@@ -4,6 +4,7 @@ const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
 import fs from 'fs';
 import path from 'path';
+import { countWords } from '../../utils/wordCounter';
 import { setStoriesMetadataCache } from './database';
 
 const pbUrl =
@@ -129,7 +130,7 @@ export async function refreshStoriesMetadataCache(forceAll = false) {
       let wordCount = 0;
       for (const ch of chapters) {
         if (ch.content) {
-          wordCount += ch.content.trim().split(/\s+/).length;
+          wordCount += countWords(ch.content, record.language);
         }
       }
 
@@ -203,7 +204,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
         let wordCount = 0;
         for (const ch of chapters) {
           if (ch.content) {
-            wordCount += ch.content.trim().split(/\s+/).length;
+            wordCount += countWords(ch.content, record.language);
           }
         }
 
