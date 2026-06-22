@@ -426,10 +426,8 @@ export type StoryCompletionsRecord = {
   user?: RecordIdString;
 };
 
-export type StoryCompletionsResponse<Texpand = unknown> = Required<
-  StoryCompletionsRecord
-> &
-  BaseSystemFields<Texpand>;
+export type StoryCompletionsResponse<Texpand = unknown> =
+  Required<StoryCompletionsRecord> & BaseSystemFields<Texpand>;
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 

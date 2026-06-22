@@ -89,6 +89,7 @@ interface ReaderPanelProps {
   onSaveStory?: (story?: Story) => Promise<any>;
   onChapterFinished?: () => void;
   onStoryFinished?: (storyId: string) => void;
+  onStoryUnfinished?: (storyId: string) => void;
   dirty?: boolean;
   isSyncing?: boolean;
   syncChangesToDatabase?: () => Promise<void>;
@@ -127,6 +128,7 @@ export default function ReaderPanel({
   onSaveStory,
   onChapterFinished,
   onStoryFinished,
+  onStoryUnfinished,
   dirty = false,
   isSyncing = false,
   syncChangesToDatabase,
@@ -1322,6 +1324,19 @@ export default function ReaderPanel({
                               >
                                 Read again? Mark another completion
                               </button>
+                              {onStoryUnfinished && (
+                                <button
+                                  type="button"
+                                  onClick={async (e) => {
+                                    e.preventDefault();
+                                    setSessionFinished(false);
+                                    await onStoryUnfinished(story.id);
+                                  }}
+                                  className="block mx-auto text-[10px] text-rose-500 hover:underline font-semibold cursor-pointer border-0 bg-transparent mt-1"
+                                >
+                                  Oops, mark as unread
+                                </button>
+                              )}
                             </div>
                           ) : (
                             <button

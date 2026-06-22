@@ -246,7 +246,39 @@ export class PocketBaseService implements IDatabaseService {
         });
       }
     } catch (error: any) {
-      console.error('[PocketBaseService] Failed to increment story completion:', error);
+      console.error(
+        '[PocketBaseService] Failed to increment story completion:',
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async decrementStoryCompletion(
+    storyId: string,
+    userId: string,
+  ): Promise<void> {
+    try {
+      const records = await pb.collection('story_completions').getList(1, 1, {
+        filter: `story = "${storyId}" && user = "${userId}"`,
+      });
+
+      if (records.items.length > 0) {
+        const existing = records.items[0];
+        const timesRead = (existing.timesRead ?? 0) - 1;
+        if (timesRead > 0) {
+          await pb.collection('story_completions').update(existing.id, {
+            timesRead,
+          });
+        } else {
+          await pb.collection('story_completions').delete(existing.id);
+        }
+      }
+    } catch (error: any) {
+      console.error(
+        '[PocketBaseService] Failed to decrement story completion:',
+        error,
+      );
       throw error;
     }
   }

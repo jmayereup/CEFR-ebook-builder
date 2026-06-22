@@ -67,6 +67,7 @@ interface ReaderPageProps {
   onSaveStory: (story?: Story) => Promise<any>;
   onChapterFinished?: () => void;
   onStoryFinished?: (storyId: string) => void;
+  onStoryUnfinished?: (storyId: string) => void;
   dirty?: boolean;
   isSyncing?: boolean;
   syncChangesToDatabase?: () => Promise<void>;
@@ -120,6 +121,7 @@ export default function ReaderPage({
   onSaveStory,
   onChapterFinished,
   onStoryFinished,
+  onStoryUnfinished,
   dirty = false,
   isSyncing = false,
   syncChangesToDatabase,
@@ -292,6 +294,7 @@ export default function ReaderPage({
         onSaveStory={onSaveStory}
         onChapterFinished={onChapterFinished}
         onStoryFinished={onStoryFinished}
+        onStoryUnfinished={onStoryUnfinished}
         dirty={dirty}
         isSyncing={isSyncing}
         syncChangesToDatabase={syncChangesToDatabase}

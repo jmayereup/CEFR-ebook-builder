@@ -40,6 +40,7 @@ import {
 } from './services/auth';
 import {
   createStory,
+  decrementStoryCompletion,
   fetchStory,
   type GenerationLimitData,
   incrementStoryCompletion,
@@ -586,7 +587,9 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
           matchingStory.isCompleted !== selectedStory.isCompleted ||
           matchingStory.title !== selectedStory.title ||
           JSON.stringify(matchingStory.ratings || {}) !==
-            JSON.stringify(selectedStory.ratings || {});
+            JSON.stringify(selectedStory.ratings || {}) ||
+          JSON.stringify(matchingStory.completedBy || {}) !==
+            JSON.stringify(selectedStory.completedBy || {});
 
         if (hasChanged) {
           setSelectedStory((prev) => {
@@ -596,6 +599,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 title: matchingStory.title,
                 isCompleted: matchingStory.isCompleted,
                 ratings: matchingStory.ratings,
+                completedBy: matchingStory.completedBy,
               };
               localStorage.setItem(
                 `cefr_story_cache_${prev.id}`,
@@ -643,6 +647,22 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         }
       } else {
         localStorage.setItem(`completed_story_${storyId}`, 'true');
+      }
+    },
+    [currentUser, loadStoriesMetadata],
+  );
+
+  const handleStoryUnfinished = useCallback(
+    async (storyId: string) => {
+      if (currentUser) {
+        try {
+          await decrementStoryCompletion(storyId, currentUser.uid);
+          loadStoriesMetadata({ refresh: true, storyId });
+        } catch (err) {
+          console.error('Failed to decrement story completion:', err);
+        }
+      } else {
+        localStorage.removeItem(`completed_story_${storyId}`);
       }
     },
     [currentUser, loadStoriesMetadata],
@@ -930,6 +950,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 onSaveStory={handleSaveUnsavedStory}
                 onChapterFinished={handleChapterFinished}
                 onStoryFinished={handleStoryFinished}
+                onStoryUnfinished={handleStoryUnfinished}
                 dirty={dirty}
                 isSyncing={isSyncing}
                 syncChangesToDatabase={syncChangesToDatabase}

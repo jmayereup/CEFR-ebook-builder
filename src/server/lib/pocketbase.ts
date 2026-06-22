@@ -118,7 +118,8 @@ export async function refreshStoriesMetadataCache(forceAll = false) {
         if (!completionsMap[storyId]) {
           completionsMap[storyId] = {};
         }
-        completionsMap[storyId][userId] = (completionsMap[storyId][userId] ?? 0) + timesRead;
+        completionsMap[storyId][userId] =
+          (completionsMap[storyId][userId] ?? 0) + timesRead;
       }
     }
 
@@ -206,7 +207,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
           }
         }
 
-        let completedBy: Record<string, number> = {};
+        const completedBy: Record<string, number> = {};
         try {
           const comps = await pb.collection('story_completions').getFullList({
             filter: `story = "${storyId}"`,
@@ -214,11 +215,15 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
           });
           for (const c of comps) {
             if (c.user) {
-              completedBy[c.user] = (completedBy[c.user] ?? 0) + (c.timesRead ?? 0);
+              completedBy[c.user] =
+                (completedBy[c.user] ?? 0) + (c.timesRead ?? 0);
             }
           }
         } catch (compError) {
-          console.warn(`[Server PB] Failed to fetch completions for single story ${storyId}:`, compError);
+          console.warn(
+            `[Server PB] Failed to fetch completions for single story ${storyId}:`,
+            compError,
+          );
         }
 
         const mapped = {

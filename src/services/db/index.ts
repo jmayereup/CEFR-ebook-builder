@@ -92,6 +92,8 @@ export const rateStory = (storyId: string, userId: string, rating: number) =>
   dbService.rateStory(storyId, userId, rating);
 export const incrementStoryCompletion = (storyId: string, userId: string) =>
   dbService.incrementStoryCompletion(storyId, userId);
+export const decrementStoryCompletion = (storyId: string, userId: string) =>
+  dbService.decrementStoryCompletion(storyId, userId);
 export const deleteStory = (storyId: string) => dbService.deleteStory(storyId);
 
 // User profile

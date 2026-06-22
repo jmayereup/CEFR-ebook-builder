@@ -102,6 +102,9 @@ export interface IDatabaseService {
   /** Record that a user has finished reading a story. */
   incrementStoryCompletion(storyId: string, userId: string): Promise<void>;
 
+  /** Undo or decrement a user's completion of a story. */
+  decrementStoryCompletion(storyId: string, userId: string): Promise<void>;
+
   /** Delete a story document. */
   deleteStory(storyId: string): Promise<void>;
 
