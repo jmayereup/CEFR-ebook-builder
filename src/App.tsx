@@ -209,6 +209,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     cachedStoryIds,
     setCachedStoryIds,
     handleSelectStory,
+    handleDownloadStory,
     handleDeleteStory,
     handleToggleStoryPrivacy,
     handleRateStory,
@@ -972,6 +973,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 recentlyRead={recentlyRead}
                 handleToggleBookshelf={handleToggleBookshelfWithAuth}
                 handleSelectStory={handleSelectStory}
+                onDownloadStory={handleDownloadStory}
                 handleDeleteStory={handleDeleteStory}
                 setActiveTab={setActiveTab}
                 searchQuery={searchQuery}
@@ -1001,6 +1003,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 generationLimitData={generationLimitData}
                 currentUser={currentUser}
                 handleSelectStory={handleSelectStory}
+                onDownloadStory={handleDownloadStory}
                 cachedStoryIds={cachedStoryIds}
                 bookshelfStories={bookshelfStories}
                 filteredBookshelfStories={filteredBookshelfStories}

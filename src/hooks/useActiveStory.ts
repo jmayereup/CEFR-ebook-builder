@@ -294,6 +294,24 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     }
   };
 
+  const handleDownloadStory = async (story: Story) => {
+    const fullStory = await libHandleSelectStory(story);
+    if (!fullStory) return;
+
+    setCachedStoryIds((prev) => {
+      if (prev.includes(story.id)) return prev;
+      const updated = [...prev, story.id];
+      localStorage.setItem('cefr_cached_story_ids', JSON.stringify(updated));
+      return updated;
+    });
+
+    showAlert(
+      'Download Complete',
+      `"${story.title}" has been saved for offline reading.`,
+      'info',
+    );
+  };
+
   return {
     selectedStory,
     setSelectedStory,
@@ -302,6 +320,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     cachedStoryIds,
     setCachedStoryIds,
     handleSelectStory,
+    handleDownloadStory,
     handleDeleteStory,
     handleToggleStoryPrivacy,
     handleRateStory,

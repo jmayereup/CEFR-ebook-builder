@@ -1,6 +1,25 @@
 {
-  "lastFetchTime": 1782047581351,
+  "lastFetchTime": 1782134031038,
   "stories": [
+    {
+      "id": "sj6xjhn7mt36iak",
+      "title": "เปิดใจสู่ความสงบ: 10 บทเรียนเพื่อการตื่นรู้",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 10,
+      "createdAt": "2026-06-22T00:05:17.214Z",
+      "isCompleted": true,
+      "description": "This collection of ten gentle yet profound lectures, inspired by the teachings of Pema Chödrön, guides Thai learners through essential spiritual themes like impermanence, self-compassion, and mindful presence. Each chapter offers simple, practical wisdom for navigating life's challenges with an open heart, making it perfect for intermediate Thai readers seeking inner peace and personal growth.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 10,
+      "wordCount": 4190
+    },
     {
       "id": "smap5fn4oz06r80",
       "title": "มนต์เสน่ห์เมืองไทย: 15 บทความท่องเที่ยวและวัฒนธรรม",
@@ -15,29 +34,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 15,
-      "wordCount": 671
-    },
-    {
-      "id": "shntquszr0ksz5q",
-      "title": "Trésors de la culture française : 15 regards sur l’art de vivre",
-      "language": "French",
-      "cefrLevel": "B1",
-      "genre": "sliceoflife",
-      "totalChapters": 15,
-      "createdAt": "2026-06-21T10:12:12.228Z",
-      "isCompleted": true,
-      "description": "Discover the many faces of French culture in this collection of 15 independent articles written for intermediate learners. Each chapter shines a light on a distinctive aspect of daily life—from the morning baguette to the art of conversation—offering both an enjoyable language experience and a deeper understanding of what makes France unique. Perfect for curious readers who want to go beyond grammar and truly enter the French way of life.",
-      "creatorId": "kjksljovpk623jy",
-      "creatorEmail": "jmayereup@gmail.com",
-      "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": null,
-      "isPublic": true,
-      "chaptersCount": 15,
-      "wordCount": 5333
+      "wordCount": 5138
     },
     {
       "id": "sgr94tn4wuwk4m3",
@@ -53,10 +53,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 12570
+      "wordCount": 12586
     },
     {
       "id": "stv7kuqd1ffq74x",
@@ -72,10 +72,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 323
+      "wordCount": 3255
     },
     {
       "id": "sndn1nd2j8ax9za",
@@ -91,7 +91,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1717
@@ -110,7 +110,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 15,
       "wordCount": 4224
@@ -136,7 +136,7 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 186
+      "wordCount": 1886
     },
     {
       "id": "qkci03ebhtv8t3u",
@@ -154,12 +154,10 @@
       "ratings": {
         "kjksljovpk623jy": 4
       },
-      "completedBy": {
-        "kjksljovpk623jy": 1
-      },
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 291
+      "wordCount": 2083
     },
     {
       "id": "story1781837709632",
@@ -177,10 +175,10 @@
       "ratings": {
         "kjksljovpk623jy": 4
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 299
+      "wordCount": 2182
     },
     {
       "id": "story1781778262598",
@@ -196,10 +194,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2194
+      "wordCount": 2202
     },
     {
       "id": "story1781775791813",
@@ -217,7 +215,7 @@
       "ratings": {
         "S2tDTbev85RmlwDnnEhT4oBswsf1": 4
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1774
@@ -236,10 +234,10 @@
       "creatorEmail": "teacherjakerru@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 366
+      "wordCount": 2766
     },
     {
       "id": "story1781700218748",
@@ -257,10 +255,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 3
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 131
+      "wordCount": 1435
     },
     {
       "id": "story1781653435387",
@@ -278,12 +276,10 @@
       "ratings": {
         "kjksljovpk623jy": 3
       },
-      "completedBy": {
-        "kjksljovpk623jy": 1
-      },
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 392
+      "wordCount": 2545
     },
     {
       "id": "story1781446030889",
@@ -299,10 +295,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "qwen/qwen3.7-plus",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 8319
+      "wordCount": 14470
     },
     {
       "id": "story1781438326213",
@@ -318,29 +314,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "openai/gpt-5-mini",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 12623
-    },
-    {
-      "id": "story1781433455885",
-      "title": "Welcome to Smile House: 30 Days of Tourism English",
-      "language": "English",
-      "cefrLevel": "Pre-A1",
-      "genre": "sliceoflife",
-      "totalChapters": 30,
-      "createdAt": "2026-06-14T10:37:35.886Z",
-      "isCompleted": false,
-      "description": "Meet Lek, a friendly Thai student starting his 30-day internship at the cozy Smile House Hotel in Chiang Mai. Each day, Lek learns simple, practical English words to help international guests feel welcome. Perfect for tourism students, this story makes learning English easy, repetitive, and fun!",
-      "creatorId": "kjksljovpk623jy",
-      "creatorEmail": "jmayereup@gmail.com",
-      "model": "google/gemini-3.5-flash",
-      "ratings": null,
-      "completedBy": null,
-      "isPublic": true,
-      "chaptersCount": 10,
-      "wordCount": 2606
+      "wordCount": 12666
     },
     {
       "id": "story1781350382933",
@@ -356,10 +333,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "openai/gpt-5.4",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3760
+      "wordCount": 3731
     },
     {
       "id": "story1781345403334",
@@ -375,10 +352,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 621
+      "wordCount": 4483
     },
     {
       "id": "story1781265585752",
@@ -396,10 +373,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 2
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 20,
-      "wordCount": 966
+      "wordCount": 11124
     },
     {
       "id": "story1781059639378",
@@ -415,10 +392,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 8450
+      "wordCount": 8456
     },
     {
       "id": "story1781024645364",
@@ -434,10 +411,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 2458
+      "wordCount": 2431
     },
     {
       "id": "story1780991062030",
@@ -453,10 +430,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 1728
+      "wordCount": 1729
     },
     {
       "id": "story1780990283785",
@@ -472,7 +449,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "openai/gpt-5-mini",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
       "wordCount": 4573
@@ -491,10 +468,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 2826
+      "wordCount": 2982
     },
     {
       "id": "story1780978783310",
@@ -510,10 +487,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 2245
+      "wordCount": 2947
     },
     {
       "id": "story1780967383095",
@@ -529,10 +506,10 @@
       "creatorEmail": "teacherjakerru@gmail.com",
       "model": "google/gemma-4-31b-it:free",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 157
+      "wordCount": 1849
     },
     {
       "id": "story1780962009669",
@@ -548,10 +525,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "openai/gpt-oss-120b",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2497
+      "wordCount": 2463
     },
     {
       "id": "story1780912090764",
@@ -567,7 +544,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "openai/gpt-oss-120b",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
       "wordCount": 3982
@@ -586,10 +563,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2103
+      "wordCount": 2130
     },
     {
       "id": "story1780907254400",
@@ -605,10 +582,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1015
+      "wordCount": 1985
     },
     {
       "id": "story1780900053911",
@@ -624,10 +601,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1283
+      "wordCount": 1672
     },
     {
       "id": "story1780881731029",
@@ -643,10 +620,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 2423
+      "wordCount": 2424
     },
     {
       "id": "story1780881266359",
@@ -662,7 +639,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 3337
@@ -681,10 +658,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 1633
+      "wordCount": 2126
     },
     {
       "id": "story1780841899387",
@@ -700,10 +677,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "openai/gpt-oss-120b",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 5037
+      "wordCount": 4999
     },
     {
       "id": "story1780824418223",
@@ -719,7 +696,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "openai/gpt-oss-120b:free",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1486
@@ -738,10 +715,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4479
+      "wordCount": 4441
     },
     {
       "id": "story1780752027746",
@@ -757,10 +734,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4744
+      "wordCount": 4777
     },
     {
       "id": "story1780750245321",
@@ -776,10 +753,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 395
+      "wordCount": 5168
     },
     {
       "id": "story1780750101963",
@@ -795,7 +772,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 833
@@ -814,7 +791,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1259
@@ -833,10 +810,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 888
+      "wordCount": 889
     },
     {
       "id": "story1780749084242",
@@ -852,7 +829,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1027
@@ -871,10 +848,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 576
+      "wordCount": 945
     },
     {
       "id": "story1780748746267",
@@ -890,10 +867,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 761
+      "wordCount": 1285
     },
     {
       "id": "story1780748591848",
@@ -909,10 +886,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 765
+      "wordCount": 1290
     },
     {
       "id": "story1780748248086",
@@ -928,7 +905,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 837
@@ -947,7 +924,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1119
@@ -966,10 +943,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3677
+      "wordCount": 3610
     },
     {
       "id": "story1780662814416",
@@ -987,10 +964,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 5
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 496
+      "wordCount": 5546
     },
     {
       "id": "story1780649138137",
@@ -1006,10 +983,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1644
+      "wordCount": 1645
     },
     {
       "id": "story1780648206704",
@@ -1025,10 +1002,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 1640
+      "wordCount": 2460
     },
     {
       "id": "story1780621997787",
@@ -1044,7 +1021,7 @@
       "creatorEmail": "teacherjakerru@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1220
@@ -1063,7 +1040,7 @@
       "creatorEmail": "teacherjakerru@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 878
@@ -1082,10 +1059,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3992
+      "wordCount": 4005
     },
     {
       "id": "story1780575754712",
@@ -1101,10 +1078,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 15,
-      "wordCount": 6780
+      "wordCount": 6725
     },
     {
       "id": "story1780574277084",
@@ -1122,10 +1099,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 4
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 479
+      "wordCount": 5571
     },
     {
       "id": "story1780571521623",
@@ -1141,10 +1118,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 495
+      "wordCount": 5347
     },
     {
       "id": "story1780566356797",
@@ -1160,7 +1137,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 3433
@@ -1179,10 +1156,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "gemini-3.5-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 2478
+      "wordCount": 4261
     },
     {
       "id": "story1780495335057",
@@ -1200,10 +1177,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 3
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 229
+      "wordCount": 3228
     },
     {
       "id": "story1780494539631",
@@ -1219,7 +1196,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemma-4-31b-it",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
       "wordCount": 908
@@ -1240,10 +1217,10 @@
       "ratings": {
         "xBN5WCGYurRX9yn3sWkZDZ15WJf2": 5
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 5223
+      "wordCount": 8828
     },
     {
       "id": "story1780469185913",
@@ -1259,7 +1236,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "x-ai/grok-4.3",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
       "wordCount": 764
@@ -1278,7 +1255,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 581
@@ -1297,10 +1274,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "gemini-3.5-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 9899
+      "wordCount": 9900
     },
     {
       "id": "story1780453209522",
@@ -1316,7 +1293,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "x-ai/grok-4.3",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
       "wordCount": 820
@@ -1335,7 +1312,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemma-4-31b-it",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
       "wordCount": 575
@@ -1356,10 +1333,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 2
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 25,
-      "wordCount": 1607
+      "wordCount": 10771
     },
     {
       "id": "story1780403193770",
@@ -1375,7 +1352,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 971
@@ -1394,7 +1371,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 898
@@ -1413,7 +1390,7 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemma-4-31b-it",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 2213
@@ -1432,29 +1409,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "x-ai/grok-4.3",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1257
-    },
-    {
-      "id": "story1780390877640",
-      "title": "เสียงระฆังของกล้า: ชีวิตที่งดงามในวัดต่างจังหวัด",
-      "language": "Thai",
-      "cefrLevel": "B1",
-      "genre": "sliceoflife",
-      "totalChapters": 10,
-      "createdAt": "2026-06-02T09:01:17.640Z",
-      "isCompleted": false,
-      "description": "",
-      "creatorId": "kjksljovpk623jy",
-      "creatorEmail": "jmayereup@gmail.com",
-      "model": "gemini-3.5-flash",
-      "ratings": null,
-      "completedBy": null,
-      "isPublic": true,
-      "chaptersCount": 3,
-      "wordCount": 157
     },
     {
       "id": "story1780385643471",
@@ -1472,10 +1430,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 4
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 544
+      "wordCount": 3727
     },
     {
       "id": "story1780376901756",
@@ -1493,10 +1451,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 3
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 330
+      "wordCount": 3193
     },
     {
       "id": "story1780374705838",
@@ -1512,10 +1470,10 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4109
+      "wordCount": 3981
     },
     {
       "id": "story1780372797588",
@@ -1533,10 +1491,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 3
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 243
+      "wordCount": 1663
     },
     {
       "id": "story1780321046992",
@@ -1554,10 +1512,10 @@
       "ratings": {
         "AjHTbotMo4fgCU0XdHOyzf4R2c83": 5
       },
-      "completedBy": null,
+      "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 444
+      "wordCount": 4422
     }
   ]
 }

@@ -40,6 +40,7 @@ interface LibraryGridProps {
   ) => void;
   isBookshelf?: boolean;
   cachedStoryIds?: string[];
+  onDownloadStory?: (story: Story) => void;
   recentlyRead?: RecentlyReadItem[];
 }
 
@@ -65,6 +66,7 @@ export default function LibraryGrid({
   onToggleSaved,
   isBookshelf = false,
   cachedStoryIds = [],
+  onDownloadStory,
   recentlyRead = [],
 }: LibraryGridProps) {
   const currentUser = useAuthStore((state) => state.currentUser);
@@ -250,6 +252,10 @@ export default function LibraryGrid({
                     isSaved={bookshelf.includes(story.id)}
                     onToggleSaved={onToggleSaved}
                     isCachedOffline={cachedStoryIds.includes(story.id)}
+                    onDownload={onDownloadStory ? (e) => {
+                      e.stopPropagation();
+                      onDownloadStory(story);
+                    } : undefined}
                     recentlyRead={recentlyRead}
                   />
                 ))}

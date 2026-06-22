@@ -1,13 +1,15 @@
 import {
+  BookCheck,
   Bookmark,
   BookmarkCheck,
-  BookOpen,
-  Check,
+  BookOpenText,
+  Cloud,
   Cpu,
   Lock,
   Star,
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import type React from 'react';
 import {
   GENRES,
   getAverageRating,
@@ -22,10 +24,6 @@ const cleanGenreLabel = (label: string) => {
   return label
     .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
     .trim();
-};
-
-const getCefrBadgeStyle = () => {
-  return 'bg-black/5 dark:bg-white/10 text-current border border-current/20';
 };
 
 const getCefrCoverStyles = (cefrLevel: string) => {
@@ -65,6 +63,7 @@ interface StoryCardProps {
   isSaved?: boolean;
   onToggleSaved?: (storyId: string, e: any) => void;
   isCachedOffline?: boolean;
+  onDownload?: (e: React.MouseEvent) => void;
   recentlyRead?: RecentlyReadItem[];
   key?: any;
 }
@@ -77,6 +76,7 @@ export default function StoryCard({
   isSaved = false,
   onToggleSaved,
   isCachedOffline = false,
+  onDownload,
   recentlyRead = [],
 }: StoryCardProps) {
   const wordCount =
@@ -131,6 +131,10 @@ export default function StoryCard({
     0,
   );
 
+  const totalReads = Math.max(globalReadCount, userReadCount);
+
+  const inRecentlyRead = recentlyRead.some((item) => item.storyId === story.id);
+
   return (
     <div className="relative group w-full max-w-[245px] mx-auto aspect-[3/4.2] min-h-[343px] cursor-pointer">
       {/* 3D Pages Stack Effects (behind card, moves slightly less on hover to look like book cover lifting) */}
@@ -140,67 +144,86 @@ export default function StoryCard({
       {/* Main Book Card */}
       <motion.div
         whileHover={{
-          y: -6,
-          x: -2,
+          scale: 1.02,
           boxShadow:
-            '10px 15px 30px -10px rgba(0,0,0,0.18), 2px 4px 8px -2px rgba(0,0,0,0.06)',
+            '4px 12px 24px -5px rgba(0,0,0,0.18), 1px 4px 8px -1px rgba(0,0,0,0.06)',
         }}
+        transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
         onClick={onSelect}
-        className={`relative ${coverStyle.card} border rounded-l-md rounded-r-lg p-5 transition-all duration-300 flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden`}
+        className={`relative ${coverStyle.card} border rounded-l-md rounded-r-lg p-5 flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden`}
       >
         {/* Left Spine Fold / Crease (adds beautiful book texture) */}
         <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
         <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
 
         <div>
-          <div className="flex flex-wrap items-center gap-1.5 pl-2.5 mb-2.5 z-10">
-            <span
-              className={`text-[8px] font-mono font-bold uppercase py-0.5 px-1.5 rounded-sm ${getCefrBadgeStyle()}`}
-            >
-              {story.cefrLevel}
-            </span>
-            <span
-              className={`text-[8px] font-mono font-semibold uppercase py-0.5 px-1.5 bg-black/5 dark:bg-white/10 rounded border border-current/10 ${coverStyle.textMuted}`}
-            >
-              {story.language}
-            </span>
-            {isCachedOffline && (
-              <span className="text-[8px] font-mono font-bold uppercase py-0.5 px-1.5 bg-emerald-500/10 dark:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 rounded-sm border border-emerald-500/20 flex items-center gap-0.5">
-                <Check className="w-2.5 h-2.5" />
-                Offline Ready
+          <div className="flex items-center justify-between pl-2.5 mb-2.5 z-10 w-full">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono font-bold uppercase py-0.5 text-current">
+                {story.cefrLevel}
               </span>
-            )}
-            {story.ratings && Object.keys(story.ratings).length > 0 ? (
-              <span className="flex items-center gap-0.5 text-amber-500 font-semibold text-[8px] py-0.5 px-1 bg-amber-500/5 dark:bg-amber-500/10 rounded border border-amber-500/20">
-                <Star className="w-2.5 h-2.5 fill-amber-500 text-amber-500" />
-                {getAverageRating(story.ratings).toFixed(1)}
-              </span>
-            ) : (
               <span
-                className={`flex items-center gap-0.5 opacity-60 text-[8px] py-0.5 px-1 bg-black/5 dark:bg-white/10 rounded border border-current/10 ${coverStyle.textMuted}`}
+                className={`text-[10px] font-mono font-bold uppercase py-0.5 ${coverStyle.textMuted}`}
               >
-                <Star className="w-2.5 h-2.5" />
-                unrated
+                {story.language}
               </span>
-            )}
-            {story.isPublic === false && (
-              <span className="text-[8px] font-mono font-bold uppercase py-0.5 px-1 bg-rose-50 dark:bg-rose-955/40 text-rose-655 dark:text-rose-400 rounded flex items-center gap-0.5">
-                <Lock className="w-2 h-2" />
-                Private
-              </span>
-            )}
-            {(story.isCompleted || chaptersCount === story.totalChapters) && (
-              <span className="text-[8px] font-mono font-bold uppercase py-0.5 px-1.5 bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover rounded-sm border border-tj-primary-border/20 flex items-center gap-0.5">
-                <BookOpen className="w-2.5 h-2.5" />
-                eBook Ready
-              </span>
-            )}
-            {isRead && (
-              <span className="text-[8px] font-mono font-bold uppercase py-0.5 px-1.5 bg-emerald-500/10 dark:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 rounded-sm border border-emerald-500/20 flex items-center gap-0.5">
-                <Check className="w-2.5 h-2.5 stroke-[3]" />
-                {userReadCount > 1 ? `Read ${userReadCount}x` : 'Read'}
-              </span>
-            )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              {story.isPublic === false && (
+                <Lock
+                  className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
+                  title="Private Story"
+                />
+              )}
+              {!isCachedOffline && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onDownload) {
+                      onDownload(e);
+                    }
+                  }}
+                  className="p-0.5 hover:bg-black/5 dark:hover:bg-white/5 rounded cursor-pointer transition-all flex items-center justify-center border-0 bg-transparent text-current"
+                  title="Download for offline reading"
+                >
+                  <Cloud
+                    className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60 hover:opacity-100`}
+                  />
+                </button>
+              )}
+              {isRead ? (
+                <BookCheck
+                  className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
+                  title="Completed reading"
+                />
+              ) : inRecentlyRead ? (
+                <BookOpenText
+                  className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
+                  title="Recently Read (In Progress)"
+                />
+              ) : null}
+              {onToggleSaved && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleSaved(story.id, e);
+                  }}
+                  className={`p-0.5 rounded transition-all cursor-pointer ${coverStyle.textMuted} opacity-50 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5`}
+                  title={
+                    isSaved ? 'Remove from Bookshelf' : 'Save to Bookshelf'
+                  }
+                >
+                  {isSaved ? (
+                    <BookmarkCheck className="w-3.5 h-3.5 fill-current opacity-100" />
+                  ) : (
+                    <Bookmark className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -228,62 +251,66 @@ export default function StoryCard({
         </div>
 
         {/* Footer Area */}
-        <div className={`z-10 pt-2.5 border-t ${coverStyle.line}`}>
-          <div className="flex items-center justify-between">
-            <div
-              className={`flex items-center gap-1.5 text-[8px] font-bold tracking-wide uppercase font-mono ${coverStyle.modelText}`}
-            >
-              <Cpu className="w-2.5 h-2.5 opacity-80 text-current" />
-              <span
-                className="truncate max-w-[100px]"
-                title={getModelDisplayName(story.model)}
+        <div className="z-10 pt-2.5">
+          <div className="flex flex-col gap-1.5 text-[9px] font-mono font-bold">
+            {/* Line 1: Model & Rating (space between) */}
+            <div className="flex items-center justify-between gap-2">
+              <div
+                className={`flex items-center gap-1.5 text-[8px] font-bold tracking-wide uppercase ${coverStyle.modelText}`}
               >
-                {getModelDisplayName(story.model)}
-              </span>
+                <Cpu className="w-2.5 h-2.5 opacity-80 text-current" />
+                <span
+                  className="truncate max-w-[120px]"
+                  title={getModelDisplayName(story.model)}
+                >
+                  {getModelDisplayName(story.model)}
+                </span>
+              </div>
+
+              <div>
+                {story.ratings && Object.keys(story.ratings).length > 0 && (
+                  <div
+                    className={`flex items-center gap-0.5 ${coverStyle.textMuted}`}
+                    title={`Avg: ${getAverageRating(story.ratings).toFixed(1)}`}
+                  >
+                    {Array.from({ length: 5 }).map((_, i) => {
+                      const ratingVal = getAverageRating(story.ratings);
+                      const isFilled = i + 1 <= Math.round(ratingVal);
+                      return (
+                        <Star
+                          key={`star-${i}`}
+                          className={`w-2 h-2 ${isFilled ? 'fill-current' : 'opacity-30'}`}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div
-              className={`text-[9px] font-mono font-bold ${coverStyle.textMuted}`}
-            >
-              {story.isCompleted || chaptersCount === story.totalChapters ? (
-                <div className="flex flex-col items-end">
-                  <span>
-                    ~{(Math.round(wordCount / 50) * 50).toLocaleString()} words
+            {/* Line 2: Word Count & Reads (space between) */}
+            <div className="flex items-center justify-between gap-2 mt-0.5">
+              <div className={`${coverStyle.textMuted}`}>
+                {story.isCompleted || chaptersCount === story.totalChapters ? (
+                  <span className="whitespace-nowrap">
+                    {(Math.round(wordCount / 50) * 50).toLocaleString()} WORDS
                   </span>
-                  {globalReadCount > 0 && (
-                    <span className="text-[7.5px] opacity-75 font-sans mt-0.5 text-right font-medium">
-                      {globalReadCount}{' '}
-                      {globalReadCount === 1 ? 'read' : 'reads'}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <span className="flex items-center gap-1 font-sans uppercase text-[8px] tracking-wide">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
-                  In Progress
+                ) : (
+                  <span className="flex items-center gap-1 font-sans uppercase text-[8px] tracking-wide whitespace-nowrap">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
+                    In Progress
+                  </span>
+                )}
+              </div>
+
+              {totalReads > 0 && (
+                <span className={`${coverStyle.textMuted} whitespace-nowrap`}>
+                  READS: {totalReads}
                 </span>
               )}
             </div>
           </div>
         </div>
-
-        {/* Saved / Bookmark Button overlay */}
-        {onToggleSaved && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleSaved(story.id, e);
-            }}
-            className={`absolute top-3 right-3 p-1 rounded transition-all cursor-pointer ${coverStyle.textMuted} opacity-25 group-hover:opacity-60 hover:!opacity-100 z-30 hover:bg-black/5 dark:hover:bg-white/5`}
-            title={isSaved ? 'Remove from Bookshelf' : 'Save to Bookshelf'}
-          >
-            {isSaved ? (
-              <BookmarkCheck className="w-3.5 h-3.5 fill-tj-tertiary text-tj-tertiary opacity-100" />
-            ) : (
-              <Bookmark className="w-3.5 h-3.5" />
-            )}
-          </button>
-        )}
       </motion.div>
     </div>
   );

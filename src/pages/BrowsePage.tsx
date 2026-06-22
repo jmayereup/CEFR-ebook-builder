@@ -13,6 +13,7 @@ interface BrowsePageProps {
   recentlyRead: RecentlyReadItem[];
   handleToggleBookshelf: (id: string) => void;
   handleSelectStory: (story: Story) => void;
+  onDownloadStory?: (story: Story) => void;
   handleDeleteStory: (
     storyId: string,
     e: React.MouseEvent | null,
@@ -44,6 +45,7 @@ export default function BrowsePage({
   recentlyRead,
   handleToggleBookshelf,
   handleSelectStory,
+  onDownloadStory,
   handleDeleteStory,
   setActiveTab,
   searchQuery,
@@ -76,6 +78,7 @@ export default function BrowsePage({
           handleToggleBookshelf(id);
         }}
         onSelectStory={handleSelectStory}
+        onDownloadStory={onDownloadStory}
         onDeleteStory={handleDeleteStory}
         setActiveTab={setActiveTab}
         searchQuery={searchQuery}

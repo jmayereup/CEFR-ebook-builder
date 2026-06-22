@@ -12,6 +12,7 @@ interface BookshelfPageProps {
   generationLimitData: GenerationLimitData;
   currentUser: { uid: string; email: string | null } | null;
   handleSelectStory: (story: Story) => void;
+  onDownloadStory?: (story: Story) => void;
   cachedStoryIds: string[];
   bookshelfStories: Story[];
   filteredBookshelfStories: Story[];
@@ -48,6 +49,7 @@ export default function BookshelfPage({
   generationLimitData,
   currentUser,
   handleSelectStory,
+  onDownloadStory,
   cachedStoryIds,
   bookshelfStories,
   filteredBookshelfStories,
@@ -114,6 +116,7 @@ export default function BookshelfPage({
           handleToggleBookshelf(id);
         }}
         onSelectStory={handleSelectStory}
+        onDownloadStory={onDownloadStory}
         onDeleteStory={handleDeleteStory}
         setActiveTab={setActiveTab}
         searchQuery={searchQuery}
