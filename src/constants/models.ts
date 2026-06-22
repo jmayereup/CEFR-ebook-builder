@@ -1,0 +1,240 @@
+/**
+ * AI model definitions shared across StoryConfigForm (UI) and App.tsx (display logic).
+ * Moving these here prevents two sources of truth for model IDs and pricing.
+ */
+
+export interface GeminiModelOption {
+  id: string;
+  name: string;
+  inputCost1M: number;
+  outputCost1M: number;
+  category: 'pro' | 'flash' | 'thinking';
+  supportsThinkingLevel: boolean;
+  supportsThinkingBudget: boolean;
+  supportsTemperature: boolean;
+  maxOutputTokens?: number;
+}
+
+export const GEMINI_MODELS: GeminiModelOption[] = [
+  // --- Free Tier Models ---
+  {
+    id: 'meta-llama/llama-3.3-70b-instruct:free',
+    name: 'Llama 3.3 70B Instruct (Free)',
+    inputCost1M: 0.0,
+    outputCost1M: 0.0,
+    category: 'flash',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 4096,
+  },
+  {
+    id: 'google/gemma-4-31b-it:free',
+    name: 'Gemma 4 31B (Free)',
+    inputCost1M: 0.0,
+    outputCost1M: 0.0,
+    category: 'flash',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'openai/gpt-oss-120b:free',
+    name: 'GPT OSS 120B (Free)',
+    inputCost1M: 0.0,
+    outputCost1M: 0.0,
+    category: 'flash',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 4096,
+  },
+
+  // --- Paid Tier Models (Shared API Key limits) ---
+  {
+    id: 'openai/gpt-oss-120b',
+    name: 'GPT OSS 120B',
+    inputCost1M: 0.04,
+    outputCost1M: 0.18,
+    category: 'pro',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 4096,
+  },
+  {
+    id: 'openai/gpt-5-mini',
+    name: 'GPT-5 Mini',
+    inputCost1M: 0.25,
+    outputCost1M: 2.0,
+    category: 'flash',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'qwen/qwen3.5-flash-02-23',
+    name: 'Qwen 3.5 Flash',
+    inputCost1M: 0.065,
+    outputCost1M: 0.26,
+    category: 'flash',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'qwen/qwen3.7-plus',
+    name: 'Qwen 3.7 Plus',
+    inputCost1M: 0.32,
+    outputCost1M: 1.28,
+    category: 'pro',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'minimax/minimax-m3',
+    name: 'MiniMax M3',
+    inputCost1M: 0.3,
+    outputCost1M: 1.2,
+    category: 'flash',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+
+  // --- Private Key & SuperAdmin Only Models ---
+  {
+    id: 'openai/gpt-5.4',
+    name: 'GPT-5.4',
+    inputCost1M: 2.5,
+    outputCost1M: 15.0,
+    category: 'pro',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'openai/gpt-5.4-mini',
+    name: 'GPT-5.4 Mini',
+    inputCost1M: 0.75,
+    outputCost1M: 4.5,
+    category: 'flash',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'openai/gpt-5.5',
+    name: 'GPT-5.5',
+    inputCost1M: 5.0,
+    outputCost1M: 30.0,
+    category: 'pro',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'google/gemini-3.1-flash-lite',
+    name: 'Gemini 3.1 Flash-Lite',
+    inputCost1M: 0.25,
+    outputCost1M: 1.5,
+    category: 'flash',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'google/gemma-4-31b-it',
+    name: 'Gemma 4 31B',
+    inputCost1M: 0.12,
+    outputCost1M: 0.36,
+    category: 'flash',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'deepseek/deepseek-v4-flash',
+    name: 'DeepSeek V4 Flash',
+    inputCost1M: 0.1,
+    outputCost1M: 0.2,
+    category: 'flash',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'deepseek/deepseek-v4-pro',
+    name: 'DeepSeek V4 Pro',
+    inputCost1M: 0.435,
+    outputCost1M: 0.87,
+    category: 'pro',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'moonshotai/kimi-k2.6',
+    name: 'Kimi K2.6',
+    inputCost1M: 0.68,
+    outputCost1M: 3.4,
+    category: 'pro',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'google/gemini-3.5-flash',
+    name: 'Gemini 3.5 Flash',
+    inputCost1M: 1.5,
+    outputCost1M: 9.0,
+    category: 'flash',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'anthropic/claude-haiku-4.5',
+    name: 'Claude 4.5 Haiku',
+    inputCost1M: 1.0,
+    outputCost1M: 5.0,
+    category: 'flash',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+  {
+    id: 'google/gemini-2.5-flash-lite',
+    name: 'Gemini 2.5 Flash-Lite',
+    inputCost1M: 0.1,
+    outputCost1M: 0.4,
+    category: 'flash',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 8192,
+  },
+];
+
+/** IDs of models that are always free to use (no contributor approval needed). */
+export const FREE_MODEL_IDS = new Set([
+  'meta-llama/llama-3.3-70b-instruct:free',
+  'google/gemma-4-31b-it:free',
+  'openai/gpt-oss-120b:free',
+]);

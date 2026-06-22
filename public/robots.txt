@@ -1,0 +1,9 @@
+# Prevent general search engine crawlers from scanning private paths or reading database-heavy book paths
+User-agent: *
+Disallow: /book/
+Disallow: /bookshelf/
+Disallow: /admin/
+
+# Explicitly allow Google AdSense crawler to access all pages so contextual ads can still be served
+User-agent: Mediapartners-Google
+Allow: /

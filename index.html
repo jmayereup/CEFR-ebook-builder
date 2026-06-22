@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CEFR Stories - Reading Companion</title>
+  <meta name="description" content="Generate and read custom CEFR-graded stories in Spanish, French, Japanese, and more. Improve reading comprehension with dynamic glossaries, audio narration, and EPUB eBook downloads." />
+  <meta name="keywords" content="CEFR graded reader, language learning worksheets, Spanish reading practice, Japanese graded reader, interactive stories, EPUB ebook downloader, dynamic glossary" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CEFR Stories - Reading Companion" />
+  <meta property="og:description" content="Read CEFR graded stories with interactive word-level translations, Text-to-Speech audio, and download them as eBooks for your Kindle or Apple Books." />
+  <meta property="og:image" content="/tj-logo.svg" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CEFR Stories - Reading Companion" />
+  <meta name="twitter:description" content="Generate and read CEFR graded stories with interactive dictionary lookups and custom eBook downloads." />
+  <meta name="twitter:image" content="/tj-logo.svg" />
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="/tj-logo.svg" />
+  <link rel="apple-touch-icon" href="/tj-logo.svg" />
+  <meta name="theme-color" content="#004d2c" />
+
+  <!-- 100% privacy-first analytics -->
+  <script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+
+  <!-- PWA & Theme Bootstrapping Scripts -->
+  <script>
+    (() => {
+      // Immediately apply dark class to prevent screen flashing before React mounts
+      try {
+        if (
+          localStorage.getItem('theme') === 'dark' ||
+          (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {
+        console.error('Theme initialization failed:', e);
+      }
+
+      // Automatically reload page on ChunkLoadError (e.g. from deleted chunk hashes after server build updates)
+      window.addEventListener('error', (e) => {
+        if (e.message && (e.message.indexOf('ChunkLoadError') !== -1 || e.message.indexOf('Loading chunk') !== -1)) {
+          console.warn('Chunk load error detected. Reloading page to fetch the latest production assets...');
+          window.location.reload();
+        }
+      }, true);
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"><!--ssr-outlet--></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

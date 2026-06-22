@@ -1,0 +1,6 @@
+{
+  "name": "CEFR Language Story Generator",
+  "description": "Generate multi-chapter short stories at specified CEFR difficulty levels in various languages, complete with vocabulary lists and Google Docs export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

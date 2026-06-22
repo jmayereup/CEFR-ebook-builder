@@ -1,0 +1,53 @@
+{
+  "name": "cefr-graded-books-generator",
+  "private": true,
+  "version": "0.0.4",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "vite build --outDir dist/client && vite build --ssr src/entry-server.tsx --outDir dist/server && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "start": "node dist/server.cjs",
+    "preview": "NODE_ENV=production node dist/server.cjs",
+    "deploy": "./deploy.sh",
+    "clean": "rm -rf dist server.js",
+    "lint": "tsc --noEmit",
+    "typegen": "node -e \"require('dotenv').config(); const { spawnSync } = require('child_process'); spawnSync('npx', ['pocketbase-typegen', '--url', process.env.VITE_POCKETBASE_URL, '--email', process.env.POCKETBASE_ADMIN_EMAIL, '--password', process.env.POCKETBASE_ADMIN_PASSWORD, '--out', 'src/services/db/pocketbase-types.ts'], { stdio: 'inherit', shell: true });\"",
+    "biome:format": "biome format --write .",
+    "biome:lint": "biome lint .",
+    "biome:check": "biome check --write ."
+  },
+  "dependencies": {
+    "@openrouter/sdk": "^0.12.79",
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.5.2",
+    "jszip": "^3.10.1",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "pocketbase": "^0.27.0",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
+    "@types/express": "^4.17.21",
+    "@types/jszip": "^3.4.0",
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.28.1",
+    "pocketbase-typegen": "^1.5.0",
+    "sharp": "^0.35.1",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3",
+    "vite-plugin-pwa": "^1.3.0"
+  },
+  "overrides": {
+    "esbuild": "$esbuild"
+  }
+}
