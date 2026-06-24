@@ -98,6 +98,16 @@ router.post('/', async (req, res) => {
     };
     const resolvedGenre = genreLabels[genre] || genre;
 
+    let resolvedWritingType = 'narrative';
+    let cleanedPromptNotes = promptNotes || '';
+    if (promptNotes) {
+      const match = promptNotes.match(/\[Writing Type:\s*([^\]]+)\]/i);
+      if (match) {
+        resolvedWritingType = match[1].trim().toLowerCase();
+        cleanedPromptNotes = promptNotes.replace(/\[Writing Type:\s*[^\]]+\]/i, '').trim();
+      }
+    }
+
     const isNonFiction = genre === 'nonfiction';
     const isHistorical = genre === 'historical';
     const accuracyGuidance = isNonFiction
@@ -111,6 +121,7 @@ router.post('/', async (req, res) => {
 
     const systemInstruction = `You are an expert bilingual linguist and a professional story writer. 
 Your target is to generate a short story segment (chapter) tailored for learners studying ${language} at the CEFR difficulty level of ${cefrLevel}.
+The text must be written in the style of a "${resolvedWritingType}" text.
 The narrative style must strictly adhere to the ${cefrLevel} CEFR guidelines:
 - Pre-A1: Extremely basic vocabulary, minimal sentence structure (2-4 words per sentence), present tense only, very repetitive. Since this is a Pre-A1 level book, it MUST be generated in a line-by-line bilingual format. Each line/sentence in target language (${language}) must be immediately followed by a word-by-word or phrase-by-phrase bilingual translation in the translation language (${translationLanguage || 'English'}). In this translation, map each word or phrase from the translation language directly to its target language counterpart in parentheses. Format each translated line on a new line prefixed with 'Translation:'. Example:
 [Target Language line]
@@ -217,10 +228,11 @@ ${accuracyGuidance ? `\n${accuracyGuidance}` : ''}`;
 
       prompt = `Start a brand new story written in ${language} at the CEFR ${cefrLevel} difficulty level.
 Genre of the story: ${resolvedGenre}
+Writing Type: ${resolvedWritingType}
 Expected total number of chapters: ${totalChapters}
 Chapter details: This is Chapter 1 of ${totalChapters}.
 ${outline ? `Approved Overarching Outline/Plan to align with:\n${outline}` : ''}
-${promptNotes ? `Initial ideas/characters/settings: "${promptNotes}"` : ''}
+${cleanedPromptNotes ? `Initial ideas/characters/settings: "${cleanedPromptNotes}"` : ''}
 ${chapterGuidance ? `Custom specific guidance for Chapter 1: "${chapterGuidance}"` : ''}
 
 Based on these guidelines, invent an overarching story title (or use "${storyTitle || ''}" if appropriate), a chapter title, the story chapter content (approx. ${targetWordCount} words), a 1-2 sentence English summary of the chapter events, and extract the key terms (leave vocab empty if A1 or Pre-A1).`;
@@ -265,8 +277,9 @@ Based on these guidelines, invent an overarching story title (or use "${storyTit
 Language: ${language}
 CEFR level: ${cefrLevel}
 Genre: ${resolvedGenre}
-This is Chapter ${chapterNumber} of ${totalChapters}.
+Writing Type: ${resolvedWritingType}
 ${outline ? `Pre-approved Story Outline/Plan to follow:\n${outline}` : ''}
+${cleanedPromptNotes ? `Author Notes / Style Guidance: "${cleanedPromptNotes}"` : ''}
 ${chapterGuidance ? `Custom additional guidance for this Chapter ${chapterNumber}: "${chapterGuidance}"` : ''}
 
 Here is the complete narrative history of all previous chapters:

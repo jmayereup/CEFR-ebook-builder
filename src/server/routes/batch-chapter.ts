@@ -119,6 +119,16 @@ router.post('/', async (req, res) => {
     };
     const resolvedGenre = genreLabels[genre] || genre;
 
+    let resolvedWritingType = 'narrative';
+    let cleanedPromptNotes = promptNotes || '';
+    if (promptNotes) {
+      const match = promptNotes.match(/\[Writing Type:\s*([^\]]+)\]/i);
+      if (match) {
+        resolvedWritingType = match[1].trim().toLowerCase();
+        cleanedPromptNotes = promptNotes.replace(/\[Writing Type:\s*[^\]]+\]/i, '').trim();
+      }
+    }
+
     const isNonFiction = genre === 'nonfiction';
     const isHistorical = genre === 'historical';
     const accuracyGuidance = isNonFiction
@@ -161,6 +171,7 @@ router.post('/', async (req, res) => {
     // -------------------------------------------------------------------------
     const systemInstruction = `You are an expert bilingual linguist and a professional story writer.
 Your task is to generate ${batchCount} consecutive chapters of an ongoing story, written in ${language} at CEFR level ${cefrLevel}.
+The text must be written in the style of a "${resolvedWritingType}" text.
 
 Each chapter must be approximately ${targetWordCount} words long.
 ${cefrNarrativeGuide}
@@ -214,8 +225,9 @@ IMPORTANT: You MUST generate exactly ${batchCount} chapters in the correct JSON 
 Language: ${language}
 CEFR Level: ${cefrLevel}
 Genre: ${resolvedGenre}
+Writing Type: ${resolvedWritingType}
 ${outline ? `Pre-approved Story Outline/Plan to follow:\n${outline}` : ''}
-${promptNotes ? `Author Notes / Style Guidance: "${promptNotes}"` : ''}
+${cleanedPromptNotes ? `Author Notes / Style Guidance: "${cleanedPromptNotes}"` : ''}
 
 Total story chapters: ${totalChapters}
 You are now writing Chapters ${batchNumbers[0]} through ${batchNumbers[batchNumbers.length - 1]} of ${totalChapters}.

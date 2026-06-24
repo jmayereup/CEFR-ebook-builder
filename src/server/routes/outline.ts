@@ -65,6 +65,16 @@ router.post('/', async (req, res) => {
     };
     const resolvedGenre = genreLabels[genre] || genre;
 
+    let resolvedWritingType = 'narrative';
+    let cleanedPromptNotes = promptNotes || '';
+    if (promptNotes) {
+      const match = promptNotes.match(/\[Writing Type:\s*([^\]]+)\]/i);
+      if (match) {
+        resolvedWritingType = match[1].trim().toLowerCase();
+        cleanedPromptNotes = promptNotes.replace(/\[Writing Type:\s*[^\]]+\]/i, '').trim();
+      }
+    }
+
     const isNonFiction = genre === 'nonfiction';
     const isHistorical = genre === 'historical';
     const accuracyGuidance = isNonFiction
@@ -75,6 +85,7 @@ router.post('/', async (req, res) => {
 
     const systemInstruction = `You are a talented story architect and bilingual educator tutor.
 Write an outline and proposed story title for a learner reading at CEFR ${cefrLevel} level in the language ${language}. 
+The text must be written in the style of a "${resolvedWritingType}" text.
 ${(cefrLevel === 'A1' || cefrLevel === 'Pre-A1') && translationLanguage ? `Since this is a ${cefrLevel} level story, it will be generated in a line-by-line bilingual format (${language} and ${translationLanguage}). Plan the chapters accordingly to be simple, repetitive, and educational.` : ''}
 ${accuracyGuidance ? `${accuracyGuidance}\n` : ''}The story will have ${totalChapters} chapters of around ${targetWordCount} words each.`;
 
@@ -98,10 +109,11 @@ ${accuracyGuidance ? `${accuracyGuidance}\n` : ''}The story will have ${totalCha
     };
 
     const prompt = `Genre: ${resolvedGenre}
+Writing Type: ${resolvedWritingType}
 Language: ${language}
 CEFR Level: ${cefrLevel}
 Total Chapters planned: ${totalChapters}
-${promptNotes ? `Incorporating user concept ideas: "${promptNotes}"` : ''}
+${cleanedPromptNotes ? `Incorporating user concept ideas: "${cleanedPromptNotes}"` : ''}
 
 Draft an overarching narrative outline. For each of the ${totalChapters} chapters, provide a brief 1-2 sentence description of the key event and theme. Return a beautiful title, outline, and a brief 2-3 sentence English synopsis/description of the story.`;
 
