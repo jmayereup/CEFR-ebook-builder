@@ -915,6 +915,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 handleRegenerateChapter={handleRegenerateChapter}
                 handleAutoGenerateRemaining={handleAutoGenerateRemaining}
                 handleSaveWord={handleSaveWord}
+                onRemoveWord={handleRemoveSavedWord}
                 isPaid={isPaid}
                 onOpenSettings={() => setShowSettingsModal(true)}
                 showAlert={showAlert}

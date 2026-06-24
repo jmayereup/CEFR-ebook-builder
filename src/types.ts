@@ -112,32 +112,38 @@ export const CEFR_LEVELS: CEFRLevel[] = [
   {
     code: 'Pre-A1',
     name: 'Pre-A1 - Novice',
-    description: 'Can recognize and read extremely basic isolated words, names, and numbers. Suitable for readers starting with word-by-word decoding and visual support.',
+    description:
+      'Can recognize and read extremely basic isolated words, names, and numbers. Suitable for readers starting with word-by-word decoding and visual support.',
   },
   {
     code: 'A1',
     name: 'A1 - Beginner',
-    description: 'Can read short, simple texts sentence-by-sentence. Can find basic information in familiar messages and narratives using high-frequency vocabulary.',
+    description:
+      'Can read short, simple texts sentence-by-sentence. Can find basic information in familiar messages and narratives using high-frequency vocabulary.',
   },
   {
     code: 'A2',
     name: 'A2 - Elementary',
-    description: 'Can read short, simple stories and find specific, predictable info in everyday materials. Understands basic tenses and simple sentence connectors.',
+    description:
+      'Can read short, simple stories and find specific, predictable info in everyday materials. Understands basic tenses and simple sentence connectors.',
   },
   {
     code: 'B1',
     name: 'B1 - Intermediate',
-    description: 'Can read straightforward factual texts and follow clear narratives on familiar topics. Transitioning to independent reading with occasional dictionary help.',
+    description:
+      'Can read straightforward factual texts and follow clear narratives on familiar topics. Transitioning to independent reading with occasional dictionary help.',
   },
   {
     code: 'B2',
     name: 'B2 - Upper Intermediate',
-    description: 'Can read complex, detailed narratives, reports, and modern literature. Understands writer viewpoints, implicit styles, subtext, and idiomatic phrases.',
+    description:
+      'Can read complex, detailed narratives, reports, and modern literature. Understands writer viewpoints, implicit styles, subtext, and idiomatic phrases.',
   },
   {
     code: 'C1',
     name: 'C1 - Advanced',
-    description: 'Can read a wide range of long, demanding texts, highly stylized literature, and nuanced analytical works. Comprehends implicit meanings and specialized terms.',
+    description:
+      'Can read a wide range of long, demanding texts, highly stylized literature, and nuanced analytical works. Comprehends implicit meanings and specialized terms.',
   },
 ];
 

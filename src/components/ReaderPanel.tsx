@@ -59,6 +59,7 @@ interface ReaderPanelProps {
   isAutoGeneratingRemaining: boolean;
   onAutoGenerateAll: () => void;
   onSaveWord?: (word: VocabularyTerm) => void;
+  onRemoveWord?: (wordText: string) => void;
   isPaid?: boolean;
   isAdmin?: boolean;
   onOpenSettings?: () => void;
@@ -106,6 +107,7 @@ export default function ReaderPanel({
   isAutoGeneratingRemaining,
   onAutoGenerateAll,
   onSaveWord,
+  onRemoveWord,
   isPaid = false,
   isAdmin = false,
   onOpenSettings,
@@ -273,8 +275,12 @@ export default function ReaderPanel({
   // Combined set of all words/phrases to match as single segments (glossary + saved phrases)
   const segmentMatchingSet = useMemo(() => {
     const combined = new Set<string>();
-    glossaryWordsSet.forEach((w) => combined.add(w));
-    savedWordsSet.forEach((w) => combined.add(w));
+    glossaryWordsSet.forEach((w) => {
+      combined.add(w);
+    });
+    savedWordsSet.forEach((w) => {
+      combined.add(w);
+    });
     return combined;
   }, [glossaryWordsSet, savedWordsSet]);
 
@@ -966,6 +972,18 @@ export default function ReaderPanel({
     }, 1500);
   };
 
+  const isSelectedWordSaved = useMemo(() => {
+    if (!selectedWord) return false;
+    return savedWordsSet.has(selectedWord.word.toLowerCase().trim());
+  }, [selectedWord, savedWordsSet]);
+
+  const handleRemoveWordRecord = () => {
+    if (!selectedWord || !onRemoveWord) return;
+    onRemoveWord(selectedWord.word);
+    setSelectedWord(null);
+    setSelectedWordRange(null);
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 relative">
       {/* CHAPTER DRAWER NAVIGATION SIDEBAR */}
@@ -1435,6 +1453,23 @@ export default function ReaderPanel({
                   </>
                 )}
 
+                {/* Dynamic glossary extracted terms */}
+                {activeChapter && !isEditing && (
+                  <VocabGlossary
+                    vocabulary={activeChapter.vocabulary}
+                    language={story.language}
+                    handlePlayWord={handlePlayWord}
+                    fontSize={fontSize}
+                    isZenMode={isZenMode}
+                    activeChapterIndex={activeChapterIndex}
+                    onSelectChapter={onSelectChapter}
+                    totalChapters={story.chapters.length}
+                    onSaveWord={onSaveWord}
+                    onRemoveWord={onRemoveWord}
+                    savedWordsSet={savedWordsSet}
+                  />
+                )}
+
                 {/* Chapter Navigation Buttons */}
                 {!isZenMode && activeChapter && (
                   <div className="mt-8">
@@ -1493,24 +1528,6 @@ export default function ReaderPanel({
             )}
           </motion.div>
         </AnimatePresence>
-
-        {/* Dynamic glossary extracted terms */}
-        {activeChapter && !isEditing && (
-          <div className={isZenMode ? 'max-w-3xl mx-auto w-full' : ''}>
-            <VocabGlossary
-              vocabulary={activeChapter.vocabulary}
-              language={story.language}
-              handlePlayWord={handlePlayWord}
-              fontSize={fontSize}
-              isZenMode={isZenMode}
-              activeChapterIndex={activeChapterIndex}
-              onSelectChapter={onSelectChapter}
-              totalChapters={story.chapters.length}
-              onSaveWord={onSaveWord}
-              savedWordsSet={savedWordsSet}
-            />
-          </div>
-        )}
       </div>
 
       {/* FLOAT TRANSLATION AND SAVING TOAST MODAL */}
@@ -1528,6 +1545,8 @@ export default function ReaderPanel({
         handleFetchTranslation={handleFetchTranslation}
         handleSaveWordRecord={handleSaveWordRecord}
         handlePlayWord={handlePlayWord}
+        isSaved={isSelectedWordSaved}
+        handleRemoveWordRecord={handleRemoveWordRecord}
         hasPrev={selectedWordRange !== null && selectedWordRange[0] > 0}
         hasNext={
           selectedWordRange !== null &&

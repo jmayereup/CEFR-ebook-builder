@@ -34,6 +34,8 @@ interface TranslationToastProps {
   handleFetchTranslation: () => void;
   handleSaveWordRecord: () => void;
   handlePlayWord: (word: string) => void;
+  isSaved?: boolean;
+  handleRemoveWordRecord?: () => void;
   isOnline?: boolean;
   hasPrev: boolean;
   hasNext: boolean;
@@ -63,6 +65,8 @@ export default function TranslationToast({
   handleFetchTranslation,
   handleSaveWordRecord,
   handlePlayWord,
+  isSaved = false,
+  handleRemoveWordRecord,
   isOnline = true,
   hasPrev,
   hasNext,
@@ -104,6 +108,7 @@ export default function TranslationToast({
           className="fixed bottom-0 left-0 right-0 z-50 w-full bg-tj-bg-card border-t border-tj-border-main shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1),0_-8px_10px_-6px_rgba(0,0,0,0.1)] p-4 md:p-6 select-text"
         >
           <button
+            type="button"
             onClick={() => setSelectedWord(null)}
             className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-full cursor-pointer transition-colors z-10"
             title="Close inspector"
@@ -136,6 +141,7 @@ export default function TranslationToast({
                   </h4>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <button
+                      type="button"
                       onClick={() => handlePlayWord(selectedWord.word)}
                       className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center"
                       title="Pronounce again"
@@ -143,6 +149,7 @@ export default function TranslationToast({
                       <Volume2 className="w-4 h-4" />
                     </button>
                     <button
+                      type="button"
                       onClick={onNavigatePrev}
                       disabled={!hasPrev}
                       className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center"
@@ -151,6 +158,7 @@ export default function TranslationToast({
                       <ChevronLeft className="w-4 h-4" />
                     </button>
                     <button
+                      type="button"
                       onClick={onNavigateNext}
                       disabled={!hasNext}
                       className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center"
@@ -265,6 +273,7 @@ export default function TranslationToast({
                     </label>
                     {currentUser && (
                       <button
+                        type="button"
                         onClick={handleFetchTranslation}
                         disabled={selectedWord.isFetching || !isOnline}
                         className="px-2 py-0.5 bg-tj-primary-light hover:bg-tj-primary-border dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover text-[9px] font-bold rounded flex items-center gap-1 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -342,17 +351,37 @@ export default function TranslationToast({
                 </div>
               </div>
 
-              {/* SECTION 3: SAVE BUTTON */}
-              <div className="flex items-stretch justify-stretch shrink-0 lg:pt-3.5">
-                <button
-                  type="button"
-                  onClick={handleSaveWordRecord}
-                  disabled={!selectedWord.translation.trim()}
-                  className="w-full lg:w-auto py-3 px-6 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer disabled:bg-slate-300 disabled:dark:bg-slate-850 disabled:text-slate-400 transition-colors select-none flex items-center justify-center gap-1.5"
-                >
-                  <Bookmark className="w-3.5 h-3.5" />
-                  <span>Save to Vocabulary List</span>
-                </button>
+              {/* SECTION 3: SAVE / REMOVE BUTTON */}
+              <div className="flex flex-col items-center justify-center shrink-0 lg:pt-3.5 min-w-[200px]">
+                {isSaved ? (
+                  <>
+                    <button
+                      type="button"
+                      disabled
+                      className="w-full lg:w-auto py-3 px-6 bg-emerald-500/10 dark:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 font-bold text-xs rounded-xl select-none flex items-center justify-center gap-1.5 border border-emerald-500/20"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Saved to Vocabulary List</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRemoveWordRecord}
+                      className="text-[10px] text-slate-400 hover:text-rose-500 dark:text-slate-500 dark:hover:text-rose-400 hover:underline cursor-pointer select-none border-0 bg-transparent block text-center mt-2 w-full font-sans"
+                    >
+                      Remove from list
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSaveWordRecord}
+                    disabled={!selectedWord.translation.trim()}
+                    className="w-full lg:w-auto py-3 px-6 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer disabled:bg-slate-300 disabled:dark:bg-slate-850 disabled:text-slate-400 transition-colors select-none flex items-center justify-center gap-1.5"
+                  >
+                    <Bookmark className="w-3.5 h-3.5" />
+                    <span>Save to Vocabulary List</span>
+                  </button>
+                )}
               </div>
             </div>
           )}

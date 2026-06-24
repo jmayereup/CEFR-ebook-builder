@@ -40,6 +40,7 @@ interface ReaderPageProps {
   ) => Promise<void>;
   handleAutoGenerateRemaining: () => void;
   handleSaveWord: (word: VocabularyTerm) => void;
+  onRemoveWord?: (wordText: string) => void;
   isPaid: boolean;
   onOpenSettings: () => void;
   showAlert: (
@@ -102,6 +103,7 @@ export default function ReaderPage({
   handleRegenerateChapter,
   handleAutoGenerateRemaining,
   handleSaveWord,
+  onRemoveWord,
   isPaid,
   onOpenSettings,
   showAlert,
@@ -274,6 +276,7 @@ export default function ReaderPage({
         isAutoGenerationPaused={isAutoGenerationPaused}
         onAutoGenerateAll={handleAutoGenerateRemaining}
         onSaveWord={handleSaveWord}
+        onRemoveWord={onRemoveWord}
         isPaid={isPaid}
         isAdmin={currentUser?.email === 'jmayereup@gmail.com'}
         onOpenSettings={onOpenSettings}

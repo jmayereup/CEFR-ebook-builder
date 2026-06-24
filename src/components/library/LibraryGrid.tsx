@@ -252,10 +252,14 @@ export default function LibraryGrid({
                     isSaved={bookshelf.includes(story.id)}
                     onToggleSaved={onToggleSaved}
                     isCachedOffline={cachedStoryIds.includes(story.id)}
-                    onDownload={onDownloadStory ? (e) => {
-                      e.stopPropagation();
-                      onDownloadStory(story);
-                    } : undefined}
+                    onDownload={
+                      onDownloadStory
+                        ? (e) => {
+                            e.stopPropagation();
+                            onDownloadStory(story);
+                          }
+                        : undefined
+                    }
                     recentlyRead={recentlyRead}
                   />
                 ))}

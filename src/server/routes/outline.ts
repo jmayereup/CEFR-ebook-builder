@@ -71,7 +71,9 @@ router.post('/', async (req, res) => {
       const match = promptNotes.match(/\[Writing Type:\s*([^\]]+)\]/i);
       if (match) {
         resolvedWritingType = match[1].trim().toLowerCase();
-        cleanedPromptNotes = promptNotes.replace(/\[Writing Type:\s*[^\]]+\]/i, '').trim();
+        cleanedPromptNotes = promptNotes
+          .replace(/\[Writing Type:\s*[^\]]+\]/i, '')
+          .trim();
       }
     }
 

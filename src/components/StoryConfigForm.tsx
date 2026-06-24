@@ -46,8 +46,6 @@ const getCefrBadgeStyle = (level: string) => {
   return 'bg-[#ffdbcf] text-[#1b1c19] border border-[#f8b7a2]/40';
 };
 
-
-
 const DEFAULT_MODEL_FOR_LANGUAGE: Record<string, string> = {
   en: 'openai/gpt-oss-120b:free',
   es: 'meta-llama/llama-3.3-70b-instruct:free',
@@ -62,10 +60,30 @@ const DEFAULT_MODEL_FOR_LANGUAGE: Record<string, string> = {
 };
 
 const WRITING_TYPES = [
-  { id: 'narrative', label: 'Narrative', emoji: '📖', desc: 'Storytelling, plot-driven, fictional or personal account.' },
-  { id: 'expository', label: 'Expository', emoji: '💡', desc: 'Explaining, informing, or describing a specific topic with facts.' },
-  { id: 'analytical', label: 'Analytical', emoji: '🔍', desc: 'Breaking down concepts, examining relationships or arguments.' },
-  { id: 'descriptive', label: 'Descriptive', emoji: '🎨', desc: 'Focusing on vivid sensory details, imagery, and mood.' },
+  {
+    id: 'narrative',
+    label: 'Narrative',
+    emoji: '📖',
+    desc: 'Storytelling, plot-driven, fictional or personal account.',
+  },
+  {
+    id: 'expository',
+    label: 'Expository',
+    emoji: '💡',
+    desc: 'Explaining, informing, or describing a specific topic with facts.',
+  },
+  {
+    id: 'analytical',
+    label: 'Analytical',
+    emoji: '🔍',
+    desc: 'Breaking down concepts, examining relationships or arguments.',
+  },
+  {
+    id: 'descriptive',
+    label: 'Descriptive',
+    emoji: '🎨',
+    desc: 'Focusing on vivid sensory details, imagery, and mood.',
+  },
 ];
 
 interface StoryConfigFormProps {
@@ -136,16 +154,18 @@ export default function StoryConfigForm({
       const stored = localStorage.getItem('prior_used_languages');
       if (stored) {
         const parsed: string[] = JSON.parse(stored);
-        const languageMap = new Map(SUPPORTED_LANGUAGES.map(l => [l.code, l]));
+        const languageMap = new Map(
+          SUPPORTED_LANGUAGES.map((l) => [l.code, l]),
+        );
         const sorted: typeof SUPPORTED_LANGUAGES = [];
-        parsed.forEach(code => {
+        parsed.forEach((code) => {
           const lang = languageMap.get(code);
           if (lang) {
             sorted.push(lang);
             languageMap.delete(code);
           }
         });
-        languageMap.forEach(lang => {
+        languageMap.forEach((lang) => {
           sorted.push(lang);
         });
         return sorted;
@@ -159,7 +179,7 @@ export default function StoryConfigForm({
     try {
       const stored = localStorage.getItem('prior_used_languages');
       let parsed: string[] = stored ? JSON.parse(stored) : [];
-      parsed = [langCode, ...parsed.filter(code => code !== langCode)];
+      parsed = [langCode, ...parsed.filter((code) => code !== langCode)];
       localStorage.setItem('prior_used_languages', JSON.stringify(parsed));
     } catch (e) {
       console.error(e);
@@ -423,7 +443,12 @@ export default function StoryConfigForm({
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {sortedLanguages
-                    .filter((lang) => !isLangCollapsed || ['en', 'fr', 'es', 'th'].includes(lang.code) || lang.code === language)
+                    .filter(
+                      (lang) =>
+                        !isLangCollapsed ||
+                        ['en', 'fr', 'es', 'th'].includes(lang.code) ||
+                        lang.code === language,
+                    )
                     .map((lang) => (
                       <button
                         key={lang.code}
@@ -436,13 +461,15 @@ export default function StoryConfigForm({
                         }`}
                       >
                         <span className="text-2xl mb-1">{lang.flag}</span>
-                        <span className="text-xs font-semibold">{lang.name}</span>
+                        <span className="text-xs font-semibold">
+                          {lang.name}
+                        </span>
                         <span className="text-[10px] text-slate-400 dark:text-slate-500">
                           {lang.nativeName}
                         </span>
                       </button>
                     ))}
-                  
+
                   {isLangCollapsed ? (
                     <button
                       type="button"
@@ -461,7 +488,14 @@ export default function StoryConfigForm({
                         Show Less
                       </button>
                       <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center font-medium leading-normal">
-                        Don't see your language? Email me at <a href="mailto:admin@teacherjake.com" className="text-tj-primary hover:underline font-semibold">admin@teacherjake.com</a> to request support!
+                        Don't see your language? Email me at{' '}
+                        <a
+                          href="mailto:admin@teacherjake.com"
+                          className="text-tj-primary hover:underline font-semibold"
+                        >
+                          admin@teacherjake.com
+                        </a>{' '}
+                        to request support!
                       </p>
                     </div>
                   )}
@@ -500,7 +534,8 @@ export default function StoryConfigForm({
                     animate={{ opacity: 1, x: 0 }}
                     className="text-xs text-tj-text-main ml-1 font-sans bg-tj-bg-recessed p-2.5 rounded border border-tj-border-main"
                   >
-                    <strong>{selectedLevelObj.name}:</strong> {selectedLevelObj.description}
+                    <strong>{selectedLevelObj.name}:</strong>{' '}
+                    {selectedLevelObj.description}
                   </motion.p>
                 )}
                 {(cefrLevel === 'A1' || cefrLevel === 'Pre-A1') && (
@@ -550,7 +585,9 @@ export default function StoryConfigForm({
                   {GENRES.map((g) => {
                     const isSelected = genre === g.id;
                     // Extract emoji if present
-                    const emojiMatch = g.label.match(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F000}-\u{1F9FF}]/u);
+                    const emojiMatch = g.label.match(
+                      /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F000}-\u{1F9FF}]/u,
+                    );
                     const emoji = emojiMatch ? emojiMatch[0] : '';
                     const text = g.label.replace(emoji, '').trim();
                     return (
@@ -574,10 +611,10 @@ export default function StoryConfigForm({
                   <div className="mt-2.5 p-3 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 text-xs rounded-xl border border-amber-100 dark:border-amber-950/30 flex items-start gap-2 animate-fade-in">
                     <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-500 dark:text-amber-400" />
                     <span>
-                      <strong>Hallucination Warning:</strong> Non-fiction
-                      topics generated by AI may contain factual inaccuracies
-                      or historical hallucinations, especially when simplified
-                      for language learning.
+                      <strong>Hallucination Warning:</strong> Non-fiction topics
+                      generated by AI may contain factual inaccuracies or
+                      historical hallucinations, especially when simplified for
+                      language learning.
                     </span>
                   </div>
                 )}
@@ -764,9 +801,9 @@ export default function StoryConfigForm({
 
                       sortedModels.forEach((model) => {
                         if (isFreeModelLocal(model.id)) {
-                           freeModels.push(model);
+                          freeModels.push(model);
                         } else {
-                           paidModels.push(model);
+                          paidModels.push(model);
                         }
                       });
 
@@ -801,8 +838,14 @@ export default function StoryConfigForm({
                     onClick={() => setShowAdvanced(!showAdvanced)}
                     className="flex items-center gap-2 text-xs font-semibold text-tj-primary hover:text-tj-primary-hover transition-colors cursor-pointer select-none"
                   >
-                    <Sliders className={`w-3.5 h-3.5 transform transition-transform duration-200 ${showAdvanced ? 'rotate-90' : ''}`} />
-                    <span>{showAdvanced ? 'Hide Advanced Options' : 'Show Advanced Options (Thinking & Temperature)'}</span>
+                    <Sliders
+                      className={`w-3.5 h-3.5 transform transition-transform duration-200 ${showAdvanced ? 'rotate-90' : ''}`}
+                    />
+                    <span>
+                      {showAdvanced
+                        ? 'Hide Advanced Options'
+                        : 'Show Advanced Options (Thinking & Temperature)'}
+                    </span>
                   </button>
                 </div>
 
@@ -816,7 +859,7 @@ export default function StoryConfigForm({
                       className="md:col-span-2 overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-200/50 dark:border-slate-800/80 pt-4"
                     >
                       {/* Reasoning / Thinking Level */}
-                      {(isAdmin || !!customOpenRouterKey) ? (
+                      {isAdmin || !!customOpenRouterKey ? (
                         <div className="col-span-1">
                           <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-355 mb-2">
                             <Brain className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />
@@ -835,7 +878,9 @@ export default function StoryConfigForm({
                               return (
                                 <select
                                   value={thinkingOption}
-                                  onChange={(e) => setThinkingOption(e.target.value)}
+                                  onChange={(e) =>
+                                    setThinkingOption(e.target.value)
+                                  }
                                   className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none"
                                 >
                                   <option value="disabled">
@@ -850,7 +895,9 @@ export default function StoryConfigForm({
                               return (
                                 <select
                                   value={thinkingOption}
-                                  onChange={(e) => setThinkingOption(e.target.value)}
+                                  onChange={(e) =>
+                                    setThinkingOption(e.target.value)
+                                  }
                                   className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none"
                                 >
                                   <option value="disabled">
@@ -861,14 +908,20 @@ export default function StoryConfigForm({
                                   <option value="medium">
                                     Medium Depth (Recommended)
                                   </option>
-                                  <option value="high">High Depth (Nuanced)</option>
+                                  <option value="high">
+                                    High Depth (Nuanced)
+                                  </option>
                                 </select>
                               );
-                            } else if (currentModelObj?.supportsThinkingBudget) {
+                            } else if (
+                              currentModelObj?.supportsThinkingBudget
+                            ) {
                               return (
                                 <select
                                   value={thinkingOption}
-                                  onChange={(e) => setThinkingOption(e.target.value)}
+                                  onChange={(e) =>
+                                    setThinkingOption(e.target.value)
+                                  }
                                   className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none"
                                 >
                                   <option value="disabled">
@@ -897,8 +950,8 @@ export default function StoryConfigForm({
                             }
                           })()}
                           <p className="text-[10px] text-slate-400 mt-1">
-                            Enables Chain-of-Thought reasoning to improve pedagogical
-                            grading.
+                            Enables Chain-of-Thought reasoning to improve
+                            pedagogical grading.
                           </p>
                         </div>
                       ) : null}
@@ -917,7 +970,11 @@ export default function StoryConfigForm({
                         const showReasoning = isAdmin || !!customOpenRouterKey;
 
                         return (
-                          <div className={showReasoning ? 'col-span-1' : 'md:col-span-2'}>
+                          <div
+                            className={
+                              showReasoning ? 'col-span-1' : 'md:col-span-2'
+                            }
+                          >
                             <label className="flex items-center justify-between text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                               <span className="flex items-center gap-2">
                                 <Sliders className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />
@@ -997,7 +1054,8 @@ export default function StoryConfigForm({
                             className="absolute z-50 bottom-full right-0 mb-2 p-3 bg-slate-900 text-white dark:bg-slate-800 dark:text-slate-100 text-[10px] rounded-lg shadow-xl border border-slate-700/50 w-56 leading-normal pointer-events-none text-left"
                           >
                             Only you will be able to view and read this story.
-                            Quotas: Free tier allows up to 10 private stories, Paid/Premium allows up to 100.
+                            Quotas: Free tier allows up to 10 private stories,
+                            Paid/Premium allows up to 100.
                           </motion.div>
                         )}
                       </AnimatePresence>
