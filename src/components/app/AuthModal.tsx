@@ -150,10 +150,14 @@ export default function AuthModal({
           <form onSubmit={handleSubmit} className="space-y-3">
             {isSignUp && (
               <div className="space-y-1">
-                <label className="block text-[9px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+                <label
+                  htmlFor="auth-modal-name"
+                  className="block text-[9px] font-mono uppercase tracking-wider text-tj-text-muted font-bold"
+                >
                   Name
                 </label>
                 <input
+                  id="auth-modal-name"
                   type="text"
                   required
                   value={name}
@@ -164,10 +168,14 @@ export default function AuthModal({
               </div>
             )}
             <div className="space-y-1">
-              <label className="block text-[9px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+              <label
+                htmlFor="auth-modal-email"
+                className="block text-[9px] font-mono uppercase tracking-wider text-tj-text-muted font-bold"
+              >
                 Email Address
               </label>
               <input
+                id="auth-modal-email"
                 type="email"
                 required
                 value={email}
@@ -177,10 +185,14 @@ export default function AuthModal({
               />
             </div>
             <div className="space-y-1">
-              <label className="block text-[9px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+              <label
+                htmlFor="auth-modal-password"
+                className="block text-[9px] font-mono uppercase tracking-wider text-tj-text-muted font-bold"
+              >
                 Password
               </label>
               <input
+                id="auth-modal-password"
                 type="password"
                 required
                 value={password}
