@@ -264,7 +264,7 @@ export function useLibrary(options: UseLibraryOptions) {
     const story = stories.find((s) => s.id === storyId);
     if (!story) return false;
 
-    const newIsPublic = story.isPublic === false ? true : false;
+    const newIsPublic = story.isPublic === false;
 
     if (newIsPublic === false) {
       const privateCount = stories.filter(

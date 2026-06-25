@@ -15,7 +15,6 @@ interface InteractiveParagraphProps {
   isBilingual?: boolean;
   glossaryWordsSet?: Set<string>;
   savedWordsSet?: Set<string>;
-  key?: any;
   activeWordRangeInPara?: [number, number] | null;
 }
 
@@ -65,12 +64,27 @@ export default function InteractiveParagraph({
 
   const combinedSet = useMemo(() => {
     const combined = new Set<string>();
-    glossaryWordsSet?.forEach((w) => combined.add(w));
-    savedWordsSet?.forEach((w) => combined.add(w));
+    glossaryWordsSet?.forEach((w) => {
+      combined.add(w);
+    });
+    savedWordsSet?.forEach((w) => {
+      combined.add(w);
+    });
     return combined;
   }, [glossaryWordsSet, savedWordsSet]);
 
-  const segments = segmentText(paragraphText, langCode, combinedSet);
+  const segments = useMemo(() => {
+    return segmentText(paragraphText, langCode, combinedSet);
+  }, [paragraphText, langCode, combinedSet]);
+
+  const segmentsWithKeys = useMemo(() => {
+    return segments.map((seg, idx) => ({
+      ...seg,
+      index: idx,
+      key: `seg-${pIdx}-${idx}-${seg.segment}`,
+    }));
+  }, [segments, pIdx]);
+
   let wordIndexInPara = 0;
 
   let startSegIdx = -1;
@@ -97,18 +111,21 @@ export default function InteractiveParagraph({
       translate="no"
       className={`${isBilingual ? '' : 'indent-4 md:indent-6'} text-justify leading-relaxed mb-4`}
     >
-      {segments.map((seg, sIdx) => {
+      {segmentsWithKeys.map((seg) => {
         const isActive =
           startSegIdx !== -1 &&
           endSegIdx !== -1 &&
-          sIdx >= startSegIdx &&
-          sIdx <= endSegIdx;
+          seg.index >= startSegIdx &&
+          seg.index <= endSegIdx;
 
         if (seg.isWordLike) {
           const currentWordIndex = wordIndexInPara++;
           return (
+            // biome-ignore lint/a11y/useSemanticElements: span is required to keep text layout inline within paragraph
             <span
-              key={sIdx}
+              key={seg.key}
+              role="button"
+              tabIndex={0}
               onClick={(e) => {
                 e.stopPropagation();
                 handleWordClick(
@@ -117,6 +134,18 @@ export default function InteractiveParagraph({
                   pIdx,
                   currentWordIndex,
                 );
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleWordClick(
+                    seg.segment,
+                    paragraphText,
+                    pIdx,
+                    currentWordIndex,
+                  );
+                }
               }}
               className={getWordStyle(seg.segment, isAsiatic, isActive)}
             >
@@ -128,7 +157,7 @@ export default function InteractiveParagraph({
         if (isActive) {
           return (
             <span
-              key={sIdx}
+              key={seg.key}
               className="text-tj-primary dark:text-tj-primary-hover underline decoration-2 decoration-black dark:decoration-white underline-offset-4 cursor-pointer font-bold select-text"
             >
               {seg.segment}
@@ -137,7 +166,7 @@ export default function InteractiveParagraph({
         }
 
         return (
-          <span key={sIdx} className="select-text">
+          <span key={seg.key} className="select-text">
             {seg.segment}
           </span>
         );

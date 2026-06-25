@@ -85,7 +85,7 @@ export default function TranslationToast({
   useEffect(() => {
     if (!selectedWord) return;
 
-    const handleDocumentClick = (e: MouseEvent) => {
+    const handleDocumentClick = (_e: MouseEvent) => {
       setSelectedWord(null);
     };
 

@@ -40,7 +40,7 @@ router.post('/update-bible', async (req, res) => {
       .map(
         (ch: any) =>
           `Chapter ${ch.chapterNumber}: "${ch.title}" (Summary: ${
-            ch.summary || ch.content?.substring(0, 250) + '...'
+            ch.summary || `${ch.content?.substring(0, 250)}...`
           })`,
       )
       .join('\n\n');

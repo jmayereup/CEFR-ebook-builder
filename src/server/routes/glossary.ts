@@ -150,20 +150,20 @@ For each term, you must provide:
           chapters: {
             type: Type.ARRAY,
             items: chapterSchema,
-            description: `An array of exactly ${chapters!.length} chapter vocabulary objects, one per chapter.`,
+            description: `An array of exactly ${chapters?.length} chapter vocabulary objects, one per chapter.`,
           },
         },
         required: ['chapters'],
       };
 
-      const chaptersText = chapters!
-        .map((ch) => `--- Chapter ${ch.chapterNumber} ---\n${ch.content}`)
+      const chaptersText = chapters
+        ?.map((ch) => `--- Chapter ${ch.chapterNumber} ---\n${ch.content}`)
         .join('\n\n');
 
       const prompt = `Language: ${language}
 CEFR Difficulty Level: ${cefrLevel}
 
-For each of the ${chapters!.length} chapter(s) below, extract 5 to 10 vocabulary terms/phrases that are relevant, interesting, or challenging for a student at the ${cefrLevel} level. Avoid selecting duplicate words across chapters.
+For each of the ${chapters?.length} chapter(s) below, extract 5 to 10 vocabulary terms/phrases that are relevant, interesting, or challenging for a student at the ${cefrLevel} level. Avoid selecting duplicate words across chapters.
 
 ${chaptersText}
 

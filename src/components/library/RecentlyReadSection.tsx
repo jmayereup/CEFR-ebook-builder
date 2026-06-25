@@ -8,8 +8,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
-import { GENRES, getLanguageCodeFromName, type Story } from '../../types';
 import { useAuthStore } from '../../store/authStore';
+import { GENRES, getLanguageCodeFromName, type Story } from '../../types';
 
 interface RecentlyReadSectionProps {
   items: {

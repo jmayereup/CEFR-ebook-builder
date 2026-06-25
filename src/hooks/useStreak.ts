@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   checkAndSyncStreakState,
-  type GenerationLimitData,
   getLocalTodayStr,
   getLocalYesterdayStr,
   recordDailyActivity,
@@ -33,7 +32,7 @@ export function useStreak(options: UseStreakOptions) {
     }
   }, [currentUser]);
 
-  const getDaysBetween = useCallback((d1: string, d2: string) => {
+  const _getDaysBetween = useCallback((d1: string, d2: string) => {
     const diff = Math.abs(new Date(d2).getTime() - new Date(d1).getTime());
     return Math.round(diff / (1000 * 60 * 60 * 24));
   }, []);
@@ -52,7 +51,7 @@ export function useStreak(options: UseStreakOptions) {
       });
       const cutoff = formatter.format(d);
       return history.filter((dateStr) => dateStr >= cutoff);
-    } catch (e) {
+    } catch (_e) {
       const d = new Date();
       d.setDate(d.getDate() - 60);
       const cutoff = d.toISOString().split('T')[0];
@@ -217,7 +216,7 @@ export function useStreak(options: UseStreakOptions) {
         return dbStreak;
       }
     },
-    [],
+    [pruneActivityHistory],
   );
 
   const syncInitialStreak = useCallback(

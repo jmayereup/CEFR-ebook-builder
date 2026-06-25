@@ -200,7 +200,7 @@ export async function callOpenRouter(options: {
         );
       }
     }
-    const duration = Date.now() - startTime;
+    const _duration = Date.now() - startTime;
     console.log(`\n--- [OpenRouter Request Completed] ---`);
     console.log(`[OpenRouter Response] Model: ${options.model}`);
     console.log(

@@ -4,10 +4,7 @@ import {
   type SetStateAction,
   useState,
 } from 'react';
-import {
-  type RecentlyReadItem,
-  updateStoryChaptersAndTitle,
-} from '../services/db';
+import type { RecentlyReadItem } from '../services/db';
 import type { Chapter, Story, VocabularyTerm } from '../types';
 
 interface UseActiveStoryOptions {
@@ -223,7 +220,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       const message = err instanceof Error ? err.message : String(err);
       showAlert(
         'Delete Failed',
-        'Failed to delete chapter: ' + message,
+        `Failed to delete chapter: ${message}`,
         'error',
       );
     }
@@ -287,7 +284,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       const message = err instanceof Error ? err.message : String(err);
       showAlert(
         'Error Adding Chapter',
-        'Failed to add custom chapter: ' + message,
+        `Failed to add custom chapter: ${message}`,
         'error',
       );
       throw err;

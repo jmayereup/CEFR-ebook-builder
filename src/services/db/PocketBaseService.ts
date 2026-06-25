@@ -301,7 +301,7 @@ export class PocketBaseService implements IDatabaseService {
         if (typeof field === 'string') {
           try {
             return JSON.parse(field);
-          } catch (e) {
+          } catch (_e) {
             return null;
           }
         }
@@ -403,7 +403,7 @@ export class PocketBaseService implements IDatabaseService {
         day: '2-digit',
       });
       return formatter.format(d);
-    } catch (e) {
+    } catch (_e) {
       return new Date().toISOString().split('T')[0];
     }
   }
@@ -420,7 +420,7 @@ export class PocketBaseService implements IDatabaseService {
         day: '2-digit',
       });
       return formatter.format(d);
-    } catch (e) {
+    } catch (_e) {
       const d = new Date();
       d.setDate(d.getDate() - 1);
       return d.toISOString().split('T')[0];
@@ -441,7 +441,7 @@ export class PocketBaseService implements IDatabaseService {
       });
       const cutoff = formatter.format(d);
       return history.filter((dateStr) => dateStr >= cutoff);
-    } catch (e) {
+    } catch (_e) {
       const d = new Date();
       d.setDate(d.getDate() - 60);
       const cutoff = d.toISOString().split('T')[0];

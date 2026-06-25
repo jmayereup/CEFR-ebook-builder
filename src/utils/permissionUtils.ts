@@ -8,7 +8,6 @@
  */
 
 import { FREE_MODEL_IDS } from '../constants/models';
-import { getModelDisplayName } from './modelUtils';
 
 export interface PermissionDenied {
   title: string;
@@ -33,13 +32,13 @@ export const checkGenerationPermission = (
   isPaid: boolean,
   isAdmin: boolean,
   customOpenRouterKey: string,
-  freeModelCount: number,
+  _freeModelCount: number,
   monthlyCreditsUsed: number,
   estimatedCreditsCost: number,
-  chaptersToAdd: number,
+  _chaptersToAdd: number,
 ): PermissionDenied | null => {
   // 1. Super Admin or users with their own API key have no limits and can use any model
-  if (isAdmin || !!customOpenRouterKey) {
+  if (isAdmin || customOpenRouterKey) {
     return null;
   }
 

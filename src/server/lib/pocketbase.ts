@@ -2,8 +2,8 @@ import PocketBaseClass from 'pocketbase';
 
 const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { countWords } from '../../utils/wordCounter';
 import { setStoriesMetadataCache } from './database';
 
@@ -89,7 +89,7 @@ function loadCacheFromDisk(): boolean {
   return false;
 }
 
-export async function refreshStoriesMetadataCache(forceAll = false) {
+export async function refreshStoriesMetadataCache(_forceAll = false) {
   if (isFetching) return;
   isFetching = true;
   try {

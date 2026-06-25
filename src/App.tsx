@@ -368,7 +368,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   const handleSaveUnsavedStory = async (storyToSave?: Story) => {
     const targetStory = storyToSave || selectedStory;
-    if (!targetStory || !targetStory.isUnsaved) return;
+    if (!targetStory?.isUnsaved) return;
     setIsSavingStory(true);
     try {
       const oldId = targetStory.id;

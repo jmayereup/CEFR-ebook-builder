@@ -97,11 +97,11 @@ export default function ChapterEditForm({
       if (onShowAlert) {
         onShowAlert(
           'Generation Failed',
-          'Failed to generate glossary: ' + err.message,
+          `Failed to generate glossary: ${err.message}`,
           'error',
         );
       } else {
-        alert('Failed to generate glossary: ' + err.message);
+        alert(`Failed to generate glossary: ${err.message}`);
       }
     } finally {
       setIsGeneratingGlossary(false);
@@ -161,11 +161,11 @@ export default function ChapterEditForm({
       if (onShowAlert) {
         onShowAlert(
           'Save Failed',
-          'Failed to save changes: ' + err.message,
+          `Failed to save changes: ${err.message}`,
           'error',
         );
       } else {
-        alert('Failed to save changes: ' + err.message);
+        alert(`Failed to save changes: ${err.message}`);
       }
     } finally {
       setIsSaving(false);

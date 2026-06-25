@@ -1,9 +1,7 @@
 import {
-  ArrowLeft,
   BookOpen,
   BookText,
   Brain,
-  CheckCircle,
   Coins,
   Cpu,
   Edit3,
@@ -15,7 +13,6 @@ import {
   Lock,
   Sliders,
   Sparkles,
-  X,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
@@ -137,19 +134,17 @@ export default function StoryConfigForm({
   const [totalChapters, setTotalChapters] = useState(5);
   const [chapterLength, setChapterLength] = useState(350);
   const [promptNotes, setPromptNotes] = useState('');
-  const [selectedModel, setSelectedModel] = useState(
-    'openrouter/free',
-  );
+  const [selectedModel, setSelectedModel] = useState('openrouter/free');
   const [thinkingOption, setThinkingOption] = useState('medium');
   const [temperature, setTemperature] = useState(0.8);
   const [isPublic, setIsPublic] = useState(true);
   const [showDefaultModelInfo, setShowDefaultModelInfo] = useState(false);
-  const [modalTab, setModalTab] = useState<'free' | 'paid'>('free');
+  const [_modalTab, _setModalTab] = useState<'free' | 'paid'>('free');
   const [writingType, setWritingType] = useState('narrative');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showPrivateTooltip, setShowPrivateTooltip] = useState(false);
   const [isLangCollapsed, setIsLangCollapsed] = useState(true);
-  const [sortedLanguages, setSortedLanguages] = useState(() => {
+  const [sortedLanguages, _setSortedLanguages] = useState(() => {
     try {
       const stored = localStorage.getItem('prior_used_languages');
       if (stored) {
@@ -170,7 +165,7 @@ export default function StoryConfigForm({
         });
         return sorted;
       }
-    } catch (e) {}
+    } catch (_e) {}
     return SUPPORTED_LANGUAGES;
   });
 
@@ -184,9 +179,7 @@ export default function StoryConfigForm({
     } catch (e) {
       console.error(e);
     }
-    const newModel =
-      DEFAULT_MODEL_FOR_LANGUAGE[langCode] ||
-      'openrouter/free';
+    const newModel = DEFAULT_MODEL_FOR_LANGUAGE[langCode] || 'openrouter/free';
     setSelectedModel(newModel);
 
     // Auto-update thinkingOption for the new model
@@ -327,7 +320,7 @@ export default function StoryConfigForm({
         try {
           const errorData = await response.json();
           if (errorData.error) errorMsg = errorData.error;
-        } catch (e) {}
+        } catch (_e) {}
         throw new Error(errorMsg);
       }
 
@@ -635,7 +628,7 @@ export default function StoryConfigForm({
                       step="1"
                       value={totalChapters}
                       onChange={(e) =>
-                        setTotalChapters(parseInt(e.target.value))
+                        setTotalChapters(parseInt(e.target.value, 10))
                       }
                       className="w-full accent-tj-primary dark:accent-tj-primary"
                     />
@@ -662,7 +655,7 @@ export default function StoryConfigForm({
                       step="25"
                       value={chapterLength}
                       onChange={(e) =>
-                        setChapterLength(parseInt(e.target.value))
+                        setChapterLength(parseInt(e.target.value, 10))
                       }
                       className="w-full accent-tj-primary dark:accent-tj-primary"
                     />
@@ -859,7 +852,7 @@ export default function StoryConfigForm({
                       className="md:col-span-2 overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-200/50 dark:border-slate-800/80 pt-4"
                     >
                       {/* Reasoning / Thinking Level */}
-                      {isAdmin || !!customOpenRouterKey ? (
+                      {isAdmin || customOpenRouterKey ? (
                         <div className="col-span-1">
                           <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-355 mb-2">
                             <Brain className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />

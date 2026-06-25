@@ -135,7 +135,7 @@ export default function NarrativeMaintenancePanel({
       if (onShowAlert) {
         onShowAlert(
           'Error',
-          'Failed to save Story Bible: ' + err.message,
+          `Failed to save Story Bible: ${err.message}`,
           'error',
         );
       }
@@ -357,7 +357,7 @@ export default function NarrativeMaintenancePanel({
       if (onShowAlert) {
         onShowAlert(
           'Error',
-          'Failed to save tone guidance: ' + err.message,
+          `Failed to save tone guidance: ${err.message}`,
           'error',
         );
       }
@@ -392,7 +392,7 @@ export default function NarrativeMaintenancePanel({
       if (onShowAlert) {
         onShowAlert(
           'Error',
-          'Failed to save Story Outline: ' + err.message,
+          `Failed to save Story Outline: ${err.message}`,
           'error',
         );
       }

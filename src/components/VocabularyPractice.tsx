@@ -146,7 +146,7 @@ export default function VocabularyPractice({
             Practice Source:
           </span>
           <div className="flex w-full sm:w-fit bg-tj-bg-recessed p-1 rounded border border-tj-border-main">
-            {story && story.chapters && (
+            {story?.chapters && (
               <button
                 type="button"
                 onClick={() => setSourceType('story')}

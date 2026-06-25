@@ -73,6 +73,7 @@ export default function TTSToolbar({
       <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
         {/* SPEAK / PAUSE TRIGGER */}
         <button
+          type="button"
           onClick={handleReadChapter}
           className={`h-8 px-2.5 rounded-lg border flex items-center gap-1.5 text-xs font-semibold transition-all cursor-pointer ${
             isSpeaking
@@ -93,6 +94,7 @@ export default function TTSToolbar({
 
         {isSpeaking && (
           <button
+            type="button"
             onClick={handleStopSpeech}
             className="h-8 w-8 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-955/20 rounded-lg border border-transparent cursor-pointer flex items-center justify-center"
             title="Stop TTS Playback"
@@ -103,6 +105,7 @@ export default function TTSToolbar({
 
         {/* SPEECH SETTINGS TRIGGER */}
         <button
+          type="button"
           onClick={() => setIsTTSModalOpen(true)}
           className="h-8 w-8 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:text-tj-primary-hover bg-transparent hover:text-tj-primary hover:border-slate-300 transition-all cursor-pointer flex items-center justify-center animate-none"
           title="Configure Speech Voice & Speed"
@@ -113,6 +116,7 @@ export default function TTSToolbar({
         {/* Bilingual Mode Toggle (Pre-A1 and A1 only) */}
         {(cefrLevel === 'A1' || cefrLevel === 'Pre-A1') && (
           <button
+            type="button"
             onClick={() => setShowBilingual(!showBilingual)}
             title="Toggle Bilingual Translation"
             className={`h-8 px-2.5 rounded-lg border flex items-center gap-1.5 text-xs font-semibold transition-all cursor-pointer ${
@@ -128,6 +132,7 @@ export default function TTSToolbar({
 
         {/* Formatting Styles Settings Button */}
         <button
+          type="button"
           onClick={() => setIsStylesModalOpen(true)}
           className="h-8 w-8 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:text-tj-primary-hover bg-transparent hover:text-tj-primary hover:border-slate-300 transition-all cursor-pointer flex items-center justify-center"
           title="Configure Font & Text Styles"
@@ -137,6 +142,7 @@ export default function TTSToolbar({
 
         {/* Zen Focus Toggle Button */}
         <button
+          type="button"
           onClick={onToggleZen}
           title="Zen Reading Mode"
           className="h-8 px-2.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:text-tj-primary-hover bg-transparent hover:text-tj-primary hover:border-slate-300 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
@@ -148,6 +154,7 @@ export default function TTSToolbar({
         {/* EDIT BUTTON (icon-only, on the left group) */}
         {(isCreator || isAdmin) && !isEditing && onEditClick && (
           <button
+            type="button"
             onClick={onEditClick}
             className="h-8 w-8 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:text-tj-primary-hover bg-transparent hover:text-tj-primary hover:border-slate-300 transition-all cursor-pointer flex items-center justify-center"
             title="Edit Chapter Content"
@@ -161,6 +168,7 @@ export default function TTSToolbar({
         {/* DELETE STORY BUTTON (icon-only, on the far right) */}
         {(isCreator || isAdmin) && !isEditing && onDeleteClick && (
           <button
+            type="button"
             onClick={onDeleteClick}
             className="h-8 w-8 rounded-lg border border-red-200 dark:border-red-900/30 text-tj-error hover:bg-rose-50 dark:hover:bg-rose-955/20 transition-all cursor-pointer flex items-center justify-center bg-transparent"
             title="Delete Entire Story"
@@ -186,6 +194,7 @@ export default function TTSToolbar({
                   <h3 className="text-sm font-bold">Speech Settings</h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setIsTTSModalOpen(false)}
                   className="p-1 hover:bg-tj-bg-recessed rounded-full text-tj-text-muted hover:text-tj-text-main cursor-pointer"
                 >
@@ -196,9 +205,9 @@ export default function TTSToolbar({
               <div className="space-y-4">
                 {/* Voice Selector */}
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+                  <span className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
                     Voice
-                  </label>
+                  </span>
                   <div className="relative">
                     <select
                       value={selectedVoiceName}
@@ -232,9 +241,9 @@ export default function TTSToolbar({
 
                 {/* Speed rate selector */}
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+                  <span className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
                     Speed Rate
-                  </label>
+                  </span>
                   <div className="relative">
                     <select
                       value={speechRate}
@@ -316,6 +325,7 @@ export default function TTSToolbar({
                   <h3 className="text-sm font-bold">Text & Font Styles</h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setIsStylesModalOpen(false)}
                   className="p-1 hover:bg-tj-bg-recessed rounded-full text-tj-text-muted hover:text-tj-text-main cursor-pointer"
                 >
@@ -326,11 +336,12 @@ export default function TTSToolbar({
               <div className="space-y-4">
                 {/* Font Family Selector */}
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+                  <span className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
                     Reading Font Type
-                  </label>
+                  </span>
                   <div className="grid grid-cols-2 gap-2">
                     <button
+                      type="button"
                       onClick={() => setUseSerif(true)}
                       className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all cursor-pointer font-serif text-center ${
                         useSerif
@@ -341,6 +352,7 @@ export default function TTSToolbar({
                       Serif (Classic)
                     </button>
                     <button
+                      type="button"
                       onClick={() => setUseSerif(false)}
                       className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all cursor-pointer font-sans text-center ${
                         !useSerif
@@ -355,11 +367,12 @@ export default function TTSToolbar({
 
                 {/* Font Size Adjuster */}
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+                  <span className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
                     Text Font Size
-                  </label>
+                  </span>
                   <div className="flex items-center justify-between bg-slate-100/50 dark:bg-slate-800/50 p-2.5 rounded-xl border border-slate-200/40 dark:border-slate-800/80">
                     <button
+                      type="button"
                       onClick={() => setFontSize(Math.max(14, fontSize - 1))}
                       disabled={fontSize <= 14}
                       className="p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg disabled:opacity-40 cursor-pointer transition-all border-0"
@@ -370,6 +383,7 @@ export default function TTSToolbar({
                       {fontSize}px
                     </span>
                     <button
+                      type="button"
                       onClick={() => setFontSize(Math.min(26, fontSize + 1))}
                       disabled={fontSize >= 26}
                       className="p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg disabled:opacity-40 cursor-pointer transition-all border-0"

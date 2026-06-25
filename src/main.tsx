@@ -28,7 +28,7 @@ if (typeof window !== 'undefined' && window.localStorage) {
           const keysToRemove: string[] = [];
           for (let i = 0; i < window.localStorage.length; i++) {
             const k = window.localStorage.key(i);
-            if (k && k.startsWith('cefr_story_cache_')) {
+            if (k?.startsWith('cefr_story_cache_')) {
               keysToRemove.push(k);
             }
           }

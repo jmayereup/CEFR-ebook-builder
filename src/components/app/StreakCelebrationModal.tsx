@@ -31,7 +31,6 @@ export default function StreakCelebrationModal({
     switch (type) {
       case 'milestone':
         return 'Milestone Achieved! 🏆';
-      case 'maintained':
       default:
         return 'Streak Maintained!';
     }
@@ -41,7 +40,6 @@ export default function StreakCelebrationModal({
     switch (type) {
       case 'milestone':
         return `Incredible dedication! You reached an amazing milestone. You've been practicing daily!`;
-      case 'maintained':
       default:
         return `You're keeping the momentum alive. Daily practice is the secret to language mastery!`;
     }

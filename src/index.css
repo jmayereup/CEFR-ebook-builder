@@ -159,8 +159,8 @@
 /* Print isolation stylesheet rules */
 @media print {
   body {
-    background: white !important;
-    color: black !important;
+    background: white;
+    color: black;
   }
 
   /* Hide interactive components and menus */
@@ -174,28 +174,28 @@
   [title="Toggle theme mode"],
   [title="Settings & Custom Gemini Subscription Key"],
   .lg\:col-span-1 {
-    display: none !important;
+    display: none;
   }
 
   /* Expand reading content area */
   .lg\:col-span-3,
   main,
   .max-w-7xl {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
   }
 
   /* Printable content styling */
   .bg-\[\#FAF9F6\],
   .dark\:bg-\[\#111827\] {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
   }
 }

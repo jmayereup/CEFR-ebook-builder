@@ -29,7 +29,7 @@ export function safeSetItem(key: string, value: string): boolean {
         for (let i = 0; i < localStorage.length; i++) {
           const k = localStorage.key(i);
           // Only evict cached story documents, which represent the largest payload
-          if (k && k.startsWith('cefr_story_cache_')) {
+          if (k?.startsWith('cefr_story_cache_')) {
             keysToRemove.push(k);
           }
         }

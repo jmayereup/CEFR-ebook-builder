@@ -90,7 +90,7 @@ export class PocketBaseAuthService implements IAuthService {
     name?: string,
   ): Promise<{ user: IUser; accessToken: string } | null> {
     try {
-      const record = await pb.collection('users').create({
+      const _record = await pb.collection('users').create({
         email,
         password,
         passwordConfirm: password,
@@ -163,7 +163,7 @@ export class PocketBaseAuthService implements IAuthService {
       // If not found, create the profile
       if (error.status === 404) {
         try {
-          const created = await pb.collection('users').create({
+          const _created = await pb.collection('users').create({
             id: user.uid,
             email: user.email || '',
             name: user.displayName || 'Learner',

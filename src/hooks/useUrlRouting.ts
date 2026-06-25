@@ -104,7 +104,13 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
       setActiveTab('browse');
       setSelectedStory(null);
     }
-  }, [selectedStory, setActiveChapterIdx, setActiveTab, setSelectedStory]);
+  }, [
+    selectedStory,
+    setActiveChapterIdx,
+    setActiveTab,
+    setSelectedStory,
+    currentUser,
+  ]);
 
   const handleUrlRoutingRef = useRef(handleUrlRouting);
   useEffect(() => {

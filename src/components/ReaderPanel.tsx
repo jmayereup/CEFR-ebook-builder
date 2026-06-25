@@ -4,9 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X as CloseIcon,
-  Edit,
   EyeOff,
-  Loader2,
   Save,
   Sparkles,
   Trash2,
@@ -16,7 +14,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { FREE_MODEL_IDS } from '../constants/models';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
-import { updateStoryChaptersAndTitle } from '../services/db';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import {
@@ -152,7 +149,7 @@ export default function ReaderPanel({
   useEffect(() => {
     hasFinishedRef.current = false;
     setHasFinishedChapter(false);
-  }, [story.id, activeChapterIndex]);
+  }, []);
 
   useEffect(() => {
     const completedByObj = story.completedBy || {};
@@ -172,7 +169,7 @@ export default function ReaderPanel({
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (entry && entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           if (hasFinishedRef.current) return;
           hasFinishedRef.current = true;
           setHasFinishedChapter(true);
@@ -193,14 +190,14 @@ export default function ReaderPanel({
     return () => {
       observer.disconnect();
     };
-  }, [hasFinishedChapter, story.id, activeChapterIndex, onChapterFinished]);
+  }, [hasFinishedChapter, onChapterFinished]);
 
   const [fontSize, setFontSize] = useState<number>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('reader-font-size');
       if (saved) {
         const parsed = parseInt(saved, 10);
-        if (!isNaN(parsed) && parsed >= 14 && parsed <= 26) {
+        if (!Number.isNaN(parsed) && parsed >= 14 && parsed <= 26) {
           return parsed;
         }
       }
@@ -361,7 +358,7 @@ export default function ReaderPanel({
   // Sync state if story changes
   useEffect(() => {
     setShowBilingual(story.cefrLevel === 'A1' || story.cefrLevel === 'Pre-A1');
-  }, [story.id, story.cefrLevel]);
+  }, [story.cefrLevel]);
 
   // Persist font size and serif choice
   useEffect(() => {
@@ -404,7 +401,7 @@ export default function ReaderPanel({
 
   useEffect(() => {
     setIsEditing(false);
-  }, [activeChapterIndex, story.id]);
+  }, []);
 
   // Reset activeTab to 'read' when exiting edit mode
   useEffect(() => {
@@ -550,8 +547,8 @@ export default function ReaderPanel({
 
   // Triggered on word click: Pronounces and pops up translation builder
   const handleWordClick = (
-    wordClean: string,
-    fullParagraph: string,
+    _wordClean: string,
+    _fullParagraph: string,
     pIdx: number,
     indexInPara: number,
   ) => {
@@ -827,6 +824,10 @@ export default function ReaderPanel({
     selectedWordRange,
     chapterWords,
     playSentenceContainingWord,
+    handlePlayWord,
+    handleNavigateNext,
+    handleNavigatePrev,
+    getPhraseFromRange,
   ]);
 
   // Calls backend to automatically fetch Translation / Definition details via Gemini
@@ -845,8 +846,6 @@ export default function ReaderPanel({
       }
       return;
     }
-
-
 
     setSelectedWord((prev) => (prev ? { ...prev, isFetching: true } : null));
 
@@ -887,8 +886,6 @@ export default function ReaderPanel({
       }
 
       const data = await response.json();
-
-
 
       setSelectedWord((prev) =>
         prev
@@ -1020,7 +1017,7 @@ export default function ReaderPanel({
             drag={isZenMode ? 'x' : false}
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.2}
-            onDragEnd={(event, info) => {
+            onDragEnd={(_event, info) => {
               if (!isZenMode) return;
               const swipeThreshold = 80;
               if (info.offset.x < -swipeThreshold) {

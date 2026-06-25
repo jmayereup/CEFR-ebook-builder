@@ -105,7 +105,11 @@ export default function LibraryGrid({
   const getPageNumbers = () => {
     const delta = 1;
     const range: number[] = [];
-    const rangeWithDots: (number | string)[] = [];
+    const rangeWithDots: {
+      type: 'page' | 'dots';
+      value: number | string;
+      key: string;
+    }[] = [];
     let l: number | undefined;
 
     for (let i = 1; i <= totalPages; i++) {
@@ -121,12 +125,24 @@ export default function LibraryGrid({
     for (const i of range) {
       if (l !== undefined) {
         if (i - l === 2) {
-          rangeWithDots.push(l + 1);
+          rangeWithDots.push({
+            type: 'page',
+            value: l + 1,
+            key: `page-${l + 1}`,
+          });
         } else if (i - l > 2) {
-          rangeWithDots.push('...');
+          rangeWithDots.push({
+            type: 'dots',
+            value: '...',
+            key: `dots-${l}-${i}`,
+          });
         }
       }
-      rangeWithDots.push(i);
+      rangeWithDots.push({
+        type: 'page',
+        value: i,
+        key: `page-${i}`,
+      });
       l = i;
     }
 
@@ -301,29 +317,29 @@ export default function LibraryGrid({
                     </button>
 
                     {/* Page Numbers */}
-                    {getPageNumbers().map((pageNum, index) => {
-                      if (pageNum === '...') {
+                    {getPageNumbers().map((item) => {
+                      if (item.type === 'dots') {
                         return (
                           <span
-                            key={`dots-${index}`}
+                            key={item.key}
                             className="min-w-[34px] h-[34px] flex items-center justify-center text-xs font-semibold text-tj-text-muted select-none"
                           >
-                            ...
+                            {item.value}
                           </span>
                         );
                       }
                       return (
                         <button
                           type="button"
-                          key={pageNum}
-                          onClick={() => setCurrentPage(pageNum as number)}
+                          key={item.key}
+                          onClick={() => setCurrentPage(item.value as number)}
                           className={`min-w-[34px] h-[34px] flex items-center justify-center text-xs font-semibold rounded transition cursor-pointer ${
-                            currentPage === pageNum
+                            currentPage === item.value
                               ? 'bg-tj-primary text-tj-bg-main border border-tj-primary shadow-none font-bold'
                               : 'border border-tj-border-main hover:border-tj-text-muted bg-tj-bg-card text-tj-text-muted'
                           }`}
                         >
-                          {pageNum}
+                          {item.value}
                         </button>
                       );
                     })}

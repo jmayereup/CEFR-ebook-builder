@@ -1,4 +1,4 @@
-import { Loader2, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
+import { Loader2, Save, Sparkles, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import type { VocabularyTerm } from '../../types';
@@ -77,7 +77,7 @@ export default function AddChapterModal({
       }
     } catch (err: any) {
       console.error(err);
-      setErrorMsg('Failed to generate glossary: ' + err.message);
+      setErrorMsg(`Failed to generate glossary: ${err.message}`);
     } finally {
       setIsGeneratingGlossary(false);
     }
@@ -117,7 +117,7 @@ export default function AddChapterModal({
       onClose();
     } catch (err: any) {
       console.error(err);
-      setErrorMsg('Failed to save chapter: ' + err.message);
+      setErrorMsg(`Failed to save chapter: ${err.message}`);
     } finally {
       setIsSaving(false);
     }

@@ -1,8 +1,7 @@
-import { Brain, Check, Cpu, Info, Sparkles, X, Zap } from 'lucide-react';
+import { Brain, Check, Cpu, Sparkles, X, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { GEMINI_MODELS } from '../../constants/models';
-import { SUPPORTED_LANGUAGES } from '../../types';
 
 interface ModelSelectionModalProps {
   isOpen: boolean;

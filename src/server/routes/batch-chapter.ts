@@ -12,7 +12,6 @@
 
 import { Router } from 'express';
 import { GEMINI_MODELS } from '../../constants/models';
-import { countWords } from '../../utils/wordCounter';
 import { cleanJSONString, handleModelCall, Type } from '../lib/aiProviders';
 
 const router = Router();

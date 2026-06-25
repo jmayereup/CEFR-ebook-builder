@@ -17,8 +17,7 @@ async function getPixelColor() {
     console.log(
       `Pixel color at (200, 200): rgb(${r}, ${g}, ${b}), alpha: ${a}`,
     );
-    const hex =
-      '#' + [r, g, b].map((x) => x.toString(16).padStart(2, '0')).join('');
+    const hex = `#${[r, g, b].map((x) => x.toString(16).padStart(2, '0')).join('')}`;
     console.log(`Hex: ${hex}`);
   } catch (err) {
     console.error('Error reading pixel:', err);

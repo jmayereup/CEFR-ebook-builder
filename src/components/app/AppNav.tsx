@@ -35,9 +35,9 @@ export default function AppNav({
   bookshelfCount,
   savedVocabCount,
   selectedStory,
-  dirty = false,
-  isSyncing = false,
-  syncChangesToDatabase,
+  dirty: _dirty = false,
+  isSyncing: _isSyncing = false,
+  syncChangesToDatabase: _syncChangesToDatabase,
 }: AppNavProps) {
   const currentUser = useAuthStore((state) => state.currentUser);
   const [isMenuOpen, setIsMenuOpen] = useState(false);

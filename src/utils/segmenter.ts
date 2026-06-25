@@ -188,7 +188,7 @@ export function limitContextToTenWords(
       }
       charIndex += seg.segment.length;
     }
-    return cleanContext.substring(0, charIndex).trim() + '...';
+    return `${cleanContext.substring(0, charIndex).trim()}...`;
   }
 
   // Center a window of 10 words around targetWordSegIdx
@@ -213,12 +213,10 @@ export function limitContextToTenWords(
   const endSegIdx = segments.indexOf(targetEndSeg);
 
   if (startSegIdx === -1 || endSegIdx === -1) {
-    return (
-      wordSegments
-        .slice(startIdx, endIdx)
-        .map((s) => s.segment)
-        .join(' ') + '...'
-    );
+    return `${wordSegments
+      .slice(startIdx, endIdx)
+      .map((s) => s.segment)
+      .join(' ')}...`;
   }
 
   let result = segments
@@ -227,10 +225,10 @@ export function limitContextToTenWords(
     .join('');
 
   if (startIdx > 0) {
-    result = '...' + result.trimStart();
+    result = `...${result.trimStart()}`;
   }
   if (endIdx < wordSegments.length) {
-    result = result.trimEnd() + '...';
+    result = `${result.trimEnd()}...`;
   }
 
   return result.trim();

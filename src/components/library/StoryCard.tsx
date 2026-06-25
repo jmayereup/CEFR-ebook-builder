@@ -96,7 +96,7 @@ export default function StoryCard({
         ? story.chapters.length
         : 0;
 
-  const progressPct = Math.round((chaptersCount / story.totalChapters) * 100);
+  const _progressPct = Math.round((chaptersCount / story.totalChapters) * 100);
   const resolvedGenreLabel = cleanGenreLabel(
     GENRES.find((g) => g.id === story.genre)?.label || story.genre,
   );
@@ -114,8 +114,6 @@ export default function StoryCard({
       userReadCount = 1;
     }
   }
-
-
 
   const isRead = userReadCount > 0;
 
@@ -267,12 +265,12 @@ export default function StoryCard({
                     className={`flex items-center gap-0.5 ${coverStyle.textMuted}`}
                     title={`Avg: ${getAverageRating(story.ratings).toFixed(1)}`}
                   >
-                    {Array.from({ length: 5 }).map((_, i) => {
+                    {[1, 2, 3, 4, 5].map((starValue) => {
                       const ratingVal = getAverageRating(story.ratings);
-                      const isFilled = i + 1 <= Math.round(ratingVal);
+                      const isFilled = starValue <= Math.round(ratingVal);
                       return (
                         <Star
-                          key={`star-${i}`}
+                          key={starValue}
                           className={`w-2 h-2 ${isFilled ? 'fill-current' : 'opacity-30'}`}
                         />
                       );

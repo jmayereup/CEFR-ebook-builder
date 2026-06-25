@@ -168,6 +168,7 @@ export default function VocabListView({
         <div className="flex items-center gap-2">
           {/* Copy Plain Text */}
           <button
+            type="button"
             onClick={copyPlainText}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-tj-primary-light hover:bg-tj-primary-light/90 text-tj-text-main text-xs font-bold rounded border border-tj-success/40 cursor-pointer transition-all relative"
           >
@@ -182,6 +183,7 @@ export default function VocabListView({
 
           {/* Copy Rich Text */}
           <button
+            type="button"
             onClick={copyRichText}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-tj-primary-light hover:bg-tj-primary-light/90 text-tj-text-main text-xs font-bold rounded border border-tj-success/40 cursor-pointer transition-all relative"
           >
@@ -247,9 +249,9 @@ export default function VocabListView({
                 </tr>
               </thead>
               <tbody>
-                {filteredAndSortedTerms.map((t, idx) => (
+                {filteredAndSortedTerms.map((t) => (
                   <tr
-                    key={idx}
+                    key={`${t.word}-${t.partOfSpeech}`}
                     className="border-b border-slate-100/60 dark:border-slate-800/60 hover:bg-slate-50/30 dark:hover:bg-slate-900/20 transition-colors"
                   >
                     <td
@@ -298,6 +300,7 @@ export default function VocabListView({
                     {isCustom && onRemoveWord && (
                       <td className="py-3 text-right align-top">
                         <button
+                          type="button"
                           onClick={() => onRemoveWord(t.word)}
                           className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-955/20 text-slate-400 hover:text-rose-600 rounded-lg transition-colors cursor-pointer border-0 bg-transparent"
                           title="Remove word from saved vocabulary"
@@ -313,9 +316,9 @@ export default function VocabListView({
           </div>
 
           <div className="block sm:hidden space-y-3">
-            {filteredAndSortedTerms.map((t, idx) => (
+            {filteredAndSortedTerms.map((t) => (
               <div
-                key={idx}
+                key={`${t.word}-${t.partOfSpeech}`}
                 className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-900/10 hover:border-slate-200 dark:hover:border-slate-700 transition-all flex flex-col gap-2 relative group"
               >
                 <div className="flex items-start justify-between gap-2">
@@ -349,6 +352,7 @@ export default function VocabListView({
                     </span>
                     {isCustom && onRemoveWord && (
                       <button
+                        type="button"
                         onClick={() => onRemoveWord(t.word)}
                         className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-955/20 text-slate-400 hover:text-rose-600 rounded transition-colors cursor-pointer border-0 bg-transparent shrink-0"
                         title="Remove word"

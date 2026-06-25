@@ -168,8 +168,8 @@ export const useStoryGeneration = (
 
   const runNarrativeMaintenance = async (
     story: Story,
-    nextChapterNum: number,
-    headers: Record<string, string>,
+    _nextChapterNum: number,
+    _headers: Record<string, string>,
   ): Promise<Story> => {
     // Automated milestones are disabled to simplify story generation and avoid model confusion.
     return story;
@@ -301,11 +301,7 @@ export const useStoryGeneration = (
         newStory.isUnsaved = true;
 
         if (onGenerationSuccess) {
-          onGenerationSuccess(
-            config.model ||
-              'openrouter/free',
-            0,
-          );
+          onGenerationSuccess(config.model || 'openrouter/free', 0);
         }
         onStoryCreated(newStory);
       } catch (err: unknown) {

@@ -104,8 +104,7 @@ export default function ChapterSidebar({
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const userRating =
-    (currentUser && story.ratings && story.ratings[currentUser.uid]) || 0;
+  const userRating = (currentUser && story.ratings?.[currentUser.uid]) || 0;
   const totalChaptersCount = story.totalChapters;
   const currentChaptersLoaded = story.chapters.length;
   const isBookFinished =
@@ -128,14 +127,12 @@ export default function ChapterSidebar({
     const estBefore = calculateEstimatedUsage(
       nextChapterNum - 1,
       story.chapterLength || 300,
-      story.model ||
-        'openrouter/free',
+      story.model || 'openrouter/free',
     );
     const estAfter = calculateEstimatedUsage(
       nextChapterNum,
       story.chapterLength || 300,
-      story.model ||
-        'openrouter/free',
+      story.model || 'openrouter/free',
     );
     const estCost = Math.max(
       1,
@@ -171,14 +168,12 @@ export default function ChapterSidebar({
       const estBefore = calculateEstimatedUsage(
         ch - 1,
         story.chapterLength || 300,
-        story.model ||
-          'openrouter/free',
+        story.model || 'openrouter/free',
       );
       const estAfter = calculateEstimatedUsage(
         ch,
         story.chapterLength || 300,
-        story.model ||
-          'openrouter/free',
+        story.model || 'openrouter/free',
       );
       const estCost = Math.max(
         1,
@@ -214,14 +209,12 @@ export default function ChapterSidebar({
     const estBefore = calculateEstimatedUsage(
       currentChapterNum - 1,
       story.chapterLength || 300,
-      story.model ||
-        'openrouter/free',
+      story.model || 'openrouter/free',
     );
     const estAfter = calculateEstimatedUsage(
       currentChapterNum,
       story.chapterLength || 300,
-      story.model ||
-        'openrouter/free',
+      story.model || 'openrouter/free',
     );
     return Math.max(
       1,
