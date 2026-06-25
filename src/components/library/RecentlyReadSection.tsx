@@ -9,6 +9,7 @@ import {
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { GENRES, getLanguageCodeFromName, type Story } from '../../types';
+import { useAuthStore } from '../../store/authStore';
 
 interface RecentlyReadSectionProps {
   items: {
@@ -52,6 +53,7 @@ export default function RecentlyReadSection({
   onSelectStory,
 }: RecentlyReadSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const currentUser = useAuthStore((state) => state.currentUser);
 
   if (!items || items.length === 0) return null;
 
@@ -68,14 +70,26 @@ export default function RecentlyReadSection({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {visibleItems.map(({ story, chapterIdx }) => {
+          const completedByObj = story.completedBy || {};
+          let userReadCount = 0;
+          if (currentUser?.uid) {
+            userReadCount = completedByObj[currentUser.uid] || 0;
+          } else if (typeof window !== 'undefined') {
+            const isLocalRead =
+              localStorage.getItem(`completed_story_${story.id}`) === 'true';
+            if (isLocalRead) {
+              userReadCount = 1;
+            }
+          }
+
+          const isCompletedUser = userReadCount > 0;
           const currentChapterNum = Math.min(
             chapterIdx + 1,
             story.totalChapters,
           );
-          const progressPct = Math.round(
-            (currentChapterNum / story.totalChapters) * 100,
-          );
-          const isCompletedUser = progressPct >= 100;
+          const progressPct = isCompletedUser
+            ? 100
+            : Math.round((chapterIdx / story.totalChapters) * 100);
 
           const coverStyle = getCefrCoverStyles(story.cefrLevel);
           const resolvedGenreLabel = cleanGenreLabel(

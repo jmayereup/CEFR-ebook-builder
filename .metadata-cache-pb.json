@@ -1,6 +1,44 @@
 {
-  "lastFetchTime": 1782288510335,
+  "lastFetchTime": 1782386904896,
   "stories": [
+    {
+      "id": "swbr67vy2hk7cqr",
+      "title": "Through Her Lens",
+      "language": "English",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 5,
+      "createdAt": "2026-06-25T07:56:30.633Z",
+      "isCompleted": true,
+      "description": "Mai is a high school senior in Thailand with a deep love for photography, but her parents dream of her becoming a doctor or lawyer. As she navigates her final year, she must find the courage to share her true passion and seek a path that honors both her family’s wishes and her own heart.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 3178
+    },
+    {
+      "id": "slnohfarkbb7l8x",
+      "title": "มนุษยชาติที่งดงาม: โลกยุค AI กับศักดิ์ศรีที่ไม่มีใครพรากได้",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 8,
+      "createdAt": "2026-06-25T01:48:28.354Z",
+      "isCompleted": true,
+      "description": "\"Magnificent Humanity: The AI Era and Inalienable Dignity\" is a thoughtful expository journey in Thai for B1 learners, exploring Pope Leo XIV's encyclical on protecting human dignity amid rapid AI development. Through eight accessible chapters, readers discover the promises and perils of artificial intelligence, the unique value of human love and imperfection, and the collective responsibility to build a civilization of hope rather than power.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 8,
+      "wordCount": 3086
+    },
     {
       "id": "skrh1zndj5eukgw",
       "title": "Pensée Rapide, Pensée Lente : Décrypter les Secrets de Notre Esprit",
@@ -28,7 +66,7 @@
       "genre": "nonfiction",
       "totalChapters": 10,
       "createdAt": "2026-06-24T07:11:42.832Z",
-      "isCompleted": false,
+      "isCompleted": true,
       "description": "This book follows the daily life of Nat, a young office worker, as he discovers the two thinking systems in his brain. Through relatable stories, it explains common biases and mental shortcuts, offering simple ways to make better decisions.",
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
@@ -36,8 +74,8 @@
       "ratings": null,
       "completedBy": {},
       "isPublic": true,
-      "chaptersCount": 5,
-      "wordCount": 2160
+      "chaptersCount": 10,
+      "wordCount": 4786
     },
     {
       "id": "s3xhdpny0rjqnqx",
@@ -52,8 +90,12 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 4616
@@ -196,7 +238,9 @@
       "ratings": {
         "kjksljovpk623jy": 4
       },
-      "completedBy": {},
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 3255

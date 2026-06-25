@@ -115,13 +115,7 @@ export default function StoryCard({
     }
   }
 
-  // Fall back to recentlyRead if we don't have database count but they completed it
-  if (userReadCount === 0 && recentlyRead) {
-    const rrItem = recentlyRead.find((item) => item.storyId === story.id);
-    if (rrItem && rrItem.chapterIdx + 1 >= story.totalChapters) {
-      userReadCount = 1;
-    }
-  }
+
 
   const isRead = userReadCount > 0;
 
