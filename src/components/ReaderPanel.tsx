@@ -846,26 +846,7 @@ export default function ReaderPanel({
       return;
     }
 
-    const isFreeTier = !isPaid && !isAdmin && !customOpenRouterKey;
-    if (isFreeTier) {
-      if (lookupLimitData && lookupLimitData.count >= 100) {
-        if (onShowAlert) {
-          onShowAlert(
-            'Lookup Limit Reached',
-            'You have used your 100 free AI lookups for today. To get unlimited lookups, enter your own OpenRouter API Key in Settings (gear icon in header)!',
-            'warning',
-          );
-        } else {
-          alert(
-            'You have used your 100 free AI lookups for today. To get unlimited lookups, enter your own OpenRouter API Key in Settings (gear icon in header)!',
-          );
-        }
-        if (onOpenSettings) {
-          onOpenSettings();
-        }
-        return;
-      }
-    }
+
 
     setSelectedWord((prev) => (prev ? { ...prev, isFetching: true } : null));
 
@@ -907,9 +888,7 @@ export default function ReaderPanel({
 
       const data = await response.json();
 
-      if (isFreeTier && onIncrementLookupCount) {
-        onIncrementLookupCount();
-      }
+
 
       setSelectedWord((prev) =>
         prev

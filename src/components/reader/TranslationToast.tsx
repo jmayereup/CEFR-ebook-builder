@@ -249,17 +249,6 @@ export default function TranslationToast({
                       build vocabulary list!
                     </span>
                   </div>
-                ) : !isPaid && !isAdmin && !customOpenRouterKey ? (
-                  <div className="p-2 bg-amber-50 dark:bg-amber-955/20 text-slate-700 dark:text-slate-355 text-[10px] rounded-xl border border-amber-100 dark:border-amber-900/10 flex flex-col gap-1 leading-tight">
-                    <div className="flex items-start gap-1">
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-500 mt-0.5" />
-                      <span>
-                        AI lookup limit:{' '}
-                        {lookupLimitData ? lookupLimitData.count : 0}/100 today.
-                        Configure OpenRouter key for unlimited!
-                      </span>
-                    </div>
-                  </div>
                 ) : null}
               </div>
 

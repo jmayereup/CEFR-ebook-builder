@@ -19,6 +19,11 @@ const MODEL_DETAILS: Record<
   }
 > = {
   // Free tier
+  'openrouter/free': {
+    verdict:
+      'OpenRouter automatic free routing. Dynamically routes to the best available free model on OpenRouter.',
+    languages: 'All supported languages',
+  },
   'meta-llama/llama-3.3-70b-instruct:free': {
     verdict:
       'Optimized for Romance and Germanic languages. Great understanding of complex conjugation, gender agreements, and local idioms.',

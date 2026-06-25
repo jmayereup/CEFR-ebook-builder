@@ -47,16 +47,16 @@ const getCefrBadgeStyle = (level: string) => {
 };
 
 const DEFAULT_MODEL_FOR_LANGUAGE: Record<string, string> = {
-  en: 'openai/gpt-oss-120b:free',
-  es: 'meta-llama/llama-3.3-70b-instruct:free',
-  fr: 'meta-llama/llama-3.3-70b-instruct:free',
-  de: 'meta-llama/llama-3.3-70b-instruct:free',
-  it: 'meta-llama/llama-3.3-70b-instruct:free',
-  pt: 'meta-llama/llama-3.3-70b-instruct:free',
-  ja: 'google/gemma-4-31b-it:free',
-  zh: 'google/gemma-4-31b-it:free',
-  th: 'google/gemma-4-31b-it:free',
-  ko: 'google/gemma-4-31b-it:free',
+  en: 'openrouter/free',
+  es: 'openrouter/free',
+  fr: 'openrouter/free',
+  de: 'openrouter/free',
+  it: 'openrouter/free',
+  pt: 'openrouter/free',
+  ja: 'openrouter/free',
+  zh: 'openrouter/free',
+  th: 'openrouter/free',
+  ko: 'openrouter/free',
 };
 
 const WRITING_TYPES = [
@@ -138,7 +138,7 @@ export default function StoryConfigForm({
   const [chapterLength, setChapterLength] = useState(350);
   const [promptNotes, setPromptNotes] = useState('');
   const [selectedModel, setSelectedModel] = useState(
-    'meta-llama/llama-3.3-70b-instruct:free',
+    'openrouter/free',
   );
   const [thinkingOption, setThinkingOption] = useState('medium');
   const [temperature, setTemperature] = useState(0.8);
@@ -186,7 +186,7 @@ export default function StoryConfigForm({
     }
     const newModel =
       DEFAULT_MODEL_FOR_LANGUAGE[langCode] ||
-      'meta-llama/llama-3.3-70b-instruct:free';
+      'openrouter/free';
     setSelectedModel(newModel);
 
     // Auto-update thinkingOption for the new model

@@ -303,7 +303,7 @@ export const useStoryGeneration = (
         if (onGenerationSuccess) {
           onGenerationSuccess(
             config.model ||
-              'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+              'openrouter/free',
             0,
           );
         }

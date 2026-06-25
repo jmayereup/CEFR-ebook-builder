@@ -18,6 +18,17 @@ export interface GeminiModelOption {
 export const GEMINI_MODELS: GeminiModelOption[] = [
   // --- Free Tier Models ---
   {
+    id: 'openrouter/free',
+    name: 'OpenRouter Free',
+    inputCost1M: 0.0,
+    outputCost1M: 0.0,
+    category: 'flash',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 4096,
+  },
+  {
     id: 'meta-llama/llama-3.3-70b-instruct:free',
     name: 'Llama 3.3 70B Instruct (Free)',
     inputCost1M: 0.0,
@@ -234,6 +245,7 @@ export const GEMINI_MODELS: GeminiModelOption[] = [
 
 /** IDs of models that are always free to use (no contributor approval needed). */
 export const FREE_MODEL_IDS = new Set([
+  'openrouter/free',
   'meta-llama/llama-3.3-70b-instruct:free',
   'google/gemma-4-31b-it:free',
   'openai/gpt-oss-120b:free',

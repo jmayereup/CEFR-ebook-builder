@@ -244,6 +244,7 @@ export function useUserData(options: UseUserDataOptions) {
     setGenerationLimitData((prev) => {
       const isFreeModel =
         modelId.endsWith(':free') ||
+        modelId === 'openrouter/free' ||
         modelId ===
           'cognitivecomputations/dolphin-mistral-24b-venice-edition:free' ||
         modelId === 'meta-llama/llama-3.3-70b-instruct:free' ||

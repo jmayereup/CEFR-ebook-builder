@@ -194,9 +194,11 @@ export default function AdminUsersDashboard({
         }));
         // Sort users: admins first, then by email
         usersList.sort((a, b) => {
-          if (a.email === 'jmayereup@gmail.com') return -1;
-          if (b.email === 'jmayereup@gmail.com') return 1;
-          return a.email.localeCompare(b.email);
+          const emailA = a.email || '';
+          const emailB = b.email || '';
+          if (emailA === 'jmayereup@gmail.com') return -1;
+          if (emailB === 'jmayereup@gmail.com') return 1;
+          return emailA.localeCompare(emailB);
         });
         setUsers(usersList);
         setLoading(false);

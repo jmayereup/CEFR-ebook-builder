@@ -129,13 +129,13 @@ export default function ChapterSidebar({
       nextChapterNum - 1,
       story.chapterLength || 300,
       story.model ||
-        'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+        'openrouter/free',
     );
     const estAfter = calculateEstimatedUsage(
       nextChapterNum,
       story.chapterLength || 300,
       story.model ||
-        'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+        'openrouter/free',
     );
     const estCost = Math.max(
       1,
@@ -172,13 +172,13 @@ export default function ChapterSidebar({
         ch - 1,
         story.chapterLength || 300,
         story.model ||
-          'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+          'openrouter/free',
       );
       const estAfter = calculateEstimatedUsage(
         ch,
         story.chapterLength || 300,
         story.model ||
-          'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+          'openrouter/free',
       );
       const estCost = Math.max(
         1,
@@ -215,13 +215,13 @@ export default function ChapterSidebar({
       currentChapterNum - 1,
       story.chapterLength || 300,
       story.model ||
-        'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+        'openrouter/free',
     );
     const estAfter = calculateEstimatedUsage(
       currentChapterNum,
       story.chapterLength || 300,
       story.model ||
-        'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
+        'openrouter/free',
     );
     return Math.max(
       1,

@@ -38,64 +38,36 @@ export const checkGenerationPermission = (
   estimatedCreditsCost: number,
   chaptersToAdd: number,
 ): PermissionDenied | null => {
-  // 1. Super Admin has no limits and can use any model
-  if (isAdmin) {
+  // 1. Super Admin or users with their own API key have no limits and can use any model
+  if (isAdmin || !!customOpenRouterKey) {
     return null;
   }
-
-  const hasRequiredKey = !!customOpenRouterKey;
 
   // Classify selected model
   const isFreeModel =
     !!modelId && (FREE_MODEL_IDS.has(modelId) || modelId.endsWith(':free'));
-  const isPaidModel =
-    modelId === 'openai/gpt-oss-120b' ||
-    modelId === 'openai/gpt-5-mini' ||
-    modelId === 'qwen/qwen3.7-plus' ||
-    modelId === 'qwen/qwen3.5-flash-02-23';
-  const isPrivateKeyModel = !isFreeModel && !isPaidModel;
 
-  // 2. Paid tier users with their own API key can use any model without daily limits
-  if (isPaid && hasRequiredKey) {
+  // 2. Free Tier models are unlimited for all signed-in users
+  if (isFreeModel) {
     return null;
   }
 
-  // 3. Users without custom API keys (using shared keys)
-  if (isPaid) {
-    // Paid users without custom key can use all models
-    if (isFreeModel) {
-      if (freeModelCount + chaptersToAdd > 30) {
-        return {
-          title: 'Daily Limit Reached',
-          message: `Generating ${chaptersToAdd} more chapter(s) would exceed your daily limit of 30 chapters on Free Tier models. You have generated ${freeModelCount} chapter(s) today. Please try again tomorrow or configure your own API key in Settings for unlimited generations.`,
-        };
-      }
-    } else {
-      // Paid model consumes monthly credits (1 credit = 1 penny of estimated cost)
-      if (monthlyCreditsUsed + estimatedCreditsCost > 100) {
-        const remaining = Math.max(0, 100 - monthlyCreditsUsed);
-        return {
-          title: 'Monthly Credits Exceeded',
-          message: `Generating this would cost ${estimatedCreditsCost} credits, which exceeds your remaining monthly budget of ${remaining} credits. You have used ${monthlyCreditsUsed} of 100 credits this month. Please configure your own API key in Settings for unlimited generations.`,
-        };
-      }
-    }
-  } else {
-    // Free Tier users (not paid, not admin)
-    if (!isFreeModel) {
-      return {
-        title: 'Premium Model Locked',
-        message:
-          'Free Tier accounts can only generate stories using Free Tier models. To use premium or Paid Tier models, please upgrade to the Paid Tier. To use custom keys, you must upgrade and configure your own API key in Settings.',
-      };
-    }
+  // 3. Premium Models (not free) require the user to be Paid (or Admin/have own key, which we checked above)
+  if (!isPaid) {
+    return {
+      title: 'Premium Model Locked',
+      message:
+        'Free accounts can only use free models. To use premium or Paid Tier models, please upgrade to the Paid Tier, or configure your own OpenRouter API key in Settings.',
+    };
+  }
 
-    if (freeModelCount + chaptersToAdd > 10) {
-      return {
-        title: 'Daily Limit Reached',
-        message: `Generating ${chaptersToAdd} more chapter(s) would exceed your free tier daily limit of 10 chapters. You have generated ${freeModelCount} chapter(s) today. Please upgrade to the Paid Tier for higher limits or configure your own API key.`,
-      };
-    }
+  // 4. Paid tier users using premium models with the shared key consume monthly credits
+  if (monthlyCreditsUsed + estimatedCreditsCost > 100) {
+    const remaining = Math.max(0, 100 - monthlyCreditsUsed);
+    return {
+      title: 'Monthly Credits Exceeded',
+      message: `Generating this would cost ${estimatedCreditsCost} credits, which exceeds your remaining monthly budget of ${remaining} credits. You have used ${monthlyCreditsUsed} of 100 credits this month. Please configure your own API key in Settings for unlimited generations.`,
+    };
   }
 
   return null;
