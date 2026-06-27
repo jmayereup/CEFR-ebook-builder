@@ -208,3 +208,11 @@ export interface UserProfileData {
   recentlyRead?: RecentlyReadItem[];
   streak?: UserStreakData | null;
 }
+
+export interface SRSRecord {
+  repetition: number;
+  interval: number;
+  easeFactor: number;
+  nextReviewDate: string;
+}
+

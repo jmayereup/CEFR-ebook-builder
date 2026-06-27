@@ -14,6 +14,7 @@ import VocabListView from './vocabulary/VocabListView';
 
 interface VocabularyPracticeProps {
   story?: Story | null;
+  savedVocab?: VocabularyTerm[];
   onRemoveSavedWord?: (word: string) => void;
   onUpdateWordSRS?: (term: VocabularyTerm, isCorrect: boolean) => void;
   onVocabActivity?: (count: number) => void;

@@ -104,10 +104,20 @@ export default function FlashcardsDeck({
       className="max-w-md mx-auto space-y-6 flex flex-col items-center"
     >
       {/* Flashcard container with 3D Flip */}
+      {/* biome-ignore lint/a11y/useSemanticElements: card container has complex structure and contains nested interactive buttons */}
       <div
+        role="button"
+        tabIndex={0}
         onClick={() => {
           setIsFlipped(!isFlipped);
           playWord(activeTerm.word, activeTerm.language);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsFlipped(!isFlipped);
+            playWord(activeTerm.word, activeTerm.language);
+          }
         }}
         className="w-full h-72 perspective cursor-pointer"
       >
@@ -115,11 +125,11 @@ export default function FlashcardsDeck({
           className={`w-full h-full relative transition-all duration-500 preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}
         >
           {/* FRONT Side: Target Word */}
-          <div className="absolute inset-0 w-full h-full bg-tj-bg-card rounded-lg p-6 border border-tj-border-main flex flex-col justify-between backface-hidden shadow-none">
+          <div className="absolute inset-0 w-full h-full bg-tj-bg-card rounded-lg p-5 border border-tj-border-main flex flex-col justify-between backface-hidden shadow-none">
             <span className="text-[10px] font-mono text-tj-text-muted tracking-wider">
               Card {currentIndex + 1} of {terms.length} • FRONT
             </span>
-            <div className="text-center py-6 flex flex-col items-center">
+            <div className="text-center py-2 flex flex-col items-center">
               <div className="flex items-center justify-center gap-2">
                 <h2
                   lang={termLangCode}
@@ -146,27 +156,45 @@ export default function FlashcardsDeck({
               )}
               <span
                 lang={termLangCode}
-                className="text-[10px] uppercase font-mono bg-tj-primary-light border border-tj-primary-border text-tj-text-main font-bold px-2.5 py-1 rounded mt-3 inline-block select-none"
+                className="text-[10px] uppercase font-mono bg-tj-primary-light border border-tj-primary-border text-tj-text-main font-bold px-2.5 py-1 rounded mt-2 inline-block select-none"
               >
                 {activeTerm.partOfSpeech}
               </span>
+              {activeTerm.contextSentence && (
+                // biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: onClick is only used to prevent card flip propagation
+                <div
+                  lang={termLangCode}
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent flip
+                  }}
+                  className="bg-tj-bg-recessed p-3 rounded border border-tj-border-main text-base text-tj-text-muted italic font-serif leading-relaxed max-h-[85px] overflow-y-auto mt-3 w-full"
+                >
+                  {"\""}
+                  {limitContextToTenWords(
+                    activeTerm.contextSentence,
+                    activeTerm.word,
+                    termLangCode,
+                  )}
+                  {"\""}
+                </div>
+              )}
             </div>
             <p className="text-[10px] text-center text-tj-text-muted select-none animate-pulse">
               Click to Flip
             </p>
           </div>
 
-          {/* BACK Side: English definition and context */}
+          {/* BACK Side: English definition */}
           <div className="absolute inset-0 w-full h-full bg-tj-bg-recessed rounded-lg p-6 border border-tj-border-main flex flex-col justify-between backface-hidden rotate-y-180 shadow-none">
             <span className="text-[10px] font-mono text-tj-text-muted tracking-wider">
               Card {currentIndex + 1} of {terms.length} • BACK (Translation)
             </span>
-            <div className="space-y-4 text-center">
+            <div className="space-y-4 text-center my-auto">
               <div>
-                <h3 className="text-lg font-bold text-tj-text-main leading-tight font-serif">
+                <h3 className="text-xl font-bold text-tj-text-main leading-tight font-serif">
                   {activeTerm.definition}
                 </h3>
-                <div className="flex items-center justify-center gap-1.5 mt-1">
+                <div className="flex items-center justify-center gap-1.5 mt-2">
                   <span
                     lang={termLangCode}
                     className="text-xs uppercase font-mono tracking-wider font-semibold text-tj-text-muted"
@@ -185,18 +213,6 @@ export default function FlashcardsDeck({
                     <Volume2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              </div>
-              <div
-                lang={termLangCode}
-                className="bg-tj-bg-card p-3 rounded border border-tj-border-main text-base text-tj-text-muted italic font-serif leading-relaxed max-h-[85px] overflow-y-auto"
-              >
-                "
-                {limitContextToTenWords(
-                  activeTerm.contextSentence || '',
-                  activeTerm.word,
-                  termLangCode,
-                )}
-                "
               </div>
             </div>
             <p className="text-[10px] text-center text-tj-text-muted select-none">

@@ -221,7 +221,7 @@ export default function ExportPanel({
                   </a>
 
                   <a
-                    href="https://play.google.com/books/upload"
+                    href="https://play.google.com/books"
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1.5 py-1 px-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-900/60 dark:hover:bg-slate-800 select-none text-slate-600 hover:text-tj-primary dark:text-slate-400 dark:hover:text-tj-primary-hover text-[11px] font-bold rounded-lg transition-colors cursor-pointer border border-slate-200/50 dark:border-slate-800 shrink-0 whitespace-nowrap"

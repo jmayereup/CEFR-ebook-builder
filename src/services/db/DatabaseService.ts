@@ -29,10 +29,10 @@ export interface MetadataOptions {
 }
 
 export interface ProfileUpdatePayload {
-  savedVocab: VocabularyTerm[];
-  bookshelf: string[];
-  recentlyRead: RecentlyReadItem[];
-  lookupLimitData: LookupLimitData | null;
+  savedVocab?: VocabularyTerm[];
+  bookshelf?: string[];
+  recentlyRead?: RecentlyReadItem[];
+  lookupLimitData?: LookupLimitData | null;
 }
 
 // ---------------------------------------------------------------------------
