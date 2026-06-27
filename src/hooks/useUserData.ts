@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   fetchUserProfile,
+  fetchUserVocab,
+  saveWord,
+  deleteWord,
   type GenerationLimitData,
   type RecentlyReadItem,
   saveUserGenerationLimit,
   saveUserProfileData,
 } from '../services/db';
 import type { VocabularyTerm } from '../types';
+import { calculateNextSRS } from '../utils/srs';
 
 interface LookupLimitData {
   count: number;
@@ -177,7 +181,6 @@ export function useUserData(options: UseUserDataOptions) {
     try {
       const payload = {
         userId: currentUser.uid,
-        savedVocab: savedVocabRef.current,
         bookshelf: bookshelfRef.current,
         recentlyRead: recentlyReadRef.current,
         lookupLimitData: lookupLimitDataRef.current,
@@ -296,49 +299,75 @@ export function useUserData(options: UseUserDataOptions) {
       return;
     }
 
-    if (savedVocab.length >= 500) {
-      const oldestWord = savedVocab[0];
-      const updated = [...savedVocab.slice(1), wordObj];
-      setSavedVocab(updated);
-      localStorage.setItem('saved_vocab', JSON.stringify(updated));
-      if (currentUser) {
-        markDirty();
+    if (currentUser) {
+      try {
+        const savedTerm = await saveWord(currentUser.uid, wordObj);
+        const updated = [...savedVocab, savedTerm];
+        setSavedVocab(updated);
+        localStorage.setItem('saved_vocab', JSON.stringify(updated));
+      } catch (e) {
+        console.error('Error saving word to DB:', e);
+        showAlert('Error', 'Failed to save word.', 'error');
       }
-      showAlert(
-        'Vocabulary Limit Reached',
-        `"${wordObj.word}" has been saved. Your oldest saved word ("${oldestWord.word}") was removed to fit within the 500-word limit.`,
-        'warning',
-      );
-    } else if (savedVocab.length >= 490) {
-      const updated = [...savedVocab, wordObj];
-      setSavedVocab(updated);
-      localStorage.setItem('saved_vocab', JSON.stringify(updated));
-      if (currentUser) {
-        markDirty();
-      }
-      showAlert(
-        'Approaching Vocabulary Limit',
-        `"${wordObj.word}" has been saved. You are approaching your limit of 500 saved words (${updated.length}/500), after which older words will be automatically removed.`,
-        'warning',
-      );
     } else {
       const updated = [...savedVocab, wordObj];
       setSavedVocab(updated);
       localStorage.setItem('saved_vocab', JSON.stringify(updated));
-      if (currentUser) {
-        markDirty();
-      }
+      showAlert('Word Saved Locally', `"${wordObj.word}" saved to your local device.`, 'info');
     }
   };
 
   const handleRemoveSavedWord = async (wordText: string) => {
+    if (currentUser) {
+      try {
+        await deleteWord(currentUser.uid, wordText);
+      } catch (e) {
+        console.error('Error deleting word from DB:', e);
+      }
+    }
     const updated = savedVocab.filter(
       (v) => v.word.toLowerCase() !== wordText.toLowerCase(),
     );
     setSavedVocab(updated);
     localStorage.setItem('saved_vocab', JSON.stringify(updated));
+  };
+
+  const handleUpdateWordSRS = async (term: VocabularyTerm, isCorrect: boolean) => {
+    const updatedSrs = calculateNextSRS(
+      {
+        nextReviewDate: term.nextReviewDate,
+        repetition: term.repetition,
+        interval: term.interval,
+        easeFactor: term.easeFactor,
+      },
+      isCorrect
+    );
+
+    const updatedTerm: VocabularyTerm = {
+      ...term,
+      ...updatedSrs,
+    };
+
     if (currentUser) {
-      markDirty();
+      try {
+        const savedTerm = await saveWord(currentUser.uid, updatedTerm);
+        setSavedVocab((prev) => {
+          const filtered = prev.filter((v) => v.word.toLowerCase() !== savedTerm.word.toLowerCase());
+          const updated = [...filtered, savedTerm];
+          localStorage.setItem('saved_vocab', JSON.stringify(updated));
+          return updated;
+        });
+      } catch (e) {
+        console.error('Error updating word SRS:', e);
+      }
+    } else {
+      // Local fallback
+      setSavedVocab((prev) => {
+        const filtered = prev.filter((v) => v.word.toLowerCase() !== updatedTerm.word.toLowerCase());
+        const updated = [...filtered, updatedTerm];
+        localStorage.setItem('saved_vocab', JSON.stringify(updated));
+        return updated;
+      });
     }
   };
 
@@ -375,8 +404,10 @@ export function useUserData(options: UseUserDataOptions) {
       if (currentUser) {
         try {
           const profile = await fetchUserProfile(currentUser.uid);
+          const vocab = await fetchUserVocab(currentUser.uid);
+          
           if (profile) {
-            setSavedVocab(profile.savedVocab);
+            setSavedVocab(vocab);
             setIsPaid(profile.isPaid ?? false);
 
             // Notify parent about profile load for streak sync
@@ -451,7 +482,6 @@ export function useUserData(options: UseUserDataOptions) {
             // Persist immediately to cloud if changed
             if (bookshelfChanged || recentlyReadChanged) {
               await saveUserProfileData(currentUser.uid, {
-                savedVocab: profile.savedVocab,
                 bookshelf: mergedBookshelf,
                 recentlyRead: finalRecentlyRead,
                 lookupLimitData: profile.lookupLimitData,
@@ -560,6 +590,7 @@ export function useUserData(options: UseUserDataOptions) {
     handleIncrementGenerationCount,
     handleSaveWord,
     handleRemoveSavedWord,
+    handleUpdateWordSRS,
     handleToggleBookshelf,
     updateRecentlyRead,
     dirty,

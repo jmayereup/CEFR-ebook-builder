@@ -17,7 +17,7 @@ import type {
   MetadataOptions,
   ProfileUpdatePayload,
 } from './DatabaseService';
-import type { StoriesResponse, UsersResponse } from './pocketbase-types';
+import type { SavedWordsResponse, StoriesResponse, UsersResponse } from './pocketbase-types';
 
 type AppUsersResponse = UsersResponse<
   any, // beginnerLessons
@@ -309,9 +309,7 @@ export class PocketBaseService implements IDatabaseService {
       };
 
       return {
-        savedVocab: Array.isArray(record.savedVocab)
-          ? record.savedVocab
-          : (parseJsonField(record.savedVocab) ?? []),
+        savedVocab: [], // No longer pulled from users JSON field, handled by fetchUserVocab
         lookupLimitData: parseJsonField(record.lookupLimitData),
         bookshelf: Array.isArray(record.bookshelf)
           ? record.bookshelf
@@ -329,8 +327,73 @@ export class PocketBaseService implements IDatabaseService {
     }
   }
 
-  async saveUserVocab(userId: string, vocab: VocabularyTerm[]): Promise<void> {
-    await pb.collection('users').update(userId, { savedVocab: vocab });
+  async fetchUserVocab(userId: string): Promise<VocabularyTerm[]> {
+    try {
+      const records = await pb
+        .collection('saved_words')
+        .getFullList<SavedWordsResponse>({
+          filter: `user = "${userId}"`,
+          sort: '-id',
+        });
+      
+      return records.map(record => ({
+        id: record.id,
+        word: record.word,
+        partOfSpeech: record.partOfSpeech || '',
+        definition: record.definition,
+        contextSentence: record.contextSentence || '',
+        language: record.language || '',
+        transliteration: record.transliteration || '',
+        nextReviewDate: record.nextReviewDate || undefined,
+        repetition: record.repetition,
+        interval: record.interval,
+        easeFactor: record.easeFactor,
+      }));
+    } catch (error: any) {
+      console.error('[PocketBaseService] fetchUserVocab error:', error);
+      return [];
+    }
+  }
+
+  async saveWord(userId: string, term: VocabularyTerm): Promise<VocabularyTerm> {
+    const payload = {
+      user: userId,
+      word: term.word,
+      partOfSpeech: term.partOfSpeech,
+      definition: term.definition,
+      contextSentence: term.contextSentence,
+      language: term.language,
+      transliteration: term.transliteration,
+      nextReviewDate: term.nextReviewDate,
+      repetition: term.repetition,
+      interval: term.interval,
+      easeFactor: term.easeFactor,
+    };
+
+    if (term.id) {
+      const updated = await pb.collection('saved_words').update<SavedWordsResponse>(term.id, payload);
+      return { ...term, id: updated.id };
+    } else {
+      // Check if it already exists to avoid duplicates
+      const existing = await pb.collection('saved_words').getList<SavedWordsResponse>(1, 1, {
+        filter: `user = "${userId}" && word = "${term.word.toLowerCase()}"`,
+      });
+      if (existing.items.length > 0) {
+        const updated = await pb.collection('saved_words').update<SavedWordsResponse>(existing.items[0].id, payload);
+        return { ...term, id: updated.id };
+      }
+      const created = await pb.collection('saved_words').create<SavedWordsResponse>(payload);
+      return { ...term, id: created.id };
+    }
+  }
+
+  async deleteWord(userId: string, wordText: string): Promise<void> {
+    const existing = await pb.collection('saved_words').getList<SavedWordsResponse>(1, 1, {
+      filter: `user = "${userId}" && word = "${wordText.toLowerCase()}"`,
+    });
+    if (existing.items.length > 0) {
+      await pb.collection('saved_words').delete(existing.items[0].id);
+    }
   }
 
   async saveUserLookupLimit(
@@ -377,7 +440,6 @@ export class PocketBaseService implements IDatabaseService {
     data: ProfileUpdatePayload,
   ): Promise<void> {
     await pb.collection('users').update(userId, {
-      savedVocab: data.savedVocab,
       bookshelf: data.bookshelf,
       recentlyRead: data.recentlyRead,
       lookupLimitData: data.lookupLimitData

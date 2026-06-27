@@ -1,6 +1,88 @@
 {
-  "lastFetchTime": 1782386904896,
+  "lastFetchTime": 1782533156994,
   "stories": [
+    {
+      "id": "sjyo4vqxzf1g2k5",
+      "title": "สลากปริศนา",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "mystery",
+      "totalChapters": 5,
+      "createdAt": "2026-06-27T02:56:29.069Z",
+      "isCompleted": true,
+      "description": "When Bangkok detective Thirachai returns to his childhood village for a traditional harvest festival, he is drawn into a chilling mystery: the lottery that selects a “lucky winner” each year is actually a brutal ritual sacrifice. Inspired by Shirley Jackson’s classic tale, this gripping Thai-language story follows his dangerous investigation as he uncovers generational secrets and races to stop the next killing.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 1998
+    },
+    {
+      "id": "sqlsnzercgzhetd",
+      "title": "หัวใจที่ไม่มีวันเงียบ",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "mystery",
+      "totalChapters": 5,
+      "createdAt": "2026-06-26T11:11:52.194Z",
+      "isCompleted": true,
+      "description": "A young detective investigates the disappearance of an old man in a quiet Bangkok neighborhood. The prime witness, a neighbor named Ek, seems cooperative, but is slowly consumed by a relentless, phantom heartbeat that only he can hear. As the sound grows louder, guilt and paranoia drive him to a chilling confession, revealing a crime hidden beneath the floorboards. A adaptation inspired by Edgar Allan Poe.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2471
+    },
+    {
+      "id": "sbk2394qgj9fkrq",
+      "title": "แมวดำกับความลับในคฤหาสน์ร้าง",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "adventure",
+      "totalChapters": 5,
+      "createdAt": "2026-06-26T09:23:58.909Z",
+      "isCompleted": true,
+      "description": "When a curious teen moves to a quiet town and ventures into a forbidden abandoned mansion, a mysterious black cat becomes their guide through hidden corridors and dark secrets. As eerie events unfold, they uncover a century-old crime and must decide whether to bring the truth to light. A tale of adventure, guilt, and the courage to face the past.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2356
+    },
+    {
+      "id": "sobjgxna0k2ftxg",
+      "title": "หนึ่งเทอมในอังกฤษ",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 5,
+      "createdAt": "2026-06-26T05:20:52.226Z",
+      "isCompleted": true,
+      "description": "A Thai exchange student's journey through a semester in England, from the first chilly morning to tearful goodbyes. Through everyday adventures in school, food, and friendship, she learns that home is not just a place but the people she meets along the way. A heartwarming slice-of-life tale about cultural discovery and personal growth.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2431
+    },
     {
       "id": "swbr67vy2hk7cqr",
       "title": "Through Her Lens",
@@ -16,7 +98,7 @@
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
       "completedBy": {
-        "kjksljovpk623jy": 1
+        "kjksljovpk623jy": 2
       },
       "isPublic": true,
       "chaptersCount": 5,
@@ -36,7 +118,9 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
-      "completedBy": {},
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 8,
       "wordCount": 3086

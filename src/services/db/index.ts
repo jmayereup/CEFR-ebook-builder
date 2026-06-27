@@ -99,8 +99,12 @@ export const deleteStory = (storyId: string) => dbService.deleteStory(storyId);
 // User profile
 export const fetchUserProfile = (userId: string) =>
   dbService.fetchUserProfile(userId);
-export const saveUserVocab = (userId: string, vocab: VocabularyTerm[]) =>
-  dbService.saveUserVocab(userId, vocab);
+export const fetchUserVocab = (userId: string) =>
+  dbService.fetchUserVocab(userId);
+export const saveWord = (userId: string, term: VocabularyTerm) =>
+  dbService.saveWord(userId, term);
+export const deleteWord = (userId: string, wordText: string) =>
+  dbService.deleteWord(userId, wordText);
 export const saveUserLookupLimit = (userId: string, data: LookupLimitData) =>
   dbService.saveUserLookupLimit(userId, data);
 /** Debounced lookup-limit write — call .flush() in beforeunload handlers. */

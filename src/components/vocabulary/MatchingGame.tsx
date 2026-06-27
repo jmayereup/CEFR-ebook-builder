@@ -12,6 +12,7 @@ interface MatchingGameProps {
   terms: VocabularyTerm[];
   langCode: string;
   onVocabActivity?: (count: number) => void;
+  onUpdateWordSRS?: (term: VocabularyTerm, isCorrect: boolean) => void;
   playWord: (word: string, customLanguage?: string) => void;
   key?: string;
 }
@@ -20,6 +21,7 @@ export default function MatchingGame({
   terms,
   langCode,
   onVocabActivity,
+  onUpdateWordSRS,
   playWord,
 }: MatchingGameProps) {
   const [subset, setSubset] = useState<VocabularyTerm[]>([]);
@@ -150,6 +152,12 @@ export default function MatchingGame({
         setSelectedWord(null);
         setSelectedDef(null);
 
+        const matchedItem = shuffledWords.find((w) => w.id === wordId);
+        const originalTerm = terms.find((t) => t.word === matchedItem?.word);
+        if (originalTerm) {
+          onUpdateWordSRS?.(originalTerm, true);
+        }
+
         // If all matched in this round, update session matched words
         if (newMatchedIds.size === subset.length) {
           const nextSessionMatched = new Set(sessionMatchedWords);
@@ -164,6 +172,12 @@ export default function MatchingGame({
         setFailedPairs({ wordId, defId });
         setSelectedWord(null);
         setSelectedDef(null);
+
+        const selectedItem = shuffledWords.find((w) => w.id === wordId);
+        const originalTerm = terms.find((t) => t.word === selectedItem?.word);
+        if (originalTerm) {
+          onUpdateWordSRS?.(originalTerm, false);
+        }
       }
     }
   };
@@ -246,7 +260,7 @@ export default function MatchingGame({
                 type="button"
                 key={item.id}
                 onClick={() => handleWordSelect(item.id)}
-                className={`w-full p-4 rounded-xl text-left border text-sm transition-all font-serif flex items-center justify-between cursor-pointer ${
+                className={`w-full p-4 rounded-xl text-left border text-lg md:text-xl transition-all font-serif flex items-center justify-between cursor-pointer ${
                   isMatched
                     ? 'border-emerald-200 bg-emerald-50/40 text-slate-400 dark:border-emerald-955/20 dark:bg-emerald-955/10 cursor-not-allowed font-medium'
                     : isFailed

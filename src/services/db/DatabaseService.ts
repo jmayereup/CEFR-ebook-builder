@@ -113,8 +113,14 @@ export interface IDatabaseService {
   /** Fetch a user's full profile. */
   fetchUserProfile(userId: string): Promise<UserProfileData | null>;
 
-  /** Persist the full saved-vocabulary array. */
-  saveUserVocab(userId: string, vocab: VocabularyTerm[]): Promise<void>;
+  /** Fetch the user's saved vocabulary from the saved_words collection. */
+  fetchUserVocab(userId: string): Promise<VocabularyTerm[]>;
+
+  /** Save a single word to the saved_words collection, or update it if it exists. Returns the new/updated term. */
+  saveWord(userId: string, term: VocabularyTerm): Promise<VocabularyTerm>;
+
+  /** Remove a saved word from the saved_words collection */
+  deleteWord(userId: string, wordText: string): Promise<void>;
 
   /** Update the daily lookup counter. */
   saveUserLookupLimit(userId: string, data: LookupLimitData): Promise<void>;

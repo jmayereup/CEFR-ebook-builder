@@ -1,10 +1,16 @@
 export interface VocabularyTerm {
+  id?: string; // PocketBase record ID (if saved)
   word: string;
   partOfSpeech: string;
   definition: string;
   contextSentence: string;
   language?: string;
   transliteration?: string;
+  // SRS Fields
+  nextReviewDate?: string;
+  repetition?: number;
+  interval?: number;
+  easeFactor?: number;
 }
 
 export interface Chapter {

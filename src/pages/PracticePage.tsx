@@ -11,6 +11,7 @@ interface PracticePageProps {
   savedVocab: VocabularyTerm[];
   handleRemoveSavedWord: (termId: string) => Promise<void>;
   handleRecordDailyActivity: () => Promise<void>;
+  onUpdateWordSRS: (term: VocabularyTerm, isCorrect: boolean) => void;
 }
 
 export default function PracticePage({
@@ -18,6 +19,7 @@ export default function PracticePage({
   savedVocab,
   handleRemoveSavedWord,
   handleRecordDailyActivity,
+  onUpdateWordSRS,
 }: PracticePageProps) {
   return (
     <div className="space-y-6">
@@ -52,6 +54,7 @@ export default function PracticePage({
           story={selectedStory}
           savedVocab={savedVocab}
           onRemoveSavedWord={handleRemoveSavedWord}
+          onUpdateWordSRS={onUpdateWordSRS}
           onVocabActivity={() => {
             handleRecordDailyActivity();
           }}

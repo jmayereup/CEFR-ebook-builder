@@ -17,6 +17,7 @@ export const Collections = {
   PictureDescriptions: 'pictureDescriptions',
   Stories: 'stories',
   StoryCompletions: 'story_completions',
+  SavedWords: 'saved_words',
   TeamGames: 'teamGames',
   Users: 'users',
   Worksheets: 'worksheets',
@@ -245,6 +246,20 @@ export type StoriesRecord<
   wordCount?: number;
 };
 
+export type SavedWordsRecord = {
+  user: RecordIdString;
+  word: string;
+  partOfSpeech?: string;
+  definition: string;
+  contextSentence?: string;
+  language?: string;
+  transliteration?: string;
+  nextReviewDate?: IsoDateString;
+  repetition?: number;
+  interval?: number;
+  easeFactor?: number;
+};
+
 export type TeamGamesRecord = {
   created: IsoAutoDateString;
   id: string;
@@ -387,6 +402,8 @@ export type StoriesResponse<
   StoriesRecord<Tchapters, TconsistencyAudits, Tratings, TstoryBible>
 > &
   BaseSystemFields<Texpand>;
+export type SavedWordsResponse<Texpand = unknown> = Required<SavedWordsRecord> &
+  BaseSystemFields<Texpand>;
 export type TeamGamesResponse<Texpand = unknown> = Required<TeamGamesRecord> &
   BaseSystemFields<Texpand>;
 export type UsersResponse<
@@ -443,6 +460,7 @@ export type CollectionRecords = {
   pictureDescriptions: PictureDescriptionsRecord;
   stories: StoriesRecord;
   story_completions: StoryCompletionsRecord;
+  saved_words: SavedWordsRecord;
   teamGames: TeamGamesRecord;
   users: UsersRecord;
   worksheets: WorksheetsRecord;
@@ -460,6 +478,7 @@ export type CollectionResponses = {
   pictureDescriptions: PictureDescriptionsResponse;
   stories: StoriesResponse;
   story_completions: StoryCompletionsResponse;
+  saved_words: SavedWordsResponse;
   teamGames: TeamGamesResponse;
   users: UsersResponse;
   worksheets: WorksheetsResponse;

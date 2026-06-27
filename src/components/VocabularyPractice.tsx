@@ -14,8 +14,8 @@ import VocabListView from './vocabulary/VocabListView';
 
 interface VocabularyPracticeProps {
   story?: Story | null;
-  savedVocab?: VocabularyTerm[];
   onRemoveSavedWord?: (word: string) => void;
+  onUpdateWordSRS?: (term: VocabularyTerm, isCorrect: boolean) => void;
   onVocabActivity?: (count: number) => void;
 }
 
@@ -23,6 +23,7 @@ export default function VocabularyPractice({
   story,
   savedVocab = [],
   onRemoveSavedWord,
+  onUpdateWordSRS,
   onVocabActivity,
 }: VocabularyPracticeProps) {
   const langCode = story ? getLanguageCodeFromName(story.language) : 'en';
@@ -81,11 +82,23 @@ export default function VocabularyPractice({
     }
   }, [uniqueLanguages, selectedLang]);
 
-  // Filter terms by selected language
+  // Filter terms by selected language and sort by SRS priority (due words first)
   const filteredVocab = useMemo(() => {
-    return allVocab.filter((t) => {
+    const filtered = allVocab.filter((t) => {
       const termLang = t.language || story?.language || 'Unknown';
       return selectedLang === 'All' || termLang === selectedLang;
+    });
+
+    return filtered.sort((a, b) => {
+      // If neither has review date, sort alphabetically
+      if (!a.nextReviewDate && !b.nextReviewDate) return a.word.localeCompare(b.word);
+      // If one is missing review date (new word), prioritize it slightly
+      if (!a.nextReviewDate) return -1;
+      if (!b.nextReviewDate) return 1;
+      
+      const dateA = new Date(a.nextReviewDate).getTime();
+      const dateB = new Date(b.nextReviewDate).getTime();
+      return dateA - dateB;
     });
   }, [allVocab, selectedLang, story]);
 
@@ -273,6 +286,7 @@ export default function VocabularyPractice({
             terms={filteredVocab}
             langCode={langCode}
             onVocabActivity={onVocabActivity}
+            onUpdateWordSRS={onUpdateWordSRS}
             playWord={playWord}
           />
         )}
@@ -282,6 +296,7 @@ export default function VocabularyPractice({
             terms={filteredVocab}
             langCode={langCode}
             onVocabActivity={onVocabActivity}
+            onUpdateWordSRS={onUpdateWordSRS}
             playWord={playWord}
           />
         )}

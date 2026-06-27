@@ -8,6 +8,7 @@ interface FlashcardsDeckProps {
   terms: VocabularyTerm[];
   langCode: string;
   onVocabActivity?: (count: number) => void;
+  onUpdateWordSRS?: (term: VocabularyTerm, isCorrect: boolean) => void;
   playWord: (word: string, customLanguage?: string) => void;
   key?: string;
 }
@@ -16,6 +17,7 @@ export default function FlashcardsDeck({
   terms,
   langCode,
   onVocabActivity,
+  onUpdateWordSRS,
   playWord,
 }: FlashcardsDeckProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -81,6 +83,7 @@ export default function FlashcardsDeck({
       setKnownCount((c) => c + 1);
       setPendingCount((c) => c + 1);
     }
+    onUpdateWordSRS?.(activeTerm, known);
     setIsFlipped(false);
     setTimeout(() => {
       setCurrentIndex((prev) => (prev + 1) % terms.length);
@@ -166,9 +169,9 @@ export default function FlashcardsDeck({
                 <div className="flex items-center justify-center gap-1.5 mt-1">
                   <span
                     lang={termLangCode}
-                    className="text-[9px] uppercase font-mono tracking-wider font-semibold text-tj-text-muted"
+                    className="text-xs uppercase font-mono tracking-wider font-semibold text-tj-text-muted"
                   >
-                    {activeTerm.word} ({activeTerm.partOfSpeech})
+                    ({activeTerm.partOfSpeech})
                   </span>
                   <button
                     type="button"
@@ -185,7 +188,7 @@ export default function FlashcardsDeck({
               </div>
               <div
                 lang={termLangCode}
-                className="bg-tj-bg-card p-3 rounded border border-tj-border-main text-xs text-tj-text-muted italic font-serif leading-relaxed max-h-[85px] overflow-y-auto"
+                className="bg-tj-bg-card p-3 rounded border border-tj-border-main text-base text-tj-text-muted italic font-serif leading-relaxed max-h-[85px] overflow-y-auto"
               >
                 "
                 {limitContextToTenWords(

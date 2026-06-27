@@ -173,6 +173,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     handleIncrementGenerationCount,
     handleSaveWord,
     handleRemoveSavedWord,
+    handleUpdateWordSRS,
     handleToggleBookshelf,
     updateRecentlyRead,
     dirty,
@@ -1059,6 +1060,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 savedVocab={savedVocab}
                 handleRemoveSavedWord={handleRemoveSavedWord}
                 handleRecordDailyActivity={handleRecordDailyActivity}
+                onUpdateWordSRS={handleUpdateWordSRS}
               />
             </motion.div>
           ) : activeTab === 'admin' &&
