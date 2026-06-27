@@ -49,6 +49,7 @@ import {
 import { useAuthStore } from './store/authStore';
 import { useUIStore } from './store/uiStore';
 import type { Story } from './types';
+import { cleanCompletedStory } from './utils/storyCleanup';
 
 interface AppProps {
   ssrPath?: string;
@@ -305,29 +306,31 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     stories,
     showAlert,
     onStoryCreated: (story) => {
-      setSelectedStory(story);
+      const cleaned = cleanCompletedStory(story);
+      setSelectedStory(cleaned);
       setActiveChapterIdx(0);
-      localStorage.setItem(`last_read_chapter_${story.id}`, '0');
+      localStorage.setItem(`last_read_chapter_${cleaned.id}`, '0');
       localStorage.setItem(
-        `cefr_story_cache_${story.id}`,
-        JSON.stringify(story),
+        `cefr_story_cache_${cleaned.id}`,
+        JSON.stringify(cleaned),
       );
       setCachedStoryIds((prev) => {
-        if (prev.includes(story.id)) return prev;
-        const updated = [...prev, story.id];
+        if (prev.includes(cleaned.id)) return prev;
+        const updated = [...prev, cleaned.id];
         localStorage.setItem('cefr_cached_story_ids', JSON.stringify(updated));
         return updated;
       });
-      loadStoriesMetadata({ refresh: true, storyId: story.id });
+      loadStoriesMetadata({ refresh: true, storyId: cleaned.id });
       setActiveTab('browse');
     },
     onStoryUpdated: (story) => {
-      setSelectedStory(story);
+      const cleaned = cleanCompletedStory(story);
+      setSelectedStory(cleaned);
       localStorage.setItem(
-        `cefr_story_cache_${story.id}`,
-        JSON.stringify(story),
+        `cefr_story_cache_${cleaned.id}`,
+        JSON.stringify(cleaned),
       );
-      loadStoriesMetadata({ refresh: true, storyId: story.id });
+      loadStoriesMetadata({ refresh: true, storyId: cleaned.id });
     },
     onLoginRequired: () => setShowLoginPrompt(true),
   });
@@ -927,18 +930,19 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 handleIncrementLookupCount={handleIncrementLookupCount}
                 savedVocab={savedVocab}
                 onStoryUpdated={(updatedStory) => {
-                  setSelectedStory(updatedStory);
+                  const cleaned = cleanCompletedStory(updatedStory);
+                  setSelectedStory(cleaned);
                   localStorage.setItem(
-                    `cefr_story_cache_${updatedStory.id}`,
-                    JSON.stringify(updatedStory),
+                    `cefr_story_cache_${cleaned.id}`,
+                    JSON.stringify(cleaned),
                   );
                   // Only refresh metadata if the story is already saved in database.
                   // Unsaved drafts have no server record yet, so fetching would be
                   // a no-op and incorrectly sets storiesLoading=true, freezing the UI.
-                  if (!updatedStory.isUnsaved) {
+                  if (!cleaned.isUnsaved) {
                     loadStoriesMetadata({
                       refresh: true,
-                      storyId: updatedStory.id,
+                      storyId: cleaned.id,
                     });
                   }
                 }}

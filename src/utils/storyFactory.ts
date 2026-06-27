@@ -8,6 +8,7 @@
 
 import type { StoryConfig } from '../hooks/useStoryGeneration';
 import type { Chapter, Story } from '../types';
+import { cleanCompletedStory } from './storyCleanup';
 
 export interface StoryCreationParams {
   storyId: string;
@@ -69,5 +70,5 @@ export const buildStory = (params: StoryCreationParams): Story => {
   if (config.translationLanguage != null)
     newStory.translationLanguage = config.translationLanguage;
 
-  return newStory;
+  return cleanCompletedStory(newStory);
 };

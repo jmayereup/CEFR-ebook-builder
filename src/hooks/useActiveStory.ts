@@ -6,6 +6,7 @@ import {
 } from 'react';
 import type { RecentlyReadItem } from '../services/db';
 import type { Chapter, Story, VocabularyTerm } from '../types';
+import { cleanCompletedStory } from '../utils/storyCleanup';
 
 interface UseActiveStoryOptions {
   currentUser: { uid: string; email: string | null } | null;
@@ -192,13 +193,13 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       const newTotal = Math.max(1, selectedStory.totalChapters - 1);
       const isCompleted = reindexedChapters.length >= newTotal;
 
-      const updatedStory = {
+      const updatedStory = cleanCompletedStory({
         ...selectedStory,
         chapters: reindexedChapters,
         totalChapters: newTotal,
         isCompleted,
         isUnsaved: true,
-      };
+      });
       setSelectedStory(updatedStory);
       localStorage.setItem(
         `cefr_story_cache_${updatedStory.id}`,
@@ -258,13 +259,13 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       );
       const isCompleted = updatedChapters.length >= newTotal;
 
-      const updatedStory = {
+      const updatedStory = cleanCompletedStory({
         ...selectedStory,
         chapters: updatedChapters,
         totalChapters: newTotal,
         isCompleted,
         isUnsaved: true,
-      };
+      });
       setSelectedStory(updatedStory);
       localStorage.setItem(
         `cefr_story_cache_${updatedStory.id}`,

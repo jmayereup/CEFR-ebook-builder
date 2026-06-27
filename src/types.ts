@@ -68,8 +68,8 @@ export interface Story {
   initialCreditsEstimate?: number;
   creditsCharged?: number;
   regenerationsCount?: number;
-  storyBible?: StoryBible;
-  consistencyAudits?: ConsistencyAudit[];
+  storyBible?: StoryBible | null;
+  consistencyAudits?: ConsistencyAudit[] | null;
   toneRefreshGuidance?: string;
   isUnsaved?: boolean;
   completedBy?: Record<string, number>;

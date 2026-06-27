@@ -44,6 +44,14 @@ export class PocketBaseService implements IDatabaseService {
     // Strip client-only fields (e.g., isUnsaved)
     const { isUnsaved, ...pbStory } = story as any;
 
+    if (pbStory.isCompleted) {
+      pbStory.promptNotes = '';
+      pbStory.outline = '';
+      pbStory.storyBible = null;
+      pbStory.consistencyAudits = null;
+      pbStory.toneRefreshGuidance = '';
+    }
+
     try {
       const { id, ...updateData } = pbStory;
       await pb.collection('stories').update(pbStory.id, updateData);
@@ -137,12 +145,20 @@ export class PocketBaseService implements IDatabaseService {
     totalChapters: number,
     creditsCharged?: number,
   ): Promise<void> {
+    const isCompleted = (updatedChapters || []).length >= totalChapters;
     const updates: Record<string, any> = {
       chapters: updatedChapters,
-      isCompleted: (updatedChapters || []).length >= totalChapters,
+      isCompleted,
     };
     if (creditsCharged !== undefined) {
       updates.creditsCharged = creditsCharged;
+    }
+    if (isCompleted) {
+      updates.promptNotes = '';
+      updates.outline = '';
+      updates.storyBible = null;
+      updates.consistencyAudits = null;
+      updates.toneRefreshGuidance = '';
     }
     await pb.collection('stories').update(storyId, updates);
   }
@@ -167,6 +183,14 @@ export class PocketBaseService implements IDatabaseService {
     if (regenerationsCount !== undefined)
       updates.regenerationsCount = regenerationsCount;
     if (creditsCharged !== undefined) updates.creditsCharged = creditsCharged;
+
+    if (updates.isCompleted) {
+      updates.promptNotes = '';
+      updates.outline = '';
+      updates.storyBible = null;
+      updates.consistencyAudits = null;
+      updates.toneRefreshGuidance = '';
+    }
     await pb.collection('stories').update(storyId, updates);
   }
 
