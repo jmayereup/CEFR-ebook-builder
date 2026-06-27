@@ -1,6 +1,6 @@
-import PocketBase from 'pocketbase';
 import { config } from 'dotenv';
 import { resolve } from 'path';
+import PocketBase from 'pocketbase';
 
 // Load environment variables from .env file
 config({ path: resolve(process.cwd(), '.env') });
@@ -10,8 +10,10 @@ const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
 const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
 
 if (!url || !adminEmail || !adminPassword) {
-  console.error("Missing required environment variables in .env file.");
-  console.error("Required: VITE_POCKETBASE_URL, POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD");
+  console.error('Missing required environment variables in .env file.');
+  console.error(
+    'Required: VITE_POCKETBASE_URL, POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD',
+  );
   process.exit(1);
 }
 
@@ -22,14 +24,16 @@ async function main() {
     console.log(`Connecting to PocketBase at: ${url}`);
     console.log(`Authenticating as: ${adminEmail}`);
     await pb.admins.authWithPassword(adminEmail, adminPassword);
-    console.log("Successfully authenticated as Admin.");
+    console.log('Successfully authenticated as Admin.');
 
-    console.log("Fetching completed stories...");
+    console.log('Fetching completed stories...');
     const stories = await pb.collection('stories').getFullList({
       filter: 'isCompleted = true',
     });
 
-    console.log(`Found ${stories.length} completed stories. Scanning for setup data to clean up...`);
+    console.log(
+      `Found ${stories.length} completed stories. Scanning for setup data to clean up...`,
+    );
 
     let cleanedCount = 0;
     for (const story of stories) {

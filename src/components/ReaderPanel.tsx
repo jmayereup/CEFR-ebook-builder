@@ -146,25 +146,16 @@ export default function ReaderPanel({
   const hasFinishedRef = useRef(false);
   const [sessionFinished, setSessionFinished] = useState(false);
 
+  // Reset hasFinishedChapter when chapter or story changes, and set up scroll observer
   useEffect(() => {
+    // Reference activeChapterIndex and story.id to ensure effect re-runs when they change
+    const _chapterRef = activeChapterIndex;
+    const _storyIdRef = story.id;
+
     hasFinishedRef.current = false;
     setHasFinishedChapter(false);
-  }, []);
 
-  useEffect(() => {
-    const completedByObj = story.completedBy || {};
-    const userReadCount = currentUser?.uid
-      ? completedByObj[currentUser.uid] || 0
-      : 0;
-    const isLocalRead =
-      typeof window !== 'undefined' &&
-      localStorage.getItem(`completed_story_${story.id}`) === 'true';
-    setSessionFinished(userReadCount > 0 || isLocalRead);
-  }, [story.id, story.completedBy, currentUser]);
-
-  useEffect(() => {
-    if (hasFinishedRef.current || hasFinishedChapter || !sentinelRef.current)
-      return;
+    if (!sentinelRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -190,7 +181,18 @@ export default function ReaderPanel({
     return () => {
       observer.disconnect();
     };
-  }, [hasFinishedChapter, onChapterFinished]);
+  }, [activeChapterIndex, story.id, onChapterFinished]);
+
+  useEffect(() => {
+    const completedByObj = story.completedBy || {};
+    const userReadCount = currentUser?.uid
+      ? completedByObj[currentUser.uid] || 0
+      : 0;
+    const isLocalRead =
+      typeof window !== 'undefined' &&
+      localStorage.getItem(`completed_story_${story.id}`) === 'true';
+    setSessionFinished(userReadCount > 0 || isLocalRead);
+  }, [story.id, story.completedBy, currentUser]);
 
   const [fontSize, setFontSize] = useState<number>(() => {
     if (typeof window !== 'undefined') {

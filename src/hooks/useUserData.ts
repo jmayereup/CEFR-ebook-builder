@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  deleteWord,
   fetchUserProfile,
   fetchUserVocab,
-  saveWord,
-  deleteWord,
   type GenerationLimitData,
   type RecentlyReadItem,
   saveUserGenerationLimit,
   saveUserProfileData,
+  saveWord,
 } from '../services/db';
 import type { VocabularyTerm } from '../types';
 import { calculateNextSRS } from '../utils/srs';
@@ -313,7 +313,11 @@ export function useUserData(options: UseUserDataOptions) {
       const updated = [...savedVocab, wordObj];
       setSavedVocab(updated);
       localStorage.setItem('saved_vocab', JSON.stringify(updated));
-      showAlert('Word Saved Locally', `"${wordObj.word}" saved to your local device.`, 'info');
+      showAlert(
+        'Word Saved Locally',
+        `"${wordObj.word}" saved to your local device.`,
+        'info',
+      );
     }
   };
 
@@ -332,7 +336,10 @@ export function useUserData(options: UseUserDataOptions) {
     localStorage.setItem('saved_vocab', JSON.stringify(updated));
   };
 
-  const handleUpdateWordSRS = async (term: VocabularyTerm, isCorrect: boolean) => {
+  const handleUpdateWordSRS = async (
+    term: VocabularyTerm,
+    isCorrect: boolean,
+  ) => {
     const updatedSrs = calculateNextSRS(
       {
         nextReviewDate: term.nextReviewDate,
@@ -340,7 +347,7 @@ export function useUserData(options: UseUserDataOptions) {
         interval: term.interval,
         easeFactor: term.easeFactor,
       },
-      isCorrect
+      isCorrect,
     );
 
     const updatedTerm: VocabularyTerm = {
@@ -352,7 +359,9 @@ export function useUserData(options: UseUserDataOptions) {
       try {
         const savedTerm = await saveWord(currentUser.uid, updatedTerm);
         setSavedVocab((prev) => {
-          const filtered = prev.filter((v) => v.word.toLowerCase() !== savedTerm.word.toLowerCase());
+          const filtered = prev.filter(
+            (v) => v.word.toLowerCase() !== savedTerm.word.toLowerCase(),
+          );
           const updated = [...filtered, savedTerm];
           localStorage.setItem('saved_vocab', JSON.stringify(updated));
           return updated;
@@ -363,7 +372,9 @@ export function useUserData(options: UseUserDataOptions) {
     } else {
       // Local fallback
       setSavedVocab((prev) => {
-        const filtered = prev.filter((v) => v.word.toLowerCase() !== updatedTerm.word.toLowerCase());
+        const filtered = prev.filter(
+          (v) => v.word.toLowerCase() !== updatedTerm.word.toLowerCase(),
+        );
         const updated = [...filtered, updatedTerm];
         localStorage.setItem('saved_vocab', JSON.stringify(updated));
         return updated;
@@ -405,7 +416,7 @@ export function useUserData(options: UseUserDataOptions) {
         try {
           const profile = await fetchUserProfile(currentUser.uid);
           const vocab = await fetchUserVocab(currentUser.uid);
-          
+
           if (profile) {
             setSavedVocab(vocab);
             setIsPaid(profile.isPaid ?? false);

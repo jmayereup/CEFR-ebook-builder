@@ -169,13 +169,13 @@ export default function FlashcardsDeck({
                   }}
                   className="bg-tj-bg-recessed p-3 rounded border border-tj-border-main text-base text-tj-text-muted italic font-serif leading-relaxed max-h-[85px] overflow-y-auto mt-3 w-full"
                 >
-                  {"\""}
+                  {'"'}
                   {limitContextToTenWords(
                     activeTerm.contextSentence,
                     activeTerm.word,
                     termLangCode,
                   )}
-                  {"\""}
+                  {'"'}
                 </div>
               )}
             </div>

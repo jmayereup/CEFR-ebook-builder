@@ -747,6 +747,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     setFilterGenre,
     filterStatus,
     setFilterStatus,
+    filterReadingStatus,
+    setFilterReadingStatus,
     sortBy,
     setSortBy,
     visibleStories,
@@ -994,6 +996,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 setFilterGenre={setFilterGenre}
                 filterStatus={filterStatus}
                 setFilterStatus={setFilterStatus}
+                filterReadingStatus={filterReadingStatus}
+                setFilterReadingStatus={setFilterReadingStatus}
               />
             </motion.div>
           ) : activeTab === 'bookshelf' && currentUser ? (
@@ -1030,6 +1034,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 setFilterGenre={setFilterGenre}
                 filterStatus={filterStatus}
                 setFilterStatus={setFilterStatus}
+                filterReadingStatus={filterReadingStatus}
+                setFilterReadingStatus={setFilterReadingStatus}
                 onRefreshPrivateStories={loadPrivateStories}
                 privateStoriesLoading={privateStoriesLoading}
               />

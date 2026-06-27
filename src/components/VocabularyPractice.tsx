@@ -92,11 +92,12 @@ export default function VocabularyPractice({
 
     return filtered.sort((a, b) => {
       // If neither has review date, sort alphabetically
-      if (!a.nextReviewDate && !b.nextReviewDate) return a.word.localeCompare(b.word);
+      if (!a.nextReviewDate && !b.nextReviewDate)
+        return a.word.localeCompare(b.word);
       // If one is missing review date (new word), prioritize it slightly
       if (!a.nextReviewDate) return -1;
       if (!b.nextReviewDate) return 1;
-      
+
       const dateA = new Date(a.nextReviewDate).getTime();
       const dateB = new Date(b.nextReviewDate).getTime();
       return dateA - dateB;

@@ -1,7 +1,7 @@
-import PocketBase from 'pocketbase';
 import { config } from 'dotenv';
-import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+import PocketBase from 'pocketbase';
+import { fileURLToPath } from 'url';
 
 config({ path: resolve(process.cwd(), '.env') });
 
@@ -10,7 +10,7 @@ const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
 const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
 
 if (!url || !adminEmail || !adminPassword) {
-  console.error("Missing required environment variables.");
+  console.error('Missing required environment variables.');
   process.exit(1);
 }
 
@@ -20,16 +20,16 @@ async function main() {
   try {
     console.log(`Authenticating as ${adminEmail}...`);
     await pb.admins.authWithPassword(adminEmail, adminPassword);
-    
-    console.log("Fetching users collection info...");
+
+    console.log('Fetching users collection info...');
     const usersCol = await pb.collections.getOne('users');
 
     try {
       await pb.collections.delete('saved_words');
       console.log('Deleted existing saved_words collection');
-    } catch(e) {}
+    } catch (e) {}
 
-    console.log("Creating saved_words collection...");
+    console.log('Creating saved_words collection...');
     const collection = await pb.collections.create({
       name: 'saved_words',
       type: 'base',
@@ -41,7 +41,7 @@ async function main() {
           required: true,
           collectionId: usersCol.id,
           cascadeDelete: true,
-          maxSelect: 1
+          maxSelect: 1,
         },
         { name: 'word', type: 'text', required: true },
         { name: 'partOfSpeech', type: 'text', required: false },
@@ -52,16 +52,19 @@ async function main() {
         { name: 'nextReviewDate', type: 'date', required: false },
         { name: 'repetition', type: 'number', required: false },
         { name: 'interval', type: 'number', required: false },
-        { name: 'easeFactor', type: 'number', required: false }
+        { name: 'easeFactor', type: 'number', required: false },
       ],
       listRule: 'user = @request.auth.id',
       viewRule: 'user = @request.auth.id',
       createRule: 'user = @request.auth.id',
       updateRule: 'user = @request.auth.id',
-      deleteRule: 'user = @request.auth.id'
+      deleteRule: 'user = @request.auth.id',
     });
 
-    console.log('Successfully created saved_words collection with ID:', collection.id);
+    console.log(
+      'Successfully created saved_words collection with ID:',
+      collection.id,
+    );
   } catch (err: any) {
     console.error('Failed to create collection:');
     if (err.response) {

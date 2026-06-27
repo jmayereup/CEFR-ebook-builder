@@ -215,4 +215,3 @@ export interface SRSRecord {
   easeFactor: number;
   nextReviewDate: string;
 }
-

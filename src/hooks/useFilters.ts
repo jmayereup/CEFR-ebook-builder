@@ -23,6 +23,7 @@ export function useFilters(options: UseFiltersOptions) {
   });
   const [filterGenre, setFilterGenre] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [filterReadingStatus, setFilterReadingStatus] = useState('All');
   const [sortBy, setSortBy] = useState<SortBy>('newest');
 
   // Remember library filters
@@ -55,7 +56,10 @@ export function useFilters(options: UseFiltersOptions) {
         filterCefrLevel,
         filterGenre,
         filterStatus,
+        filterReadingStatus,
         sortBy,
+        currentUser,
+        recentlyRead,
       }),
     [
       visibleStories,
@@ -64,7 +68,10 @@ export function useFilters(options: UseFiltersOptions) {
       filterCefrLevel,
       filterGenre,
       filterStatus,
+      filterReadingStatus,
       sortBy,
+      currentUser,
+      recentlyRead,
     ],
   );
 
@@ -90,7 +97,10 @@ export function useFilters(options: UseFiltersOptions) {
         filterCefrLevel,
         filterGenre,
         filterStatus,
+        filterReadingStatus,
         sortBy,
+        currentUser,
+        recentlyRead,
       }),
     [
       bookshelfStories,
@@ -99,7 +109,10 @@ export function useFilters(options: UseFiltersOptions) {
       filterCefrLevel,
       filterGenre,
       filterStatus,
+      filterReadingStatus,
       sortBy,
+      currentUser,
+      recentlyRead,
     ],
   );
 
@@ -129,6 +142,8 @@ export function useFilters(options: UseFiltersOptions) {
     setFilterGenre,
     filterStatus,
     setFilterStatus,
+    filterReadingStatus,
+    setFilterReadingStatus,
     sortBy,
     setSortBy,
     visibleStories,

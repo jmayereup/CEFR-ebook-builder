@@ -17,7 +17,11 @@ import type {
   MetadataOptions,
   ProfileUpdatePayload,
 } from './DatabaseService';
-import type { SavedWordsResponse, StoriesResponse, UsersResponse } from './pocketbase-types';
+import type {
+  SavedWordsResponse,
+  StoriesResponse,
+  UsersResponse,
+} from './pocketbase-types';
 
 type AppUsersResponse = UsersResponse<
   any, // beginnerLessons
@@ -359,8 +363,8 @@ export class PocketBaseService implements IDatabaseService {
           filter: `user = "${userId}"`,
           sort: '-id',
         });
-      
-      return records.map(record => ({
+
+      return records.map((record) => ({
         id: record.id,
         word: record.word,
         partOfSpeech: record.partOfSpeech || '',
@@ -379,7 +383,10 @@ export class PocketBaseService implements IDatabaseService {
     }
   }
 
-  async saveWord(userId: string, term: VocabularyTerm): Promise<VocabularyTerm> {
+  async saveWord(
+    userId: string,
+    term: VocabularyTerm,
+  ): Promise<VocabularyTerm> {
     const payload = {
       user: userId,
       word: term.word,
@@ -395,26 +402,36 @@ export class PocketBaseService implements IDatabaseService {
     };
 
     if (term.id) {
-      const updated = await pb.collection('saved_words').update<SavedWordsResponse>(term.id, payload);
+      const updated = await pb
+        .collection('saved_words')
+        .update<SavedWordsResponse>(term.id, payload);
       return { ...term, id: updated.id };
     } else {
       // Check if it already exists to avoid duplicates
-      const existing = await pb.collection('saved_words').getList<SavedWordsResponse>(1, 1, {
-        filter: `user = "${userId}" && word = "${term.word.toLowerCase()}"`,
-      });
+      const existing = await pb
+        .collection('saved_words')
+        .getList<SavedWordsResponse>(1, 1, {
+          filter: `user = "${userId}" && word = "${term.word.toLowerCase()}"`,
+        });
       if (existing.items.length > 0) {
-        const updated = await pb.collection('saved_words').update<SavedWordsResponse>(existing.items[0].id, payload);
+        const updated = await pb
+          .collection('saved_words')
+          .update<SavedWordsResponse>(existing.items[0].id, payload);
         return { ...term, id: updated.id };
       }
-      const created = await pb.collection('saved_words').create<SavedWordsResponse>(payload);
+      const created = await pb
+        .collection('saved_words')
+        .create<SavedWordsResponse>(payload);
       return { ...term, id: created.id };
     }
   }
 
   async deleteWord(userId: string, wordText: string): Promise<void> {
-    const existing = await pb.collection('saved_words').getList<SavedWordsResponse>(1, 1, {
-      filter: `user = "${userId}" && word = "${wordText.toLowerCase()}"`,
-    });
+    const existing = await pb
+      .collection('saved_words')
+      .getList<SavedWordsResponse>(1, 1, {
+        filter: `user = "${userId}" && word = "${wordText.toLowerCase()}"`,
+      });
     if (existing.items.length > 0) {
       await pb.collection('saved_words').delete(existing.items[0].id);
     }

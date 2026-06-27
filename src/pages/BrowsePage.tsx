@@ -34,6 +34,8 @@ interface BrowsePageProps {
   setFilterGenre: (genre: string) => void;
   filterStatus: string;
   setFilterStatus: (status: string) => void;
+  filterReadingStatus: string;
+  setFilterReadingStatus: (status: string) => void;
 }
 
 export default function BrowsePage({
@@ -60,6 +62,8 @@ export default function BrowsePage({
   setFilterGenre,
   filterStatus,
   setFilterStatus,
+  filterReadingStatus,
+  setFilterReadingStatus,
 }: BrowsePageProps) {
   return (
     <div className="space-y-8">
@@ -93,6 +97,8 @@ export default function BrowsePage({
         setFilterGenre={setFilterGenre}
         filterStatus={filterStatus}
         setFilterStatus={setFilterStatus}
+        filterReadingStatus={filterReadingStatus}
+        setFilterReadingStatus={setFilterReadingStatus}
       />
     </div>
   );

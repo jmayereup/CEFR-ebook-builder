@@ -1,4 +1,4 @@
-import { type SRSRecord } from '../types';
+import type { SRSRecord } from '../types';
 
 /**
  * Calculates the next Spaced Repetition state using a simplified SuperMemo-2 (SM-2) algorithm.
@@ -9,7 +9,7 @@ import { type SRSRecord } from '../types';
  */
 export function calculateNextSRS(
   currentSRS: Partial<SRSRecord> | undefined,
-  isCorrect: boolean
+  isCorrect: boolean,
 ): SRSRecord {
   let repetition = currentSRS?.repetition ?? 0;
   let interval = currentSRS?.interval ?? 0;

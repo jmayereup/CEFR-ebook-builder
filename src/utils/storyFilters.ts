@@ -5,7 +5,7 @@
  * for `filteredStories` and `filteredBookshelfStories`.
  */
 
-import type { Story } from '../types';
+import type { Story, RecentlyReadItem } from '../types';
 import { GENRES } from '../types';
 import { getModelDisplayName } from './modelUtils';
 
@@ -16,8 +16,11 @@ export interface StoryFilters {
   filterCefrLevel: string;
   filterGenre: string;
   filterStatus: string;
+  filterReadingStatus: string;
   searchQuery: string;
   sortBy: SortBy;
+  currentUser: { uid: string } | null;
+  recentlyRead: RecentlyReadItem[];
 }
 
 /** Returns the resolved chapter count for a story (handles metadata-only stories). */
@@ -41,8 +44,11 @@ export const filterAndSortStories = (
     filterCefrLevel,
     filterGenre,
     filterStatus,
+    filterReadingStatus,
     searchQuery,
     sortBy,
+    currentUser,
+    recentlyRead,
   } = filters;
 
   return stories
@@ -67,7 +73,7 @@ export const filterAndSortStories = (
         if (!matchId && !matchLabel && !matchDirect) return false;
       }
 
-      // 4. Status filter
+      // 4. Status filter (Writing / Generation Status)
       if (filterStatus !== 'All') {
         const isCompleted =
           story.isCompleted !== undefined
@@ -75,6 +81,25 @@ export const filterAndSortStories = (
             : getChaptersCount(story) >= story.totalChapters;
         if (filterStatus === 'Completed' && !isCompleted) return false;
         if (filterStatus === 'In-Progress' && isCompleted) return false;
+      }
+
+      // 4b. Reading Status filter
+      if (filterReadingStatus !== 'All') {
+        let isRead = false;
+        if (currentUser) {
+          isRead = (story.completedBy?.[currentUser.uid] || 0) > 0;
+        } else {
+          isRead =
+            typeof window !== 'undefined' &&
+            localStorage.getItem(`completed_story_${story.id}`) === 'true';
+        }
+
+        const isInProgress =
+          recentlyRead.some((item) => item.storyId === story.id) && !isRead;
+
+        if (filterReadingStatus === 'Completed' && !isRead) return false;
+        if (filterReadingStatus === 'In-Progress' && !isInProgress) return false;
+        if (filterReadingStatus === 'Unread' && (isRead || isInProgress)) return false;
       }
 
       // 5. Search query

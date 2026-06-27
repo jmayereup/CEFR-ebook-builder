@@ -39,6 +39,8 @@ interface BookshelfPageProps {
   setFilterGenre: (genre: string) => void;
   filterStatus: string;
   setFilterStatus: (status: string) => void;
+  filterReadingStatus: string;
+  setFilterReadingStatus: (status: string) => void;
   onRefreshPrivateStories: () => Promise<void>;
   privateStoriesLoading: boolean;
 }
@@ -70,6 +72,8 @@ export default function BookshelfPage({
   setFilterGenre,
   filterStatus,
   setFilterStatus,
+  filterReadingStatus,
+  setFilterReadingStatus,
   onRefreshPrivateStories,
   privateStoriesLoading,
 }: BookshelfPageProps) {
@@ -131,6 +135,8 @@ export default function BookshelfPage({
         setFilterGenre={setFilterGenre}
         filterStatus={filterStatus}
         setFilterStatus={setFilterStatus}
+        filterReadingStatus={filterReadingStatus}
+        setFilterReadingStatus={setFilterReadingStatus}
       />
     </div>
   );
