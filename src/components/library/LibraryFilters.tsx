@@ -13,8 +13,6 @@ interface LibraryFiltersProps {
   setFilterCefrLevel: (level: string) => void;
   filterGenre: string;
   setFilterGenre: (genre: string) => void;
-  filterStatus: string;
-  setFilterStatus: (status: string) => void;
   filterReadingStatus: string;
   setFilterReadingStatus: (status: string) => void;
   filteredStoriesCount: number;
@@ -32,8 +30,6 @@ export default function LibraryFilters({
   setFilterCefrLevel,
   filterGenre,
   setFilterGenre,
-  filterStatus,
-  setFilterStatus,
   filterReadingStatus,
   setFilterReadingStatus,
   filteredStoriesCount,
@@ -44,7 +40,6 @@ export default function LibraryFilters({
     filterLanguage !== 'All' ||
     filterCefrLevel !== 'All' ||
     filterGenre !== 'All' ||
-    filterStatus !== 'All' ||
     filterReadingStatus !== 'All';
 
   const handleReset = () => {
@@ -52,7 +47,6 @@ export default function LibraryFilters({
     setFilterLanguage('All');
     setFilterCefrLevel('All');
     setFilterGenre('All');
-    setFilterStatus('All');
     setFilterReadingStatus('All');
   };
 
@@ -109,7 +103,7 @@ export default function LibraryFilters({
       </div>
 
       {/* SELECT FILTERS GRID */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 border-t border-tj-border-main pt-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 border-t border-tj-border-main pt-3">
         {/* Language */}
         <div className="relative">
           <select
@@ -171,26 +165,6 @@ export default function LibraryFilters({
                 {g.label}
               </option>
             ))}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-tj-text-muted pointer-events-none" />
-        </div>
-
-        {/* Writing Status */}
-        <div className="relative">
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="w-full appearance-none pl-3 pr-8 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-[11px] font-medium rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans"
-          >
-            <option value="All" className="dark:bg-slate-900">
-              All Writing Statuses
-            </option>
-            <option value="Completed" className="dark:bg-slate-900">
-              Fully Generated
-            </option>
-            <option value="In-Progress" className="dark:bg-slate-900">
-              Generation In-Progress
-            </option>
           </select>
           <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-tj-text-muted pointer-events-none" />
         </div>

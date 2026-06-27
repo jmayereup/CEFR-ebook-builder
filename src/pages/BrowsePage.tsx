@@ -32,8 +32,6 @@ interface BrowsePageProps {
   setFilterCefrLevel: (level: string) => void;
   filterGenre: string;
   setFilterGenre: (genre: string) => void;
-  filterStatus: string;
-  setFilterStatus: (status: string) => void;
   filterReadingStatus: string;
   setFilterReadingStatus: (status: string) => void;
 }
@@ -60,8 +58,6 @@ export default function BrowsePage({
   setFilterCefrLevel,
   filterGenre,
   setFilterGenre,
-  filterStatus,
-  setFilterStatus,
   filterReadingStatus,
   setFilterReadingStatus,
 }: BrowsePageProps) {
@@ -95,8 +91,6 @@ export default function BrowsePage({
         setFilterCefrLevel={setFilterCefrLevel}
         filterGenre={filterGenre}
         setFilterGenre={setFilterGenre}
-        filterStatus={filterStatus}
-        setFilterStatus={setFilterStatus}
         filterReadingStatus={filterReadingStatus}
         setFilterReadingStatus={setFilterReadingStatus}
       />

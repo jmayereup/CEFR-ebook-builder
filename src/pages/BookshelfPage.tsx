@@ -37,8 +37,6 @@ interface BookshelfPageProps {
   setFilterCefrLevel: (level: string) => void;
   filterGenre: string;
   setFilterGenre: (genre: string) => void;
-  filterStatus: string;
-  setFilterStatus: (status: string) => void;
   filterReadingStatus: string;
   setFilterReadingStatus: (status: string) => void;
   onRefreshPrivateStories: () => Promise<void>;
@@ -70,8 +68,6 @@ export default function BookshelfPage({
   setFilterCefrLevel,
   filterGenre,
   setFilterGenre,
-  filterStatus,
-  setFilterStatus,
   filterReadingStatus,
   setFilterReadingStatus,
   onRefreshPrivateStories,
@@ -133,8 +129,6 @@ export default function BookshelfPage({
         setFilterCefrLevel={setFilterCefrLevel}
         filterGenre={filterGenre}
         setFilterGenre={setFilterGenre}
-        filterStatus={filterStatus}
-        setFilterStatus={setFilterStatus}
         filterReadingStatus={filterReadingStatus}
         setFilterReadingStatus={setFilterReadingStatus}
       />

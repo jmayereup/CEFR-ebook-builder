@@ -31,8 +31,6 @@ interface LibraryGridProps {
   setFilterCefrLevel: (level: string) => void;
   filterGenre: string;
   setFilterGenre: (genre: string) => void;
-  filterStatus: string;
-  setFilterStatus: (status: string) => void;
   filterReadingStatus: string;
   setFilterReadingStatus: (status: string) => void;
   bookshelf: string[];
@@ -62,8 +60,6 @@ export default function LibraryGrid({
   setFilterCefrLevel,
   filterGenre,
   setFilterGenre,
-  filterStatus,
-  setFilterStatus,
   filterReadingStatus,
   setFilterReadingStatus,
   bookshelf,
@@ -75,7 +71,25 @@ export default function LibraryGrid({
 }: LibraryGridProps) {
   const currentUser = useAuthStore((state) => state.currentUser);
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 9;
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+
+  useEffect(() => {
+    const updateItemsPerPage = () => {
+      if (typeof window === 'undefined') return;
+      const width = window.innerWidth;
+      if (width >= 1280) {
+        setItemsPerPage(10); // 5 columns * 2 rows = 10
+      } else if (width >= 640) {
+        setItemsPerPage(12); // 4 columns * 3 rows = 12, or 3 columns * 4 rows = 12
+      } else {
+        setItemsPerPage(8);  // 2 columns * 4 rows = 8
+      }
+    };
+
+    updateItemsPerPage();
+    window.addEventListener('resize', updateItemsPerPage);
+    return () => window.removeEventListener('resize', updateItemsPerPage);
+  }, []);
 
   // Reset page when filters or sorting change
   // biome-ignore lint/correctness/useExhaustiveDependencies: Reset page when filters or sorting change
@@ -86,7 +100,6 @@ export default function LibraryGrid({
     filterLanguage,
     filterCefrLevel,
     filterGenre,
-    filterStatus,
     filterReadingStatus,
     sortBy,
   ]);
@@ -96,15 +109,14 @@ export default function LibraryGrid({
     setFilterLanguage('All');
     setFilterCefrLevel('All');
     setFilterGenre('All');
-    setFilterStatus('All');
     setFilterReadingStatus('All');
   };
 
-  const totalPages = Math.ceil(filteredStories.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const totalPages = Math.ceil(filteredStories.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedStories = filteredStories.slice(
     startIndex,
-    startIndex + ITEMS_PER_PAGE,
+    startIndex + itemsPerPage,
   );
 
   // Helper to generate page numbers with ellipses
@@ -231,8 +243,6 @@ export default function LibraryGrid({
             setFilterCefrLevel={setFilterCefrLevel}
             filterGenre={filterGenre}
             setFilterGenre={setFilterGenre}
-            filterStatus={filterStatus}
-            setFilterStatus={setFilterStatus}
             filterReadingStatus={filterReadingStatus}
             setFilterReadingStatus={setFilterReadingStatus}
             filteredStoriesCount={filteredStories.length}
@@ -299,7 +309,7 @@ export default function LibraryGrid({
                     to{' '}
                     <strong className="font-semibold text-tj-text-main">
                       {Math.min(
-                        startIndex + ITEMS_PER_PAGE,
+                        startIndex + itemsPerPage,
                         filteredStories.length,
                       )}
                     </strong>{' '}

@@ -745,8 +745,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     setFilterCefrLevel,
     filterGenre,
     setFilterGenre,
-    filterStatus,
-    setFilterStatus,
     filterReadingStatus,
     setFilterReadingStatus,
     sortBy,
@@ -994,8 +992,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 setFilterCefrLevel={setFilterCefrLevel}
                 filterGenre={filterGenre}
                 setFilterGenre={setFilterGenre}
-                filterStatus={filterStatus}
-                setFilterStatus={setFilterStatus}
                 filterReadingStatus={filterReadingStatus}
                 setFilterReadingStatus={setFilterReadingStatus}
               />
@@ -1032,8 +1028,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 setFilterCefrLevel={setFilterCefrLevel}
                 filterGenre={filterGenre}
                 setFilterGenre={setFilterGenre}
-                filterStatus={filterStatus}
-                setFilterStatus={setFilterStatus}
                 filterReadingStatus={filterReadingStatus}
                 setFilterReadingStatus={setFilterReadingStatus}
                 onRefreshPrivateStories={loadPrivateStories}

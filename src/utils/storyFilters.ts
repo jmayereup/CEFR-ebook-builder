@@ -15,7 +15,6 @@ export interface StoryFilters {
   filterLanguage: string;
   filterCefrLevel: string;
   filterGenre: string;
-  filterStatus: string;
   filterReadingStatus: string;
   searchQuery: string;
   sortBy: SortBy;
@@ -43,7 +42,6 @@ export const filterAndSortStories = (
     filterLanguage,
     filterCefrLevel,
     filterGenre,
-    filterStatus,
     filterReadingStatus,
     searchQuery,
     sortBy,
@@ -71,16 +69,6 @@ export const filterAndSortStories = (
         const matchLabel = gObj ? gObj.label.toLowerCase() === sGenre : false;
         const matchDirect = filterGenre.toLowerCase() === sGenre;
         if (!matchId && !matchLabel && !matchDirect) return false;
-      }
-
-      // 4. Status filter (Writing / Generation Status)
-      if (filterStatus !== 'All') {
-        const isCompleted =
-          story.isCompleted !== undefined
-            ? story.isCompleted
-            : getChaptersCount(story) >= story.totalChapters;
-        if (filterStatus === 'Completed' && !isCompleted) return false;
-        if (filterStatus === 'In-Progress' && isCompleted) return false;
       }
 
       // 4b. Reading Status filter

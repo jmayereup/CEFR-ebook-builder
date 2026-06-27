@@ -22,7 +22,6 @@ export function useFilters(options: UseFiltersOptions) {
     return localStorage.getItem('library_filter_cefr_level') || 'All';
   });
   const [filterGenre, setFilterGenre] = useState('All');
-  const [filterStatus, setFilterStatus] = useState('All');
   const [filterReadingStatus, setFilterReadingStatus] = useState('All');
   const [sortBy, setSortBy] = useState<SortBy>('newest');
 
@@ -55,7 +54,6 @@ export function useFilters(options: UseFiltersOptions) {
         filterLanguage,
         filterCefrLevel,
         filterGenre,
-        filterStatus,
         filterReadingStatus,
         sortBy,
         currentUser,
@@ -67,7 +65,6 @@ export function useFilters(options: UseFiltersOptions) {
       filterLanguage,
       filterCefrLevel,
       filterGenre,
-      filterStatus,
       filterReadingStatus,
       sortBy,
       currentUser,
@@ -96,7 +93,6 @@ export function useFilters(options: UseFiltersOptions) {
         filterLanguage,
         filterCefrLevel,
         filterGenre,
-        filterStatus,
         filterReadingStatus,
         sortBy,
         currentUser,
@@ -108,7 +104,6 @@ export function useFilters(options: UseFiltersOptions) {
       filterLanguage,
       filterCefrLevel,
       filterGenre,
-      filterStatus,
       filterReadingStatus,
       sortBy,
       currentUser,
@@ -140,8 +135,6 @@ export function useFilters(options: UseFiltersOptions) {
     setFilterCefrLevel,
     filterGenre,
     setFilterGenre,
-    filterStatus,
-    setFilterStatus,
     filterReadingStatus,
     setFilterReadingStatus,
     sortBy,
