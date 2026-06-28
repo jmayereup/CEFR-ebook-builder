@@ -270,12 +270,12 @@ export default function TranslationToast({
                         {selectedWord.isFetching ? (
                           <>
                             <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                            <span>Fetching...</span>
+                            <span>Working...</span>
                           </>
                         ) : (
                           <>
                             <Languages className="w-2.5 h-2.5" />
-                            <span>Fetch AI Translation</span>
+                            <span>Translate</span>
                           </>
                         )}
                       </button>
