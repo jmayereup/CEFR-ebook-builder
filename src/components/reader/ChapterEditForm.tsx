@@ -1,5 +1,6 @@
 import {
   AlertCircle,
+  ChevronDown,
   X as CloseIcon,
   Loader2,
   Save,
@@ -10,7 +11,12 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
 // Firestore import removed to operate in-memory
-import type { Chapter, Story, VocabularyTerm } from '../../types';
+import {
+  type Chapter,
+  type Story,
+  SUPPORTED_LANGUAGES,
+  type VocabularyTerm,
+} from '../../types';
 
 interface ChapterEditFormProps {
   story: Story;
@@ -50,6 +56,13 @@ export default function ChapterEditForm({
   const [selectedModel, setSelectedModel] = useState<string>(
     'google/gemma-4-31b-it:free',
   );
+  const { translationTargetLanguage } = useUIStore();
+  const [selectedGlossaryLanguage, setSelectedGlossaryLanguage] =
+    useState<string>(translationTargetLanguage || 'English');
+
+  useEffect(() => {
+    setSelectedGlossaryLanguage(translationTargetLanguage);
+  }, [translationTargetLanguage]);
 
   // Sync state if activeChapter changes
   useEffect(() => {
@@ -60,7 +73,10 @@ export default function ChapterEditForm({
     setEditVocabulary(activeChapter.vocabulary || []);
   }, [activeChapter, story.title, story.description]);
 
-  const handleGenerateGlossaryFromContent = async (modelId?: string) => {
+  const handleGenerateGlossaryFromContent = async (
+    modelId?: string,
+    translationLang?: string,
+  ) => {
     if (!editContent.trim()) {
       if (onShowAlert) {
         onShowAlert(
@@ -97,6 +113,7 @@ export default function ChapterEditForm({
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
           translationLanguage:
+            translationLang ||
             story.translationLanguage ||
             useUIStore.getState().translationTargetLanguage,
         }),
@@ -246,28 +263,53 @@ export default function ChapterEditForm({
 
       {/* Glossary Editor inside Chapter editing */}
       <div className="pt-4 border-t border-tj-border-main space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-sans">
           <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
             Chapter Glossary Review ({editVocabulary.length} terms)
           </label>
-          <button
-            type="button"
-            disabled={isGeneratingGlossary}
-            onClick={handleGenerateGlossaryFromContent}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-tj-primary-light hover:bg-tj-primary-border text-tj-primary font-semibold rounded text-xs cursor-pointer border border-tj-border-main transition-all disabled:opacity-50"
-          >
-            {isGeneratingGlossary ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Generating Glossary...</span>
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Generate Glossary with AI</span>
-              </>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <select
+                value={selectedGlossaryLanguage}
+                onChange={(e) => setSelectedGlossaryLanguage(e.target.value)}
+                className="pl-2 pr-7 py-1.5 bg-white dark:bg-slate-900 border border-tj-border-main rounded text-xs font-semibold text-tj-text-main focus:outline-none focus:ring-1 focus:ring-tj-primary cursor-pointer appearance-none"
+              >
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <option key={lang.code} value={lang.name}>
+                    {lang.flag} {lang.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-tj-text-muted pointer-events-none" />
+            </div>
+            <button
+              type="button"
+              disabled={isGeneratingGlossary}
+              onClick={() =>
+                handleGenerateGlossaryFromContent(
+                  undefined,
+                  selectedGlossaryLanguage,
+                )
+              }
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-tj-primary-light hover:bg-tj-primary-border text-tj-primary font-semibold rounded text-xs cursor-pointer border border-tj-border-main transition-all disabled:opacity-50"
+            >
+              {isGeneratingGlossary ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Generating Glossary...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>
+                    {editVocabulary.length > 0
+                      ? 'Regenerate Glossary'
+                      : 'Generate Glossary with AI'}
+                  </span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {glossaryError && (
@@ -306,7 +348,12 @@ export default function ChapterEditForm({
               <button
                 type="button"
                 disabled={isGeneratingGlossary}
-                onClick={() => handleGenerateGlossaryFromContent(selectedModel)}
+                onClick={() =>
+                  handleGenerateGlossaryFromContent(
+                    selectedModel,
+                    selectedGlossaryLanguage,
+                  )
+                }
                 className="px-4 py-2 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main text-xs font-bold rounded-lg cursor-pointer transition-all disabled:opacity-50 shrink-0 border-0 flex items-center justify-center gap-1.5"
               >
                 {isGeneratingGlossary && (

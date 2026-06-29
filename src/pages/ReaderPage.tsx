@@ -64,7 +64,12 @@ interface ReaderPageProps {
   handleDeleteStory: (bypass?: boolean) => void;
   isZenMode: boolean;
   setIsZenMode: (zen: boolean) => void;
-  handleGenerateGlossary: (story: Story) => Promise<void>;
+  handleGenerateGlossary: (
+    story: Story,
+    modelId?: string,
+    translationLanguage?: string,
+    forceRegenerate?: boolean,
+  ) => Promise<void>;
   onSaveStory: (story?: Story) => Promise<any>;
   onChapterFinished?: () => void;
   onStoryFinished?: (storyId: string) => void;

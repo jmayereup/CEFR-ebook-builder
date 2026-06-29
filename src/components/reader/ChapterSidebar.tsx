@@ -1,6 +1,7 @@
 import {
   AlertCircle,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Cpu,
   Loader2,
@@ -13,10 +14,12 @@ import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { FREE_MODEL_IDS, GEMINI_MODELS } from '../../constants/models';
 import { updateStoryModel } from '../../services/db';
+import { useUIStore } from '../../store/uiStore';
 import {
   getAverageRating,
   getLanguageCodeFromName,
   type Story,
+  SUPPORTED_LANGUAGES,
   type VocabularyTerm,
 } from '../../types';
 import { extractChapterOutline } from '../../utils/outlineParser';
@@ -49,7 +52,12 @@ interface ChapterSidebarProps {
   isEditing?: boolean;
   isPaid?: boolean;
   onViewAudits?: () => void;
-  onGenerateGlossary?: (story: Story) => Promise<void>;
+  onGenerateGlossary?: (
+    story: Story,
+    modelId?: string,
+    translationLanguage?: string,
+    forceRegenerate?: boolean,
+  ) => Promise<void>;
   onStoryUpdated?: (story: Story) => void;
 }
 
@@ -78,6 +86,14 @@ export default function ChapterSidebar({
   onGenerateGlossary,
   onStoryUpdated,
 }: ChapterSidebarProps) {
+  const { translationTargetLanguage } = useUIStore();
+  const [selectedGlossaryLanguage, setSelectedGlossaryLanguage] =
+    useState<string>(translationTargetLanguage || 'English');
+
+  useEffect(() => {
+    setSelectedGlossaryLanguage(translationTargetLanguage);
+  }, [translationTargetLanguage]);
+
   const [chapterGuidance, setChapterGuidance] = useState<string>('');
   const [regenerateGuidance, setRegenerateGuidance] = useState<string>('');
 
@@ -482,17 +498,88 @@ export default function ChapterSidebar({
               <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span>Full book written!</span>
             </div>
-            {hasChaptersLackingVocabulary &&
+            {story.cefrLevel !== 'A1' &&
+              story.cefrLevel !== 'Pre-A1' &&
               onGenerateGlossary &&
               (isCreator || currentUser?.email === 'jmayereup@gmail.com') && (
-                <button
-                  disabled={isLoadingNext || isAutoGeneratingRemaining}
-                  onClick={() => onGenerateGlossary(story)}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-white" />
-                  <span>Generate Glossary</span>
-                </button>
+                <>
+                  {hasChaptersLackingVocabulary && (
+                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
+                        Glossary Language
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={selectedGlossaryLanguage}
+                          onChange={(e) =>
+                            setSelectedGlossaryLanguage(e.target.value)
+                          }
+                          className="w-full pl-3 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer appearance-none"
+                        >
+                          {SUPPORTED_LANGUAGES.map((lang) => (
+                            <option key={lang.code} value={lang.name}>
+                              {lang.flag} {lang.name}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                      </div>
+                      <button
+                        disabled={isLoadingNext || isAutoGeneratingRemaining}
+                        onClick={() =>
+                          onGenerateGlossary(
+                            story,
+                            undefined,
+                            selectedGlossaryLanguage,
+                          )
+                        }
+                        className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-white" />
+                        <span>Generate Glossary</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {isEditing && !hasChaptersLackingVocabulary && (
+                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
+                        Glossary Language
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={selectedGlossaryLanguage}
+                          onChange={(e) =>
+                            setSelectedGlossaryLanguage(e.target.value)
+                          }
+                          className="w-full pl-3 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer appearance-none"
+                        >
+                          {SUPPORTED_LANGUAGES.map((lang) => (
+                            <option key={lang.code} value={lang.name}>
+                              {lang.flag} {lang.name}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                      </div>
+                      <button
+                        disabled={isLoadingNext || isAutoGeneratingRemaining}
+                        onClick={() =>
+                          onGenerateGlossary(
+                            story,
+                            undefined,
+                            selectedGlossaryLanguage,
+                            true,
+                          )
+                        }
+                        className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-white" />
+                        <span>Regenerate Glossary</span>
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
           </div>
         )}

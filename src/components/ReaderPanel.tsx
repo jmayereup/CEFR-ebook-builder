@@ -1,6 +1,7 @@
 import {
   BookOpen,
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   X as CloseIcon,
@@ -20,6 +21,7 @@ import {
   type Chapter,
   getLanguageCodeFromName,
   type Story,
+  SUPPORTED_LANGUAGES,
   type VocabularyTerm,
 } from '../types';
 import { limitContextToTenWords, segmentText } from '../utils/segmenter';
@@ -83,7 +85,12 @@ interface ReaderPanelProps {
   onToggleZen: (zen: boolean) => void;
   onDownloadEpub?: () => void;
   isAutoGenerationPaused?: boolean;
-  onGenerateGlossary?: (story: Story) => Promise<void>;
+  onGenerateGlossary?: (
+    story: Story,
+    modelId?: string,
+    translationLanguage?: string,
+    forceRegenerate?: boolean,
+  ) => Promise<void>;
   onSaveStory?: (story?: Story) => Promise<any>;
   onChapterFinished?: () => void;
   onStoryFinished?: (storyId: string) => void;
@@ -141,6 +148,13 @@ export default function ReaderPanel({
   const isOnline = useUIStore((state) => state.isOnline);
   const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
   const currentUser = useAuthStore((state) => state.currentUser);
+
+  const [selectedGlossaryLanguage, setSelectedGlossaryLanguage] =
+    useState<string>(translationTargetLanguage || 'English');
+
+  useEffect(() => {
+    setSelectedGlossaryLanguage(translationTargetLanguage);
+  }, [translationTargetLanguage]);
 
   const [hasFinishedChapter, setHasFinishedChapter] = useState(false);
   const hasFinishedRef = useRef(false);
@@ -1391,14 +1405,43 @@ export default function ReaderPanel({
                                     with glossary.
                                   </p>
                                 </div>
-                                <button
-                                  type="button"
-                                  onClick={() => onGenerateGlossary(story)}
-                                  className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4.5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-98 shrink-0 font-sans border-0"
-                                >
-                                  <Sparkles className="w-3.5 h-3.5 text-white" />
-                                  <span>Generate Glossary</span>
-                                </button>
+                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto shrink-0 font-sans">
+                                  <div className="relative">
+                                    <select
+                                      value={selectedGlossaryLanguage}
+                                      onChange={(e) =>
+                                        setSelectedGlossaryLanguage(
+                                          e.target.value,
+                                        )
+                                      }
+                                      className="w-full sm:w-40 pl-3 pr-8 py-2.5 bg-white dark:bg-slate-900 border border-violet-200 dark:border-violet-850 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer appearance-none"
+                                    >
+                                      {SUPPORTED_LANGUAGES.map((lang) => (
+                                        <option
+                                          key={lang.code}
+                                          value={lang.name}
+                                        >
+                                          {lang.flag} {lang.name}
+                                        </option>
+                                      ))}
+                                    </select>
+                                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      onGenerateGlossary(
+                                        story,
+                                        undefined,
+                                        selectedGlossaryLanguage,
+                                      )
+                                    }
+                                    className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4.5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-98 shrink-0 font-sans border-0"
+                                  >
+                                    <Sparkles className="w-3.5 h-3.5 text-white" />
+                                    <span>Generate Glossary</span>
+                                  </button>
+                                </div>
                               </div>
                             )}
 

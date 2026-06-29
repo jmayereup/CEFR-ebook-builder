@@ -30,7 +30,9 @@ async function main() {
 
     for (const story of stories) {
       if (!story.translationLanguage) {
-        console.log(`Updating story "${story.title}" (${story.id}) - setting translationLanguage to "English"`);
+        console.log(
+          `Updating story "${story.title}" (${story.id}) - setting translationLanguage to "English"`,
+        );
         await pb.collection('stories').update(story.id, {
           translationLanguage: 'English',
         });

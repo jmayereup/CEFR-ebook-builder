@@ -106,7 +106,12 @@ export interface UseStoryGenerationReturn {
     chapterGuidance?: string,
   ) => Promise<void>;
   handleAutoGenerateRemaining: () => Promise<void>;
-  handleGenerateGlossary: (story: Story, modelId?: string) => Promise<void>;
+  handleGenerateGlossary: (
+    story: Story,
+    modelId?: string,
+    translationLanguage?: string,
+    forceRegenerate?: boolean,
+  ) => Promise<void>;
   handleCancelGeneration: () => void;
 }
 
@@ -1044,6 +1049,8 @@ export const useStoryGeneration = (
   const handleGenerateGlossary = async (
     story: Story,
     modelId?: string,
+    translationLanguage?: string,
+    forceRegenerate: boolean = false,
   ): Promise<void> => {
     if (!currentUser) {
       showAlert('Authentication Required', 'Please log in first.', 'warning');
@@ -1053,10 +1060,12 @@ export const useStoryGeneration = (
     const chapters = story.chapters ?? [];
     const isBilingualStory =
       story.cefrLevel === 'A1' || story.cefrLevel === 'Pre-A1';
-    const chaptersNeedingGlossary = chapters.filter(
-      (ch) =>
-        !isBilingualStory && (!ch.vocabulary || ch.vocabulary.length === 0),
-    );
+    const chaptersNeedingGlossary = forceRegenerate
+      ? chapters.filter((ch) => !isBilingualStory)
+      : chapters.filter(
+          (ch) =>
+            !isBilingualStory && (!ch.vocabulary || ch.vocabulary.length === 0),
+        );
 
     if (chaptersNeedingGlossary.length === 0) {
       showAlert(
@@ -1086,10 +1095,12 @@ export const useStoryGeneration = (
       );
 
       // Collect all existing words to avoid duplicates across chapters
-      const existingWords = updatedChapters
-        .flatMap((c) => c.vocabulary ?? [])
-        .map((v) => v.word.toLowerCase().trim())
-        .filter(Boolean);
+      const existingWords = forceRegenerate
+        ? []
+        : updatedChapters
+            .flatMap((c) => c.vocabulary ?? [])
+            .map((v) => v.word.toLowerCase().trim())
+            .filter(Boolean);
 
       // Single batch call for all chapters needing glossary.
       const res = await fetch('/api/stories/generate-glossary', {
@@ -1108,6 +1119,7 @@ export const useStoryGeneration = (
           userEmail: currentUser?.email,
           model: modelId,
           translationLanguage:
+            translationLanguage ||
             story.translationLanguage ||
             useUIStore.getState().translationTargetLanguage,
         }),
@@ -1150,7 +1162,10 @@ export const useStoryGeneration = (
         onStoryUpdated({
           ...story,
           chapters: updatedChapters,
-          translationLanguage: story.translationLanguage || useUIStore.getState().translationTargetLanguage,
+          translationLanguage:
+            translationLanguage ||
+            story.translationLanguage ||
+            useUIStore.getState().translationTargetLanguage,
           isUnsaved: true,
         });
 
