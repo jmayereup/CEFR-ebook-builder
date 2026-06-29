@@ -134,7 +134,7 @@ export default function StoryCard({
   const inRecentlyRead = recentlyRead.some((item) => item.storyId === story.id);
 
   return (
-    <div className="relative group w-full max-w-[245px] mx-auto aspect-[3/4.2] min-h-[343px] cursor-pointer">
+    <div className="relative group w-full max-w-[360px] min-w-[340px] mx-auto aspect-[3/4.2] min-h-[476px] cursor-pointer">
       {/* 3D Pages Stack Effects (behind card, moves slightly less on hover to look like book cover lifting) */}
       <div className="absolute right-[-3px] top-1.5 bottom-1.5 w-1.5 bg-[#faf9f6] dark:bg-[#323330] border-y border-r border-[#e3dfd3] dark:border-[#424546] rounded-r-md z-0 shadow-xs transition-all duration-300 group-hover:translate-x-[0.5px]" />
       <div className="absolute right-[-6px] top-3 bottom-3 w-1.5 bg-[#f4ebd9] dark:bg-[#282927] border-y border-r border-[#dacfae]/70 dark:border-[#383a3b] rounded-r-md z-[-1] shadow-xs transition-all duration-300 group-hover:translate-x-[1px]" />

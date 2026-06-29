@@ -1150,6 +1150,7 @@ export const useStoryGeneration = (
         onStoryUpdated({
           ...story,
           chapters: updatedChapters,
+          translationLanguage: story.translationLanguage || useUIStore.getState().translationTargetLanguage,
           isUnsaved: true,
         });
 
