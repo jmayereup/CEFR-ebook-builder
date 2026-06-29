@@ -355,7 +355,8 @@ export const useStoryGeneration = (
             temperature: config.temperature,
             translationLanguage:
               config.translationLanguage ||
-              useUIStore.getState().translationTargetLanguage,
+              useUIStore.getState().translationTargetLanguage ||
+              'English',
             userId: currentUser?.uid,
             userEmail: currentUser?.email,
           }),
@@ -555,7 +556,8 @@ export const useStoryGeneration = (
             temperature: maintenanceStory.temperature,
             translationLanguage:
               maintenanceStory.translationLanguage ||
-              useUIStore.getState().translationTargetLanguage,
+              useUIStore.getState().translationTargetLanguage ||
+              'English',
             storyBible: maintenanceStory.storyBible || null,
             toneRefreshGuidance: maintenanceStory.toneRefreshGuidance || '',
             consistencyAudits: maintenanceStory.consistencyAudits || [],
@@ -720,7 +722,8 @@ export const useStoryGeneration = (
             temperature: selectedStory.temperature,
             translationLanguage:
               selectedStory.translationLanguage ||
-              useUIStore.getState().translationTargetLanguage,
+              useUIStore.getState().translationTargetLanguage ||
+              'English',
             storyBible: selectedStory.storyBible || null,
             toneRefreshGuidance: selectedStory.toneRefreshGuidance || '',
             consistencyAudits: selectedStory.consistencyAudits || [],
@@ -933,7 +936,8 @@ export const useStoryGeneration = (
               temperature: activeStory.temperature,
               translationLanguage:
                 activeStory.translationLanguage ||
-                useUIStore.getState().translationTargetLanguage,
+                useUIStore.getState().translationTargetLanguage ||
+                'English',
               storyBible: activeStory.storyBible || null,
               toneRefreshGuidance: activeStory.toneRefreshGuidance || '',
               consistencyAudits: activeStory.consistencyAudits || [],
@@ -1121,7 +1125,8 @@ export const useStoryGeneration = (
           translationLanguage:
             translationLanguage ||
             story.translationLanguage ||
-            useUIStore.getState().translationTargetLanguage,
+            useUIStore.getState().translationTargetLanguage ||
+            'English',
         }),
       });
 
@@ -1165,7 +1170,8 @@ export const useStoryGeneration = (
           translationLanguage:
             translationLanguage ||
             story.translationLanguage ||
-            useUIStore.getState().translationTargetLanguage,
+            useUIStore.getState().translationTargetLanguage ||
+            'English',
           isUnsaved: true,
         });
 

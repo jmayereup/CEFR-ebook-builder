@@ -149,7 +149,7 @@ export default function SettingsModal({
                 <Globe className="w-4 h-4" />
               </span>
               <select
-                value={translationTargetLanguage}
+                value={translationTargetLanguage || ''}
                 onChange={(e) => {
                   const newLang = e.target.value;
                   setTranslationTargetLanguage(newLang);
@@ -157,6 +157,9 @@ export default function SettingsModal({
                 }}
                 className="w-full pl-10 pr-10 py-3 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
               >
+                {translationTargetLanguage === null && (
+                  <option value="" disabled>Select language...</option>
+                )}
                 {SUPPORTED_LANGUAGES.map((lang) => (
                   <option key={lang.code} value={lang.name}>
                     {lang.flag} {lang.name}

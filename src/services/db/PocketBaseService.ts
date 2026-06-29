@@ -36,6 +36,7 @@ type AppUsersResponse = UsersResponse<
 
 type AppStoriesResponse = StoriesResponse<
   Chapter[], // chapters
+  any, // completedBy
   ConsistencyAudit[], // consistencyAudits
   Record<string, number>, // ratings
   StoryBible // storyBible
@@ -348,6 +349,9 @@ export class PocketBaseService implements IDatabaseService {
           ? record.recentlyRead
           : (parseJsonField(record.recentlyRead) ?? []),
         streak: parseJsonField(record.streak),
+        translationTargetLanguage: record.translationTargetLanguage || null,
+        readerFontSize: record.readerFontSize,
+        readerUseSerif: record.readerUseSerif,
       };
     } catch (error: any) {
       if (error.status === 404) return null;
@@ -480,13 +484,25 @@ export class PocketBaseService implements IDatabaseService {
     userId: string,
     data: ProfileUpdatePayload,
   ): Promise<void> {
-    await pb.collection('users').update(userId, {
-      bookshelf: data.bookshelf,
-      recentlyRead: data.recentlyRead,
-      lookupLimitData: data.lookupLimitData
+    const updateData: any = {};
+    if (data.bookshelf !== undefined) updateData.bookshelf = data.bookshelf;
+    if (data.recentlyRead !== undefined) updateData.recentlyRead = data.recentlyRead;
+    if (data.lookupLimitData !== undefined) {
+      updateData.lookupLimitData = data.lookupLimitData
         ? JSON.stringify(data.lookupLimitData)
-        : null,
-    });
+        : null;
+    }
+    if (data.translationTargetLanguage !== undefined) {
+      updateData.translationTargetLanguage = data.translationTargetLanguage;
+    }
+    if (data.readerFontSize !== undefined) {
+      updateData.readerFontSize = data.readerFontSize;
+    }
+    if (data.readerUseSerif !== undefined) {
+      updateData.readerUseSerif = data.readerUseSerif;
+    }
+
+    await pb.collection('users').update(userId, updateData);
   }
 
   async updateStreak(userId: string, streak: UserStreakData): Promise<void> {

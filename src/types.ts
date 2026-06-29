@@ -207,6 +207,9 @@ export interface UserProfileData {
   generationLimitData: GenerationLimitData | null;
   recentlyRead?: RecentlyReadItem[];
   streak?: UserStreakData | null;
+  translationTargetLanguage?: string | null;
+  readerFontSize?: number;
+  readerUseSerif?: boolean;
 }
 
 export interface SRSRecord {

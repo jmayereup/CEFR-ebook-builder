@@ -11,6 +11,7 @@ import {
 } from '../services/db';
 import type { VocabularyTerm } from '../types';
 import { calculateNextSRS } from '../utils/srs';
+import { useUIStore } from '../store/uiStore';
 
 interface LookupLimitData {
   count: number;
@@ -136,6 +137,25 @@ export function useUserData(options: UseUserDataOptions) {
 
   const [dirty, setDirty] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const isSyncingFromServer = useRef(false);
+
+  const translationTargetLanguage = useUIStore((state) => state.translationTargetLanguage);
+  const readerFontSize = useUIStore((state) => state.readerFontSize);
+  const readerUseSerif = useUIStore((state) => state.readerUseSerif);
+
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    if (isSyncingFromServer.current) {
+      return;
+    }
+    if (currentUser) {
+      markDirty();
+    }
+  }, [translationTargetLanguage, readerFontSize, readerUseSerif, currentUser]);
 
   const savedVocabRef = useRef(savedVocab);
   const bookshelfRef = useRef(bookshelf);
@@ -184,6 +204,9 @@ export function useUserData(options: UseUserDataOptions) {
         bookshelf: bookshelfRef.current,
         recentlyRead: recentlyReadRef.current,
         lookupLimitData: lookupLimitDataRef.current,
+        translationTargetLanguage: useUIStore.getState().translationTargetLanguage,
+        readerFontSize: useUIStore.getState().readerFontSize,
+        readerUseSerif: useUIStore.getState().readerUseSerif,
       };
 
       const response = await fetch('/api/users/sync', {
@@ -561,6 +584,24 @@ export function useUserData(options: UseUserDataOptions) {
                 JSON.stringify(resetData),
               );
             }
+
+            // Load and update target language, font size, serif choice
+            isSyncingFromServer.current = true;
+            if (profile.translationTargetLanguage !== undefined) {
+              useUIStore.getState().setTranslationTargetLanguage(profile.translationTargetLanguage);
+            }
+            if (profile.readerFontSize !== undefined && profile.readerFontSize !== null) {
+              const dbSize = profile.readerFontSize;
+              if (typeof dbSize === 'number' && dbSize >= 14 && dbSize <= 26) {
+                useUIStore.getState().setReaderFontSize(dbSize);
+              } else {
+                useUIStore.getState().setReaderFontSize(18);
+              }
+            }
+            if (profile.readerUseSerif !== undefined && profile.readerUseSerif !== null) {
+              useUIStore.getState().setReaderUseSerif(profile.readerUseSerif);
+            }
+            isSyncingFromServer.current = false;
           }
         } catch (err) {
           console.error('Error fetching user profile: ', err);

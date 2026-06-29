@@ -532,7 +532,7 @@ export default function StoryConfigForm({
                       Bilingual Translation Language
                     </label>
                     <select
-                      value={translationTargetLanguage}
+                      value={translationTargetLanguage || ''}
                       onChange={(e) => {
                         const newLang = e.target.value;
                         setTranslationTargetLanguage(newLang);
@@ -543,6 +543,9 @@ export default function StoryConfigForm({
                       }}
                       className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-xs font-semibold focus:border-tj-primary focus:outline-none cursor-pointer"
                     >
+                      {translationTargetLanguage === null && (
+                        <option value="" disabled>Select language...</option>
+                      )}
                       {SUPPORTED_LANGUAGES.filter(
                         (lang) => lang.code !== language,
                       ).map((lang) => (

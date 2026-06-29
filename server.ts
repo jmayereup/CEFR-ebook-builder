@@ -93,8 +93,16 @@ app.use('/api/translate', translationLimiter, translateRouter);
 
 app.post('/api/users/sync', async (req, res) => {
   try {
-    const { userId, savedVocab, bookshelf, recentlyRead, lookupLimitData } =
-      req.body;
+    const {
+      userId,
+      savedVocab,
+      bookshelf,
+      recentlyRead,
+      lookupLimitData,
+      translationTargetLanguage,
+      readerFontSize,
+      readerUseSerif,
+    } = req.body;
     if (!userId) {
       return res.status(400).json({ error: 'Missing userId.' });
     }
@@ -104,6 +112,10 @@ app.post('/api/users/sync', async (req, res) => {
     if (recentlyRead !== undefined) updates.recentlyRead = recentlyRead;
     if (lookupLimitData !== undefined)
       updates.lookupLimitData = lookupLimitData;
+    if (translationTargetLanguage !== undefined)
+      updates.translationTargetLanguage = translationTargetLanguage;
+    if (readerFontSize !== undefined) updates.readerFontSize = readerFontSize;
+    if (readerUseSerif !== undefined) updates.readerUseSerif = readerUseSerif;
 
     await syncUserProfileServer(userId, updates);
     return res.status(200).json({ success: true });

@@ -33,6 +33,9 @@ export interface ProfileUpdatePayload {
   bookshelf?: string[];
   recentlyRead?: RecentlyReadItem[];
   lookupLimitData?: LookupLimitData | null;
+  translationTargetLanguage?: string | null;
+  readerFontSize?: number;
+  readerUseSerif?: boolean;
 }
 
 // ---------------------------------------------------------------------------

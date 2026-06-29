@@ -115,7 +115,8 @@ export default function ChapterEditForm({
           translationLanguage:
             translationLang ||
             story.translationLanguage ||
-            useUIStore.getState().translationTargetLanguage,
+            useUIStore.getState().translationTargetLanguage ||
+            'English',
         }),
       });
 

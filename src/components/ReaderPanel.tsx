@@ -32,6 +32,7 @@ import ChapterNavigationBar from './reader/ChapterNavigationBar';
 import ChapterSidebar from './reader/ChapterSidebar';
 import InteractiveParagraph from './reader/InteractiveParagraph';
 import NarrativeMaintenancePanel from './reader/NarrativeMaintenancePanel';
+import PreferredLanguageModal from './reader/PreferredLanguageModal';
 import TranslationToast from './reader/TranslationToast';
 import TTSToolbar from './reader/TTSToolbar';
 import VocabGlossary from './reader/VocabGlossary';
@@ -145,6 +146,9 @@ export default function ReaderPanel({
   const translationTargetLanguage = useUIStore(
     (state) => state.translationTargetLanguage,
   );
+  const setTranslationTargetLanguage = useUIStore(
+    (state) => state.setTranslationTargetLanguage,
+  );
   const isOnline = useUIStore((state) => state.isOnline);
   const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
   const currentUser = useAuthStore((state) => state.currentUser);
@@ -208,27 +212,10 @@ export default function ReaderPanel({
     setSessionFinished(userReadCount > 0 || isLocalRead);
   }, [story.id, story.completedBy, currentUser]);
 
-  const [fontSize, setFontSize] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('reader-font-size');
-      if (saved) {
-        const parsed = parseInt(saved, 10);
-        if (!Number.isNaN(parsed) && parsed >= 14 && parsed <= 26) {
-          return parsed;
-        }
-      }
-    }
-    return 18;
-  });
-  const [useSerif, setUseSerif] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('reader-use-serif');
-      if (saved !== null) {
-        return saved === 'true';
-      }
-    }
-    return true;
-  });
+  const fontSize = useUIStore((state) => state.readerFontSize);
+  const setFontSize = useUIStore((state) => state.setReaderFontSize);
+  const useSerif = useUIStore((state) => state.readerUseSerif);
+  const setUseSerif = useUIStore((state) => state.setReaderUseSerif);
   const [showBilingual, setShowBilingual] = useState<boolean>(
     story.cefrLevel === 'A1' || story.cefrLevel === 'Pre-A1',
   );
@@ -242,6 +229,8 @@ export default function ReaderPanel({
   const [selectedWordRange, setSelectedWordRange] = useState<
     [number, number] | null
   >(null);
+
+  const [showLanguageModal, setShowLanguageModal] = useState<boolean>(false);
 
   interface DisplayParagraph {
     original: string;
@@ -375,15 +364,6 @@ export default function ReaderPanel({
   useEffect(() => {
     setShowBilingual(story.cefrLevel === 'A1' || story.cefrLevel === 'Pre-A1');
   }, [story.cefrLevel]);
-
-  // Persist font size and serif choice
-  useEffect(() => {
-    localStorage.setItem('reader-font-size', fontSize.toString());
-  }, [fontSize]);
-
-  useEffect(() => {
-    localStorage.setItem('reader-use-serif', useSerif.toString());
-  }, [useSerif]);
 
   // TTS browser controls hook
   const {
@@ -923,6 +903,25 @@ export default function ReaderPanel({
       );
     }
   };
+
+  const handleLanguageConfirm = (selectedLang: string) => {
+    setTranslationTargetLanguage(selectedLang);
+    setShowLanguageModal(false);
+    
+    // Automatically trigger translation lookup now that the target language is set!
+    handleFetchTranslation();
+  };
+
+  const handleLanguageCancel = () => {
+    setShowLanguageModal(false);
+  };
+
+  // Prompt for preferred translation language when the toast comes up
+  useEffect(() => {
+    if (selectedWord && translationTargetLanguage === null) {
+      setShowLanguageModal(true);
+    }
+  }, [selectedWord, translationTargetLanguage]);
 
   const handleSaveWordRecord = () => {
     if (!selectedWord || !onSaveWord) return;
@@ -1589,6 +1588,14 @@ export default function ReaderPanel({
         onShrinkRight={handleShrinkRight}
         onExtendRight={handleExtendRight}
       />
+
+      {/* PREFERRED LANGUAGE MODAL FOR NEW USERS */}
+      <PreferredLanguageModal
+        isOpen={showLanguageModal}
+        onClose={handleLanguageCancel}
+        onConfirm={handleLanguageConfirm}
+      />
+
       {/* DELETE BOOK CONFIRMATION MODAL */}
       <AnimatePresence>
         {showDeleteModal && (
