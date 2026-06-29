@@ -5,7 +5,7 @@
  * for `filteredStories` and `filteredBookshelfStories`.
  */
 
-import type { Story, RecentlyReadItem } from '../types';
+import type { RecentlyReadItem, Story } from '../types';
 import { GENRES } from '../types';
 import { getModelDisplayName } from './modelUtils';
 
@@ -86,8 +86,10 @@ export const filterAndSortStories = (
           recentlyRead.some((item) => item.storyId === story.id) && !isRead;
 
         if (filterReadingStatus === 'Completed' && !isRead) return false;
-        if (filterReadingStatus === 'In-Progress' && !isInProgress) return false;
-        if (filterReadingStatus === 'Unread' && (isRead || isInProgress)) return false;
+        if (filterReadingStatus === 'In-Progress' && !isInProgress)
+          return false;
+        if (filterReadingStatus === 'Unread' && (isRead || isInProgress))
+          return false;
       }
 
       // 5. Search query

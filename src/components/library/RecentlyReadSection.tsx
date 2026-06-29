@@ -117,8 +117,12 @@ export default function RecentlyReadSection({
                     <span className="text-[6px] font-mono font-bold uppercase py-0.5 px-1 bg-black/5 dark:bg-white/10 rounded border border-current/10">
                       {story.cefrLevel}
                     </span>
-                    <span className="text-[6px] font-mono font-bold uppercase py-0.5 px-1 bg-black/5 dark:bg-white/10 rounded border border-current/10">
+                    <span className="text-[6px] font-mono font-bold uppercase py-0.5 px-1 bg-black/5 dark:bg-white/10 rounded border border-current/10 flex items-center">
                       {getLanguageCodeFromName(story.language).toUpperCase()}
+                      {story.translationLanguage &&
+                        getLanguageCodeFromName(story.translationLanguage).toUpperCase() !==
+                          getLanguageCodeFromName(story.language).toUpperCase() &&
+                        `-${getLanguageCodeFromName(story.translationLanguage).toUpperCase()}`}
                     </span>
                   </div>
 

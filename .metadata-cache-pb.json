@@ -1,6 +1,170 @@
 {
-  "lastFetchTime": 1782533156994,
+  "lastFetchTime": 1782698678580,
   "stories": [
+    {
+      "id": "sacp6xhsczdsj7f",
+      "title": "Between the Lines: Understanding Western and Thai Communication",
+      "language": "English",
+      "cefrLevel": "B1",
+      "genre": "nonfiction",
+      "totalChapters": 5,
+      "createdAt": "2026-06-29T01:27:42.489Z",
+      "isCompleted": true,
+      "description": "Why does a Western 'yes' sound so final, while a Thai smile can hide a polite 'no'? This book explores the fascinating differences between Western and Thai communication styles, from direct speech to the vital importance of saving face and reading non-verbal cues. Through clear examples and simple explanations, readers will learn to navigate cross-cultural conversations with greater understanding and respect.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2036
+    },
+    {
+      "id": "s3ll6n31ozoxvdi",
+      "title": "ธรรมะในชีวิตประจำวัน: เส้นทางสู่ความสงบใจแบบไทย",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 15,
+      "createdAt": "2026-06-28T23:36:33.587Z",
+      "isCompleted": true,
+      "description": "This book offers a serene journey through core Buddhist teachings, gently weaving them into the fabric of everyday Thai life. Each chapter provides practical meditations and reflections, guiding laypeople to find peace, compassion, and wisdom amidst modern challenges.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 15,
+      "wordCount": 7633
+    },
+    {
+      "id": "s7i3p58ou01ekmk",
+      "title": "สองโลก สองมุมมอง: เปรียบเทียบโลกทัศน์ไทยกับอเมริกัน",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "nonfiction",
+      "totalChapters": 5,
+      "createdAt": "2026-06-27T22:44:40.521Z",
+      "isCompleted": true,
+      "description": "This expository Thai reader for intermediate learners compares core aspects of Thai and American worldviews. Through five clear chapters, it contrasts ideas of self and group, communication styles, concepts of time, family structures, and religious beliefs. Designed for B1 learners, the text uses accessible Thai to illuminate cultural differences with factual, real-world examples.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2848
+    },
+    {
+      "id": "sznvgqbqsujjzrj",
+      "title": "หน้ากากสีเลือดแห่งคฤหาสน์ลึกลับ",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "mystery",
+      "totalChapters": 5,
+      "createdAt": "2026-06-27T13:03:17.336Z",
+      "isCompleted": true,
+      "description": "A wealthy Thai businessman attempts to escape a deadly plague by locking himself and his elite friends inside a lavish estate. However, during a mysterious masquerade ball, an uninvited guest arrives to remind them that no wall is high enough to keep out death.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "google/gemma-4-31b-it",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 1333
+    },
+    {
+      "id": "su97g3lq64t2rwu",
+      "title": "คฤหาสน์อัชเชอร์แห่งสายน้ำ",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "mystery",
+      "totalChapters": 5,
+      "createdAt": "2026-06-27T12:47:58.677Z",
+      "isCompleted": true,
+      "description": "In this Thai adaptation of Poe’s classic, a man visits his childhood friend in a decaying teak mansion surrounded by dark, stagnant waters. As a mysterious family illness and a premature burial haunt the house, the boundary between sanity and the supernatural begins to collapse during a torrential storm.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "google/gemini-3.1-flash-lite",
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 1721
+    },
+    {
+      "id": "srupbmtwst3npt6",
+      "title": "อุ้งมือลิงวิเศษ",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "folklore",
+      "totalChapters": 5,
+      "createdAt": "2026-06-27T12:35:08.030Z",
+      "isCompleted": true,
+      "description": "A poor Thai family receives a magical monkey's paw that grants three wishes, but each comes with a terrible price. As they learn the hard way that some desires are better left unfulfilled, they must confront the consequences of their greed and the true meaning of happiness.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-flash",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 780
+    },
+    {
+      "id": "swgvqbwpibl2by4",
+      "title": "อุ้งเท้าลิงอาถรรพ์แห่งหมู่บ้านดอนหมอก",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "folklore",
+      "totalChapters": 5,
+      "createdAt": "2026-06-27T12:29:12.594Z",
+      "isCompleted": true,
+      "description": "In a remote Thai village, a struggling family comes into possession of a mystical monkey's paw that grants three wishes, only to discover that destiny demands a terrible price. This adaptation of a classic tale explores the dark consequences of trying to change fate through greed and grief.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "google/gemini-3.1-flash-lite",
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2019
+    },
+    {
+      "id": "sbxx8hfwnsr4gqi",
+      "title": "ตำนานกบกระโดดของลุงสมหมาย",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 5,
+      "createdAt": "2026-06-27T05:23:09.493Z",
+      "isCompleted": true,
+      "description": "A young traveler arrives in a sleepy Thai village and meets Uncle Sommai, who spins a tall tale about his champion jumping frog, Tup. In a story filled with laughter and gentle trickery, the frog’s fate at a temple fair becomes a lesson in life’s simple joys and the art of losing with a smile. Inspired by Mark Twain’s classic, this heartwarming slice-of-life captures the spirit of Thai rural humor.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 1908
+    },
     {
       "id": "sjyo4vqxzf1g2k5",
       "title": "สลากปริศนา",
@@ -33,8 +197,12 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 2471

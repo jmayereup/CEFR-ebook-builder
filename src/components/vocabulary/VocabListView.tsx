@@ -260,6 +260,7 @@ export default function VocabListView({
                     >
                       <button
                         type="button"
+                        translate="no"
                         className="flex items-center gap-1.5 hover:text-tj-primary transition-colors cursor-pointer text-left bg-transparent border-0 p-0 font-serif font-bold text-base md:text-lg text-slate-805 dark:text-slate-200"
                         onClick={() => playWord(t.word, t.language)}
                         title="Click to pronounce word"
@@ -268,7 +269,10 @@ export default function VocabListView({
                         <Volume2 className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 text-tj-primary transition-opacity shrink-0" />
                       </button>
                       {t.transliteration && (
-                        <span className="text-xs text-slate-400 font-sans italic block font-normal mt-0.5">
+                        <span
+                          translate="no"
+                          className="text-xs text-slate-400 font-sans italic block font-normal mt-0.5"
+                        >
                           [{t.transliteration}]
                         </span>
                       )}
@@ -281,11 +285,17 @@ export default function VocabListView({
                     </td>
                     <td className="py-3 pr-4 text-sm text-slate-700 dark:text-slate-300 max-w-sm align-top">
                       <div className="flex flex-col gap-1">
-                        <span className="font-semibold text-tj-text-main block">
+                        <span
+                          translate="yes"
+                          className="font-semibold text-tj-text-main block"
+                        >
                           {t.definition}
                         </span>
                         {t.contextSentence && (
-                          <span className="text-tj-text-muted italic font-serif leading-relaxed block">
+                          <span
+                            translate="no"
+                            className="text-tj-text-muted italic font-serif leading-relaxed block"
+                          >
                             "
                             {limitContextToTenWords(
                               t.contextSentence,
@@ -331,6 +341,7 @@ export default function VocabListView({
                     <div className="flex items-center gap-1.5 hover:text-tj-primary transition-colors">
                       <span
                         lang={langCode}
+                        translate="no"
                         className="font-serif font-bold text-lg md:text-xl text-slate-800 dark:text-slate-200"
                       >
                         {t.word}
@@ -338,7 +349,10 @@ export default function VocabListView({
                       <Volume2 className="w-4 h-4 text-tj-primary opacity-60 group-hover/word:opacity-100 transition-opacity shrink-0" />
                     </div>
                     {t.transliteration && (
-                      <span className="text-xs text-slate-400 font-sans italic">
+                      <span
+                        translate="no"
+                        className="text-xs text-slate-400 font-sans italic"
+                      >
                         [{t.transliteration}]
                       </span>
                     )}
@@ -363,11 +377,17 @@ export default function VocabListView({
                   </div>
                 </div>
                 <div className="text-sm text-slate-700 dark:text-slate-350">
-                  <span className="font-semibold text-tj-text-main block mb-1">
+                  <span
+                    translate="yes"
+                    className="font-semibold text-tj-text-main block mb-1"
+                  >
                     {t.definition}
                   </span>
                   {t.contextSentence && (
-                    <span className="text-sm text-tj-text-muted italic font-serif leading-relaxed block border-l-2 border-tj-border-main pl-2 py-0.5 mt-1.5">
+                    <span
+                      translate="no"
+                      className="text-sm text-tj-text-muted italic font-serif leading-relaxed block border-l-2 border-tj-border-main pl-2 py-0.5 mt-1.5"
+                    >
                       "
                       {limitContextToTenWords(
                         t.contextSentence,

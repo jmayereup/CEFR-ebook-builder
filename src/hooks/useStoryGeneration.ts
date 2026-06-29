@@ -18,7 +18,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-
+import { useUIStore } from '../store/uiStore';
 import type { Chapter, Story } from '../types';
 import {
   calculateChapterCreditCost,
@@ -348,7 +348,9 @@ export const useStoryGeneration = (
             thinkingLevel: config.thinkingLevel,
             thinkingBudget: config.thinkingBudget,
             temperature: config.temperature,
-            translationLanguage: config.translationLanguage,
+            translationLanguage:
+              config.translationLanguage ||
+              useUIStore.getState().translationTargetLanguage,
             userId: currentUser?.uid,
             userEmail: currentUser?.email,
           }),
@@ -546,7 +548,9 @@ export const useStoryGeneration = (
             thinkingLevel: maintenanceStory.thinkingLevel,
             thinkingBudget: maintenanceStory.thinkingBudget,
             temperature: maintenanceStory.temperature,
-            translationLanguage: maintenanceStory.translationLanguage,
+            translationLanguage:
+              maintenanceStory.translationLanguage ||
+              useUIStore.getState().translationTargetLanguage,
             storyBible: maintenanceStory.storyBible || null,
             toneRefreshGuidance: maintenanceStory.toneRefreshGuidance || '',
             consistencyAudits: maintenanceStory.consistencyAudits || [],
@@ -709,7 +713,9 @@ export const useStoryGeneration = (
             thinkingLevel: selectedStory.thinkingLevel,
             thinkingBudget: selectedStory.thinkingBudget,
             temperature: selectedStory.temperature,
-            translationLanguage: selectedStory.translationLanguage,
+            translationLanguage:
+              selectedStory.translationLanguage ||
+              useUIStore.getState().translationTargetLanguage,
             storyBible: selectedStory.storyBible || null,
             toneRefreshGuidance: selectedStory.toneRefreshGuidance || '',
             consistencyAudits: selectedStory.consistencyAudits || [],
@@ -920,7 +926,9 @@ export const useStoryGeneration = (
               thinkingLevel: activeStory.thinkingLevel,
               thinkingBudget: activeStory.thinkingBudget,
               temperature: activeStory.temperature,
-              translationLanguage: activeStory.translationLanguage,
+              translationLanguage:
+                activeStory.translationLanguage ||
+                useUIStore.getState().translationTargetLanguage,
               storyBible: activeStory.storyBible || null,
               toneRefreshGuidance: activeStory.toneRefreshGuidance || '',
               consistencyAudits: activeStory.consistencyAudits || [],
@@ -1033,7 +1041,10 @@ export const useStoryGeneration = (
   // Generate glossary for all completed chapters (deferred post-completion)
   // ---------------------------------------------------------------------------
 
-  const handleGenerateGlossary = async (story: Story, modelId?: string): Promise<void> => {
+  const handleGenerateGlossary = async (
+    story: Story,
+    modelId?: string,
+  ): Promise<void> => {
     if (!currentUser) {
       showAlert('Authentication Required', 'Please log in first.', 'warning');
       return;
@@ -1096,6 +1107,9 @@ export const useStoryGeneration = (
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
           model: modelId,
+          translationLanguage:
+            story.translationLanguage ||
+            useUIStore.getState().translationTargetLanguage,
         }),
       });
 
@@ -1133,7 +1147,11 @@ export const useStoryGeneration = (
         setGlossaryLogs([]);
         setGlossaryError(null);
 
-        onStoryUpdated({ ...story, chapters: updatedChapters, isUnsaved: true });
+        onStoryUpdated({
+          ...story,
+          chapters: updatedChapters,
+          isUnsaved: true,
+        });
 
         showAlert(
           'Glossary Complete',
@@ -1142,7 +1160,10 @@ export const useStoryGeneration = (
         );
       } else {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Glossary request failed with status ${res.status}`);
+        throw new Error(
+          errorData.error ||
+            `Glossary request failed with status ${res.status}`,
+        );
       }
     } catch (err: unknown) {
       const e = err as { name?: string; message?: string };
@@ -1157,7 +1178,9 @@ export const useStoryGeneration = (
         setGlossaryLogs([]);
         setGlossaryError(null);
       } else {
-        setGlossaryError(e.message || 'An error occurred while generating the glossary.');
+        setGlossaryError(
+          e.message || 'An error occurred while generating the glossary.',
+        );
       }
     } finally {
       abortControllerRef.current = null;

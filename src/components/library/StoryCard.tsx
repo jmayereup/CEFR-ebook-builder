@@ -123,6 +123,12 @@ export default function StoryCard({
     0,
   );
 
+  const mainLangCode = getLanguageCodeFromName(story.language).toUpperCase();
+  const transLangCode = story.translationLanguage
+    ? getLanguageCodeFromName(story.translationLanguage).toUpperCase()
+    : '';
+  const showBilingualTag = transLangCode && transLangCode !== mainLangCode;
+
   const totalReads = Math.max(globalReadCount, userReadCount);
 
   const inRecentlyRead = recentlyRead.some((item) => item.storyId === story.id);
@@ -154,11 +160,20 @@ export default function StoryCard({
               <span className="text-[10px] font-mono font-bold uppercase py-0.5 text-current">
                 {story.cefrLevel}
               </span>
-              <span
-                className={`text-[10px] font-mono font-bold uppercase py-0.5 ${coverStyle.textMuted}`}
-              >
-                {story.language}
-              </span>
+              <div className="flex items-center">
+                <span
+                  className={`text-[10px] font-mono font-bold uppercase py-0.5 ${coverStyle.textMuted}`}
+                >
+                  {mainLangCode}
+                </span>
+                {showBilingualTag && (
+                  <span
+                    className={`text-[10px] font-mono font-bold uppercase py-0.5 ${coverStyle.textMuted}`}
+                  >
+                    -{transLangCode}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center gap-2">

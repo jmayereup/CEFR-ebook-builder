@@ -135,6 +135,7 @@ export default function TranslationToast({
                 <div className="flex items-center gap-3">
                   <h4
                     lang={getLanguageCodeFromName(story.language)}
+                    translate="no"
                     className="text-xl font-serif font-black text-tj-primary dark:text-tj-primary-hover tracking-tight"
                   >
                     {selectedWord.word}

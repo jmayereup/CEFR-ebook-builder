@@ -80,6 +80,7 @@ export default function VocabGlossary({
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <button
                     type="button"
+                    translate="no"
                     lang={getLanguageCodeFromName(language)}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -94,6 +95,7 @@ export default function VocabGlossary({
 
                   {vocab.transliteration && (
                     <span
+                      translate="no"
                       className="text-slate-400 dark:text-slate-500 font-sans text-[11px] italic"
                       style={{ fontSize: `${Math.max(9, fontSize - 7)}px` }}
                     >
@@ -145,6 +147,7 @@ export default function VocabGlossary({
                 </span>
               </div>
               <p
+                translate="yes"
                 className="font-sans text-slate-600 dark:text-slate-355 font-semibold mb-1"
                 style={{ fontSize: `${Math.max(10, fontSize - 6)}px` }}
               >
@@ -153,6 +156,7 @@ export default function VocabGlossary({
 
               {vocab.contextSentence && (
                 <p
+                  translate="no"
                   className="text-tj-text-muted italic font-serif leading-relaxed mt-1.5 pl-2 border-l-2 border-tj-border-main"
                   style={{ fontSize: `${Math.max(11, fontSize - 5)}px` }}
                 >

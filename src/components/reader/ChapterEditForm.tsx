@@ -1,6 +1,14 @@
-import { AlertCircle, X as CloseIcon, Loader2, Save, Sparkles, Trash2 } from 'lucide-react';
+import {
+  AlertCircle,
+  X as CloseIcon,
+  Loader2,
+  Save,
+  Sparkles,
+  Trash2,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
+import { useUIStore } from '../../store/uiStore';
 // Firestore import removed to operate in-memory
 import type { Chapter, Story, VocabularyTerm } from '../../types';
 
@@ -39,7 +47,9 @@ export default function ChapterEditForm({
   const [isGeneratingGlossary, setIsGeneratingGlossary] =
     useState<boolean>(false);
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState<string>('google/gemma-4-31b-it:free');
+  const [selectedModel, setSelectedModel] = useState<string>(
+    'google/gemma-4-31b-it:free',
+  );
 
   // Sync state if activeChapter changes
   useEffect(() => {
@@ -86,12 +96,18 @@ export default function ChapterEditForm({
           model: activeModel,
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
+          translationLanguage:
+            story.translationLanguage ||
+            useUIStore.getState().translationTargetLanguage,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to generate glossary (status ${response.status}).`);
+        throw new Error(
+          errorData.error ||
+            `Failed to generate glossary (status ${response.status}).`,
+        );
       }
 
       const data = await response.json();
@@ -101,7 +117,9 @@ export default function ChapterEditForm({
       }
     } catch (err: any) {
       console.error(err);
-      setGlossaryError(err.message || 'An error occurred while generating the glossary.');
+      setGlossaryError(
+        err.message || 'An error occurred while generating the glossary.',
+      );
     } finally {
       setIsGeneratingGlossary(false);
     }
@@ -265,7 +283,7 @@ export default function ChapterEditForm({
                 </p>
               </div>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-rose-100 dark:border-rose-900/20">
               <div className="flex-1">
                 <select
@@ -273,9 +291,15 @@ export default function ChapterEditForm({
                   onChange={(e) => setSelectedModel(e.target.value)}
                   className="w-full text-xs p-2 rounded-lg border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:outline-none cursor-pointer"
                 >
-                  <option value="google/gemma-4-31b-it:free">Gemma 4 31B (Free)</option>
-                  <option value="deepseek/deepseek-v4-flash">DeepSeek V4 Flash</option>
-                  <option value="google/gemma-4-31b-it">Gemma 4 31B (Paid)</option>
+                  <option value="google/gemma-4-31b-it:free">
+                    Gemma 4 31B (Free)
+                  </option>
+                  <option value="deepseek/deepseek-v4-flash">
+                    DeepSeek V4 Flash
+                  </option>
+                  <option value="google/gemma-4-31b-it">
+                    Gemma 4 31B (Paid)
+                  </option>
                   <option value="openrouter/free">OpenRouter Free</option>
                 </select>
               </div>
@@ -285,7 +309,9 @@ export default function ChapterEditForm({
                 onClick={() => handleGenerateGlossaryFromContent(selectedModel)}
                 className="px-4 py-2 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main text-xs font-bold rounded-lg cursor-pointer transition-all disabled:opacity-50 shrink-0 border-0 flex items-center justify-center gap-1.5"
               >
-                {isGeneratingGlossary && <Loader2 className="w-3 h-3 animate-spin" />}
+                {isGeneratingGlossary && (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                )}
                 <span>Retry with Selected Model</span>
               </button>
             </div>

@@ -306,10 +306,7 @@ export default function StoryConfigForm({
           thinkingLevel: finalThinkingLevel,
           thinkingBudget: finalThinkingBudget,
           temperature: finalTemperature,
-          translationLanguage:
-            cefrLevel === 'A1' || cefrLevel === 'Pre-A1'
-              ? translationTargetLanguage
-              : undefined,
+          translationLanguage: translationTargetLanguage,
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
         }),
@@ -385,10 +382,7 @@ export default function StoryConfigForm({
       thinkingLevel: finalThinkingLevel,
       thinkingBudget: finalThinkingBudget,
       temperature: finalTemperature,
-      translationLanguage:
-        cefrLevel === 'A1' || cefrLevel === 'Pre-A1'
-          ? translationTargetLanguage
-          : undefined,
+      translationLanguage: translationTargetLanguage,
       isPublic,
       skipChapterGeneration: isScratchMode,
     });

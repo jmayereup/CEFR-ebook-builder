@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { AlertCircle, RotateCcw, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 
 interface GlossaryGenerationToastProps {
   isGeneratingGlossary: boolean;
@@ -28,7 +28,9 @@ export default function GlossaryGenerationToast({
   onRetry,
   onDismiss,
 }: GlossaryGenerationToastProps) {
-  const [selectedModel, setSelectedModel] = useState('google/gemma-4-31b-it:free');
+  const [selectedModel, setSelectedModel] = useState(
+    'google/gemma-4-31b-it:free',
+  );
 
   return (
     <AnimatePresence>
@@ -147,7 +149,8 @@ export default function GlossaryGenerationToast({
 
               {/* Action text */}
               <p className="text-[10px] text-tj-text-muted italic select-none">
-                You can continue reading the story while generation is in progress.
+                You can continue reading the story while generation is in
+                progress.
               </p>
             </>
           )}

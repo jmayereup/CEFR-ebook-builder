@@ -270,7 +270,9 @@ export default function MatchingGame({
                         : 'border-slate-200 dark:border-slate-800 hover:border-tj-primary-border dark:hover:border-slate-700 bg-transparent text-slate-800 dark:text-slate-200 font-semibold shadow-sm'
                 }`}
               >
-                <span lang={termLangCode}>{item.word}</span>
+                <span lang={termLangCode} translate="no">
+                  {item.word}
+                </span>
                 {isMatched && (
                   <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
                 )}
@@ -307,7 +309,9 @@ export default function MatchingGame({
                         : 'border-slate-200 dark:border-slate-800 hover:border-tj-primary-border dark:hover:border-slate-700 bg-transparent text-slate-800 dark:text-slate-200 font-semibold shadow-sm'
                 }`}
               >
-                <span className="line-clamp-1 text-xs">{item.word}</span>
+                <span translate="yes" className="line-clamp-1 text-xs">
+                  {item.word}
+                </span>
                 {isMatched && (
                   <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
                 )}

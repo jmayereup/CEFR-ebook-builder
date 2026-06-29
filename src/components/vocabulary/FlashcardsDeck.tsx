@@ -133,6 +133,7 @@ export default function FlashcardsDeck({
               <div className="flex items-center justify-center gap-2">
                 <h2
                   lang={termLangCode}
+                  translate="no"
                   className="text-3xl font-serif font-black text-tj-text-main tracking-tight select-none"
                 >
                   {activeTerm.word}
@@ -150,7 +151,10 @@ export default function FlashcardsDeck({
                 </button>
               </div>
               {activeTerm.transliteration && (
-                <p className="text-sm font-sans italic text-tj-text-muted mt-1 select-none">
+                <p
+                  translate="no"
+                  className="text-sm font-sans italic text-tj-text-muted mt-1 select-none"
+                >
                   [{activeTerm.transliteration}]
                 </p>
               )}
@@ -164,6 +168,7 @@ export default function FlashcardsDeck({
                 // biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: onClick is only used to prevent card flip propagation
                 <div
                   lang={termLangCode}
+                  translate="no"
                   onClick={(e) => {
                     e.stopPropagation(); // prevent flip
                   }}
@@ -191,7 +196,10 @@ export default function FlashcardsDeck({
             </span>
             <div className="space-y-4 text-center my-auto">
               <div>
-                <h3 className="text-xl font-bold text-tj-text-main leading-tight font-serif">
+                <h3
+                  translate="yes"
+                  className="text-xl font-bold text-tj-text-main leading-tight font-serif"
+                >
                   {activeTerm.definition}
                 </h3>
                 <div className="flex items-center justify-center gap-1.5 mt-2">

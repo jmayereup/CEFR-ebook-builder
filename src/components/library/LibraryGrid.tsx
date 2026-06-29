@@ -82,7 +82,7 @@ export default function LibraryGrid({
       } else if (width >= 640) {
         setItemsPerPage(12); // 4 columns * 3 rows = 12, or 3 columns * 4 rows = 12
       } else {
-        setItemsPerPage(8);  // 2 columns * 4 rows = 8
+        setItemsPerPage(8); // 2 columns * 4 rows = 8
       }
     };
 

@@ -20,8 +20,8 @@ const router = Router();
 // Always use this cheap model for glossary regardless of story model.
 const GLOSSARY_MODEL = 'google/gemma-4-31b-it:free';
 
-// Vocabulary schema item (reused for both modes)
-const vocabItem = {
+// Vocabulary schema item generator (reused for both modes)
+const getVocabItemSchema = (targetTranslationLanguage: string) => ({
   type: Type.OBJECT,
   properties: {
     word: {
@@ -39,7 +39,7 @@ const vocabItem = {
     },
     definition: {
       type: Type.STRING,
-      description: 'English translation or concise explanation.',
+      description: `${targetTranslationLanguage} translation or concise explanation.`,
     },
     contextSentence: {
       type: Type.STRING,
@@ -54,7 +54,7 @@ const vocabItem = {
     'definition',
     'contextSentence',
   ],
-};
+});
 
 router.post('/', async (req, res) => {
   let headersSent = false;
@@ -71,6 +71,7 @@ router.post('/', async (req, res) => {
       userId,
       userEmail,
       model,
+      translationLanguage,
     } = req.body as {
       content?: string;
       chapters?: Array<{ chapterNumber: number; content: string }>;
@@ -80,6 +81,7 @@ router.post('/', async (req, res) => {
       userId?: string;
       userEmail?: string;
       model?: string;
+      translationLanguage?: string;
     };
 
     const isBatchMode = Array.isArray(chapters) && chapters.length > 0;
@@ -99,6 +101,9 @@ router.post('/', async (req, res) => {
       req.headers['x-openrouter-api-key'] ||
       req.headers['X-OpenRouter-API-Key'];
 
+    const targetTranslationLanguage = translationLanguage || 'English';
+    const vocabItem = getVocabItemSchema(targetTranslationLanguage);
+
     // Base system instruction
     let systemInstruction = `You are an expert bilingual linguist and language teacher. \
 Your task is to analyze the provided text and extract key vocabulary terms/phrases suitable \
@@ -107,7 +112,7 @@ For each term, you must provide:
 - The word/phrase in ${language}.
 - The part of speech (Noun, Verb, Adjective, Idiom, etc.).
 - A transliteration, romanization, or pronunciation guide (e.g. romanization/IPA for Thai, pinyin for Chinese, romaji for Japanese, romanization for Korean, or empty for standard space-separated latin languages).
-- A simple English definition/explanation.
+- A simple ${targetTranslationLanguage} definition/explanation.
 - A short context sentence or phrase from the text showing how it is used (maximum of 10 words). Crucially, the contextSentence MUST contain the exact word/phrase as a substring. (This is especially important for languages like Thai; ensure the word's exact spelling is present in the sentence.)`;
 
     if (existingWords && existingWords.length > 0) {

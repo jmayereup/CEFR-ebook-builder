@@ -1232,6 +1232,7 @@ export default function ReaderPanel({
                 ) : (
                   <>
                     <div
+                      translate="no"
                       lang={getLanguageCodeFromName(story.language)}
                       className={`space-y-6 select-text ${useSerif ? 'font-serif' : 'font-sans'}`}
                       style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
@@ -1277,7 +1278,10 @@ export default function ReaderPanel({
                               )}
                             </div>
                             {showBilingual && dp.translation && (
-                              <p className="text-sm text-tj-text-muted font-sans italic pl-4 border-l-2 border-tj-border-main select-text leading-[1.6] pr-8">
+                              <p
+                                translate="yes"
+                                className="text-sm text-tj-text-muted font-sans italic pl-4 border-l-2 border-tj-border-main select-text leading-[1.6] pr-8"
+                              >
                                 {dp.translation}
                               </p>
                             )}

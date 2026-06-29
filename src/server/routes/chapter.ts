@@ -118,20 +118,19 @@ router.post('/', async (req, res) => {
         ? 'Note: This is a historical fiction work. Please ensure the setting, culture, and key historical facts are accurate, avoiding glaring anachronisms.'
         : '';
 
-    // Note: vocabulary exclusion is no longer performed here.
-    // Glossary generation is fully deferred to post-story completion.
+    const targetTranslationLanguage = translationLanguage || 'English';
 
     const systemInstruction = `You are an expert bilingual linguist and a professional story writer. 
 Your target is to generate a short story segment (chapter) tailored for learners studying ${language} at the CEFR difficulty level of ${cefrLevel}.
 The text must be written in the style of a "${resolvedWritingType}" text.
 The narrative style must strictly adhere to the ${cefrLevel} CEFR guidelines:
-- Pre-A1: Extremely basic vocabulary, minimal sentence structure (2-4 words per sentence), present tense only, very repetitive. Since this is a Pre-A1 level book, it MUST be generated in a line-by-line bilingual format. Each line/sentence in target language (${language}) must be immediately followed by a word-by-word or phrase-by-phrase bilingual translation in the translation language (${translationLanguage || 'English'}). In this translation, map each word or phrase from the translation language directly to its target language counterpart in parentheses. Format each translated line on a new line prefixed with 'Translation:'. Example:
+- Pre-A1: Extremely basic vocabulary, minimal sentence structure (2-4 words per sentence), present tense only, very repetitive. Since this is a Pre-A1 level book, it MUST be generated in a line-by-line bilingual format. Each line/sentence in target language (${language}) must be immediately followed by a word-by-word or phrase-by-phrase bilingual translation in the translation language (${targetTranslationLanguage}). In this translation, map each word or phrase from the translation language directly to its target language counterpart in parentheses. Format each translated line on a new line prefixed with 'Translation:'. Example:
 [Target Language line]
 Translation: [Translation Language word-by-word/phrase-by-phrase translation with target words in parentheses]
 Example: if target is "민수는 일어나요." (Minsu wakes up), the translation line must be:
 Translation: Minsu (민수) wakes up (일어나요).
 Do not include any key vocabulary extraction or glossary for Pre-A1 bilingual stories.
-- A1: Extremely basic, short sentences, simple vocab, present tense only, very repetitive, easy to read. Since this is an A1 level book, it MUST be generated in a line-by-line bilingual format: each line/sentence in target language (${language}) must be immediately followed by its translation in the translation language (${translationLanguage || 'English'}). Format each translated line on a new line prefixed with 'Translation:'. Example:
+- A1: Extremely basic, short sentences, simple vocab, present tense only, very repetitive, easy to read. Since this is an A1 level book, it MUST be generated in a line-by-line bilingual format: each line/sentence in target language (${language}) must be immediately followed by its translation in the translation language (${targetTranslationLanguage}). Format each translated line on a new line prefixed with 'Translation:'. Example:
 [Target Language line]
 Translation: [Translation Language line]
 Do not include any key vocabulary extraction or glossary for A1 bilingual stories.
@@ -142,7 +141,7 @@ Do not include any key vocabulary extraction or glossary for A1 bilingual storie
 - C2: Mastery, expert-level native text, highly advanced wordplays, idiomatic mastery.
 
 The chapter must be approximately ${targetWordCount} words long.
-${cefrLevel === 'A1' || cefrLevel === 'Pre-A1' ? 'Do NOT select or extract vocabulary terms. Set the vocabulary field to an empty array.' : `You must also select and extract 5 to 10 key vocabulary terms from this chapter. For each term, provide its part of speech, a clear English meaning/definition, its transliteration/pronunciation guide (e.g. romanization/IPA for Thai, pinyin for Chinese, romaji for Japanese, romanization for Korean, or empty for standard space-separated latin languages), and its usage context (a short context sentence or phrase from the text of at most 10 words). Crucially, the contextSentence MUST contain the exact word/phrase as a substring. (Verify this carefully, especially for languages like Thai where words are not space-separated.)`}
+${cefrLevel === 'A1' || cefrLevel === 'Pre-A1' ? 'Do NOT select or extract vocabulary terms. Set the vocabulary field to an empty array.' : `You must also select and extract 5 to 10 key vocabulary terms from this chapter. For each term, provide its part of speech, a clear ${targetTranslationLanguage} meaning/definition, its transliteration/pronunciation guide (e.g. romanization/IPA for Thai, pinyin for Chinese, romaji for Japanese, romanization for Korean, or empty for standard space-separated latin languages), and its usage context (a short context sentence or phrase from the text of at most 10 words). Crucially, the contextSentence MUST contain the exact word/phrase as a substring. (Verify this carefully, especially for languages like Thai where words are not space-separated.)`}
 ${accuracyGuidance ? `\n${accuracyGuidance}` : ''}`;
 
     // ---------------------------------------------------------------------------
@@ -170,7 +169,7 @@ ${accuracyGuidance ? `\n${accuracyGuidance}` : ''}`;
         },
         definition: {
           type: Type.STRING,
-          description: 'English translation or explanation of the term.',
+          description: `${targetTranslationLanguage} translation or explanation of the term.`,
         },
         contextSentence: {
           type: Type.STRING,
