@@ -1,4 +1,4 @@
-import { Loader2, Save, Sparkles, Trash2, X } from 'lucide-react';
+import { AlertCircle, Loader2, Save, Sparkles, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import type { VocabularyTerm } from '../../types';
@@ -35,15 +35,18 @@ export default function AddChapterModal({
   const [isGeneratingGlossary, setIsGeneratingGlossary] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [glossaryError, setGlossaryError] = useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = useState<string>(model);
 
   if (!isOpen) return null;
 
-  const handleGenerateGlossary = async () => {
+  const handleGenerateGlossary = async (modelId?: string) => {
     if (!content.trim()) {
       setErrorMsg('Please enter chapter content before generating a glossary.');
       return;
     }
     setErrorMsg('');
+    setGlossaryError(null);
     setIsGeneratingGlossary(true);
 
     try {
@@ -54,6 +57,8 @@ export default function AddChapterModal({
         headers['X-OpenRouter-API-Key'] = customOpenRouterKey;
       }
 
+      const activeModel = modelId || selectedModel;
+
       const response = await fetch('/api/stories/generate-glossary', {
         method: 'POST',
         headers,
@@ -61,23 +66,25 @@ export default function AddChapterModal({
           content: content.trim(),
           language,
           cefrLevel,
-          model,
+          model: activeModel,
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate glossary from server.');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to generate glossary (status ${response.status}).`);
       }
 
       const data = await response.json();
       if (data.vocabulary) {
         setVocabulary(data.vocabulary);
+        setGlossaryError(null);
       }
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(`Failed to generate glossary: ${err.message}`);
+      setGlossaryError(err.message || 'An error occurred while generating the glossary.');
     } finally {
       setIsGeneratingGlossary(false);
     }
@@ -204,6 +211,46 @@ export default function AddChapterModal({
                 )}
               </button>
             </div>
+
+            {glossaryError && (
+              <div className="p-3.5 bg-rose-50 dark:bg-rose-955/20 border border-rose-200 dark:border-rose-900/30 rounded-xl space-y-3 font-sans">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-bold text-rose-600 dark:text-rose-400">
+                      Glossary Generation Failed
+                    </p>
+                    <p className="text-[10px] text-tj-text-muted mt-0.5 leading-relaxed">
+                      {glossaryError}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-rose-100 dark:border-rose-900/20">
+                  <div className="flex-1">
+                    <select
+                      value={selectedModel}
+                      onChange={(e) => setSelectedModel(e.target.value)}
+                      className="w-full text-xs p-2 rounded-lg border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:outline-none cursor-pointer"
+                    >
+                      <option value="google/gemma-4-31b-it:free">Gemma 4 31B (Free)</option>
+                      <option value="deepseek/deepseek-v4-flash">DeepSeek V4 Flash</option>
+                      <option value="google/gemma-4-31b-it">Gemma 4 31B (Paid)</option>
+                      <option value="openrouter/free">OpenRouter Free</option>
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isGeneratingGlossary}
+                    onClick={() => handleGenerateGlossary(selectedModel)}
+                    className="px-4 py-2 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main text-xs font-bold rounded-lg cursor-pointer transition-all disabled:opacity-50 shrink-0 border-0 flex items-center justify-center gap-1.5"
+                  >
+                    {isGeneratingGlossary && <Loader2 className="w-3 h-3 animate-spin" />}
+                    <span>Retry with Selected Model</span>
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[250px] overflow-y-auto p-1 border border-tj-border-main rounded-xl bg-tj-bg-card">
               {vocabulary.map((vocab, index) => (

@@ -70,6 +70,7 @@ router.post('/', async (req, res) => {
       existingWords = [],
       userId,
       userEmail,
+      model,
     } = req.body as {
       content?: string;
       chapters?: Array<{ chapterNumber: number; content: string }>;
@@ -78,6 +79,7 @@ router.post('/', async (req, res) => {
       existingWords?: string[];
       userId?: string;
       userEmail?: string;
+      model?: string;
     };
 
     const isBatchMode = Array.isArray(chapters) && chapters.length > 0;
@@ -170,7 +172,7 @@ ${chaptersText}
 Return your response as a JSON array of chapter vocabulary objects.`;
 
       const responseText = await handleModelCall({
-        model: GLOSSARY_MODEL,
+        model: model || GLOSSARY_MODEL,
         systemInstruction,
         prompt,
         responseSchema,
@@ -234,7 +236,7 @@ CEFR Difficulty Level: ${cefrLevel}
 Extract 5 to 10 vocabulary terms/phrases that are relevant, interesting, or challenging for a student at the ${cefrLevel} level from the text above. Return them in the requested JSON structure.`;
 
     const responseText = await handleModelCall({
-      model: GLOSSARY_MODEL,
+      model: model || GLOSSARY_MODEL,
       systemInstruction,
       prompt,
       responseSchema,

@@ -289,6 +289,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     isGeneratingGlossary,
     glossaryStatus,
     glossaryLogs,
+    glossaryError,
     handleInitiateStory,
     handleGenerateNextChapter,
     handleRegenerateChapter,
@@ -874,6 +875,13 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
           glossaryLogs={glossaryLogs}
           glossaryStatus={glossaryStatus}
           handleCancelGeneration={handleCancelGeneration}
+          glossaryError={glossaryError}
+          onRetry={(modelId) => {
+            if (selectedStory) {
+              handleGenerateGlossary(selectedStory, modelId);
+            }
+          }}
+          onDismiss={handleCancelGeneration}
         />
 
         <AnimatePresence mode="wait">

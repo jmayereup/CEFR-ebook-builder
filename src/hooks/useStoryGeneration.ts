@@ -98,6 +98,7 @@ export interface UseStoryGenerationReturn {
   isGeneratingGlossary: boolean;
   glossaryLogs: string[];
   glossaryStatus: string;
+  glossaryError: string | null;
   handleInitiateStory: (config: StoryConfig) => Promise<void>;
   handleGenerateNextChapter: (chapterGuidance?: string) => Promise<void>;
   handleRegenerateChapter: (
@@ -105,7 +106,7 @@ export interface UseStoryGenerationReturn {
     chapterGuidance?: string,
   ) => Promise<void>;
   handleAutoGenerateRemaining: () => Promise<void>;
-  handleGenerateGlossary: (story: Story) => Promise<void>;
+  handleGenerateGlossary: (story: Story, modelId?: string) => Promise<void>;
   handleCancelGeneration: () => void;
 }
 
@@ -156,6 +157,7 @@ export const useStoryGeneration = (
   const [isGeneratingGlossary, setIsGeneratingGlossary] = useState(false);
   const [glossaryStatus, setGlossaryStatus] = useState<string>('');
   const [glossaryLogs, setGlossaryLogs] = useState<string[]>([]);
+  const [glossaryError, setGlossaryError] = useState<string | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -190,6 +192,7 @@ export const useStoryGeneration = (
     setIsGeneratingGlossary(false);
     setGlossaryStatus('');
     setGlossaryLogs([]);
+    setGlossaryError(null);
   };
 
   // ---------------------------------------------------------------------------
@@ -1030,7 +1033,7 @@ export const useStoryGeneration = (
   // Generate glossary for all completed chapters (deferred post-completion)
   // ---------------------------------------------------------------------------
 
-  const handleGenerateGlossary = async (story: Story): Promise<void> => {
+  const handleGenerateGlossary = async (story: Story, modelId?: string): Promise<void> => {
     if (!currentUser) {
       showAlert('Authentication Required', 'Please log in first.', 'warning');
       return;
@@ -1054,6 +1057,7 @@ export const useStoryGeneration = (
     }
 
     setIsGeneratingGlossary(true);
+    setGlossaryError(null);
     setGlossaryLogs([
       `Generating glossary for ${chaptersNeedingGlossary.length} chapter(s)...`,
     ]);
@@ -1077,8 +1081,6 @@ export const useStoryGeneration = (
         .filter(Boolean);
 
       // Single batch call for all chapters needing glossary.
-      // Note: no `model` field — the server always uses a cheap model for glossary
-      // regardless of what model was used to write the story.
       const res = await fetch('/api/stories/generate-glossary', {
         method: 'POST',
         headers: { ...headers, 'Content-Type': 'application/json' },
@@ -1093,6 +1095,7 @@ export const useStoryGeneration = (
           existingWords,
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
+          model: modelId,
         }),
       });
 
@@ -1124,17 +1127,23 @@ export const useStoryGeneration = (
             ]);
           }
         }
+
+        setIsGeneratingGlossary(false);
+        setGlossaryStatus('');
+        setGlossaryLogs([]);
+        setGlossaryError(null);
+
+        onStoryUpdated({ ...story, chapters: updatedChapters, isUnsaved: true });
+
+        showAlert(
+          'Glossary Complete',
+          `Vocabulary terms have been generated for all ${chaptersNeedingGlossary.length} chapter(s).`,
+          'info',
+        );
       } else {
-        throw new Error(`Glossary request failed with status ${res.status}`);
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Glossary request failed with status ${res.status}`);
       }
-
-      onStoryUpdated({ ...story, chapters: updatedChapters, isUnsaved: true });
-
-      showAlert(
-        'Glossary Complete',
-        `Vocabulary terms have been generated for all ${chaptersNeedingGlossary.length} chapter(s).`,
-        'info',
-      );
     } catch (err: unknown) {
       const e = err as { name?: string; message?: string };
       if (e.name === 'AbortError') {
@@ -1143,17 +1152,14 @@ export const useStoryGeneration = (
           'Glossary generation was canceled by user.',
           'info',
         );
+        setIsGeneratingGlossary(false);
+        setGlossaryStatus('');
+        setGlossaryLogs([]);
+        setGlossaryError(null);
       } else {
-        showAlert(
-          'Glossary Generation Failed',
-          e.message || 'An error occurred while generating the glossary.',
-          'error',
-        );
+        setGlossaryError(e.message || 'An error occurred while generating the glossary.');
       }
     } finally {
-      setIsGeneratingGlossary(false);
-      setGlossaryStatus('');
-      setGlossaryLogs([]);
       abortControllerRef.current = null;
     }
   };
@@ -1167,6 +1173,7 @@ export const useStoryGeneration = (
     isGeneratingGlossary,
     glossaryStatus,
     glossaryLogs,
+    glossaryError,
     handleInitiateStory,
     handleGenerateNextChapter,
     handleRegenerateChapter,
