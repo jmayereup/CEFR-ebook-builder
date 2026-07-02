@@ -265,7 +265,7 @@
         }
 
         // Set up real-time subscription (if supported)
-        pb.collection('posts').subscribe('*', function (e) {
+        pb.collection('posts').subscribe('*', (e) => {
             console.log('Real-time event:', e);
             // Reload posts when changes occur
             loadPosts();

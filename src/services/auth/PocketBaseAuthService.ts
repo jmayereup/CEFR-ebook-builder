@@ -19,6 +19,25 @@ export class PocketBaseAuthService implements IAuthService {
     // If already logged in, invoke onSuccess immediately
     if (pb.authStore.isValid && pb.authStore.record) {
       onSuccess(toIUser(pb.authStore.record), pb.authStore.token);
+
+      // Asynchronously refresh the token to keep it valid and verify with server
+      pb.collection('users')
+        .authRefresh()
+        .then((authData) => {
+          if (authData.record) {
+            onSuccess(toIUser(authData.record), authData.token);
+          }
+        })
+        .catch((err) => {
+          console.warn(
+            '[PocketBaseAuthService] Auto authRefresh on mount failed:',
+            err,
+          );
+          if (err.status === 401 || err.status === 403) {
+            pb.authStore.clear();
+            onFailure();
+          }
+        });
     } else {
       onFailure();
     }

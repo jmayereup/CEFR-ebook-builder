@@ -907,7 +907,7 @@ export default function ReaderPanel({
   const handleLanguageConfirm = (selectedLang: string) => {
     setTranslationTargetLanguage(selectedLang);
     setShowLanguageModal(false);
-    
+
     // Automatically trigger translation lookup now that the target language is set!
     handleFetchTranslation();
   };

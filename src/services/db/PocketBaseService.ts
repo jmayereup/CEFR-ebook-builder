@@ -486,7 +486,8 @@ export class PocketBaseService implements IDatabaseService {
   ): Promise<void> {
     const updateData: any = {};
     if (data.bookshelf !== undefined) updateData.bookshelf = data.bookshelf;
-    if (data.recentlyRead !== undefined) updateData.recentlyRead = data.recentlyRead;
+    if (data.recentlyRead !== undefined)
+      updateData.recentlyRead = data.recentlyRead;
     if (data.lookupLimitData !== undefined) {
       updateData.lookupLimitData = data.lookupLimitData
         ? JSON.stringify(data.lookupLimitData)

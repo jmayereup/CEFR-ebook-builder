@@ -1,6 +1,44 @@
 {
-  "lastFetchTime": 1782700338802,
+  "lastFetchTime": 1782991797816,
   "stories": [
+    {
+      "id": "s4xcb8zpv9wefkv",
+      "title": "เสียงสะท้อนจากดินแดนรอยยิ้ม",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "folklore",
+      "totalChapters": 30,
+      "createdAt": "2026-07-01T11:38:53.835Z",
+      "isCompleted": true,
+      "description": "Journey through the heart of Thailand with thirty timeless tales that blend Buddhist fables, folk magic, and mythical legends. Each story carries a moral, a spark of humour, or a touch of the supernatural, revealing the wisdom and imagination of the Thai people. From loyal spirits to clever tricksters, these echoes of the Land of Smiles captivate and inspire readers of all ages.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 30,
+      "wordCount": 10839
+    },
+    {
+      "id": "sf59lxv51pcthce",
+      "title": "เป็นเหมือนน้ำ: ห้าบทเรียนชีวิตจากเต๋าเต๋อจิง",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 5,
+      "createdAt": "2026-06-29T05:38:26.289Z",
+      "isCompleted": true,
+      "description": "This book distills five timeless lessons from Lao Tzu's Tao Te Ching into simple, accessible Thai for intermediate learners. Exploring concepts like humility, adaptability, and inner peace, it guides readers to live with balance and wisdom in a changing world. Perfect for those seeking practical philosophy rooted in ancient wisdom.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2504
+    },
     {
       "id": "sacp6xhsczdsj7f",
       "title": "Between the Lines: Understanding Western and Thai Communication",
@@ -52,8 +90,12 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 2848
@@ -178,8 +220,12 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 2
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1998
@@ -264,7 +310,9 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
       "completedBy": {
         "kjksljovpk623jy": 2
       },
@@ -432,8 +480,12 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 4190
@@ -631,7 +683,7 @@
       "createdAt": "2026-06-18T09:43:11.816Z",
       "isCompleted": true,
       "description": "Rashid leaves his quiet life in the mountains of northern Pakistan to teach English in a lively Thai provincial school. As he struggles to connect with his students, he discovers that the greatest adventures are not only found in new landscapes but in the bridges we build between hearts. A gentle story of cultural exchange, courage, and finding home in unexpected places.",
-      "creatorId": "13995bf5fb33347",
+      "creatorId": "",
       "creatorEmail": "teacherjakerru@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": {
@@ -652,7 +704,7 @@
       "createdAt": "2026-06-17T21:34:43.795Z",
       "isCompleted": true,
       "description": "This book is a gentle introduction to the life-changing ideas of William James, the father of American psychology and pragmatism. Written for intermediate Thai learners, it explores how truth works in our daily lives, why we have the right to believe even without proof, and how our actions can shape our emotions. Through simple, relatable examples, readers will discover a practical philosophy that offers hope, self-understanding, and a guide to building a meaningful life in an imperfect world.",
-      "creatorId": "13995bf5fb33347",
+      "creatorId": "",
       "creatorEmail": "teacherjakerru@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
@@ -924,7 +976,7 @@
       "createdAt": "2026-06-09T01:09:43.096Z",
       "isCompleted": true,
       "description": "This story is set in the late 1890s during the transition period of the Lanna Kingdom (Northern Thailand) as it integrated more closely with Siam (Central Thailand). During this era, British timber companies were heavily active in Chiang Mai, extracting highly valuable teak wood. The story explores themes of environmental preservation, cultural heritage, and the transition from ancient beliefs to modern industry.",
-      "creatorId": "13995bf5fb33347",
+      "creatorId": "",
       "creatorEmail": "teacherjakerru@gmail.com",
       "model": "google/gemma-4-31b-it:free",
       "ratings": null,
@@ -1439,7 +1491,7 @@
       "createdAt": "2026-06-05T01:13:17.788Z",
       "isCompleted": true,
       "description": "",
-      "creatorId": "13995bf5fb33347",
+      "creatorId": "",
       "creatorEmail": "teacherjakerru@gmail.com",
       "model": "google/gemini-3.1-flash-lite",
       "ratings": null,
@@ -1458,7 +1510,7 @@
       "createdAt": "2026-06-05T00:51:07.193Z",
       "isCompleted": true,
       "description": "",
-      "creatorId": "13995bf5fb33347",
+      "creatorId": "",
       "creatorEmail": "teacherjakerru@gmail.com",
       "model": "deepseek-v4-flash",
       "ratings": null,

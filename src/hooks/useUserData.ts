@@ -9,9 +9,10 @@ import {
   saveUserProfileData,
   saveWord,
 } from '../services/db';
+import { pb } from '../services/pocketbase';
+import { useUIStore } from '../store/uiStore';
 import type { VocabularyTerm } from '../types';
 import { calculateNextSRS } from '../utils/srs';
-import { useUIStore } from '../store/uiStore';
 
 interface LookupLimitData {
   count: number;
@@ -61,6 +62,7 @@ const defaultLookupLimitData = (): LookupLimitData => {
 
 interface UseUserDataOptions {
   currentUser: { uid: string } | null;
+  authChecking: boolean;
   isPaid: boolean;
   setIsPaid: (paid: boolean) => void;
   generationLimitData: GenerationLimitData;
@@ -80,6 +82,7 @@ interface UseUserDataOptions {
 export function useUserData(options: UseUserDataOptions) {
   const {
     currentUser,
+    authChecking,
     showAlert,
     onProfileLoaded,
     setIsPaid,
@@ -139,7 +142,9 @@ export function useUserData(options: UseUserDataOptions) {
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const isSyncingFromServer = useRef(false);
 
-  const translationTargetLanguage = useUIStore((state) => state.translationTargetLanguage);
+  const translationTargetLanguage = useUIStore(
+    (state) => state.translationTargetLanguage,
+  );
   const readerFontSize = useUIStore((state) => state.readerFontSize);
   const readerUseSerif = useUIStore((state) => state.readerUseSerif);
 
@@ -172,6 +177,7 @@ export function useUserData(options: UseUserDataOptions) {
   }, [savedVocab, bookshelf, recentlyRead, lookupLimitData, dirty]);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevUserRef = useRef<{ uid: string } | null>(null);
 
   const markDirty = () => {
     setDirty(true);
@@ -204,7 +210,8 @@ export function useUserData(options: UseUserDataOptions) {
         bookshelf: bookshelfRef.current,
         recentlyRead: recentlyReadRef.current,
         lookupLimitData: lookupLimitDataRef.current,
-        translationTargetLanguage: useUIStore.getState().translationTargetLanguage,
+        translationTargetLanguage:
+          useUIStore.getState().translationTargetLanguage,
         readerFontSize: useUIStore.getState().readerFontSize,
         readerUseSerif: useUIStore.getState().readerUseSerif,
       };
@@ -432,11 +439,40 @@ export function useUserData(options: UseUserDataOptions) {
 
   // Load saved vocabulary and lookup limit from database (if user is authenticated) or localStorage
   useEffect(() => {
-    const loadSavedVocab = async () => {
-      const todayStr = new Date().toISOString().split('T')[0];
-      const thisMonthStr = todayStr.substring(0, 7);
+    if (authChecking) return;
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const thisMonthStr = todayStr.substring(0, 7);
+    const lastFetchTimeRef = { current: 0 };
+    const isFetchingRef = { current: false };
+
+    const loadSavedVocab = async (force = false) => {
       if (currentUser) {
+        // Throttle automatic re-fetches (e.g. on focus) to at most once every 15 seconds unless forced
+        const now = Date.now();
+        if (!force && now - lastFetchTimeRef.current < 15000) {
+          return;
+        }
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+        lastFetchTimeRef.current = now;
+
         try {
+          // Attempt to refresh the auth token first to verify session validity
+          try {
+            await pb.collection('users').authRefresh();
+          } catch (authErr: any) {
+            console.warn(
+              '[useUserData] authRefresh failed on load/focus:',
+              authErr,
+            );
+            // If the token is expired/revoked (401/403), stop and let auth handler log the user out
+            if (authErr.status === 401 || authErr.status === 403) {
+              pb.authStore.clear();
+              return;
+            }
+          }
+
           const profile = await fetchUserProfile(currentUser.uid);
           const vocab = await fetchUserVocab(currentUser.uid);
 
@@ -548,6 +584,7 @@ export function useUserData(options: UseUserDataOptions) {
                 JSON.stringify(resetData),
               );
             }
+
             if (profile.generationLimitData) {
               const dataWithFallbacks = {
                 freeModelCount:
@@ -588,9 +625,16 @@ export function useUserData(options: UseUserDataOptions) {
             // Load and update target language, font size, serif choice
             isSyncingFromServer.current = true;
             if (profile.translationTargetLanguage !== undefined) {
-              useUIStore.getState().setTranslationTargetLanguage(profile.translationTargetLanguage);
+              useUIStore
+                .getState()
+                .setTranslationTargetLanguage(
+                  profile.translationTargetLanguage,
+                );
             }
-            if (profile.readerFontSize !== undefined && profile.readerFontSize !== null) {
+            if (
+              profile.readerFontSize !== undefined &&
+              profile.readerFontSize !== null
+            ) {
               const dbSize = profile.readerFontSize;
               if (typeof dbSize === 'number' && dbSize >= 14 && dbSize <= 26) {
                 useUIStore.getState().setReaderFontSize(dbSize);
@@ -598,37 +642,67 @@ export function useUserData(options: UseUserDataOptions) {
                 useUIStore.getState().setReaderFontSize(18);
               }
             }
-            if (profile.readerUseSerif !== undefined && profile.readerUseSerif !== null) {
+            if (
+              profile.readerUseSerif !== undefined &&
+              profile.readerUseSerif !== null
+            ) {
               useUIStore.getState().setReaderUseSerif(profile.readerUseSerif);
             }
             isSyncingFromServer.current = false;
           }
         } catch (err) {
           console.error('Error fetching user profile: ', err);
+        } finally {
+          isFetchingRef.current = false;
         }
       } else {
-        // Clear guest legacy data
-        localStorage.removeItem('savedVocab');
-        localStorage.removeItem('lookup_limit_data');
-        localStorage.removeItem('generation_limit_data');
-        localStorage.removeItem('bookshelf');
-        localStorage.removeItem('recently_read');
+        // Only clear states and localStorage if we transitioned from a logged-in user to a guest
+        if (prevUserRef.current !== null) {
+          localStorage.removeItem('saved_vocab');
+          localStorage.removeItem('lookup_limit_data');
+          localStorage.removeItem('generation_limit_data');
+          localStorage.removeItem('bookshelf');
+          localStorage.removeItem('recently_read');
 
-        setSavedVocab([]);
-        setIsPaid(false);
-        setBookshelf([]);
-        setRecentlyRead([]);
-        setLookupLimitData({ count: 0, date: todayStr });
-        setGenerationLimitData({
-          freeModelCount: 0,
-          monthlyCreditsUsed: 0,
-          monthlyCreditsMonth: thisMonthStr,
-          date: todayStr,
-        });
+          setSavedVocab([]);
+          setIsPaid(false);
+          setBookshelf([]);
+          setRecentlyRead([]);
+          setLookupLimitData({ count: 0, date: todayStr });
+          setGenerationLimitData({
+            freeModelCount: 0,
+            monthlyCreditsUsed: 0,
+            monthlyCreditsMonth: thisMonthStr,
+            date: todayStr,
+          });
+        }
+      }
+      prevUserRef.current = currentUser;
+    };
+
+    // Trigger initial load
+    loadSavedVocab(true);
+
+    // Set up listeners for tab focus, visibility change, and online status to automatically re-fetch/sync
+    const handleTriggerLoad = () => {
+      if (
+        typeof document !== 'undefined' &&
+        document.visibilityState === 'visible'
+      ) {
+        loadSavedVocab(false);
       }
     };
-    loadSavedVocab();
-  }, [currentUser, setIsPaid, setGenerationLimitData]);
+
+    window.addEventListener('focus', handleTriggerLoad);
+    window.addEventListener('visibilitychange', handleTriggerLoad);
+    window.addEventListener('online', handleTriggerLoad);
+
+    return () => {
+      window.removeEventListener('focus', handleTriggerLoad);
+      window.removeEventListener('visibilitychange', handleTriggerLoad);
+      window.removeEventListener('online', handleTriggerLoad);
+    };
+  }, [currentUser, authChecking, setIsPaid, setGenerationLimitData]);
 
   return {
     bookshelf,

@@ -38,7 +38,8 @@ export const useUIStore = create<UIState>((set) => ({
     set({ translationTargetLanguage: lang });
   },
   setReaderFontSize: (size) => {
-    const validatedSize = typeof size === 'number' && size >= 14 && size <= 26 ? size : 18;
+    const validatedSize =
+      typeof size === 'number' && size >= 14 && size <= 26 ? size : 18;
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('reader-font-size', validatedSize.toString());
     }
@@ -53,8 +54,7 @@ export const useUIStore = create<UIState>((set) => ({
   initializeClientState: () => {
     if (typeof localStorage !== 'undefined') {
       const key = localStorage.getItem('custom_openrouter_api_key') || '';
-      const lang =
-        localStorage.getItem('translation_target_language') || null;
+      const lang = localStorage.getItem('translation_target_language') || null;
       const sizeVal = localStorage.getItem('reader-font-size');
       let size = sizeVal ? Number.parseInt(sizeVal, 10) : 18;
       if (Number.isNaN(size) || size < 14 || size > 26) {

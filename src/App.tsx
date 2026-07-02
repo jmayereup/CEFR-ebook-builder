@@ -182,6 +182,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     syncChangesToDatabase,
   } = useUserData({
     currentUser,
+    authChecking,
     isPaid,
     setIsPaid,
     generationLimitData,
