@@ -1307,67 +1307,66 @@ export default function ReaderPanel({
                     <div ref={sentinelRef} className="h-2 w-full" />
 
                     {/* Explicit book completion section */}
-                    {activeChapterIndex === story.chapters.length - 1 &&
-                      hasFinishedChapter && (
-                        <div className="mt-8 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/10 dark:to-teal-950/5 border border-emerald-100 dark:border-emerald-900/20 rounded-2xl animate-fade-in text-center space-y-4">
-                          <div className="space-y-1">
-                            <h4 className="text-sm font-bold text-emerald-800 dark:text-emerald-400">
-                              You've reached the end!
-                            </h4>
-                            <p className="text-xs text-tj-text-muted max-w-md mx-auto">
-                              Congratulations on reading the entire story. Click
-                              below to mark it as completed and update your
-                              reading stats.
-                            </p>
-                          </div>
-                          {sessionFinished ? (
-                            <div className="space-y-3">
-                              <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-500/10">
-                                <Check className="w-4 h-4 stroke-[3]" />
-                                <span>Story Completed!</span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={async () => {
-                                  if (onStoryFinished) {
-                                    await onStoryFinished(story.id);
-                                  }
-                                }}
-                                className="block mx-auto text-xs text-tj-primary hover:underline font-semibold cursor-pointer border-0 bg-transparent"
-                              >
-                                Read again? Mark another completion
-                              </button>
-                              {onStoryUnfinished && (
-                                <button
-                                  type="button"
-                                  onClick={async (e) => {
-                                    e.preventDefault();
-                                    setSessionFinished(false);
-                                    await onStoryUnfinished(story.id);
-                                  }}
-                                  className="block mx-auto text-[10px] text-rose-500 hover:underline font-semibold cursor-pointer border-0 bg-transparent mt-1"
-                                >
-                                  Oops, mark as unread
-                                </button>
-                              )}
+                    {activeChapterIndex === story.chapters.length - 1 && (
+                      <div className="mt-8 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/10 dark:to-teal-950/5 border border-emerald-100 dark:border-emerald-900/20 rounded-2xl animate-fade-in text-center space-y-4">
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-bold text-emerald-800 dark:text-emerald-400">
+                            You've reached the end!
+                          </h4>
+                          <p className="text-xs text-tj-text-muted max-w-md mx-auto">
+                            Congratulations on reading the entire story. Click
+                            below to mark it as completed and update your
+                            reading stats.
+                          </p>
+                        </div>
+                        {sessionFinished ? (
+                          <div className="space-y-3">
+                            <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-500/10">
+                              <Check className="w-4 h-4 stroke-[3]" />
+                              <span>Story Completed!</span>
                             </div>
-                          ) : (
                             <button
                               type="button"
                               onClick={async () => {
-                                setSessionFinished(true);
                                 if (onStoryFinished) {
                                   await onStoryFinished(story.id);
                                 }
                               }}
-                              className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 cursor-pointer active:scale-98 border-0"
+                              className="block mx-auto text-xs text-tj-primary hover:underline font-semibold cursor-pointer border-0 bg-transparent"
                             >
-                              <Check className="w-4 h-4 stroke-[3]" />
-                              <span>I've finished</span>
+                              Read again? Mark another completion
                             </button>
-                          )}
-                        </div>
-                      )}
+                            {onStoryUnfinished && (
+                              <button
+                                type="button"
+                                onClick={async (e) => {
+                                  e.preventDefault();
+                                  setSessionFinished(false);
+                                  await onStoryUnfinished(story.id);
+                                }}
+                                className="block mx-auto text-[10px] text-rose-500 hover:underline font-semibold cursor-pointer border-0 bg-transparent mt-1"
+                              >
+                                Oops, mark as unread
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              setSessionFinished(true);
+                              if (onStoryFinished) {
+                                await onStoryFinished(story.id);
+                              }
+                            }}
+                            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 cursor-pointer active:scale-98 border-0"
+                          >
+                            <Check className="w-4 h-4 stroke-[3]" />
+                            <span>I've finished</span>
+                          </button>
+                        )}
+                      </div>
+                    )}
 
                     {/* Take it Offline Milestone Callout */}
                     {(story.isCompleted ||

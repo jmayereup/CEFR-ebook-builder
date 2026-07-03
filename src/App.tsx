@@ -590,32 +590,50 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     if (selectedStory && !selectedStory.isUnsaved) {
       const matchingStory = stories.find((s) => s.id === selectedStory.id);
       if (matchingStory) {
-        const hasChanged =
-          matchingStory.isCompleted !== selectedStory.isCompleted ||
-          matchingStory.title !== selectedStory.title ||
-          JSON.stringify(matchingStory.ratings || {}) !==
-            JSON.stringify(selectedStory.ratings || {}) ||
-          JSON.stringify(matchingStory.completedBy || {}) !==
-            JSON.stringify(selectedStory.completedBy || {});
+        const matchingTime = matchingStory.updated
+          ? new Date(matchingStory.updated).getTime()
+          : 0;
+        const selectedTime = selectedStory.updated
+          ? new Date(selectedStory.updated).getTime()
+          : 0;
 
-        if (hasChanged) {
-          setSelectedStory((prev) => {
-            if (prev) {
-              const updated = {
-                ...prev,
-                title: matchingStory.title,
-                isCompleted: matchingStory.isCompleted,
-                ratings: matchingStory.ratings,
-                completedBy: matchingStory.completedBy,
-              };
-              localStorage.setItem(
-                `cefr_story_cache_${prev.id}`,
-                JSON.stringify(updated),
-              );
-              return updated;
-            }
-            return null;
-          });
+        // Only sync if the metadata list item is actually newer than the loaded detail,
+        // or if timestamps are not yet fully populated (to allow initial hydration/sync).
+        // This prevents race conditions where stale metadata responses overwrite fresh details.
+        const shouldSync =
+          !matchingStory.updated ||
+          !selectedStory.updated ||
+          matchingTime > selectedTime;
+
+        if (shouldSync) {
+          const hasChanged =
+            matchingStory.isCompleted !== selectedStory.isCompleted ||
+            matchingStory.title !== selectedStory.title ||
+            JSON.stringify(matchingStory.ratings || {}) !==
+              JSON.stringify(selectedStory.ratings || {}) ||
+            JSON.stringify(matchingStory.completedBy || {}) !==
+              JSON.stringify(selectedStory.completedBy || {});
+
+          if (hasChanged) {
+            setSelectedStory((prev) => {
+              if (prev) {
+                const updated = {
+                  ...prev,
+                  title: matchingStory.title,
+                  isCompleted: matchingStory.isCompleted,
+                  ratings: matchingStory.ratings,
+                  completedBy: matchingStory.completedBy,
+                  updated: matchingStory.updated || prev.updated,
+                };
+                localStorage.setItem(
+                  `cefr_story_cache_${prev.id}`,
+                  JSON.stringify(updated),
+                );
+                return updated;
+              }
+              return null;
+            });
+          }
         }
       }
     }

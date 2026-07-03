@@ -153,6 +153,7 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
         isPublic: record.isPublic !== false,
         chaptersCount: chapters.length,
         wordCount,
+        updated: record.updated || record.updatedAt || '',
       };
     });
 
@@ -246,6 +247,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
           isPublic: record.isPublic !== false,
           chaptersCount: chapters.length,
           wordCount,
+          updated: record.updated || record.updatedAt || '',
         };
         updateStoriesMetadataCache(
           [
