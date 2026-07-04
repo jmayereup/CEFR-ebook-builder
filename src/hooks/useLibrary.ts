@@ -174,9 +174,15 @@ export function useLibrary(options: UseLibraryOptions) {
                     )
                   : 0;
 
+            const cachedUpdated = cachedStory.updated;
+            const refUpdated = story.updated;
+            const isTimestampMatch =
+              cachedUpdated && refUpdated && cachedUpdated === refUpdated;
+
             if (
               cachedChaptersCount === refChaptersCount &&
-              cachedWordCount === refWordCount
+              cachedWordCount === refWordCount &&
+              (!refUpdated || isTimestampMatch)
             ) {
               console.log(
                 `[Cache Hit] Loading story ${story.id} ("${story.title}") from localStorage cache.`,
@@ -184,7 +190,7 @@ export function useLibrary(options: UseLibraryOptions) {
               return cachedStory;
             } else {
               console.log(
-                `[Cache Mismatch] Story ${story.id} cache mismatch. Cached chapters: ${cachedChaptersCount}, ref: ${refChaptersCount}. Cached wordCount: ${cachedWordCount}, ref: ${refWordCount}.`,
+                `[Cache Mismatch] Story ${story.id} cache mismatch. Cached chapters: ${cachedChaptersCount}, ref: ${refChaptersCount}. Cached wordCount: ${cachedWordCount}, ref: ${refWordCount}. Cached updated: ${cachedUpdated}, ref: ${refUpdated}.`,
               );
             }
           }

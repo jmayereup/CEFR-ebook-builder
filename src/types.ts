@@ -73,6 +73,7 @@ export interface Story {
   toneRefreshGuidance?: string;
   isUnsaved?: boolean;
   completedBy?: Record<string, number>;
+  updated?: string;
 }
 
 export interface Language {

@@ -173,6 +173,9 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
 
         if (!directStory) {
           directStory = await fetchStory(storyId);
+          if (directStory) {
+            localStorage.setItem(cacheKey, JSON.stringify(directStory));
+          }
         }
 
         if (!active) return;
