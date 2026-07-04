@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   AlertCircle,
   Bookmark,
@@ -7,7 +8,6 @@ import {
   Languages,
   Loader2,
   Volume2,
-  X,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect } from 'react';
@@ -107,17 +107,8 @@ export default function TranslationToast({
           onClick={(e) => e.stopPropagation()}
           className="fixed bottom-0 left-0 right-0 z-50 w-full bg-tj-bg-card border-t border-tj-border-main shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1),0_-8px_10px_-6px_rgba(0,0,0,0.1)] p-4 md:p-6 select-text"
         >
-          <button
-            type="button"
-            onClick={() => setSelectedWord(null)}
-            className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-full cursor-pointer transition-colors z-10"
-            title="Close inspector"
-          >
-            <X className="w-4 h-4" />
-          </button>
-
           {selectedWord.saveSuccess ? (
-            <div className="py-6 flex flex-col items-center justify-center space-y-2">
+            <div className="py-3 flex flex-col items-center justify-center space-y-2">
               <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 rounded-full flex items-center justify-center">
                 <Check className="w-6 h-6" />
               </div>
@@ -129,26 +120,28 @@ export default function TranslationToast({
               </p>
             </div>
           ) : (
-            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-stretch lg:items-center gap-6 pr-8">
-              {/* SECTION 1: WORD INFO */}
-              <div className="flex flex-col gap-2 min-w-[220px] lg:max-w-[320px]">
-                <div className="flex items-center gap-3">
-                  <h4
-                    lang={getLanguageCodeFromName(story.language)}
-                    translate="no"
-                    className="text-xl font-serif font-black text-tj-primary dark:text-tj-primary-hover tracking-tight"
-                  >
-                    {selectedWord.word}
-                  </h4>
-                  <div className="flex items-center gap-1.5 shrink-0">
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-stretch lg:items-start gap-6">
+              {/* SECTION 1: WORD INFO with nav arrows */}
+              <div className="flex flex-col gap-2 min-w-[200px] lg:max-w-[280px]">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <h4
+                      lang={getLanguageCodeFromName(story.language)}
+                      translate="no"
+                      className="text-xl font-serif font-black text-tj-primary dark:text-tj-primary-hover tracking-tight"
+                    >
+                      {selectedWord.word}
+                    </h4>
                     <button
                       type="button"
                       onClick={() => handlePlayWord(selectedWord.word)}
-                      className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center"
+                      className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center shrink-0"
                       title="Pronounce again"
                     >
                       <Volume2 className="w-4 h-4" />
                     </button>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
                     <button
                       type="button"
                       onClick={onNavigatePrev}
@@ -254,76 +247,58 @@ export default function TranslationToast({
               </div>
 
               {/* SECTION 2: INPUT FIELDS */}
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {/* Translation input & AI Fetch */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      Translation
-                    </label>
-                    {currentUser && (
-                      <button
-                        type="button"
-                        onClick={handleFetchTranslation}
-                        disabled={selectedWord.isFetching || !isOnline}
-                        className="px-2 py-0.5 bg-tj-primary-light hover:bg-tj-primary-border dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover text-[9px] font-bold rounded flex items-center gap-1 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {selectedWord.isFetching ? (
-                          <>
-                            <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                            <span>Working...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Languages className="w-2.5 h-2.5" />
-                            <span>Translate</span>
-                          </>
-                        )}
-                      </button>
-                    )}
+              <div className="flex-1 flex flex-col gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {/* Translation input & AI Fetch */}
+                  <div className="flex-1 space-y-1.5">
+                    <div className="min-h-[12px]">
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest min-h-[12px] flex items-start">
+                        Translation
+                      </label>
+                    </div>
+                    <input
+                      type="text"
+                      value={selectedWord.translation}
+                      onChange={(e) =>
+                        setSelectedWord({
+                          ...selectedWord,
+                          translation: e.target.value,
+                        })
+                      }
+                      placeholder="Enter or fetch translation"
+                      className="w-full text-xs p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:border-tj-primary focus:outline-none"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    value={selectedWord.translation}
-                    onChange={(e) =>
-                      setSelectedWord({
-                        ...selectedWord,
-                        translation: e.target.value,
-                      })
-                    }
-                    placeholder="Enter or fetch translation"
-                    className="w-full text-xs p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:border-tj-primary focus:outline-none"
-                  />
+
+                  {/* Part of Speech Select */}
+                  <div className="w-full sm:w-44 space-y-1.5">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest min-h-[12px] flex items-start">
+                      Part of Speech
+                    </label>
+                    <select
+                      value={selectedWord.partOfSpeech}
+                      onChange={(e) =>
+                        setSelectedWord({
+                          ...selectedWord,
+                          partOfSpeech: e.target.value,
+                        })
+                      }
+                      className="w-full text-xs p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:border-tj-primary focus:outline-none cursor-pointer"
+                    >
+                      <option value="Noun">Noun</option>
+                      <option value="Verb">Verb</option>
+                      <option value="Adjective">Adjective</option>
+                      <option value="Adverb">Adverb</option>
+                      <option value="Preposition">Preposition</option>
+                      <option value="Pronoun">Pronoun</option>
+                      <option value="Phrase">Phrase/Idiom</option>
+                    </select>
+                  </div>
                 </div>
 
-                {/* Part of Speech Select */}
+                {/* Definition Input - full width row */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    Part of Speech
-                  </label>
-                  <select
-                    value={selectedWord.partOfSpeech}
-                    onChange={(e) =>
-                      setSelectedWord({
-                        ...selectedWord,
-                        partOfSpeech: e.target.value,
-                      })
-                    }
-                    className="w-full text-xs p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:border-tj-primary focus:outline-none cursor-pointer"
-                  >
-                    <option value="Noun">Noun</option>
-                    <option value="Verb">Verb</option>
-                    <option value="Adjective">Adjective</option>
-                    <option value="Adverb">Adverb</option>
-                    <option value="Preposition">Preposition</option>
-                    <option value="Pronoun">Pronoun</option>
-                    <option value="Phrase">Phrase/Idiom</option>
-                  </select>
-                </div>
-
-                {/* Definition Input */}
-                <div className="space-y-1.5">
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest min-h-[12px] flex items-start">
                     Definition (Optional)
                   </label>
                   <input
@@ -341,35 +316,57 @@ export default function TranslationToast({
                 </div>
               </div>
 
-              {/* SECTION 3: SAVE / REMOVE BUTTON */}
-              <div className="flex flex-col items-center justify-center shrink-0 lg:pt-3.5 min-w-[200px]">
-                {isSaved ? (
-                  <>
+              {/* SECTION 3: TRANSLATE + SAVE / REMOVE BUTTONS */}
+              <div className="flex flex-row justify-center items-center min-w-12">
+                <div className="flex lg:flex-col items-center gap-2 lg:pt-5">
+                  {currentUser && (
+                    <button
+                      type="button"
+                      onClick={handleFetchTranslation}
+                      disabled={selectedWord.isFetching || !isOnline}
+                      className="w-full py-3 px-4 bg-tj-primary hover:bg-tj-primary-hover text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
+                    >
+                      {selectedWord.isFetching ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Translating...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Languages className="w-3.5 h-3.5" />
+                          <span>Translate</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                  {isSaved ? (
                     <button
                       type="button"
                       disabled
-                      className="w-full lg:w-auto py-3 px-6 bg-emerald-500/10 dark:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 font-bold text-xs rounded-xl select-none flex items-center justify-center gap-1.5 border border-emerald-500/20"
+                      className="w-full py-3 px-6 bg-emerald-500/10 dark:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 font-bold text-xs rounded-xl select-none flex items-center justify-center gap-1.5 border border-emerald-500/20 min-w-[120px]"
                     >
                       <Check className="w-3.5 h-3.5" />
-                      <span>Saved to Vocabulary List</span>
+                      <span>Saved</span>
                     </button>
+                  ) : (
                     <button
                       type="button"
-                      onClick={handleRemoveWordRecord}
-                      className="text-[10px] text-slate-400 hover:text-rose-500 dark:text-slate-500 dark:hover:text-rose-400 hover:underline cursor-pointer select-none border-0 bg-transparent block text-center mt-2 w-full font-sans"
+                      onClick={handleSaveWordRecord}
+                      disabled={!selectedWord.translation.trim()}
+                      className="w-full py-3 px-4 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer disabled:bg-slate-300 disabled:dark:bg-slate-850 disabled:text-slate-400 transition-colors select-none flex items-center justify-center gap-1.5 min-w-[120px]"
                     >
-                      Remove from list
+                      <Bookmark className="w-3.5 h-3.5" />
+                      <span>Save</span>
                     </button>
-                  </>
-                ) : (
+                  )}
+                </div>
+                {isSaved && (
                   <button
                     type="button"
-                    onClick={handleSaveWordRecord}
-                    disabled={!selectedWord.translation.trim()}
-                    className="w-full lg:w-auto py-3 px-6 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer disabled:bg-slate-300 disabled:dark:bg-slate-850 disabled:text-slate-400 transition-colors select-none flex items-center justify-center gap-1.5"
+                    onClick={handleRemoveWordRecord}
+                    className="text-[10px] text-slate-400 hover:text-rose-500 dark:text-slate-500 dark:hover:text-rose-400 hover:underline cursor-pointer select-none border-0 bg-transparent block text-center mt-2 font-sans"
                   >
-                    <Bookmark className="w-3.5 h-3.5" />
-                    <span>Save to Vocabulary List</span>
+                    Remove from list
                   </button>
                 )}
               </div>
