@@ -1,5 +1,5 @@
 {
-  "lastFetchTime": 1782991797816,
+  "lastFetchTime": 1783132178421,
   "stories": [
     {
       "id": "s4xcb8zpv9wefkv",
@@ -101,6 +101,25 @@
       "wordCount": 2848
     },
     {
+      "id": "skkg6vcz9l0uuim",
+      "title": "พระคัมภีร์เดิม: เรื่องราวสำคัญและความหมาย",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 10,
+      "createdAt": "2026-06-27T13:14:38.616Z",
+      "isCompleted": true,
+      "description": "This book retells ten foundational stories from the Old Testament, from the creation of the world to Jonah's mission. Each chapter presents the biblical event in simple Thai and explains how it is commonly understood by mainstream Christian churches, highlighting themes of faith, mercy, and God's plan for humanity.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 10,
+      "wordCount": 6172
+    },
+    {
       "id": "sznvgqbqsujjzrj",
       "title": "หน้ากากสีเลือดแห่งคฤหาสน์ลึกลับ",
       "language": "Thai",
@@ -113,8 +132,12 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "google/gemma-4-31b-it",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 3
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1333

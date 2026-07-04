@@ -1,4 +1,4 @@
-import { Check, Plus } from 'lucide-react';
+import { Check, Plus, Volume2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { getLanguageCodeFromName, type VocabularyTerm } from '../../types';
 
@@ -155,13 +155,20 @@ export default function VocabGlossary({
               </p>
 
               {vocab.contextSentence && (
-                <p
+                <button
+                  type="button"
                   translate="no"
-                  className="text-tj-text-muted italic font-serif leading-relaxed mt-1.5 pl-2 border-l-2 border-tj-border-main"
+                  lang={getLanguageCodeFromName(language)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePlayWord(vocab.contextSentence);
+                  }}
+                  className="text-tj-text-muted italic font-serif leading-relaxed mt-1.5 text-left hover:text-tj-primary transition-colors cursor-pointer border-0 bg-transparent p-0 w-full block"
                   style={{ fontSize: `${Math.max(11, fontSize - 5)}px` }}
+                  title="Click to pronounce example sentence"
                 >
                   "{vocab.contextSentence}"
-                </p>
+                </button>
               )}
             </div>
           );

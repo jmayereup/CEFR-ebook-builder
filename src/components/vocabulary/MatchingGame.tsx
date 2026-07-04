@@ -1,5 +1,5 @@
-import { CheckCircle, Shuffle, XCircle } from 'lucide-react';
-import { motion } from 'motion/react';
+import { CheckCircle, Shuffle, Volume2, X, XCircle } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getLanguageCodeFromName, type VocabularyTerm } from '../../types';
 
@@ -39,6 +39,8 @@ export default function MatchingGame({
   const [sessionMatchedWords, setSessionMatchedWords] = useState<Set<string>>(
     new Set(),
   );
+  const [selectedTermForToast, setSelectedTermForToast] =
+    useState<VocabularyTerm | null>(null);
 
   const sessionMatchedWordsRef = useRef(sessionMatchedWords);
   useEffect(() => {
@@ -120,7 +122,11 @@ export default function MatchingGame({
     const selectedItem = shuffledWords.find((w) => w.id === id);
     if (selectedItem) {
       const originalTerm = terms.find((t) => t.word === selectedItem.word);
-      playWord(selectedItem.word, originalTerm?.language);
+      if (originalTerm?.contextSentence) {
+        setSelectedTermForToast(originalTerm);
+      } else {
+        playWord(selectedItem.word, originalTerm?.language);
+      }
     }
 
     if (id === selectedWord) {
@@ -349,6 +355,54 @@ export default function MatchingGame({
           </button>
         </motion.div>
       )}
+
+      {/* Example Sentence Toast */}
+      <AnimatePresence>
+        {selectedTermForToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            onClick={(e) => e.stopPropagation()}
+            className="fixed bottom-0 left-0 right-0 z-50 w-full bg-tj-bg-card border-t border-tj-border-main shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1),0_-8px_10px_-6px_rgba(0,0,0,0.1)] p-4 md:p-6"
+          >
+            <button
+              type="button"
+              onClick={() => setSelectedTermForToast(null)}
+              className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-full cursor-pointer transition-colors"
+              title="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="max-w-3xl mx-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  if (selectedTermForToast?.contextSentence) {
+                    playWord(
+                      selectedTermForToast.contextSentence,
+                      selectedTermForToast.language,
+                    );
+                  }
+                }}
+                className="w-full text-left cursor-pointer border-0 bg-transparent p-0"
+              >
+                <span
+                  lang={getLanguageCodeFromName(
+                    selectedTermForToast.language || langCode,
+                  )}
+                  translate="no"
+                  className="text-base text-slate-900 dark:text-slate-100 italic font-serif leading-relaxed"
+                >
+                  "{selectedTermForToastContextSentence}"
+                </span>
+                <Volume2 className="w-4 h-4 inline ml-2 text-slate-900 dark:text-slate-100" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

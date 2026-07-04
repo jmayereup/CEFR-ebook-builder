@@ -170,17 +170,31 @@ export default function FlashcardsDeck({
                   lang={termLangCode}
                   translate="no"
                   onClick={(e) => {
-                    e.stopPropagation(); // prevent flip
+                    e.stopPropagation();
+                    playWord(activeTerm.contextSentence, activeTerm.language);
                   }}
-                  className="bg-tj-bg-recessed p-3 rounded border border-tj-border-main text-base text-tj-text-muted italic font-serif leading-relaxed max-h-[85px] overflow-y-auto mt-3 w-full"
+                  className="bg-tj-bg-recessed p-3 rounded border border-tj-border-main text-base text-tj-text-muted italic font-serif leading-relaxed max-h-[85px] overflow-y-auto mt-3 w-full relative cursor-pointer"
                 >
-                  {'"'}
-                  {limitContextToTenWords(
-                    activeTerm.contextSentence,
-                    activeTerm.word,
-                    termLangCode,
-                  )}
-                  {'"'}
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-center">
+                      {limitContextToTenWords(
+                        activeTerm.contextSentence,
+                        activeTerm.word,
+                        termLangCode,
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playWord(activeTerm.contextSentence, activeTerm.language);
+                      }}
+                      className="p-1 rounded-full hover:bg-tj-primary-light text-tj-text-muted hover:text-tj-primary transition-colors cursor-pointer border-0 bg-transparent flex items-center justify-center"
+                      title="Pronounce example sentence"
+                    >
+                      <Volume2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

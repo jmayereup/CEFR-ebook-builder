@@ -292,18 +292,22 @@ export default function VocabListView({
                           {t.definition}
                         </span>
                         {t.contextSentence && (
-                          <span
+                          <button
+                            type="button"
                             translate="no"
-                            className="text-tj-text-muted italic font-serif leading-relaxed block"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              playWord(t.contextSentence, t.language);
+                            }}
+                            className="text-sm text-slate-800 dark:text-slate-200 font-serif leading-relaxed block text-left hover:text-tj-primary transition-colors cursor-pointer border-0 bg-transparent p-0 w-full"
+                            title="Click to pronounce example sentence"
                           >
-                            "
-                            {limitContextToTenWords(
+                            "{limitContextToTenWords(
                               t.contextSentence,
                               t.word,
                               langCode,
-                            )}
-                            "
-                          </span>
+                            )}"
+                          </button>
                         )}
                       </div>
                     </td>
@@ -384,18 +388,22 @@ export default function VocabListView({
                     {t.definition}
                   </span>
                   {t.contextSentence && (
-                    <span
+                    <button
+                      type="button"
                       translate="no"
-                      className="text-sm text-tj-text-muted italic font-serif leading-relaxed block border-l-2 border-tj-border-main pl-2 py-0.5 mt-1.5"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playWord(t.contextSentence, t.language);
+                      }}
+                      className="text-sm text-slate-800 dark:text-slate-200 font-serif leading-relaxed block mt-1.5 text-left hover:text-tj-primary transition-colors cursor-pointer border-0 bg-transparent p-0 w-full"
+                      title="Click to pronounce example sentence"
                     >
-                      "
-                      {limitContextToTenWords(
+                      "{limitContextToTenWords(
                         t.contextSentence,
                         t.word,
                         langCode,
-                      )}
-                      "
-                    </span>
+                      )}"
+                    </button>
                   )}
                 </div>
               </div>
