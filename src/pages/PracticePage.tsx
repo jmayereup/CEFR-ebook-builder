@@ -1,5 +1,5 @@
 import { Loader2 } from 'lucide-react';
-import { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import type { Story, VocabularyTerm } from '../types';
 
 const VocabularyPractice = lazy(
