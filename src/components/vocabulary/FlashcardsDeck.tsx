@@ -103,24 +103,7 @@ export default function FlashcardsDeck({
       exit={{ opacity: 0, scale: 0.98 }}
       className="max-w-md mx-auto space-y-6 flex flex-col items-center"
     >
-      {/* Flashcard container with 3D Flip */}
-      {/* biome-ignore lint/a11y/useSemanticElements: card container has complex structure and contains nested interactive buttons */}
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={() => {
-          setIsFlipped(!isFlipped);
-          playWord(activeTerm.word, activeTerm.language);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            setIsFlipped(!isFlipped);
-            playWord(activeTerm.word, activeTerm.language);
-          }
-        }}
-        className="w-full h-72 perspective cursor-pointer"
-      >
+      <div className="w-full h-72 perspective">
         <div
           className={`w-full h-full relative transition-all duration-500 preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}
         >
@@ -198,9 +181,16 @@ export default function FlashcardsDeck({
                 </div>
               )}
             </div>
-            <p className="text-[10px] text-center text-tj-text-muted select-none animate-pulse">
-              Click to Flip
-            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setIsFlipped(true);
+                playWord(activeTerm.word, activeTerm.language);
+              }}
+              className="w-full text-[10px] uppercase font-mono tracking-wider text-tj-text-muted hover:text-tj-primary pt-3 border-t border-dashed border-tj-border-main hover:border-tj-primary/40 transition-colors cursor-pointer select-none text-center"
+            >
+              Click to Flip 🔄
+            </button>
           </div>
 
           {/* BACK Side: English definition */}
@@ -237,9 +227,15 @@ export default function FlashcardsDeck({
                 </div>
               </div>
             </div>
-            <p className="text-[10px] text-center text-tj-text-muted select-none">
-              Click to Flip BACK
-            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setIsFlipped(false);
+              }}
+              className="w-full text-[10px] uppercase font-mono tracking-wider text-tj-text-muted hover:text-tj-primary pt-3 border-t border-dashed border-tj-border-main hover:border-tj-primary/40 transition-colors cursor-pointer select-none text-center"
+            >
+              Click to Flip BACK 🔄
+            </button>
           </div>
         </div>
       </div>

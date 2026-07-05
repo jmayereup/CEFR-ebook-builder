@@ -395,7 +395,7 @@ export default function MatchingGame({
                   translate="no"
                   className="text-base text-slate-900 dark:text-slate-100 italic font-serif leading-relaxed"
                 >
-                  "{selectedTermForToastContextSentence}"
+                  "{selectedTermForToast.contextSentence}"
                 </span>
                 <Volume2 className="w-4 h-4 inline ml-2 text-slate-900 dark:text-slate-100" />
               </button>

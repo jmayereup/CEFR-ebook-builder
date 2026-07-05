@@ -317,7 +317,7 @@ export default function TranslationToast({
               </div>
 
               {/* SECTION 3: TRANSLATE + SAVE / REMOVE BUTTONS */}
-              <div className="flex flex-row justify-center items-center min-w-12">
+              <div className="flex flex-col justify-center items-center min-w-12">
                 <div className="flex lg:flex-col items-center gap-2 lg:pt-5">
                   {currentUser && (
                     <button

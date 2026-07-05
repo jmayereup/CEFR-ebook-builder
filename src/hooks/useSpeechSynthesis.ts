@@ -1,6 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getLanguageCodeFromName } from '../types';
 
+function cleanSpeechText(text: string): string {
+  if (!text) return '';
+  let clean = text.trim();
+  
+  // Loop to remove all leading ellipses
+  while (/^(\.{3,}|…)/.test(clean)) {
+    clean = clean.replace(/^(\.{3,}|…)\s*/, '').trim();
+  }
+  
+  // Loop to remove all trailing ellipses
+  while (/(\.{3,}|…)$/.test(clean)) {
+    clean = clean.replace(/\s*(\.{3,}|…)$/, '').trim();
+  }
+  
+  return clean;
+}
+
 export function useSpeechSynthesis(language: string) {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceName, setSelectedVoiceName] = useState<string>('');
@@ -69,7 +86,8 @@ export function useSpeechSynthesis(language: string) {
       if (typeof window === 'undefined' || !window.speechSynthesis) return;
       window.speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(word);
+      const cleanedWord = cleanSpeechText(word);
+      const utterance = new SpeechSynthesisUtterance(cleanedWord);
       const langToUse = customLanguage || language;
       const targetLangCode = getLanguageCodeFromName(langToUse);
       utterance.lang = targetLangCode;
@@ -128,7 +146,8 @@ export function useSpeechSynthesis(language: string) {
 
       window.speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      const cleanedText = cleanSpeechText(textToSpeak);
+      const utterance = new SpeechSynthesisUtterance(cleanedText);
       const targetLangCode = getLanguageCodeFromName(language);
       utterance.lang = targetLangCode;
 
