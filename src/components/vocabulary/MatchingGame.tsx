@@ -122,10 +122,9 @@ export default function MatchingGame({
     const selectedItem = shuffledWords.find((w) => w.id === id);
     if (selectedItem) {
       const originalTerm = terms.find((t) => t.word === selectedItem.word);
+      playWord(selectedItem.word, originalTerm?.language);
       if (originalTerm?.contextSentence) {
         setSelectedTermForToast(originalTerm);
-      } else {
-        playWord(selectedItem.word, originalTerm?.language);
       }
     }
 

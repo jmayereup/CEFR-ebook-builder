@@ -1,6 +1,46 @@
 {
-  "lastFetchTime": 1783132178421,
+  "lastFetchTime": 1783290132789,
   "stories": [
+    {
+      "id": "sjvncvm66gtvhe8",
+      "title": "นางเสม็ด ผู้พิทักษ์เกาะ",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "folklore",
+      "totalChapters": 5,
+      "createdAt": "2026-07-05T13:35:16.211Z",
+      "isCompleted": true,
+      "description": "When young Praew returns to her grandmother's home on Koh Samet, she discovers the legend of Nang Samet, a beautiful spirit who has protected the island for centuries. As strange storms threaten the shores and villagers grow afraid, Praew must learn the ancient ways to honor the guardian spirit before the island loses its magic forever. A tale of love, tradition, and the powerful bond between people and the sea.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "minimax/minimax-m3",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 1641,
+      "updated": "2026-07-05 13:39:52.626Z"
+    },
+    {
+      "id": "s4q6erpoo9wrgbz",
+      "title": "ดอยเชียงใหม่กับหัวใจที่เป็นตัวเอง",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 10,
+      "createdAt": "2026-07-05T06:23:29.009Z",
+      "isCompleted": true,
+      "description": "Set in the warm, everyday life of Chiang Mai, this heartwarming slice-of-life story follows Mena, a transgender girl finding the courage to come out and live as her true self. Through family conversations, friendship, local festivals, and quiet moments of change, the story explores acceptance, identity, and the beauty of being seen with love.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "openai/gpt-5.4-mini",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 10,
+      "wordCount": 4827,
+      "updated": "2026-07-05 07:09:07.423Z"
+    },
     {
       "id": "s4xcb8zpv9wefkv",
       "title": "เสียงสะท้อนจากดินแดนรอยยิ้ม",
@@ -18,7 +58,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 10839
+      "wordCount": 10839,
+      "updated": "2026-07-01 12:00:05.408Z"
     },
     {
       "id": "sf59lxv51pcthce",
@@ -37,7 +78,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2504
+      "wordCount": 2504,
+      "updated": "2026-06-29 05:43:29.078Z"
     },
     {
       "id": "sacp6xhsczdsj7f",
@@ -56,7 +98,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2036
+      "wordCount": 2036,
+      "updated": "2026-06-29 02:31:58.853Z"
     },
     {
       "id": "s3ll6n31ozoxvdi",
@@ -75,7 +118,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 15,
-      "wordCount": 7633
+      "wordCount": 7633,
+      "updated": "2026-06-29 02:14:59.552Z"
     },
     {
       "id": "s7i3p58ou01ekmk",
@@ -98,7 +142,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2848
+      "wordCount": 2848,
+      "updated": "2026-06-29 10:57:23.308Z"
     },
     {
       "id": "skkg6vcz9l0uuim",
@@ -117,7 +162,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 6172
+      "wordCount": 6172,
+      "updated": "2026-07-04 02:08:36.797Z"
     },
     {
       "id": "sznvgqbqsujjzrj",
@@ -140,7 +186,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1333
+      "wordCount": 1333,
+      "updated": "2026-07-02 21:13:25.799Z"
     },
     {
       "id": "su97g3lq64t2rwu",
@@ -163,7 +210,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1721
+      "wordCount": 1721,
+      "updated": "2026-06-29 02:14:59.820Z"
     },
     {
       "id": "srupbmtwst3npt6",
@@ -182,7 +230,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 780
+      "wordCount": 780,
+      "updated": "2026-06-29 02:14:59.888Z"
     },
     {
       "id": "swgvqbwpibl2by4",
@@ -205,7 +254,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2019
+      "wordCount": 2019,
+      "updated": "2026-06-29 02:14:59.949Z"
     },
     {
       "id": "sbxx8hfwnsr4gqi",
@@ -228,7 +278,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1908
+      "wordCount": 1908,
+      "updated": "2026-06-29 02:15:00.013Z"
     },
     {
       "id": "sjyo4vqxzf1g2k5",
@@ -251,7 +302,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1998
+      "wordCount": 1998,
+      "updated": "2026-07-01 13:08:59.195Z"
     },
     {
       "id": "sqlsnzercgzhetd",
@@ -274,7 +326,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2471
+      "wordCount": 2471,
+      "updated": "2026-06-29 02:15:00.141Z"
     },
     {
       "id": "sbk2394qgj9fkrq",
@@ -297,7 +350,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2356
+      "wordCount": 2356,
+      "updated": "2026-06-29 02:15:00.211Z"
     },
     {
       "id": "sobjgxna0k2ftxg",
@@ -318,7 +372,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2431
+      "wordCount": 2431,
+      "updated": "2026-06-29 02:15:00.277Z"
     },
     {
       "id": "swbr67vy2hk7cqr",
@@ -341,7 +396,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 3178
+      "wordCount": 3178,
+      "updated": "2026-06-29 08:31:54.048Z"
     },
     {
       "id": "slnohfarkbb7l8x",
@@ -362,7 +418,8 @@
       },
       "isPublic": true,
       "chaptersCount": 8,
-      "wordCount": 3086
+      "wordCount": 3086,
+      "updated": "2026-06-29 02:15:01.726Z"
     },
     {
       "id": "skrh1zndj5eukgw",
@@ -381,7 +438,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4413
+      "wordCount": 4413,
+      "updated": "2026-06-29 02:15:01.947Z"
     },
     {
       "id": "sazqfihltx2pe1e",
@@ -397,10 +455,13 @@
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
-      "completedBy": {},
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4786
+      "wordCount": 4786,
+      "updated": "2026-06-29 02:15:02.166Z"
     },
     {
       "id": "s3xhdpny0rjqnqx",
@@ -423,7 +484,8 @@
       },
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4616
+      "wordCount": 4616,
+      "updated": "2026-06-29 02:15:02.397Z"
     },
     {
       "id": "s7lvffdkp9papze",
@@ -446,7 +508,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1706
+      "wordCount": 1706,
+      "updated": "2026-06-29 02:15:02.606Z"
     },
     {
       "id": "s0ox47k9v97rhd6",
@@ -465,7 +528,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 4,
-      "wordCount": 1476
+      "wordCount": 1476,
+      "updated": "2026-06-29 02:15:02.718Z"
     },
     {
       "id": "sbg0fknyborygj4",
@@ -488,7 +552,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2114
+      "wordCount": 2114,
+      "updated": "2026-06-29 02:15:02.812Z"
     },
     {
       "id": "sj6xjhn7mt36iak",
@@ -511,7 +576,8 @@
       },
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4190
+      "wordCount": 4190,
+      "updated": "2026-06-30 22:46:25.697Z"
     },
     {
       "id": "smap5fn4oz06r80",
@@ -530,7 +596,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 15,
-      "wordCount": 5138
+      "wordCount": 5138,
+      "updated": "2026-06-29 02:15:03.068Z"
     },
     {
       "id": "sgr94tn4wuwk4m3",
@@ -549,7 +616,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 12586
+      "wordCount": 12586,
+      "updated": "2026-06-27 04:47:52.882Z"
     },
     {
       "id": "stv7kuqd1ffq74x",
@@ -572,7 +640,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 3255
+      "wordCount": 3255,
+      "updated": "2026-06-29 02:15:03.386Z"
     },
     {
       "id": "sndn1nd2j8ax9za",
@@ -591,7 +660,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1717
+      "wordCount": 1717,
+      "updated": "2026-06-29 02:15:03.501Z"
     },
     {
       "id": "story1781916972497",
@@ -610,7 +680,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 15,
-      "wordCount": 4224
+      "wordCount": 4224,
+      "updated": "2026-06-29 02:15:03.780Z"
     },
     {
       "id": "story1781912075342",
@@ -633,7 +704,8 @@
       },
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1886
+      "wordCount": 1886,
+      "updated": "2026-06-29 02:15:04.001Z"
     },
     {
       "id": "qkci03ebhtv8t3u",
@@ -654,7 +726,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2083
+      "wordCount": 2083,
+      "updated": "2026-06-29 02:15:03.613Z"
     },
     {
       "id": "story1781837709632",
@@ -675,7 +748,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2182
+      "wordCount": 2182,
+      "updated": "2026-06-29 02:15:07.334Z"
     },
     {
       "id": "story1781778262598",
@@ -694,7 +768,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2202
+      "wordCount": 2202,
+      "updated": "2026-06-29 02:15:04.613Z"
     },
     {
       "id": "story1781775791813",
@@ -715,7 +790,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1774
+      "wordCount": 1774,
+      "updated": "2026-06-29 08:41:18.526Z"
     },
     {
       "id": "story1781732083793",
@@ -734,7 +810,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2766
+      "wordCount": 2766,
+      "updated": "2026-06-29 08:41:18.524Z"
     },
     {
       "id": "story1781700218748",
@@ -755,7 +832,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1435
+      "wordCount": 1435,
+      "updated": "2026-06-29 02:15:05.227Z"
     },
     {
       "id": "story1781653435387",
@@ -776,7 +854,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2545
+      "wordCount": 2545,
+      "updated": "2026-06-29 02:15:05.456Z"
     },
     {
       "id": "story1781446030889",
@@ -795,7 +874,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 14470
+      "wordCount": 14470,
+      "updated": "2026-06-27 04:47:35.299Z"
     },
     {
       "id": "story1781438326213",
@@ -814,7 +894,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 12666
+      "wordCount": 12666,
+      "updated": "2026-06-27 04:47:46.001Z"
     },
     {
       "id": "story1781350382933",
@@ -833,7 +914,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3731
+      "wordCount": 3731,
+      "updated": "2026-06-29 02:15:05.114Z"
     },
     {
       "id": "story1781345403334",
@@ -852,7 +934,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4483
+      "wordCount": 4483,
+      "updated": "2026-06-29 02:15:07.533Z"
     },
     {
       "id": "story1781265585752",
@@ -873,7 +956,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 20,
-      "wordCount": 11124
+      "wordCount": 11124,
+      "updated": "2026-06-29 02:15:06.096Z"
     },
     {
       "id": "story1781059639378",
@@ -892,7 +976,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 8456
+      "wordCount": 8456,
+      "updated": "2026-06-29 02:15:06.249Z"
     },
     {
       "id": "story1781024645364",
@@ -911,7 +996,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 2431
+      "wordCount": 2431,
+      "updated": "2026-06-29 02:15:04.540Z"
     },
     {
       "id": "story1780991062030",
@@ -930,7 +1016,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 1729
+      "wordCount": 1729,
+      "updated": "2026-06-27 04:47:48.375Z"
     },
     {
       "id": "story1780990283785",
@@ -949,7 +1036,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 4573
+      "wordCount": 4573,
+      "updated": "2026-06-27 04:47:44.124Z"
     },
     {
       "id": "story1780981737222",
@@ -968,7 +1056,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 2982
+      "wordCount": 2982,
+      "updated": "2026-06-27 04:47:33.231Z"
     },
     {
       "id": "story1780978783310",
@@ -987,7 +1076,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 2947
+      "wordCount": 2947,
+      "updated": "2026-06-27 04:47:38.545Z"
     },
     {
       "id": "story1780967383095",
@@ -1006,7 +1096,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1849
+      "wordCount": 1849,
+      "updated": "2026-06-29 08:41:18.527Z"
     },
     {
       "id": "story1780962009669",
@@ -1025,7 +1116,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2463
+      "wordCount": 2463,
+      "updated": "2026-06-29 02:15:07.689Z"
     },
     {
       "id": "story1780912090764",
@@ -1044,7 +1136,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 3982
+      "wordCount": 3982,
+      "updated": "2026-06-27 04:47:35.226Z"
     },
     {
       "id": "story1780907990021",
@@ -1063,7 +1156,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 2130
+      "wordCount": 2130,
+      "updated": "2026-06-29 02:15:04.809Z"
     },
     {
       "id": "story1780907254400",
@@ -1082,7 +1176,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1985
+      "wordCount": 1985,
+      "updated": "2026-06-27 04:47:43.867Z"
     },
     {
       "id": "story1780900053911",
@@ -1101,7 +1196,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1672
+      "wordCount": 1672,
+      "updated": "2026-06-27 04:47:49.603Z"
     },
     {
       "id": "story1780881731029",
@@ -1120,7 +1216,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 2424
+      "wordCount": 2424,
+      "updated": "2026-06-27 04:47:43.460Z"
     },
     {
       "id": "story1780881266359",
@@ -1139,7 +1236,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3337
+      "wordCount": 3337,
+      "updated": "2026-06-27 04:47:46.483Z"
     },
     {
       "id": "story1780880791703",
@@ -1158,7 +1256,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 2126
+      "wordCount": 2126,
+      "updated": "2026-06-27 04:47:45.590Z"
     },
     {
       "id": "story1780841899387",
@@ -1177,7 +1276,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4999
+      "wordCount": 4999,
+      "updated": "2026-06-29 02:15:05.291Z"
     },
     {
       "id": "story1780824418223",
@@ -1196,7 +1296,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1486
+      "wordCount": 1486,
+      "updated": "2026-06-27 04:47:32.810Z"
     },
     {
       "id": "story1780755245223",
@@ -1215,7 +1316,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4441
+      "wordCount": 4441,
+      "updated": "2026-06-29 02:15:05.373Z"
     },
     {
       "id": "story1780752027746",
@@ -1234,7 +1336,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4777
+      "wordCount": 4777,
+      "updated": "2026-06-29 02:15:08.253Z"
     },
     {
       "id": "story1780750245321",
@@ -1253,7 +1356,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 5168
+      "wordCount": 5168,
+      "updated": "2026-06-29 02:15:09.308Z"
     },
     {
       "id": "story1780750101963",
@@ -1272,7 +1376,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 833
+      "wordCount": 833,
+      "updated": "2026-06-29 02:15:06.347Z"
     },
     {
       "id": "story1780749831622",
@@ -1291,7 +1396,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1259
+      "wordCount": 1259,
+      "updated": "2026-06-29 02:15:07.397Z"
     },
     {
       "id": "story1780749298825",
@@ -1310,7 +1416,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 889
+      "wordCount": 889,
+      "updated": "2026-06-27 04:47:37.320Z"
     },
     {
       "id": "story1780749084242",
@@ -1329,7 +1436,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1027
+      "wordCount": 1027,
+      "updated": "2026-06-27 04:47:45.093Z"
     },
     {
       "id": "story1780748848977",
@@ -1348,7 +1456,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 945
+      "wordCount": 945,
+      "updated": "2026-06-27 04:47:34.855Z"
     },
     {
       "id": "story1780748746267",
@@ -1367,7 +1476,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1285
+      "wordCount": 1285,
+      "updated": "2026-06-27 04:47:34.445Z"
     },
     {
       "id": "story1780748591848",
@@ -1386,7 +1496,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1290
+      "wordCount": 1290,
+      "updated": "2026-06-27 04:47:46.106Z"
     },
     {
       "id": "story1780748248086",
@@ -1405,7 +1516,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 837
+      "wordCount": 837,
+      "updated": "2026-06-27 04:47:39.617Z"
     },
     {
       "id": "story1780745842432",
@@ -1424,7 +1536,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1119
+      "wordCount": 1119,
+      "updated": "2026-06-27 04:47:33.094Z"
     },
     {
       "id": "story1780733359838",
@@ -1443,7 +1556,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3610
+      "wordCount": 3610,
+      "updated": "2026-06-29 02:15:08.568Z"
     },
     {
       "id": "story1780662814416",
@@ -1464,7 +1578,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 5546
+      "wordCount": 5546,
+      "updated": "2026-06-29 02:15:06.601Z"
     },
     {
       "id": "story1780649138137",
@@ -1483,7 +1598,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1645
+      "wordCount": 1645,
+      "updated": "2026-06-29 02:15:06.445Z"
     },
     {
       "id": "story1780648206704",
@@ -1502,7 +1618,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 2460
+      "wordCount": 2460,
+      "updated": "2026-06-27 04:47:35.067Z"
     },
     {
       "id": "story1780621997787",
@@ -1521,7 +1638,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1220
+      "wordCount": 1220,
+      "updated": "2026-06-29 08:41:18.529Z"
     },
     {
       "id": "story1780620667193",
@@ -1540,7 +1658,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 878
+      "wordCount": 878,
+      "updated": "2026-06-29 08:41:18.528Z"
     },
     {
       "id": "story1780614206821",
@@ -1559,7 +1678,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4005
+      "wordCount": 4005,
+      "updated": "2026-06-29 02:15:05.888Z"
     },
     {
       "id": "story1780575754712",
@@ -1578,7 +1698,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 15,
-      "wordCount": 6725
+      "wordCount": 6725,
+      "updated": "2026-06-29 02:15:07.184Z"
     },
     {
       "id": "story1780574277084",
@@ -1599,7 +1720,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 5571
+      "wordCount": 5571,
+      "updated": "2026-06-29 02:15:04.309Z"
     },
     {
       "id": "story1780571521623",
@@ -1618,7 +1740,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 5347
+      "wordCount": 5347,
+      "updated": "2026-06-29 02:15:08.471Z"
     },
     {
       "id": "story1780566356797",
@@ -1637,7 +1760,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3433
+      "wordCount": 3433,
+      "updated": "2026-06-27 04:47:32.319Z"
     },
     {
       "id": "story1780557464079",
@@ -1656,7 +1780,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4261
+      "wordCount": 4261,
+      "updated": "2026-06-27 04:47:42.638Z"
     },
     {
       "id": "story1780495335057",
@@ -1677,7 +1802,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3228
+      "wordCount": 3228,
+      "updated": "2026-06-29 02:15:04.686Z"
     },
     {
       "id": "story1780494539631",
@@ -1696,7 +1822,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 908
+      "wordCount": 908,
+      "updated": "2026-06-27 04:47:40.593Z"
     },
     {
       "id": "story1780474707404",
@@ -1717,7 +1844,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 8828
+      "wordCount": 8828,
+      "updated": "2026-06-27 04:47:46.742Z"
     },
     {
       "id": "story1780469185913",
@@ -1736,7 +1864,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 764
+      "wordCount": 764,
+      "updated": "2026-06-27 04:47:44.685Z"
     },
     {
       "id": "story1780464281808",
@@ -1755,7 +1884,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 581
+      "wordCount": 581,
+      "updated": "2026-06-27 04:47:36.087Z"
     },
     {
       "id": "story1780458565373",
@@ -1774,7 +1904,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 30,
-      "wordCount": 9900
+      "wordCount": 9900,
+      "updated": "2026-06-29 02:15:04.418Z"
     },
     {
       "id": "story1780453209522",
@@ -1793,7 +1924,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 820
+      "wordCount": 820,
+      "updated": "2026-06-29 02:15:08.710Z"
     },
     {
       "id": "story1780438479911",
@@ -1812,7 +1944,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 7,
-      "wordCount": 575
+      "wordCount": 575,
+      "updated": "2026-06-29 02:15:08.394Z"
     },
     {
       "id": "story1780407549825",
@@ -1833,7 +1966,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 25,
-      "wordCount": 10771
+      "wordCount": 10771,
+      "updated": "2026-06-29 02:15:04.884Z"
     },
     {
       "id": "story1780403193770",
@@ -1852,7 +1986,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 971
+      "wordCount": 971,
+      "updated": "2026-06-29 02:15:08.772Z"
     },
     {
       "id": "story1780394444588",
@@ -1871,7 +2006,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 898
+      "wordCount": 898,
+      "updated": "2026-06-29 02:15:08.979Z"
     },
     {
       "id": "story1780392983429",
@@ -1890,7 +2026,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 2213
+      "wordCount": 2213,
+      "updated": "2026-06-29 02:15:09.136Z"
     },
     {
       "id": "story1780392557600",
@@ -1909,7 +2046,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1257
+      "wordCount": 1257,
+      "updated": "2026-06-29 02:15:06.697Z"
     },
     {
       "id": "story1780385643471",
@@ -1930,7 +2068,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3727
+      "wordCount": 3727,
+      "updated": "2026-06-29 02:15:07.098Z"
     },
     {
       "id": "story1780376901756",
@@ -1951,7 +2090,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3193
+      "wordCount": 3193,
+      "updated": "2026-06-29 02:15:05.682Z"
     },
     {
       "id": "story1780374705838",
@@ -1970,7 +2110,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 3981
+      "wordCount": 3981,
+      "updated": "2026-06-29 02:15:08.638Z"
     },
     {
       "id": "story1780372797588",
@@ -1991,7 +2132,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 5,
-      "wordCount": 1663
+      "wordCount": 1663,
+      "updated": "2026-06-29 02:15:09.456Z"
     },
     {
       "id": "story1780321046992",
@@ -2012,7 +2154,8 @@
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 10,
-      "wordCount": 4422
+      "wordCount": 4422,
+      "updated": "2026-06-29 02:15:05.015Z"
     }
   ]
 }
