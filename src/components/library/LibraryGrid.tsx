@@ -2,6 +2,8 @@ import {
   ChevronLeft,
   ChevronRight,
   HelpCircle,
+  LayoutGrid,
+  List,
   SlidersHorizontal,
 } from 'lucide-react';
 import type React from 'react';
@@ -11,6 +13,7 @@ import type { RecentlyReadItem, Story } from '../../types';
 import type { SortBy } from '../../utils/storyFilters';
 import LibraryFilters from './LibraryFilters';
 import StoryCard from './StoryCard';
+import StoryCondensedRow from './StoryCondensedRow';
 
 interface LibraryGridProps {
   stories: Story[];
@@ -72,6 +75,18 @@ export default function LibraryGrid({
   const currentUser = useAuthStore((state) => state.currentUser);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [viewMode, setViewMode] = useState<'grid' | 'condensed'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('library_view_mode');
+      return saved === 'condensed' ? 'condensed' : 'grid';
+    }
+    return 'grid';
+  });
+
+  const handleToggleViewMode = (mode: 'grid' | 'condensed') => {
+    setViewMode(mode);
+    localStorage.setItem('library_view_mode', mode);
+  };
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -91,7 +106,7 @@ export default function LibraryGrid({
     return () => window.removeEventListener('resize', updateItemsPerPage);
   }, []);
 
-  // Reset page when filters or sorting change
+  // Reset page when filters, sorting or view mode change
   // biome-ignore lint/correctness/useExhaustiveDependencies: Reset page when filters or sorting change
   useEffect(() => {
     setCurrentPage(1);
@@ -102,6 +117,7 @@ export default function LibraryGrid({
     filterGenre,
     filterReadingStatus,
     sortBy,
+    viewMode,
   ]);
 
   const handleResetFilters = () => {
@@ -112,11 +128,12 @@ export default function LibraryGrid({
     setFilterReadingStatus([]);
   };
 
-  const totalPages = Math.ceil(filteredStories.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
+  const itemsPerPageVal = viewMode === 'condensed' ? 15 : itemsPerPage;
+  const totalPages = Math.ceil(filteredStories.length / itemsPerPageVal);
+  const startIndex = (currentPage - 1) * itemsPerPageVal;
   const paginatedStories = filteredStories.slice(
     startIndex,
-    startIndex + itemsPerPage,
+    startIndex + itemsPerPageVal,
   );
 
   // Helper to generate page numbers with ellipses
@@ -179,6 +196,36 @@ export default function LibraryGrid({
               ? 'Your personal collection of created and bookmarked graded readers.'
               : 'Graded books open for learning. Read instantly below.'}
           </p>
+        </div>
+
+        {/* View Mode Toggle */}
+        <div className="flex items-center bg-tj-bg-recessed p-0.5 rounded-xl border border-tj-border-main self-start sm:self-auto shadow-none shrink-0">
+          <button
+            type="button"
+            onClick={() => handleToggleViewMode('grid')}
+            className={`p-1.5 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+              viewMode === 'grid'
+                ? 'bg-tj-bg-card text-tj-text-main shadow-xs border border-tj-border-main'
+                : 'text-tj-text-muted hover:text-tj-text-main border border-transparent'
+            }`}
+            title="Grid View"
+            aria-label="Grid View"
+          >
+            <LayoutGrid className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => handleToggleViewMode('condensed')}
+            className={`p-1.5 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+              viewMode === 'condensed'
+                ? 'bg-tj-bg-card text-tj-text-main shadow-xs border border-tj-border-main'
+                : 'text-tj-text-muted hover:text-tj-text-main border border-transparent'
+            }`}
+            title="Condensed View"
+            aria-label="Condensed View"
+          >
+            <List className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
@@ -275,29 +322,55 @@ export default function LibraryGrid({
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-x-6 gap-y-8 justify-items-center">
-                {paginatedStories.map((story) => (
-                  <StoryCard
-                    key={story.id}
-                    story={story}
-                    currentUser={currentUser}
-                    onSelect={() => onSelectStory(story)}
-                    onDelete={onDeleteStory}
-                    isSaved={bookshelf.includes(story.id)}
-                    onToggleSaved={onToggleSaved}
-                    isCachedOffline={cachedStoryIds.includes(story.id)}
-                    onDownload={
-                      onDownloadStory
-                        ? (e) => {
-                            e.stopPropagation();
-                            onDownloadStory(story);
-                          }
-                        : undefined
-                    }
-                    recentlyRead={recentlyRead}
-                  />
-                ))}
-              </div>
+              {viewMode === 'condensed' ? (
+                <div className="flex flex-col gap-2">
+                  {paginatedStories.map((story) => (
+                    <StoryCondensedRow
+                      key={story.id}
+                      story={story}
+                      currentUser={currentUser}
+                      onSelect={() => onSelectStory(story)}
+                      onDelete={onDeleteStory}
+                      isSaved={bookshelf.includes(story.id)}
+                      onToggleSaved={onToggleSaved}
+                      isCachedOffline={cachedStoryIds.includes(story.id)}
+                      onDownload={
+                        onDownloadStory
+                          ? (e) => {
+                              e.stopPropagation();
+                              onDownloadStory(story);
+                            }
+                          : undefined
+                      }
+                      recentlyRead={recentlyRead}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-x-6 gap-y-8 justify-items-center">
+                  {paginatedStories.map((story) => (
+                    <StoryCard
+                      key={story.id}
+                      story={story}
+                      currentUser={currentUser}
+                      onSelect={() => onSelectStory(story)}
+                      onDelete={onDeleteStory}
+                      isSaved={bookshelf.includes(story.id)}
+                      onToggleSaved={onToggleSaved}
+                      isCachedOffline={cachedStoryIds.includes(story.id)}
+                      onDownload={
+                        onDownloadStory
+                          ? (e) => {
+                              e.stopPropagation();
+                              onDownloadStory(story);
+                            }
+                          : undefined
+                      }
+                      recentlyRead={recentlyRead}
+                    />
+                  ))}
+                </div>
+              )}
 
               {totalPages > 1 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-tj-border-main">
@@ -309,7 +382,7 @@ export default function LibraryGrid({
                     to{' '}
                     <strong className="font-semibold text-tj-text-main">
                       {Math.min(
-                        startIndex + itemsPerPage,
+                        startIndex + itemsPerPageVal,
                         filteredStories.length,
                       )}
                     </strong>{' '}
