@@ -1,4 +1,8 @@
 import {
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
   ChevronDown,
   Edit,
   Eye,
@@ -30,6 +34,8 @@ interface TTSToolbarProps {
   setUseSerif: (serif: boolean) => void;
   fontSize: number;
   setFontSize: (size: number) => void;
+  alignment: 'left' | 'center' | 'right' | 'justify';
+  setAlignment: (alignment: 'left' | 'center' | 'right' | 'justify') => void;
   cefrLevel: string;
   showBilingual: boolean;
   setShowBilingual: (show: boolean) => void;
@@ -55,6 +61,8 @@ export default function TTSToolbar({
   setUseSerif,
   fontSize,
   setFontSize,
+  alignment,
+  setAlignment,
   cefrLevel,
   showBilingual,
   setShowBilingual,
@@ -389,6 +397,67 @@ export default function TTSToolbar({
                       className="p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg disabled:opacity-40 cursor-pointer transition-all border-0"
                     >
                       <ZoomIn className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Text Alignment Selector */}
+                <div className="space-y-2">
+                  <span className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+                    Text Alignment
+                  </span>
+                  <div className="grid grid-cols-4 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAlignment('left')}
+                      className={`py-2 px-1 flex flex-col items-center justify-center gap-1 text-[10px] font-semibold rounded-xl border transition-all cursor-pointer ${
+                        alignment === 'left'
+                          ? 'border-tj-primary bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover font-bold'
+                          : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      }`}
+                      title="Align Left"
+                    >
+                      <AlignLeft className="w-4 h-4" />
+                      <span>Left</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAlignment('center')}
+                      className={`py-2 px-1 flex flex-col items-center justify-center gap-1 text-[10px] font-semibold rounded-xl border transition-all cursor-pointer ${
+                        alignment === 'center'
+                          ? 'border-tj-primary bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover font-bold'
+                          : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      }`}
+                      title="Align Center"
+                    >
+                      <AlignCenter className="w-4 h-4" />
+                      <span>Center</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAlignment('justify')}
+                      className={`py-2 px-1 flex flex-col items-center justify-center gap-1 text-[10px] font-semibold rounded-xl border transition-all cursor-pointer ${
+                        alignment === 'justify'
+                          ? 'border-tj-primary bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover font-bold'
+                          : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      }`}
+                      title="Justify"
+                    >
+                      <AlignJustify className="w-4 h-4" />
+                      <span>Justify</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAlignment('right')}
+                      className={`py-2 px-1 flex flex-col items-center justify-center gap-1 text-[10px] font-semibold rounded-xl border transition-all cursor-pointer ${
+                        alignment === 'right'
+                          ? 'border-tj-primary bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover font-bold'
+                          : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      }`}
+                      title="Align Right"
+                    >
+                      <AlignRight className="w-4 h-4" />
+                      <span>Right</span>
                     </button>
                   </div>
                 </div>

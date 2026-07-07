@@ -16,6 +16,7 @@ interface InteractiveParagraphProps {
   glossaryWordsSet?: Set<string>;
   savedWordsSet?: Set<string>;
   activeWordRangeInPara?: [number, number] | null;
+  alignment?: 'left' | 'center' | 'right' | 'justify';
 }
 
 export default function InteractiveParagraph({
@@ -27,6 +28,7 @@ export default function InteractiveParagraph({
   glossaryWordsSet,
   savedWordsSet,
   activeWordRangeInPara = null,
+  alignment = 'justify',
 }: InteractiveParagraphProps) {
   const langCode = getLanguageCodeFromName(language);
   const isAsiatic = ['japanese', 'chinese', 'ja', 'zh'].some((c) =>
@@ -105,11 +107,24 @@ export default function InteractiveParagraph({
     }
   }
 
+  const getAlignmentClass = () => {
+    switch (alignment) {
+      case 'left':
+        return 'text-left';
+      case 'center':
+        return 'text-center';
+      case 'right':
+        return 'text-right';
+      default:
+        return 'text-justify';
+    }
+  };
+
   return (
     <p
       key={pIdx}
       translate="no"
-      className={`${isBilingual ? '' : 'indent-4 md:indent-6'} text-justify leading-relaxed mb-4`}
+      className={`${isBilingual ? '' : 'indent-4 md:indent-6'} ${getAlignmentClass()} leading-relaxed mb-4`}
     >
       {segmentsWithKeys.map((seg) => {
         const isActive =

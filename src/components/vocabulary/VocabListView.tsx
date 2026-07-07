@@ -302,11 +302,13 @@ export default function VocabListView({
                             className="text-sm text-slate-800 dark:text-slate-200 font-serif leading-relaxed block text-left hover:text-tj-primary transition-colors cursor-pointer border-0 bg-transparent p-0 w-full"
                             title="Click to pronounce example sentence"
                           >
-                            "{limitContextToTenWords(
+                            "
+                            {limitContextToTenWords(
                               t.contextSentence,
                               t.word,
                               langCode,
-                            )}"
+                            )}
+                            "
                           </button>
                         )}
                       </div>
@@ -398,11 +400,13 @@ export default function VocabListView({
                       className="text-sm text-slate-800 dark:text-slate-200 font-serif leading-relaxed block mt-1.5 text-left hover:text-tj-primary transition-colors cursor-pointer border-0 bg-transparent p-0 w-full"
                       title="Click to pronounce example sentence"
                     >
-                      "{limitContextToTenWords(
+                      "
+                      {limitContextToTenWords(
                         t.contextSentence,
                         t.word,
                         langCode,
-                      )}"
+                      )}
+                      "
                     </button>
                   )}
                 </div>

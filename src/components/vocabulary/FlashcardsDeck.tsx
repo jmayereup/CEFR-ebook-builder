@@ -170,7 +170,10 @@ export default function FlashcardsDeck({
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        playWord(activeTerm.contextSentence, activeTerm.language);
+                        playWord(
+                          activeTerm.contextSentence,
+                          activeTerm.language,
+                        );
                       }}
                       className="p-1 rounded-full hover:bg-tj-primary-light text-tj-text-muted hover:text-tj-primary transition-colors cursor-pointer border-0 bg-transparent flex items-center justify-center"
                       title="Pronounce example sentence"

@@ -1,6 +1,26 @@
 {
-  "lastFetchTime": 1783290132789,
+  "lastFetchTime": 1783431124742,
   "stories": [
+    {
+      "id": "sqqd3rgauvbn6rg",
+      "title": "Between the Rice Fields and the Stars",
+      "language": "English",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 10,
+      "createdAt": "2026-07-07T00:37:41.853Z",
+      "isCompleted": true,
+      "description": "Mali, a young teacher from Chachoengsao, begins her first year at a rural school in the northern mountains of Thailand. There she meets Tom, a volunteer teacher from England, and together they help shy students discover the joy of English while sharing daily village life, friendship, and a gentle romance. This warm slice-of-life story is about learning, belonging, and the quiet moments that can change a life.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "openai/gpt-5.4-mini",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 10,
+      "wordCount": 5848,
+      "updated": "2026-07-07 00:41:22.041Z"
+    },
     {
       "id": "sjvncvm66gtvhe8",
       "title": "นางเสม็ด ผู้พิทักษ์เกาะ",
@@ -14,12 +34,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "minimax/minimax-m3",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1641,
-      "updated": "2026-07-05 13:39:52.626Z"
+      "updated": "2026-07-05 22:50:18.231Z"
     },
     {
       "id": "s4q6erpoo9wrgbz",
@@ -34,12 +58,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "openai/gpt-5.4-mini",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 4827,
-      "updated": "2026-07-05 07:09:07.423Z"
+      "updated": "2026-07-06 23:43:50.161Z"
     },
     {
       "id": "s4xcb8zpv9wefkv",
@@ -1138,26 +1166,6 @@
       "chaptersCount": 7,
       "wordCount": 3982,
       "updated": "2026-06-27 04:47:35.226Z"
-    },
-    {
-      "id": "story1780907990021",
-      "title": "The Neon Divide",
-      "language": "English",
-      "cefrLevel": "B2",
-      "genre": "romance",
-      "totalChapters": 5,
-      "createdAt": "2026-06-08T08:39:50.022Z",
-      "isCompleted": true,
-      "description": "In a futuristic city where rival tech dynasties control every aspect of life, two young men find a forbidden connection through a digital veil. As they fight for a future together, they discover a shocking truth that challenges the very nature of their existence and love.",
-      "creatorId": "kjksljovpk623jy",
-      "creatorEmail": "jmayereup@gmail.com",
-      "model": "google/gemini-3.1-flash-lite",
-      "ratings": null,
-      "completedBy": {},
-      "isPublic": true,
-      "chaptersCount": 5,
-      "wordCount": 2130,
-      "updated": "2026-06-29 02:15:04.809Z"
     },
     {
       "id": "story1780907254400",

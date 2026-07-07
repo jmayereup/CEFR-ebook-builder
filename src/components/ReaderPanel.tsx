@@ -216,6 +216,8 @@ export default function ReaderPanel({
   const setFontSize = useUIStore((state) => state.setReaderFontSize);
   const useSerif = useUIStore((state) => state.readerUseSerif);
   const setUseSerif = useUIStore((state) => state.setReaderUseSerif);
+  const alignment = useUIStore((state) => state.readerTextAlignment);
+  const setAlignment = useUIStore((state) => state.setReaderTextAlignment);
   const [showBilingual, setShowBilingual] = useState<boolean>(
     story.cefrLevel === 'A1' || story.cefrLevel === 'Pre-A1',
   );
@@ -1151,6 +1153,8 @@ export default function ReaderPanel({
                       setUseSerif={setUseSerif}
                       fontSize={fontSize}
                       setFontSize={setFontSize}
+                      alignment={alignment}
+                      setAlignment={setAlignment}
                       cefrLevel={story.cefrLevel}
                       showBilingual={showBilingual}
                       setShowBilingual={setShowBilingual}
@@ -1277,6 +1281,7 @@ export default function ReaderPanel({
                                   glossaryWordsSet={glossaryWordsSet}
                                   savedWordsSet={savedWordsSet}
                                   activeWordRangeInPara={activeWordRangeInPara}
+                                  alignment={alignment}
                                 />
                               </div>
                               {showBilingual && (

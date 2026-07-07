@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   AlertCircle,
   Bookmark,
@@ -10,7 +9,7 @@ import {
   Volume2,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { getLanguageCodeFromName, type Story } from '../../types';
 
 interface TranslationToastProps {

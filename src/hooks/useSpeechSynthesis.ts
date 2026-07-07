@@ -4,17 +4,17 @@ import { getLanguageCodeFromName } from '../types';
 function cleanSpeechText(text: string): string {
   if (!text) return '';
   let clean = text.trim();
-  
+
   // Loop to remove all leading ellipses
   while (/^(\.{3,}|…)/.test(clean)) {
     clean = clean.replace(/^(\.{3,}|…)\s*/, '').trim();
   }
-  
+
   // Loop to remove all trailing ellipses
   while (/(\.{3,}|…)$/.test(clean)) {
     clean = clean.replace(/\s*(\.{3,}|…)$/, '').trim();
   }
-  
+
   return clean;
 }
 
