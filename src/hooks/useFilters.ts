@@ -49,11 +49,17 @@ export function useFilters(options: UseFiltersOptions) {
 
   // Remember library filters
   useEffect(() => {
-    localStorage.setItem('library_filter_language', JSON.stringify(filterLanguage));
+    localStorage.setItem(
+      'library_filter_language',
+      JSON.stringify(filterLanguage),
+    );
   }, [filterLanguage]);
 
   useEffect(() => {
-    localStorage.setItem('library_filter_cefr_level', JSON.stringify(filterCefrLevel));
+    localStorage.setItem(
+      'library_filter_cefr_level',
+      JSON.stringify(filterCefrLevel),
+    );
   }, [filterCefrLevel]);
 
   // Filter public stories or user owned private stories for Browse tab

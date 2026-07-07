@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Search, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { CEFR_LEVELS, GENRES, SUPPORTED_LANGUAGES } from '../../types';
 import type { SortBy } from '../../utils/storyFilters';
 
@@ -36,12 +36,17 @@ export default function LibraryFilters({
   filteredStoriesCount,
   storiesCount,
 }: LibraryFiltersProps) {
-  const [openDropdown, setOpenDropdown] = useState<'language' | 'cefr' | 'genre' | 'status' | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<
+    'language' | 'cefr' | 'genre' | 'status' | null
+  >(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setOpenDropdown(null);
       }
     };
@@ -76,7 +81,9 @@ export default function LibraryFilters({
 
   const toggleCefrLevel = (levelCode: string) => {
     if (filterCefrLevel.includes(levelCode)) {
-      setFilterCefrLevel(filterCefrLevel.filter((level) => level !== levelCode));
+      setFilterCefrLevel(
+        filterCefrLevel.filter((level) => level !== levelCode),
+      );
     } else {
       setFilterCefrLevel([...filterCefrLevel, levelCode]);
     }
@@ -101,7 +108,9 @@ export default function LibraryFilters({
   const getLanguageLabel = () => {
     if (filterLanguage.length === 0) return 'All Languages';
     if (filterLanguage.length === 1) {
-      const lang = SUPPORTED_LANGUAGES.find((l) => l.name === filterLanguage[0]);
+      const lang = SUPPORTED_LANGUAGES.find(
+        (l) => l.name === filterLanguage[0],
+      );
       return `${lang?.flag || ''} ${filterLanguage[0]}`;
     }
     return `Languages (${filterLanguage.length})`;
@@ -195,7 +204,9 @@ export default function LibraryFilters({
         <div className="relative">
           <button
             type="button"
-            onClick={() => setOpenDropdown(openDropdown === 'language' ? null : 'language')}
+            onClick={() =>
+              setOpenDropdown(openDropdown === 'language' ? null : 'language')
+            }
             className="w-full flex items-center justify-between pl-3 pr-3 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-[11px] font-medium rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans text-left"
           >
             <span className="truncate">{getLanguageLabel()}</span>
@@ -214,7 +225,9 @@ export default function LibraryFilters({
               >
                 <span>All Languages</span>
                 {filterLanguage.length > 0 && (
-                  <span className="text-[10px] font-bold text-tj-primary">Clear</span>
+                  <span className="text-[10px] font-bold text-tj-primary">
+                    Clear
+                  </span>
                 )}
               </button>
               {SUPPORTED_LANGUAGES.map((lang) => {
@@ -246,7 +259,9 @@ export default function LibraryFilters({
         <div className="relative">
           <button
             type="button"
-            onClick={() => setOpenDropdown(openDropdown === 'cefr' ? null : 'cefr')}
+            onClick={() =>
+              setOpenDropdown(openDropdown === 'cefr' ? null : 'cefr')
+            }
             className="w-full flex items-center justify-between pl-3 pr-3 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-[11px] font-medium rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans text-left"
           >
             <span className="truncate">{getCefrLabel()}</span>
@@ -265,7 +280,9 @@ export default function LibraryFilters({
               >
                 <span>All CEFR Levels</span>
                 {filterCefrLevel.length > 0 && (
-                  <span className="text-[10px] font-bold text-tj-primary">Clear</span>
+                  <span className="text-[10px] font-bold text-tj-primary">
+                    Clear
+                  </span>
                 )}
               </button>
               {CEFR_LEVELS.map((level) => {
@@ -297,7 +314,9 @@ export default function LibraryFilters({
         <div className="relative">
           <button
             type="button"
-            onClick={() => setOpenDropdown(openDropdown === 'genre' ? null : 'genre')}
+            onClick={() =>
+              setOpenDropdown(openDropdown === 'genre' ? null : 'genre')
+            }
             className="w-full flex items-center justify-between pl-3 pr-3 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-[11px] font-medium rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans text-left"
           >
             <span className="truncate">{getGenreLabel()}</span>
@@ -316,7 +335,9 @@ export default function LibraryFilters({
               >
                 <span>All Genres/Themes</span>
                 {filterGenre.length > 0 && (
-                  <span className="text-[10px] font-bold text-tj-primary">Clear</span>
+                  <span className="text-[10px] font-bold text-tj-primary">
+                    Clear
+                  </span>
                 )}
               </button>
               {GENRES.map((g) => {
@@ -346,7 +367,9 @@ export default function LibraryFilters({
         <div className="relative">
           <button
             type="button"
-            onClick={() => setOpenDropdown(openDropdown === 'status' ? null : 'status')}
+            onClick={() =>
+              setOpenDropdown(openDropdown === 'status' ? null : 'status')
+            }
             className="w-full flex items-center justify-between pl-3 pr-3 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-[11px] font-medium rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans text-left"
           >
             <span className="truncate">{getReadingStatusLabel()}</span>
@@ -365,7 +388,9 @@ export default function LibraryFilters({
               >
                 <span>All Statuses</span>
                 {filterReadingStatus.length > 0 && (
-                  <span className="text-[10px] font-bold text-tj-primary">Clear</span>
+                  <span className="text-[10px] font-bold text-tj-primary">
+                    Clear
+                  </span>
                 )}
               </button>
               {['Unread', 'In-Progress', 'Completed'].map((status) => {
@@ -404,7 +429,8 @@ export default function LibraryFilters({
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-tj-primary animate-pulse shrink-0"></span>
             <span className="text-[10px] font-bold text-tj-text-main uppercase tracking-wider font-mono">
-              Filtering Active: {filteredStoriesCount} of {storiesCount} stories matched
+              Filtering Active: {filteredStoriesCount} of {storiesCount} stories
+              matched
             </span>
           </div>
           <button

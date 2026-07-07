@@ -4,7 +4,6 @@ import {
   BookmarkCheck,
   BookOpenText,
   Cloud,
-  Cpu,
   Lock,
   Star,
 } from 'lucide-react';
@@ -17,7 +16,6 @@ import {
   type RecentlyReadItem,
   type Story,
 } from '../../types';
-import { getModelDisplayName } from '../../utils/modelUtils';
 import { countWords } from '../../utils/wordCounter';
 
 const cleanGenreLabel = (label: string) => {
@@ -34,7 +32,6 @@ const getCefrCoverStyles = (cefrLevel: string) => {
       card: 'bg-gradient-to-br from-[#FAF6EE] to-[#EBE4D5] dark:from-[#2D2B28] dark:to-[#1C1A18] text-[#2D2A26] dark:text-[#EBE4D5] border-[#D0C7B2]/40 dark:border-[#5A5348]/40',
       textMuted: 'text-[#615C54] dark:text-[#9B9384]',
       line: 'border-[#D0C7B2]/30 dark:border-[#5A5348]/30',
-      modelText: 'text-[#514D46] dark:text-[#A89F90]',
     };
   }
   if (lvl.startsWith('B')) {
@@ -43,7 +40,6 @@ const getCefrCoverStyles = (cefrLevel: string) => {
       card: 'bg-gradient-to-br from-[#F0F2E8] to-[#DCE0CC] dark:from-[#20231D] dark:to-[#131612] text-[#20291D] dark:text-[#DCE0CC] border-[#C1C9A9]/40 dark:border-[#4C5340]/40',
       textMuted: 'text-[#535F4F] dark:text-[#8F9983]',
       line: 'border-[#C1C9A9]/30 dark:border-[#4C5340]/30',
-      modelText: 'text-[#455041] dark:text-[#A2AD95]',
     };
   }
   // Warm Cedar / Oak / Sandalwood / Terracotta (C levels - Advanced)
@@ -51,7 +47,6 @@ const getCefrCoverStyles = (cefrLevel: string) => {
     card: 'bg-gradient-to-br from-[#FAF0E3] to-[#EBD7BE] dark:from-[#312318] dark:to-[#1C130D] text-[#3B250D] dark:text-[#EBD7BE] border-[#D9BD9C]/40 dark:border-[#624A35]/40',
     textMuted: 'text-[#7A5A39] dark:text-[#AB9074]',
     line: 'border-[#D9BD9C]/30 dark:border-[#624A35]/30',
-    modelText: 'text-[#66492A] dark:text-[#BC9F80]',
   };
 };
 
@@ -238,10 +233,10 @@ export default function StoryCard({
         </div>
 
         {/* Centerpiece Cover Art / Title Block */}
-        <div className="flex-1 flex flex-col justify-center text-center px-2 py-3 z-10">
+        <div className="flex-1 flex flex-col justify-start text-center px-2 py-3 z-10">
           <h3
             lang={getLanguageCodeFromName(story.language)}
-            className="text-sm md:text-base font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-1 hyphens-auto"
+            className="text-base md:text-lg font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-1 hyphens-auto"
           >
             {story.title}
           </h3>
@@ -253,7 +248,7 @@ export default function StoryCard({
 
           {story.description && (
             <p
-              className={`text-[10px] ${coverStyle.textMuted} mt-2.5 line-clamp-5 leading-relaxed font-sans italic opacity-85 px-0.5`}
+              className={`text-[10px] ${coverStyle.textMuted} mt-2.5 line-clamp-8 leading-relaxed font-sans italic opacity-85 px-0.5 text-left`}
             >
               "{story.description}"
             </p>
@@ -262,22 +257,23 @@ export default function StoryCard({
 
         {/* Footer Area */}
         <div className="z-10 pt-2.5">
-          <div className="flex flex-col gap-1.5 text-[9px] font-mono font-bold">
-            {/* Line 1: Model & Rating (space between) */}
-            <div className="flex items-center justify-between gap-2">
-              <div
-                className={`flex items-center gap-1.5 text-[8px] font-bold tracking-wide uppercase ${coverStyle.modelText}`}
-              >
-                <Cpu className="w-2.5 h-2.5 opacity-80 text-current" />
-                <span
-                  className="truncate max-w-[120px]"
-                  title={getModelDisplayName(story.model)}
-                >
-                  {getModelDisplayName(story.model)}
-                </span>
+          <div className="text-[9px] font-mono font-bold">
+            {/* Line: Word Count, Ratings & Reads */}
+            <div className="flex items-center justify-between gap-2 mt-0.5">
+              <div className={`${coverStyle.textMuted}`}>
+                {story.isCompleted || chaptersCount === story.totalChapters ? (
+                  <span className="whitespace-nowrap">
+                    {(Math.round(wordCount / 50) * 50).toLocaleString()} WORDS
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 font-sans uppercase text-[8px] tracking-wide whitespace-nowrap">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
+                    In Progress
+                  </span>
+                )}
               </div>
 
-              <div>
+              <div className="flex items-center gap-2.5">
                 {story.ratings && Object.keys(story.ratings).length > 0 && (
                   <div
                     className={`flex items-center gap-0.5 ${coverStyle.textMuted}`}
@@ -295,29 +291,13 @@ export default function StoryCard({
                     })}
                   </div>
                 )}
-              </div>
-            </div>
 
-            {/* Line 2: Word Count & Reads (space between) */}
-            <div className="flex items-center justify-between gap-2 mt-0.5">
-              <div className={`${coverStyle.textMuted}`}>
-                {story.isCompleted || chaptersCount === story.totalChapters ? (
-                  <span className="whitespace-nowrap">
-                    {(Math.round(wordCount / 50) * 50).toLocaleString()} WORDS
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1 font-sans uppercase text-[8px] tracking-wide whitespace-nowrap">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
-                    In Progress
+                {totalReads > 0 && (
+                  <span className={`${coverStyle.textMuted} whitespace-nowrap`}>
+                    READS: {totalReads}
                   </span>
                 )}
               </div>
-
-              {totalReads > 0 && (
-                <span className={`${coverStyle.textMuted} whitespace-nowrap`}>
-                  READS: {totalReads}
-                </span>
-              )}
             </div>
           </div>
         </div>

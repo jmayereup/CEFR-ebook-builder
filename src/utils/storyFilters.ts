@@ -56,15 +56,16 @@ export const filterAndSortStories = (
         return false;
 
       // 2. CEFR level filter
-      if (filterCefrLevel.length > 0 && !filterCefrLevel.includes(story.cefrLevel))
+      if (
+        filterCefrLevel.length > 0 &&
+        !filterCefrLevel.includes(story.cefrLevel)
+      )
         return false;
 
       // 3. Genre filter
       if (filterGenre.length > 0) {
         const match = filterGenre.some((fg) => {
-          const gObj = GENRES.find(
-            (g) => g.id === fg || g.label === fg,
-          );
+          const gObj = GENRES.find((g) => g.id === fg || g.label === fg);
           const sGenre = story.genre.toLowerCase();
           const matchId = gObj ? gObj.id.toLowerCase() === sGenre : false;
           const matchLabel = gObj ? gObj.label.toLowerCase() === sGenre : false;
