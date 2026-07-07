@@ -207,7 +207,7 @@ export function useExport(options: UseExportOptions) {
       a.href = url;
       const safeTitle = selectedStory.title
         .replace(/[/\\?%*:|"<>]/g, '_')
-        .replace(/\s+/g, '_')
+        .replace(/\s+/g, ' ')
         .trim();
       a.download = `${safeTitle}.epub`;
       document.body.appendChild(a);
