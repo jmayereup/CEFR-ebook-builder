@@ -178,10 +178,11 @@ export default function StoryCard({
 
             <div className="flex items-center gap-2">
               {story.isPublic === false && (
-                <Lock
-                  className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
-                  title="Private Story"
-                />
+                <span title="Private Story">
+                  <Lock
+                    className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
+                  />
+                </span>
               )}
               {!isCachedOffline && (
                 <button
@@ -201,15 +202,17 @@ export default function StoryCard({
                 </button>
               )}
               {isRead ? (
-                <BookCheck
-                  className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
-                  title="Completed reading"
-                />
+                <span title="Completed reading">
+                  <BookCheck
+                    className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
+                  />
+                </span>
               ) : inRecentlyRead ? (
-                <BookOpenText
-                  className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
-                  title="Recently Read (In Progress)"
-                />
+                <span title="Recently Read (In Progress)">
+                  <BookOpenText
+                    className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
+                  />
+                </span>
               ) : null}
               {onToggleSaved && (
                 <button

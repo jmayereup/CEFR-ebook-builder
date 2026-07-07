@@ -13,25 +13,47 @@ export function useFilters(options: UseFiltersOptions) {
   const { stories, bookshelf, recentlyRead, currentUser } = options;
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterLanguage, setFilterLanguage] = useState(() => {
-    if (typeof window === 'undefined') return 'All';
-    return localStorage.getItem('library_filter_language') || 'All';
+  const [filterLanguage, setFilterLanguage] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const stored = localStorage.getItem('library_filter_language');
+      if (!stored) return [];
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed === 'All') return [];
+      return [parsed];
+    } catch {
+      const val = localStorage.getItem('library_filter_language');
+      if (val === 'All' || !val) return [];
+      return [val];
+    }
   });
-  const [filterCefrLevel, setFilterCefrLevel] = useState(() => {
-    if (typeof window === 'undefined') return 'All';
-    return localStorage.getItem('library_filter_cefr_level') || 'All';
+  const [filterCefrLevel, setFilterCefrLevel] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const stored = localStorage.getItem('library_filter_cefr_level');
+      if (!stored) return [];
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed === 'All') return [];
+      return [parsed];
+    } catch {
+      const val = localStorage.getItem('library_filter_cefr_level');
+      if (val === 'All' || !val) return [];
+      return [val];
+    }
   });
-  const [filterGenre, setFilterGenre] = useState('All');
-  const [filterReadingStatus, setFilterReadingStatus] = useState('All');
+  const [filterGenre, setFilterGenre] = useState<string[]>([]);
+  const [filterReadingStatus, setFilterReadingStatus] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortBy>('newest');
 
   // Remember library filters
   useEffect(() => {
-    localStorage.setItem('library_filter_language', filterLanguage);
+    localStorage.setItem('library_filter_language', JSON.stringify(filterLanguage));
   }, [filterLanguage]);
 
   useEffect(() => {
-    localStorage.setItem('library_filter_cefr_level', filterCefrLevel);
+    localStorage.setItem('library_filter_cefr_level', JSON.stringify(filterCefrLevel));
   }, [filterCefrLevel]);
 
   // Filter public stories or user owned private stories for Browse tab

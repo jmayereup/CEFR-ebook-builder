@@ -5,7 +5,7 @@ interface StreakCelebrationModalProps {
   isOpen: boolean;
   onClose: () => void;
   streak: number;
-  type: 'maintained' | 'milestone';
+  type: 'maintained' | 'milestone' | 'repaired';
 }
 
 export default function StreakCelebrationModal({

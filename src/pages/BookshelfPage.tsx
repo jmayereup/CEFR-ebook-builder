@@ -31,14 +31,14 @@ interface BookshelfPageProps {
   setSearchQuery: (query: string) => void;
   sortBy: SortBy;
   setSortBy: (sort: SortBy) => void;
-  filterLanguage: string;
-  setFilterLanguage: (lang: string) => void;
-  filterCefrLevel: string;
-  setFilterCefrLevel: (level: string) => void;
-  filterGenre: string;
-  setFilterGenre: (genre: string) => void;
-  filterReadingStatus: string;
-  setFilterReadingStatus: (status: string) => void;
+  filterLanguage: string[];
+  setFilterLanguage: (lang: string[]) => void;
+  filterCefrLevel: string[];
+  setFilterCefrLevel: (level: string[]) => void;
+  filterGenre: string[];
+  setFilterGenre: (genre: string[]) => void;
+  filterReadingStatus: string[];
+  setFilterReadingStatus: (status: string[]) => void;
   onRefreshPrivateStories: () => Promise<void>;
   privateStoriesLoading: boolean;
 }

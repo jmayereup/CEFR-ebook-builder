@@ -12,10 +12,10 @@ import { getModelDisplayName } from './modelUtils';
 export type SortBy = 'newest' | 'oldest' | 'chapters' | 'title' | 'popularity';
 
 export interface StoryFilters {
-  filterLanguage: string;
-  filterCefrLevel: string;
-  filterGenre: string;
-  filterReadingStatus: string;
+  filterLanguage: string[];
+  filterCefrLevel: string[];
+  filterGenre: string[];
+  filterReadingStatus: string[];
   searchQuery: string;
   sortBy: SortBy;
   currentUser: { uid: string } | null;
@@ -52,27 +52,30 @@ export const filterAndSortStories = (
   return stories
     .filter((story) => {
       // 1. Language filter
-      if (filterLanguage !== 'All' && story.language !== filterLanguage)
+      if (filterLanguage.length > 0 && !filterLanguage.includes(story.language))
         return false;
 
       // 2. CEFR level filter
-      if (filterCefrLevel !== 'All' && story.cefrLevel !== filterCefrLevel)
+      if (filterCefrLevel.length > 0 && !filterCefrLevel.includes(story.cefrLevel))
         return false;
 
       // 3. Genre filter
-      if (filterGenre !== 'All') {
-        const gObj = GENRES.find(
-          (g) => g.id === filterGenre || g.label === filterGenre,
-        );
-        const sGenre = story.genre.toLowerCase();
-        const matchId = gObj ? gObj.id.toLowerCase() === sGenre : false;
-        const matchLabel = gObj ? gObj.label.toLowerCase() === sGenre : false;
-        const matchDirect = filterGenre.toLowerCase() === sGenre;
-        if (!matchId && !matchLabel && !matchDirect) return false;
+      if (filterGenre.length > 0) {
+        const match = filterGenre.some((fg) => {
+          const gObj = GENRES.find(
+            (g) => g.id === fg || g.label === fg,
+          );
+          const sGenre = story.genre.toLowerCase();
+          const matchId = gObj ? gObj.id.toLowerCase() === sGenre : false;
+          const matchLabel = gObj ? gObj.label.toLowerCase() === sGenre : false;
+          const matchDirect = fg.toLowerCase() === sGenre;
+          return matchId || matchLabel || matchDirect;
+        });
+        if (!match) return false;
       }
 
       // 4b. Reading Status filter
-      if (filterReadingStatus !== 'All') {
+      if (filterReadingStatus.length > 0) {
         let isRead = false;
         if (currentUser) {
           isRead = (story.completedBy?.[currentUser.uid] || 0) > 0;
@@ -85,11 +88,13 @@ export const filterAndSortStories = (
         const isInProgress =
           recentlyRead.some((item) => item.storyId === story.id) && !isRead;
 
-        if (filterReadingStatus === 'Completed' && !isRead) return false;
-        if (filterReadingStatus === 'In-Progress' && !isInProgress)
+        const match = filterReadingStatus.some((frs) => {
+          if (frs === 'Completed' && isRead) return true;
+          if (frs === 'In-Progress' && isInProgress) return true;
+          if (frs === 'Unread' && !isRead && !isInProgress) return true;
           return false;
-        if (filterReadingStatus === 'Unread' && (isRead || isInProgress))
-          return false;
+        });
+        if (!match) return false;
       }
 
       // 5. Search query

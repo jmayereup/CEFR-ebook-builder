@@ -202,7 +202,7 @@ export default function AddChapterModal({
               <button
                 type="button"
                 disabled={isGeneratingGlossary}
-                onClick={handleGenerateGlossary}
+                onClick={() => handleGenerateGlossary()}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-tj-primary-light dark:bg-slate-900 hover:bg-tj-primary-border dark:hover:bg-slate-800 text-tj-primary dark:text-tj-primary-hover font-semibold rounded-xl text-xs cursor-pointer border border-slate-200 dark:border-slate-800 transition-all disabled:opacity-50"
               >
                 {isGeneratingGlossary ? (

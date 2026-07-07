@@ -25,14 +25,14 @@ interface LibraryGridProps {
   setSearchQuery: (query: string) => void;
   sortBy: SortBy;
   setSortBy: (sort: SortBy) => void;
-  filterLanguage: string;
-  setFilterLanguage: (lang: string) => void;
-  filterCefrLevel: string;
-  setFilterCefrLevel: (level: string) => void;
-  filterGenre: string;
-  setFilterGenre: (genre: string) => void;
-  filterReadingStatus: string;
-  setFilterReadingStatus: (status: string) => void;
+  filterLanguage: string[];
+  setFilterLanguage: (lang: string[]) => void;
+  filterCefrLevel: string[];
+  setFilterCefrLevel: (level: string[]) => void;
+  filterGenre: string[];
+  setFilterGenre: (genre: string[]) => void;
+  filterReadingStatus: string[];
+  setFilterReadingStatus: (status: string[]) => void;
   bookshelf: string[];
   onToggleSaved: (
     storyId: string,
@@ -106,10 +106,10 @@ export default function LibraryGrid({
 
   const handleResetFilters = () => {
     setSearchQuery('');
-    setFilterLanguage('All');
-    setFilterCefrLevel('All');
-    setFilterGenre('All');
-    setFilterReadingStatus('All');
+    setFilterLanguage([]);
+    setFilterCefrLevel([]);
+    setFilterGenre([]);
+    setFilterReadingStatus([]);
   };
 
   const totalPages = Math.ceil(filteredStories.length / itemsPerPage);

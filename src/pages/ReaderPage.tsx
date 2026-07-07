@@ -25,7 +25,7 @@ interface ReaderPageProps {
   setShowDocOptions: (show: boolean) => void;
   showEpubLinks: boolean;
   setShowEpubLinks: (show: boolean) => void;
-  copyStatus: 'idle' | 'success' | 'error';
+  copyStatus: string | null;
   isExportingEpub: boolean;
   triggerCopyPlaintext: () => void;
   triggerCopyRichText: () => void;
