@@ -54,13 +54,18 @@ router.post('/', async (req, res) => {
 
     const genreLabels: Record<string, string> = {
       mystery: 'Detective & Mystery',
-      scifi: 'Sci-Fi & Fantasy',
+      scifi: 'Science Fiction',
+      fantasy: 'Fantasy',
+      scifi_fantasy: 'Sci-Fi & Fantasy (Blended)',
       adventure: 'Adventure & Exploration',
       sliceoflife: 'Slice of Life & Culture',
       romance: 'Romance & Drama',
       folklore: 'Folklore & Legend',
       philosophy: 'Spirituality & Philosophy',
       historical: 'Historical Fiction',
+      horror: 'Horror & Thriller',
+      comedy: 'Comedy & Humor',
+      fairy: 'Fairy Tales & Fables',
       nonfiction: 'Non-Fiction',
     };
     const resolvedGenre = genreLabels[genre] || genre;
@@ -85,11 +90,32 @@ router.post('/', async (req, res) => {
         ? 'Note: This is a historical fiction work. Please ensure the setting, culture, and key historical facts are accurate, avoiding glaring anachronisms.'
         : '';
 
+    let genreGuidance = '';
+    if (genre === 'scifi') {
+      genreGuidance =
+        'Note: This is a pure Science Fiction story. You must strictly avoid any fantasy elements, magic, spells, supernatural occurrences, or mythical creatures unless explicitly requested in the concept notes. Focus on scientific elements, futuristic technology, or space exploration.';
+    } else if (genre === 'fantasy') {
+      genreGuidance =
+        'Note: This is a pure Fantasy story. You must strictly avoid advanced futuristic technology, space travel, or science fiction concepts unless explicitly requested in the concept notes. Focus on magic, mythical creatures, historical/medieval settings, and supernatural events.';
+    } else if (genre === 'scifi_fantasy') {
+      genreGuidance =
+        'Note: This is a blended Science Fiction & Fantasy story. You may combine futuristic technology with magic or mystical elements.';
+    } else if (genre === 'horror') {
+      genreGuidance =
+        'Note: This is a Horror & Thriller story. Build suspense, tension, and a spooky or thrilling atmosphere.';
+    } else if (genre === 'comedy') {
+      genreGuidance =
+        'Note: This is a Comedy & Humor story. Keep the tone light, funny, and entertaining.';
+    } else if (genre === 'fairy') {
+      genreGuidance =
+        'Note: This is a Fairy Tale & Fable. Keep the story whimsical, moral-focused, or classic, suitable for storytelling.';
+    }
+
     const systemInstruction = `You are a talented story architect and bilingual educator tutor.
 Write an outline and proposed story title for a learner reading at CEFR ${cefrLevel} level in the language ${language}. 
 The text must be written in the style of a "${resolvedWritingType}" text.
 ${(cefrLevel === 'A1' || cefrLevel === 'Pre-A1') && translationLanguage ? `Since this is a ${cefrLevel} level story, it will be generated in a line-by-line bilingual format (${language} and ${translationLanguage}). Plan the chapters accordingly to be simple, repetitive, and educational.` : ''}
-${accuracyGuidance ? `${accuracyGuidance}\n` : ''}The story will have ${totalChapters} chapters of around ${targetWordCount} words each.`;
+${accuracyGuidance ? `${accuracyGuidance}\n` : ''}${genreGuidance ? `${genreGuidance}\n` : ''}The story will have ${totalChapters} chapters of around ${targetWordCount} words each.`;
 
     const responseSchema = {
       type: Type.OBJECT,

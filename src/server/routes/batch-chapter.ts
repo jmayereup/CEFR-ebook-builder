@@ -107,13 +107,18 @@ router.post('/', async (req, res) => {
 
     const genreLabels: Record<string, string> = {
       mystery: 'Detective & Mystery',
-      scifi: 'Sci-Fi & Fantasy',
+      scifi: 'Science Fiction',
+      fantasy: 'Fantasy',
+      scifi_fantasy: 'Sci-Fi & Fantasy (Blended)',
       adventure: 'Adventure & Exploration',
       sliceoflife: 'Slice of Life & Culture',
       romance: 'Romance & Drama',
       folklore: 'Folklore & Legend',
       philosophy: 'Spirituality & Philosophy',
       historical: 'Historical Fiction',
+      horror: 'Horror & Thriller',
+      comedy: 'Comedy & Humor',
+      fairy: 'Fairy Tales & Fables',
       nonfiction: 'Non-Fiction',
     };
     const resolvedGenre = genreLabels[genre] || genre;
@@ -137,6 +142,27 @@ router.post('/', async (req, res) => {
       : isHistorical
         ? 'Note: This is a historical fiction work. Ensure the setting, culture, and key historical facts are accurate, avoiding anachronisms.'
         : '';
+
+    let genreGuidance = '';
+    if (genre === 'scifi') {
+      genreGuidance =
+        'Note: This is a pure Science Fiction story. You must strictly avoid any fantasy elements, magic, spells, supernatural occurrences, or mythical creatures unless explicitly requested in the concept notes. Focus on scientific elements, futuristic technology, or space exploration.';
+    } else if (genre === 'fantasy') {
+      genreGuidance =
+        'Note: This is a pure Fantasy story. You must strictly avoid advanced futuristic technology, space travel, or science fiction concepts unless explicitly requested in the concept notes. Focus on magic, mythical creatures, historical/medieval settings, and supernatural events.';
+    } else if (genre === 'scifi_fantasy') {
+      genreGuidance =
+        'Note: This is a blended Science Fiction & Fantasy story. You may combine futuristic technology with magic or mystical elements.';
+    } else if (genre === 'horror') {
+      genreGuidance =
+        'Note: This is a Horror & Thriller story. Build suspense, tension, and a spooky or thrilling atmosphere.';
+    } else if (genre === 'comedy') {
+      genreGuidance =
+        'Note: This is a Comedy & Humor story. Keep the tone light, funny, and entertaining.';
+    } else if (genre === 'fairy') {
+      genreGuidance =
+        'Note: This is a Fairy Tale & Fable. Keep the story whimsical, moral-focused, or classic, suitable for storytelling.';
+    }
 
     // -------------------------------------------------------------------------
     // Full-context previous chapters (no hybrid summarisation)
@@ -177,6 +203,7 @@ The text must be written in the style of a "${resolvedWritingType}" text.
 Each chapter must be approximately ${targetWordCount} words long.
 ${cefrNarrativeGuide}
 ${accuracyGuidance ? `\n${accuracyGuidance}` : ''}
+${genreGuidance ? `\n${genreGuidance}` : ''}
 
 IMPORTANT: You MUST generate exactly ${batchCount} chapters in the correct JSON array structure. Ensure the narrative flows seamlessly from one chapter to the next within the batch, and continues from where the previous chapters ended.`;
 

@@ -87,13 +87,18 @@ router.post('/', async (req, res) => {
 
     const genreLabels: Record<string, string> = {
       mystery: 'Detective & Mystery',
-      scifi: 'Sci-Fi & Fantasy',
+      scifi: 'Science Fiction',
+      fantasy: 'Fantasy',
+      scifi_fantasy: 'Sci-Fi & Fantasy (Blended)',
       adventure: 'Adventure & Exploration',
       sliceoflife: 'Slice of Life & Culture',
       romance: 'Romance & Drama',
       folklore: 'Folklore & Legend',
       philosophy: 'Spirituality & Philosophy',
       historical: 'Historical Fiction',
+      horror: 'Horror & Thriller',
+      comedy: 'Comedy & Humor',
+      fairy: 'Fairy Tales & Fables',
       nonfiction: 'Non-Fiction',
     };
     const resolvedGenre = genreLabels[genre] || genre;
@@ -117,6 +122,27 @@ router.post('/', async (req, res) => {
       : isHistorical
         ? 'Note: This is a historical fiction work. Please ensure the setting, culture, and key historical facts are accurate, avoiding glaring anachronisms.'
         : '';
+
+    let genreGuidance = '';
+    if (genre === 'scifi') {
+      genreGuidance =
+        'Note: This is a pure Science Fiction story. You must strictly avoid any fantasy elements, magic, spells, supernatural occurrences, or mythical creatures unless explicitly requested in the concept notes. Focus on scientific elements, futuristic technology, or space exploration.';
+    } else if (genre === 'fantasy') {
+      genreGuidance =
+        'Note: This is a pure Fantasy story. You must strictly avoid advanced futuristic technology, space travel, or science fiction concepts unless explicitly requested in the concept notes. Focus on magic, mythical creatures, historical/medieval settings, and supernatural events.';
+    } else if (genre === 'scifi_fantasy') {
+      genreGuidance =
+        'Note: This is a blended Science Fiction & Fantasy story. You may combine futuristic technology with magic or mystical elements.';
+    } else if (genre === 'horror') {
+      genreGuidance =
+        'Note: This is a Horror & Thriller story. Build suspense, tension, and a spooky or thrilling atmosphere.';
+    } else if (genre === 'comedy') {
+      genreGuidance =
+        'Note: This is a Comedy & Humor story. Keep the tone light, funny, and entertaining.';
+    } else if (genre === 'fairy') {
+      genreGuidance =
+        'Note: This is a Fairy Tale & Fable. Keep the story whimsical, moral-focused, or classic, suitable for storytelling.';
+    }
 
     const targetTranslationLanguage = translationLanguage || 'English';
 
@@ -142,7 +168,7 @@ Do not include any key vocabulary extraction or glossary for A1 bilingual storie
 
 The chapter must be approximately ${targetWordCount} words long.
 ${cefrLevel === 'A1' || cefrLevel === 'Pre-A1' ? 'Do NOT select or extract vocabulary terms. Set the vocabulary field to an empty array.' : `You must also select and extract 5 to 10 key vocabulary terms from this chapter. For each term, provide its part of speech, a clear ${targetTranslationLanguage} meaning/definition, its transliteration/pronunciation guide (e.g. romanization/IPA for Thai, pinyin for Chinese, romaji for Japanese, romanization for Korean, or empty for standard space-separated latin languages), and its usage context (a short context sentence or phrase from the text of at most 10 words). Crucially, the contextSentence MUST contain the exact word/phrase as a substring. (Verify this carefully, especially for languages like Thai where words are not space-separated.)`}
-${accuracyGuidance ? `\n${accuracyGuidance}` : ''}`;
+${accuracyGuidance ? `\n${accuracyGuidance}` : ''}${genreGuidance ? `\n${genreGuidance}` : ''}`;
 
     // ---------------------------------------------------------------------------
     // Build schema and prompt depending on whether this is chapter 1 or later

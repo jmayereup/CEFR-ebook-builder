@@ -39,6 +39,7 @@ interface StoryCondensedRowProps {
   isCachedOffline?: boolean;
   onDownload?: (e: React.MouseEvent) => void;
   recentlyRead?: RecentlyReadItem[];
+  key?: any;
 }
 
 export default function StoryCondensedRow({

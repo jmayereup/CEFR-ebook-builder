@@ -3,6 +3,23 @@ import { cleanJSONString, handleModelCall, Type } from '../lib/aiProviders';
 
 const router = Router();
 
+const genreLabels: Record<string, string> = {
+  mystery: 'Detective & Mystery',
+  scifi: 'Science Fiction',
+  fantasy: 'Fantasy',
+  scifi_fantasy: 'Sci-Fi & Fantasy (Blended)',
+  adventure: 'Adventure & Exploration',
+  sliceoflife: 'Slice of Life & Culture',
+  romance: 'Romance & Drama',
+  folklore: 'Folklore & Legend',
+  philosophy: 'Spirituality & Philosophy',
+  historical: 'Historical Fiction',
+  horror: 'Horror & Thriller',
+  comedy: 'Comedy & Humor',
+  fairy: 'Fairy Tales & Fables',
+  nonfiction: 'Non-Fiction',
+};
+
 // Endpoint: Update Story Bible
 router.post('/update-bible', async (req, res) => {
   try {
@@ -26,6 +43,8 @@ router.post('/update-bible', async (req, res) => {
       return res.status(400).json({ error: 'Missing required parameters.' });
     }
 
+    const resolvedGenre = genreLabels[genre] || genre;
+
     const customOpenRouterKey =
       req.headers['x-openrouter-api-key'] ||
       req.headers['X-OpenRouter-API-Key'];
@@ -47,7 +66,7 @@ router.post('/update-bible', async (req, res) => {
 
     const systemInstruction = `You are a professional story editor and narrative continuity architect.
 Your task is to analyze the story so far and generate/update the "Story Bible" to prevent character dilution and narrative drift.
-This story is written in ${language} at CEFR ${cefrLevel} difficulty, with genre ${genre}.
+This story is written in ${language} at CEFR ${cefrLevel} difficulty, with genre ${resolvedGenre}.
 The Story Bible MUST contain:
 1. Character Profiles: Update or create profiles for the main characters. For each character, write 2-3 sentences on their current emotional state, distinct speech patterns, and current goals.
 2. The "Rule of Three": Exactly 3 rules of forbidden actions/behaviors (e.g., "Mali never uses formal, flowery language with Gla", "Gla never shows fear in public"). If rules already exist in the existing bible, you may keep, update, or replace them.
@@ -88,7 +107,7 @@ The Story Bible MUST contain:
     };
 
     const prompt = `Story Title: "${storyTitle}"
-Genre: ${genre}
+Genre: ${resolvedGenre}
 Language: ${language}
 CEFR Level: ${cefrLevel}
 Overarching Plan/Outline:
@@ -153,6 +172,8 @@ router.post('/run-audit', async (req, res) => {
       return res.status(400).json({ error: 'Missing required parameters.' });
     }
 
+    const resolvedGenre = genreLabels[genre] || genre;
+
     const customOpenRouterKey =
       req.headers['x-openrouter-api-key'] ||
       req.headers['X-OpenRouter-API-Key'];
@@ -197,7 +218,7 @@ Keep the tone helpful, constructive, and analytical. Structure your output in cl
     };
 
     const prompt = `Story Title: "${storyTitle}"
-Genre: ${genre}
+Genre: ${resolvedGenre}
 Language: ${language}
 CEFR Level: ${cefrLevel}
 Overarching Plan/Outline:
@@ -265,6 +286,8 @@ router.post('/analyze-tone', async (req, res) => {
       return res.status(400).json({ error: 'Missing required parameters.' });
     }
 
+    const resolvedGenre = genreLabels[genre] || genre;
+
     const customOpenRouterKey =
       req.headers['x-openrouter-api-key'] ||
       req.headers['X-OpenRouter-API-Key'];
@@ -305,7 +328,7 @@ Write your analysis in English.`;
     };
 
     const prompt = `Story Title: "${storyTitle}"
-Genre: ${genre}
+Genre: ${resolvedGenre}
 Language: ${language}
 CEFR Level: ${cefrLevel}
 Overarching Plan/Outline:

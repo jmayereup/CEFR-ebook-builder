@@ -156,13 +156,18 @@ export const CEFR_LEVELS: CEFRLevel[] = [
 
 export const GENRES = [
   { id: 'mystery', label: 'Detective & Mystery 🔍' },
-  { id: 'scifi', label: 'Sci-Fi & Fantasy 🚀' },
+  { id: 'scifi', label: 'Science Fiction 🚀' },
+  { id: 'fantasy', label: 'Fantasy 🧙' },
+  { id: 'scifi_fantasy', label: 'Sci-Fi & Fantasy (Blended) 🌌' },
   { id: 'adventure', label: 'Adventure & Exploration 🗺️' },
   { id: 'sliceoflife', label: 'Slice of Life & Culture ☕' },
   { id: 'romance', label: 'Romance & Drama 💖' },
   { id: 'folklore', label: 'Folklore & Legend 🐉' },
   { id: 'philosophy', label: 'Spirituality & Philosophy 🧘' },
   { id: 'historical', label: 'Historical Fiction 🏛️' },
+  { id: 'horror', label: 'Horror & Thriller 👻' },
+  { id: 'comedy', label: 'Comedy & Humor 😹' },
+  { id: 'fairy', label: 'Fairy Tales & Fables 🦄' },
   { id: 'nonfiction', label: 'Non-Fiction 📖' },
 ];
 
