@@ -27,9 +27,17 @@ export function useExport(options: UseExportOptions) {
 
   const [showShareToast, setShowShareToast] = useState(false);
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
-  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [showExportMenu, setShowExportMenuState] = useState(false);
   const [showDocOptions, setShowDocOptions] = useState(false);
   const [showEpubLinks, setShowEpubLinks] = useState(false);
+
+  const setShowExportMenu = (show: boolean) => {
+    setShowExportMenuState(show);
+    if (show) {
+      setShowEpubLinks(true);
+      setShowDocOptions(false);
+    }
+  };
   const [isExportingEpub, setIsExportingEpub] = useState(false);
 
   const handleShareStoryLink = () => {

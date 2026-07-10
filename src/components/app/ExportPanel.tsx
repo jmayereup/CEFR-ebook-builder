@@ -259,7 +259,7 @@ export default function ExportPanel({
                             className="flex items-center gap-1.5 py-1 px-2.5 bg-tj-bg-card hover:bg-tj-bg-recessed select-none text-slate-650 hover:text-tj-primary dark:text-slate-400 dark:hover:text-tj-primary-hover text-[11px] font-bold rounded-lg transition-colors cursor-pointer border border-slate-200/60 dark:border-slate-800 shrink-0 whitespace-nowrap"
                             title="Google Play Books web library uploader portal"
                           >
-                            <span>Google Books</span>
+                            <span>Google Library</span>
                             <ExternalLink className="w-2.5 h-2.5 shrink-0 text-tj-primary" />
                           </a>
                         </div>
