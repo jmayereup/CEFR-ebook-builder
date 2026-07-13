@@ -35,6 +35,7 @@ export default function VocabularyPractice({
   const [sourceType, setSourceType] = useState<'story' | 'custom'>(
     savedVocab && savedVocab.length > 0 ? 'custom' : 'story',
   );
+  const [deckSize, setDeckSize] = useState<number>(20);
 
   // Collect vocab words based on selected source type and deduplicate
   const allVocab = useMemo(() => {
@@ -103,6 +104,11 @@ export default function VocabularyPractice({
       return dateA - dateB;
     });
   }, [allVocab, selectedLang, story]);
+
+  // Slice to the selected deck size limit for active practice sessions
+  const activeVocabDeck = useMemo(() => {
+    return filteredVocab.slice(0, deckSize);
+  }, [filteredVocab, deckSize]);
 
   if (allVocab.length === 0) {
     return (
@@ -206,33 +212,54 @@ export default function VocabularyPractice({
           </div>
         </div>
 
-        {/* Global Language Filter */}
-        {uniqueLanguages.length > 1 && (
-          <div className="flex items-center gap-2 bg-tj-bg-recessed p-1.5 rounded border border-tj-border-main self-start md:self-auto w-full md:w-auto">
+        {/* Global Controls: Language & Deck Size Selector */}
+        <div className="flex flex-wrap items-center gap-3 self-start md:self-auto w-full md:w-auto">
+          {/* Global Language Filter */}
+          {uniqueLanguages.length > 1 && (
+            <div className="flex items-center gap-2 bg-tj-bg-recessed p-1.5 rounded border border-tj-border-main w-full sm:w-auto">
+              <span className="text-xs font-bold text-tj-text-muted px-2 flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5" />
+                <span>Language:</span>
+              </span>
+              <select
+                value={selectedLang}
+                onChange={(e) => setSelectedLang(e.target.value)}
+                className="appearance-none text-xs px-2.5 py-1 bg-tj-bg-card border border-tj-border-main rounded text-tj-text-main focus:border-tj-primary focus:ring-0 outline-none cursor-pointer font-medium w-full"
+              >
+                <option value="All">All ({uniqueLanguages.length})</option>
+                {uniqueLanguages.map((lang) => {
+                  const langObj = SUPPORTED_LANGUAGES.find(
+                    (l) => l.name.toLowerCase() === lang.toLowerCase(),
+                  );
+                  const flag = langObj ? langObj.flag : '🌐';
+                  return (
+                    <option key={lang} value={lang}>
+                      {flag} {lang}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          )}
+
+          {/* Deck Size Selector */}
+          <div className="flex items-center gap-2 bg-tj-bg-recessed p-1.5 rounded border border-tj-border-main w-full sm:w-auto">
             <span className="text-xs font-bold text-tj-text-muted px-2 flex items-center gap-1.5">
-              <Globe className="w-3.5 h-3.5" />
-              <span>Language:</span>
+              <Layers className="w-3.5 h-3.5" />
+              <span>Deck Size:</span>
             </span>
             <select
-              value={selectedLang}
-              onChange={(e) => setSelectedLang(e.target.value)}
-              className="appearance-none text-xs px-2.5 py-1 bg-tj-bg-card border border-tj-border-main rounded text-tj-text-main focus:border-tj-primary focus:ring-0 outline-none cursor-pointer font-medium"
+              value={deckSize}
+              onChange={(e) => setDeckSize(Number(e.target.value))}
+              className="appearance-none text-xs px-2.5 py-1 bg-tj-bg-card border border-tj-border-main rounded text-tj-text-main focus:border-tj-primary focus:ring-0 outline-none cursor-pointer font-medium w-full"
             >
-              <option value="All">All ({uniqueLanguages.length})</option>
-              {uniqueLanguages.map((lang) => {
-                const langObj = SUPPORTED_LANGUAGES.find(
-                  (l) => l.name.toLowerCase() === lang.toLowerCase(),
-                );
-                const flag = langObj ? langObj.flag : '🌐';
-                return (
-                  <option key={lang} value={lang}>
-                    {flag} {lang}
-                  </option>
-                );
-              })}
+              <option value="10">10 words</option>
+              <option value="20">20 words</option>
+              <option value="50">50 words</option>
+              <option value="999999">All ({filteredVocab.length})</option>
             </select>
           </div>
-        )}
+        </div>
       </div>
 
       <div className="flex w-full sm:w-fit bg-tj-bg-recessed p-1 rounded border border-tj-border-main">
@@ -247,9 +274,9 @@ export default function VocabularyPractice({
         >
           <Layers className="w-4.5 h-4.5 sm:w-3.5 sm:h-3.5" />
           <span className="hidden sm:inline">
-            Interactive Flashcards ({filteredVocab.length})
+            Interactive Flashcards ({activeVocabDeck.length === filteredVocab.length ? filteredVocab.length : `${activeVocabDeck.length} of ${filteredVocab.length}`})
           </span>
-          <span className="sm:hidden">Flashcards ({filteredVocab.length})</span>
+          <span className="sm:hidden">Flashcards ({activeVocabDeck.length})</span>
         </button>
         <button
           type="button"
@@ -261,8 +288,10 @@ export default function VocabularyPractice({
           }`}
         >
           <Gamepad2 className="w-4.5 h-4.5 sm:w-3.5 sm:h-3.5" />
-          <span className="hidden sm:inline">Vocab Matching Game</span>
-          <span className="sm:hidden">Matching</span>
+          <span className="hidden sm:inline">
+            Vocab Matching Game ({activeVocabDeck.length === filteredVocab.length ? filteredVocab.length : `${activeVocabDeck.length} of ${filteredVocab.length}`})
+          </span>
+          <span className="sm:hidden">Matching ({activeVocabDeck.length})</span>
         </button>
         <button
           type="button"
@@ -284,8 +313,8 @@ export default function VocabularyPractice({
       <AnimatePresence mode="wait">
         {activeTab === 'flashcards' && (
           <FlashcardsDeck
-            key="flashcards"
-            terms={filteredVocab}
+            key={`flashcards-${sourceType}-${story?.id || 'global'}-${selectedLang}-${deckSize}`}
+            terms={activeVocabDeck}
             langCode={langCode}
             onVocabActivity={onVocabActivity}
             onUpdateWordSRS={onUpdateWordSRS}
@@ -294,8 +323,8 @@ export default function VocabularyPractice({
         )}
         {activeTab === 'match' && (
           <MatchingGame
-            key="match"
-            terms={filteredVocab}
+            key={`match-${sourceType}-${story?.id || 'global'}-${selectedLang}-${deckSize}`}
+            terms={activeVocabDeck}
             langCode={langCode}
             onVocabActivity={onVocabActivity}
             onUpdateWordSRS={onUpdateWordSRS}

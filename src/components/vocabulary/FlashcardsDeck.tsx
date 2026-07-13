@@ -20,6 +20,7 @@ export default function FlashcardsDeck({
   onUpdateWordSRS,
   playWord,
 }: FlashcardsDeckProps) {
+  const [deckTerms, setDeckTerms] = useState<VocabularyTerm[]>(() => terms);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [knownCount, setKnownCount] = useState(0);
@@ -63,15 +64,26 @@ export default function FlashcardsDeck({
     null,
   );
 
-  // Reset index when terms list changes
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We intentionally reset index when the terms list reference changes
+  const prevTermsKeyRef = useRef<string>('');
+
+  // Only reset/update deck when the actual set of words changes, not when individual metadata/sort changes
   useEffect(() => {
-    setCurrentIndex(0);
-    setKnownCount(0);
-    setIsFlipped(false);
-    if (transitionTimeoutRef.current) {
-      clearTimeout(transitionTimeoutRef.current);
-      transitionTimeoutRef.current = null;
+    if (terms && terms.length > 0) {
+      const currentTermsKey = terms
+        .map((t) => t.word.toLowerCase().trim())
+        .sort()
+        .join('|');
+      if (currentTermsKey !== prevTermsKeyRef.current) {
+        prevTermsKeyRef.current = currentTermsKey;
+        setDeckTerms(terms);
+        setCurrentIndex(0);
+        setKnownCount(0);
+        setIsFlipped(false);
+        if (transitionTimeoutRef.current) {
+          clearTimeout(transitionTimeoutRef.current);
+          transitionTimeoutRef.current = null;
+        }
+      }
     }
   }, [terms]);
 
@@ -101,22 +113,22 @@ export default function FlashcardsDeck({
         transitionTimeoutRef.current = setTimeout(() => {
           setCurrentIndex((prev) => {
             if (direction === 'next') {
-              return (prev + 1) % terms.length;
+              return (prev + 1) % deckTerms.length;
             }
-            return (prev - 1 + terms.length) % terms.length;
+            return (prev - 1 + deckTerms.length) % deckTerms.length;
           });
           transitionTimeoutRef.current = null;
         }, 150);
       } else {
         setCurrentIndex((prev) => {
           if (direction === 'next') {
-            return (prev + 1) % terms.length;
+            return (prev + 1) % deckTerms.length;
           }
-          return (prev - 1 + terms.length) % terms.length;
+          return (prev - 1 + deckTerms.length) % deckTerms.length;
         });
       }
     },
-    [terms.length],
+    [deckTerms.length],
   );
 
   // Keyboard navigation shortcuts
@@ -148,7 +160,7 @@ export default function FlashcardsDeck({
     };
   }, [handleNavigate]);
 
-  if (!terms || terms.length === 0) {
+  if (!deckTerms || deckTerms.length === 0) {
     return (
       <div className="text-center py-8 text-xs text-tj-text-muted bg-tj-bg-card p-6 rounded-lg border border-tj-border-main max-w-md mx-auto">
         No vocabulary terms available for the selected language filter.
@@ -156,7 +168,7 @@ export default function FlashcardsDeck({
     );
   }
 
-  const activeTerm = terms[currentIndex % terms.length];
+  const activeTerm = deckTerms[currentIndex % deckTerms.length];
   const termLangCode = getLanguageCodeFromName(
     activeTerm?.language || langCode,
   );
@@ -174,12 +186,13 @@ export default function FlashcardsDeck({
     onUpdateWordSRS?.(activeTerm, known);
     setIsFlipped(false);
     transitionTimeoutRef.current = setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % terms.length);
+      setCurrentIndex((prev) => (prev + 1) % deckTerms.length);
       transitionTimeoutRef.current = null;
     }, 150);
   };
 
   const handleReset = () => {
+    setDeckTerms(terms);
     setCurrentIndex(0);
     setKnownCount(0);
     setIsFlipped(false);
@@ -215,7 +228,7 @@ export default function FlashcardsDeck({
             {/* FRONT Side: Target Word */}
             <div className="absolute inset-0 w-full h-full bg-tj-bg-card rounded-lg p-5 border border-tj-border-main flex flex-col justify-between backface-hidden shadow-none">
               <span className="text-[10px] font-mono text-tj-text-muted tracking-wider">
-                Card {(currentIndex % terms.length) + 1} of {terms.length} •
+                Card {(currentIndex % deckTerms.length) + 1} of {deckTerms.length} •
                 FRONT
               </span>
               <div className="text-center py-2 flex flex-col items-center">
@@ -305,7 +318,7 @@ export default function FlashcardsDeck({
             {/* BACK Side: English definition */}
             <div className="absolute inset-0 w-full h-full bg-tj-bg-recessed rounded-lg p-6 border border-tj-border-main flex flex-col justify-between backface-hidden rotate-y-180 shadow-none">
               <span className="text-[10px] font-mono text-tj-text-muted tracking-wider">
-                Card {(currentIndex % terms.length) + 1} of {terms.length} •
+                Card {(currentIndex % deckTerms.length) + 1} of {deckTerms.length} •
                 BACK (Translation)
               </span>
               <div className="space-y-4 text-center my-auto">
