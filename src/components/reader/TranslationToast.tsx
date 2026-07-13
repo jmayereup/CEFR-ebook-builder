@@ -2,13 +2,14 @@ import {
   AlertCircle,
   Bookmark,
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Languages,
   Loader2,
   Volume2,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useDragControls } from 'motion/react';
 import React, { useEffect } from 'react';
 import { getLanguageCodeFromName, type Story } from '../../types';
 
@@ -81,6 +82,8 @@ export default function TranslationToast({
   onShrinkRight,
   onExtendRight,
 }: TranslationToastProps) {
+  const dragControls = useDragControls();
+
   useEffect(() => {
     if (!selectedWord) return;
 
@@ -104,7 +107,26 @@ export default function TranslationToast({
           exit={{ opacity: 0, y: 150 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           onClick={(e) => e.stopPropagation()}
-          className="fixed bottom-0 left-0 right-0 z-50 w-full bg-tj-bg-card border-t border-tj-border-main shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1),0_-8px_10px_-6px_rgba(0,0,0,0.1)] p-4 md:p-6 select-text"
+          className="fixed bottom-0 left-0 right-0 z-50 w-full bg-tj-bg-card border-t border-tj-border-main shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1),0_-8px_10px_-6px_rgba(0,0,0,0.1)] p-4 pb-12 md:p-6 md:pb-6 select-text touch-pan-x"
+          drag="y"
+          dragControls={dragControls}
+          dragListener={false}
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={{ top: 0, bottom: 0.8 }}
+          onDragEnd={(_event, info) => {
+            if (info.offset.y > 100 || info.velocity.y > 400) {
+              setSelectedWord(null);
+            }
+          }}
+          onPointerDown={(e) => {
+            const target = e.target as HTMLElement;
+            if (
+              !target.closest('input, select, textarea, button, a') &&
+              !target.isContentEditable
+            ) {
+              dragControls.start(e);
+            }
+          }}
         >
           {selectedWord.saveSuccess ? (
             <div className="py-3 flex flex-col items-center justify-center space-y-2">
@@ -371,6 +393,15 @@ export default function TranslationToast({
               </div>
             </div>
           )}
+          {/* Close button in the bottom right corner */}
+          <button
+            type="button"
+            onClick={() => setSelectedWord(null)}
+            className="absolute bottom-3 right-3 p-1.5 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 rounded-xl hover:bg-tj-bg-recessed transition-colors flex items-center justify-center cursor-pointer z-10"
+            title="Close toast"
+          >
+            <ChevronDown className="w-5 h-5" />
+          </button>
         </motion.div>
       )}
     </AnimatePresence>

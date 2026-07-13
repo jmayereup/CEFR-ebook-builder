@@ -8,6 +8,7 @@ import {
   EyeOff,
   Save,
   Sparkles,
+  Star,
   Trash2,
   Volume2,
 } from 'lucide-react';
@@ -19,6 +20,7 @@ import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import {
   type Chapter,
+  getAverageRating,
   getLanguageCodeFromName,
   type Story,
   SUPPORTED_LANGUAGES,
@@ -163,6 +165,7 @@ export default function ReaderPanel({
   const [hasFinishedChapter, setHasFinishedChapter] = useState(false);
   const hasFinishedRef = useRef(false);
   const [sessionFinished, setSessionFinished] = useState(false);
+  const [hoverRating, setHoverRating] = useState<number>(0);
 
   // Reset hasFinishedChapter when chapter or story changes, and set up scroll observer
   useEffect(() => {
@@ -396,6 +399,7 @@ export default function ReaderPanel({
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
   const isCreator = currentUser && story.creatorId === currentUser.uid;
+  const userRating = (currentUser && story.ratings?.[currentUser.uid]) || 0;
 
   useEffect(() => {
     setIsEditing(false);
@@ -1370,6 +1374,76 @@ export default function ReaderPanel({
                             <span>I've finished</span>
                           </button>
                         )}
+                      </div>
+                    )}
+
+                    {/* Book Rating Section */}
+                    {activeChapterIndex === story.chapters.length - 1 && (
+                      <div className="mt-4 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-amber-50/40 to-orange-50/30 dark:from-amber-950/10 dark:to-orange-950/5 border border-amber-100/70 dark:border-amber-900/20 rounded-2xl animate-fade-in text-center space-y-4">
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-bold text-amber-800 dark:text-amber-400 flex items-center justify-center gap-1.5">
+                            <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+                            How did you like this story?
+                          </h4>
+                          <p className="text-xs text-tj-text-muted max-w-md mx-auto">
+                            Share your feedback to help us recommend better
+                            books for you.
+                          </p>
+                        </div>
+
+                        <div className="p-3 bg-white/80 dark:bg-slate-900/40 backdrop-blur-sm rounded-xl border border-amber-100/50 dark:border-amber-900/10 inline-flex flex-col items-center gap-2 select-none min-w-[240px]">
+                          {currentUser ? (
+                            <>
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold font-sans tracking-wide uppercase">
+                                {userRating > 0 ? 'Your rating' : 'Tap to rate'}
+                              </p>
+                              <div className="flex items-center justify-center gap-2">
+                                {[1, 2, 3, 4, 5].map((star) => {
+                                  const isStarred =
+                                    star <= (hoverRating || userRating);
+                                  return (
+                                    <button
+                                      key={star}
+                                      type="button"
+                                      onClick={() => onRateStory?.(star)}
+                                      onMouseEnter={() => setHoverRating(star)}
+                                      onMouseLeave={() => setHoverRating(0)}
+                                      className="p-1 hover:scale-125 transition-transform duration-100 cursor-pointer focus:outline-none"
+                                    >
+                                      <Star
+                                        className={`w-8 h-8 transition-colors duration-150 ${
+                                          isStarred
+                                            ? 'text-amber-500 fill-amber-500 filter drop-shadow-sm'
+                                            : 'text-slate-300 dark:text-slate-700'
+                                        }`}
+                                      />
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium font-sans">
+                                {Object.keys(story.ratings || {}).length} total{' '}
+                                {Object.keys(story.ratings || {}).length === 1
+                                  ? 'rating'
+                                  : 'ratings'}
+                                {story.ratings &&
+                                  Object.keys(story.ratings).length > 0 && (
+                                    <span className="ml-1.5 text-amber-600 dark:text-amber-400 font-semibold">
+                                      (Avg:{' '}
+                                      {getAverageRating(story.ratings).toFixed(
+                                        1,
+                                      )}{' '}
+                                      ★)
+                                    </span>
+                                  )}
+                              </p>
+                            </>
+                          ) : (
+                            <div className="text-[10px] text-slate-400 dark:text-slate-500 leading-normal font-sans py-1">
+                              <span>Please sign in to rate this book.</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
 

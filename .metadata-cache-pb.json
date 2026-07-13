@@ -1,6 +1,26 @@
 {
-  "lastFetchTime": 1783660684592,
+  "lastFetchTime": 1783940848941,
   "stories": [
+    {
+      "id": "ssniffmnblimt2y",
+      "title": "ความคิดถึงในหมู่ดาว",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "scifi",
+      "totalChapters": 5,
+      "createdAt": "2026-07-13T10:45:39.250Z",
+      "isCompleted": true,
+      "description": "Napa, a young Thai botanist, travels to a distant exoplanet to study alien plant life. Overwhelmed by homesickness, she struggles to adapt to the sterile station and longs for the familiar tastes and sounds of Earth. Through an unlikely friendship with a homesick alien and the creation of a shared Memory Garden, she discovers that home can be found wherever you connect with others.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2525,
+      "updated": "2026-07-13 10:51:48.486Z"
+    },
     {
       "id": "se3neqs13rzh1gc",
       "title": "ทางแห่งความสงบ: 5 ข้อคิดจากพุทธศาสนาเพื่อเอาชนะความคิดลบและการบ่น",
@@ -34,12 +54,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "qwen/qwen3.7-plus",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 2
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1381,
-      "updated": "2026-07-09 18:21:53.657Z"
+      "updated": "2026-07-13 10:28:03.770Z"
     },
     {
       "id": "saigo07ou08v73v",
@@ -692,12 +716,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 4,
       "wordCount": 1476,
-      "updated": "2026-06-29 02:15:02.718Z"
+      "updated": "2026-07-11 23:43:52.398Z"
     },
     {
       "id": "sbg0fknyborygj4",
