@@ -213,11 +213,11 @@ export default function VocabularyPractice({
         </div>
 
         {/* Global Controls: Language & Deck Size Selector */}
-        <div className="flex flex-wrap items-center gap-3 self-start md:self-auto w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 self-start md:self-auto w-full md:w-auto">
           {/* Global Language Filter */}
           {uniqueLanguages.length > 1 && (
             <div className="flex items-center gap-2 bg-tj-bg-recessed p-1.5 rounded border border-tj-border-main w-full sm:w-auto">
-              <span className="text-xs font-bold text-tj-text-muted px-2 flex items-center gap-1.5">
+              <span className="text-xs font-bold text-tj-text-muted px-2 flex items-center gap-1.5 whitespace-nowrap">
                 <Globe className="w-3.5 h-3.5" />
                 <span>Language:</span>
               </span>
@@ -244,7 +244,7 @@ export default function VocabularyPractice({
 
           {/* Deck Size Selector */}
           <div className="flex items-center gap-2 bg-tj-bg-recessed p-1.5 rounded border border-tj-border-main w-full sm:w-auto">
-            <span className="text-xs font-bold text-tj-text-muted px-2 flex items-center gap-1.5">
+            <span className="text-xs font-bold text-tj-text-muted px-2 flex items-center gap-1.5 whitespace-nowrap">
               <Layers className="w-3.5 h-3.5" />
               <span>Deck Size:</span>
             </span>

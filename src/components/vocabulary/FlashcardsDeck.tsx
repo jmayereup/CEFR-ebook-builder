@@ -209,17 +209,7 @@ export default function FlashcardsDeck({
       exit={{ opacity: 0, scale: 0.98 }}
       className="max-w-lg mx-auto space-y-6 flex flex-col items-center w-full"
     >
-      <div className="w-full flex items-center justify-between gap-2 sm:gap-4 select-none">
-        {/* Previous Card Button */}
-        <button
-          type="button"
-          onClick={() => handleNavigate('prev')}
-          className="p-2.5 sm:p-3 rounded-full bg-tj-bg-card hover:bg-tj-primary-light text-tj-text-muted hover:text-tj-primary border border-tj-border-main hover:border-tj-primary/30 transition-all cursor-pointer shadow-none flex items-center justify-center shrink-0"
-          title="Previous card (ArrowLeft)"
-        >
-          <ChevronLeft className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
-        </button>
-
+      <div className="w-full flex items-center justify-center select-none">
         {/* Card Viewport */}
         <div className="flex-1 h-72 perspective max-w-md w-full">
           <div
@@ -303,16 +293,44 @@ export default function FlashcardsDeck({
                   </div>
                 )}
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsFlipped(true);
-                  playWord(activeTerm.word, activeTerm.language);
-                }}
-                className="w-full text-[10px] uppercase font-mono tracking-wider text-tj-text-muted hover:text-tj-primary pt-3 border-t border-dashed border-tj-border-main hover:border-tj-primary/40 transition-colors cursor-pointer select-none text-center"
-              >
-                Click to Flip 🔄
-              </button>
+
+              {/* Bottom Navigation & Flip Tray */}
+              <div className="flex items-stretch mx-[-20px] mb-[-20px] border-t border-dashed border-tj-border-main select-none mt-auto">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNavigate('prev');
+                  }}
+                  className="px-4 text-tj-text-muted hover:text-tj-primary hover:bg-tj-primary-light/30 transition-colors cursor-pointer border-r border-dashed border-tj-border-main flex items-center justify-center shrink-0 rounded-bl-lg"
+                  title="Previous card (ArrowLeft)"
+                >
+                  <ChevronLeft className="w-4.5 h-4.5" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsFlipped(true);
+                    playWord(activeTerm.word, activeTerm.language);
+                  }}
+                  className="flex-1 py-3.5 text-[10px] uppercase font-mono tracking-wider text-tj-text-muted hover:text-tj-primary transition-colors cursor-pointer select-none text-center"
+                >
+                  Click to Flip 🔄
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNavigate('next');
+                  }}
+                  className="px-4 text-tj-text-muted hover:text-tj-primary hover:bg-tj-primary-light/30 transition-colors cursor-pointer border-l border-dashed border-tj-border-main flex items-center justify-center shrink-0 rounded-br-lg"
+                  title="Next card (ArrowRight)"
+                >
+                  <ChevronRight className="w-4.5 h-4.5" />
+                </button>
+              </div>
             </div>
 
             {/* BACK Side: English definition */}
@@ -350,28 +368,46 @@ export default function FlashcardsDeck({
                   </div>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsFlipped(false);
-                }}
-                className="w-full text-[10px] uppercase font-mono tracking-wider text-tj-text-muted hover:text-tj-primary pt-3 border-t border-dashed border-tj-border-main hover:border-tj-primary/40 transition-colors cursor-pointer select-none text-center"
-              >
-                Click to Flip BACK 🔄
-              </button>
+
+              {/* Bottom Navigation & Flip Tray */}
+              <div className="flex items-stretch mx-[-24px] mb-[-24px] border-t border-dashed border-tj-border-main select-none mt-auto">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNavigate('prev');
+                  }}
+                  className="px-4 text-tj-text-muted hover:text-tj-primary hover:bg-tj-primary-light/30 transition-colors cursor-pointer border-r border-dashed border-tj-border-main flex items-center justify-center shrink-0 rounded-bl-lg"
+                  title="Previous card (ArrowLeft)"
+                >
+                  <ChevronLeft className="w-4.5 h-4.5" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsFlipped(false);
+                  }}
+                  className="flex-1 py-3.5 text-[10px] uppercase font-mono tracking-wider text-tj-text-muted hover:text-tj-primary transition-colors cursor-pointer select-none text-center"
+                >
+                  Click to Flip BACK 🔄
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNavigate('next');
+                  }}
+                  className="px-4 text-tj-text-muted hover:text-tj-primary hover:bg-tj-primary-light/30 transition-colors cursor-pointer border-l border-dashed border-tj-border-main flex items-center justify-center shrink-0 rounded-br-lg"
+                  title="Next card (ArrowRight)"
+                >
+                  <ChevronRight className="w-4.5 h-4.5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Next Card Button */}
-        <button
-          type="button"
-          onClick={() => handleNavigate('next')}
-          className="p-2.5 sm:p-3 rounded-full bg-tj-bg-card hover:bg-tj-primary-light text-tj-text-muted hover:text-tj-primary border border-tj-border-main hover:border-tj-primary/30 transition-all cursor-pointer shadow-none flex items-center justify-center shrink-0"
-          title="Next card (ArrowRight)"
-        >
-          <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
-        </button>
       </div>
 
       {/* Control Buttons */}
