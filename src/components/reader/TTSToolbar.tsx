@@ -36,6 +36,8 @@ interface TTSToolbarProps {
   setFontSize: (size: number) => void;
   alignment: 'left' | 'center' | 'right' | 'justify';
   setAlignment: (alignment: 'left' | 'center' | 'right' | 'justify') => void;
+  columnWidth: 'narrow' | 'medium' | 'wide' | 'full';
+  setColumnWidth: (width: 'narrow' | 'medium' | 'wide' | 'full') => void;
   cefrLevel: string;
   showBilingual: boolean;
   setShowBilingual: (show: boolean) => void;
@@ -63,6 +65,8 @@ export default function TTSToolbar({
   setFontSize,
   alignment,
   setAlignment,
+  columnWidth,
+  setColumnWidth,
   cefrLevel,
   showBilingual,
   setShowBilingual,
@@ -459,6 +463,114 @@ export default function TTSToolbar({
                       <AlignRight className="w-4 h-4" />
                       <span>Right</span>
                     </button>
+                  </div>
+                </div>
+
+                {/* Reading Column Width Selector */}
+                <div className="space-y-2">
+                  <span className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+                    Reading Column Width
+                  </span>
+                  <div className="grid grid-cols-4 gap-2">
+                    {(['narrow', 'medium', 'wide', 'full'] as const).map(
+                      (width) => (
+                        <button
+                          key={width}
+                          type="button"
+                          onClick={() => setColumnWidth(width)}
+                          className={`py-2 px-1 flex flex-col items-center justify-center gap-1.5 text-[10px] font-semibold rounded-xl border transition-all cursor-pointer ${
+                            columnWidth === width
+                              ? 'border-tj-primary bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover font-bold'
+                              : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                          }`}
+                          title={`Set column width to ${width}`}
+                        >
+                          {width === 'narrow' && (
+                            <svg
+                              className="w-4 h-4"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <title>Narrow Column Width</title>
+                              <line x1="8" y1="6" x2="16" y2="6" />
+                              <line x1="8" y1="12" x2="16" y2="12" />
+                              <line x1="8" y1="18" x2="16" y2="18" />
+                            </svg>
+                          )}
+                          {width === 'medium' && (
+                            <svg
+                              className="w-4 h-4"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <title>Medium Column Width</title>
+                              <line x1="5" y1="6" x2="19" y2="6" />
+                              <line x1="5" y1="12" x2="19" y2="12" />
+                              <line x1="5" y1="18" x2="19" y2="18" />
+                            </svg>
+                          )}
+                          {width === 'wide' && (
+                            <svg
+                              className="w-4 h-4"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <title>Wide Column Width</title>
+                              <line x1="2" y1="6" x2="22" y2="6" />
+                              <line x1="2" y1="12" x2="22" y2="12" />
+                              <line x1="2" y1="18" x2="22" y2="18" />
+                            </svg>
+                          )}
+                          {width === 'full' && (
+                            <svg
+                              className="w-4 h-4"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <title>Full Column Width</title>
+                              <line
+                                x1="0"
+                                y1="6"
+                                x2="24"
+                                y2="6"
+                                strokeWidth="2.5"
+                              />
+                              <line
+                                x1="0"
+                                y1="12"
+                                x2="24"
+                                y2="12"
+                                strokeWidth="2.5"
+                              />
+                              <line
+                                x1="0"
+                                y1="18"
+                                x2="24"
+                                y2="18"
+                                strokeWidth="2.5"
+                              />
+                            </svg>
+                          )}
+                          <span className="capitalize">{width}</span>
+                        </button>
+                      ),
+                    )}
                   </div>
                 </div>
               </div>

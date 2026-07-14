@@ -7,6 +7,7 @@ interface UIState {
   readerFontSize: number;
   readerUseSerif: boolean;
   readerTextAlignment: 'left' | 'center' | 'right' | 'justify';
+  readerColumnWidth: 'narrow' | 'medium' | 'wide' | 'full';
   setIsOnline: (isOnline: boolean) => void;
   setCustomOpenRouterKey: (key: string) => void;
   setTranslationTargetLanguage: (lang: string | null) => void;
@@ -14,6 +15,9 @@ interface UIState {
   setReaderUseSerif: (useSerif: boolean) => void;
   setReaderTextAlignment: (
     alignment: 'left' | 'center' | 'right' | 'justify',
+  ) => void;
+  setReaderColumnWidth: (
+    columnWidth: 'narrow' | 'medium' | 'wide' | 'full',
   ) => void;
   initializeClientState: () => void;
 }
@@ -25,6 +29,7 @@ export const useUIStore = create<UIState>((set) => ({
   readerFontSize: 18,
   readerUseSerif: true,
   readerTextAlignment: 'justify',
+  readerColumnWidth: 'medium',
   setIsOnline: (isOnline) => set({ isOnline }),
   setCustomOpenRouterKey: (key) => {
     if (typeof localStorage !== 'undefined') {
@@ -62,6 +67,12 @@ export const useUIStore = create<UIState>((set) => ({
     }
     set({ readerTextAlignment: alignment });
   },
+  setReaderColumnWidth: (columnWidth) => {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('reader-column-width', columnWidth);
+    }
+    set({ readerColumnWidth: columnWidth });
+  },
   initializeClientState: () => {
     if (typeof localStorage !== 'undefined') {
       const key = localStorage.getItem('custom_openrouter_api_key') || '';
@@ -81,12 +92,21 @@ export const useUIStore = create<UIState>((set) => ({
         alignVal === 'justify'
           ? alignVal
           : 'justify';
+      const widthVal = localStorage.getItem('reader-column-width');
+      const width =
+        widthVal === 'narrow' ||
+        widthVal === 'medium' ||
+        widthVal === 'wide' ||
+        widthVal === 'full'
+          ? widthVal
+          : 'medium';
       set({
         customOpenRouterKey: key,
         translationTargetLanguage: lang,
         readerFontSize: size,
         readerUseSerif: serif,
         readerTextAlignment: align,
+        readerColumnWidth: width,
       });
     }
     if (typeof navigator !== 'undefined') {

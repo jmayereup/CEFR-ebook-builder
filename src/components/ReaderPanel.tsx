@@ -221,6 +221,8 @@ export default function ReaderPanel({
   const setUseSerif = useUIStore((state) => state.setReaderUseSerif);
   const alignment = useUIStore((state) => state.readerTextAlignment);
   const setAlignment = useUIStore((state) => state.setReaderTextAlignment);
+  const columnWidth = useUIStore((state) => state.readerColumnWidth);
+  const setColumnWidth = useUIStore((state) => state.setReaderColumnWidth);
   const [showBilingual, setShowBilingual] = useState<boolean>(
     story.cefrLevel === 'A1' || story.cefrLevel === 'Pre-A1',
   );
@@ -1051,7 +1053,15 @@ export default function ReaderPanel({
                 }
               }
             }}
-            className={`bg-tj-bg-card text-tj-text-main ${isZenMode ? 'p-6 sm:p-12 md:p-16 max-w-3xl' : 'p-4 sm:p-6 md:p-8'} sm:rounded-lg border-x-0 border-y sm:border border-tj-border-main shadow-none mx-auto relative overflow-hidden`}
+            className={`bg-tj-bg-card text-tj-text-main ${isZenMode ? 'p-6 sm:p-12 md:p-16' : 'p-4 sm:p-6 md:p-8'} ${
+              columnWidth === 'narrow'
+                ? 'max-w-xl'
+                : columnWidth === 'wide'
+                  ? 'max-w-5xl'
+                  : columnWidth === 'full'
+                    ? 'max-w-full'
+                    : 'max-w-3xl'
+            } sm:rounded-lg border-x-0 border-y sm:border border-tj-border-main shadow-none mx-auto relative overflow-hidden`}
           >
             <ScrollToTop readerRef={readerRef} />
             {/* Terracotta progress bookmark line at the top of the reading view card */}
@@ -1159,6 +1169,8 @@ export default function ReaderPanel({
                       setFontSize={setFontSize}
                       alignment={alignment}
                       setAlignment={setAlignment}
+                      columnWidth={columnWidth}
+                      setColumnWidth={setColumnWidth}
                       cefrLevel={story.cefrLevel}
                       showBilingual={showBilingual}
                       setShowBilingual={setShowBilingual}

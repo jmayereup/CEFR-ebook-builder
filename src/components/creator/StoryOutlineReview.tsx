@@ -141,9 +141,7 @@ export default function StoryOutlineReview({
             <>
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               <span>
-                {isScratchMode
-                  ? 'Saving Story Plan...'
-                  : 'Drafting Chapter 1...'}
+                {isScratchMode ? 'Saving Story Plan...' : 'Drafting Part 1...'}
               </span>
             </>
           ) : (
@@ -152,7 +150,7 @@ export default function StoryOutlineReview({
               <span>
                 {isScratchMode
                   ? 'Save Story Plan'
-                  : `Approve Outline & Write Chapter 1${
+                  : `Approve Outline & Draft Part 1${
                       isPaid && !isFreeModel
                         ? ` (Est. ${creditCost} credits)`
                         : ''
