@@ -24,6 +24,7 @@ export default function MatchingGame({
   onUpdateWordSRS,
   playWord,
 }: MatchingGameProps) {
+  const [gameTerms, setGameTerms] = useState<VocabularyTerm[]>(() => terms);
   const [subset, setSubset] = useState<VocabularyTerm[]>([]);
   const [shuffledWords, setShuffledWords] = useState<ShuffledItem[]>([]);
   const [shuffledDefs, setShuffledDefs] = useState<ShuffledItem[]>([]);
@@ -49,7 +50,8 @@ export default function MatchingGame({
 
   // Initialize a round of the game (slice 5 words)
   const initializeRound = useCallback(
-    (resetSession = false) => {
+    (resetSession = false, freshTerms?: VocabularyTerm[]) => {
+      const activeTerms = freshTerms || gameTerms;
       const currentSessionMatched = resetSession
         ? new Set<string>()
         : sessionMatchedWordsRef.current;
@@ -59,13 +61,13 @@ export default function MatchingGame({
       }
 
       // Filter out words that have already been matched in this session
-      let availableTerms = terms.filter(
+      let availableTerms = activeTerms.filter(
         (t) => !currentSessionMatched.has(t.word.toLowerCase().trim()),
       );
 
       // Fallback: if we matched all words, reset the session pool
       if (availableTerms.length === 0) {
-        availableTerms = terms;
+        availableTerms = activeTerms;
         setSessionMatchedWords(new Set());
         sessionMatchedWordsRef.current = new Set();
       }
@@ -96,23 +98,12 @@ export default function MatchingGame({
       setMatchedIds(new Set());
       setFailedPairs(null);
     },
-    [terms],
+    [gameTerms],
   );
 
-  const prevTermsKeyRef = useRef<string>('');
-
   useEffect(() => {
-    if (terms && terms.length > 0) {
-      const currentTermsKey = terms
-        .map((t) => t.word.toLowerCase().trim())
-        .sort()
-        .join('|');
-      if (currentTermsKey !== prevTermsKeyRef.current) {
-        prevTermsKeyRef.current = currentTermsKey;
-        initializeRound(true);
-      }
-    }
-  }, [terms, initializeRound]);
+    initializeRound(true);
+  }, [initializeRound]);
 
   // Click handler
   const handleWordSelect = (id: string) => {
@@ -121,7 +112,7 @@ export default function MatchingGame({
 
     const selectedItem = shuffledWords.find((w) => w.id === id);
     if (selectedItem) {
-      const originalTerm = terms.find((t) => t.word === selectedItem.word);
+      const originalTerm = gameTerms.find((t) => t.word === selectedItem.word);
       playWord(selectedItem.word, originalTerm?.language);
       if (originalTerm?.contextSentence) {
         setSelectedTermForToast(originalTerm);
@@ -158,7 +149,9 @@ export default function MatchingGame({
         setSelectedDef(null);
 
         const matchedItem = shuffledWords.find((w) => w.id === wordId);
-        const originalTerm = terms.find((t) => t.word === matchedItem?.word);
+        const originalTerm = gameTerms.find(
+          (t) => t.word === matchedItem?.word,
+        );
         if (originalTerm) {
           onUpdateWordSRS?.(originalTerm, true);
         }
@@ -179,7 +172,9 @@ export default function MatchingGame({
         setSelectedDef(null);
 
         const selectedItem = shuffledWords.find((w) => w.id === wordId);
-        const originalTerm = terms.find((t) => t.word === selectedItem?.word);
+        const originalTerm = gameTerms.find(
+          (t) => t.word === selectedItem?.word,
+        );
         if (originalTerm) {
           onUpdateWordSRS?.(originalTerm, false);
         }
@@ -187,7 +182,7 @@ export default function MatchingGame({
     }
   };
 
-  if (!terms || terms.length === 0) {
+  if (!gameTerms || gameTerms.length === 0) {
     return (
       <div className="text-center py-8 text-xs text-tj-text-muted bg-tj-bg-card p-6 rounded-lg border border-tj-border-main">
         No matching pairs available for the selected language filter.
@@ -213,7 +208,10 @@ export default function MatchingGame({
         </div>
         <button
           type="button"
-          onClick={() => initializeRound(true)}
+          onClick={() => {
+            setGameTerms(terms);
+            initializeRound(true, terms);
+          }}
           className="p-2 bg-tj-bg-recessed hover:bg-tj-primary-light text-tj-text-muted hover:text-tj-text-main rounded border border-tj-border-main transition-all cursor-pointer"
           title="Shuffled / Load New Board"
         >
@@ -226,19 +224,20 @@ export default function MatchingGame({
         <div className="flex justify-between items-center text-xs font-semibold text-slate-600 dark:text-slate-400">
           <span>Session Progress</span>
           <span>
-            {sessionMatchedWords.size} / {terms.length} words matched
-            {sessionMatchedWords.size === terms.length && terms.length > 0 && (
-              <span className="text-emerald-600 dark:text-emerald-400 ml-2 font-bold animate-pulse">
-                Mastered! 🎉
-              </span>
-            )}
+            {sessionMatchedWords.size} / {gameTerms.length} words matched
+            {sessionMatchedWords.size === gameTerms.length &&
+              gameTerms.length > 0 && (
+                <span className="text-emerald-600 dark:text-emerald-400 ml-2 font-bold animate-pulse">
+                  Mastered! 🎉
+                </span>
+              )}
           </span>
         </div>
         <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
           <div
             className="bg-tj-primary h-full transition-all duration-500 ease-out rounded-full"
             style={{
-              width: `${Math.min(100, (sessionMatchedWords.size / (terms.length || 1)) * 100)}%`,
+              width: `${Math.min(100, (sessionMatchedWords.size / (gameTerms.length || 1)) * 100)}%`,
             }}
           />
         </div>
@@ -255,7 +254,7 @@ export default function MatchingGame({
             const isSelected = selectedWord === item.id;
             const isFailed = failedPairs?.wordId === item.id;
 
-            const originalTerm = terms.find((t) => t.word === item.word);
+            const originalTerm = gameTerms.find((t) => t.word === item.word);
             const termLangCode = getLanguageCodeFromName(
               originalTerm?.language || langCode,
             );
@@ -338,17 +337,22 @@ export default function MatchingGame({
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5 shrink-0" />
             <span className="text-sm font-semibold">
-              {sessionMatchedWords.size === terms.length
+              {sessionMatchedWords.size === gameTerms.length
                 ? 'Phenomenal! You have mastered all vocabulary terms in this set!'
                 : 'Incredible work! You matched all pairs in this set!'}
             </span>
           </div>
           <button
             type="button"
-            onClick={() => initializeRound(false)}
+            onClick={() => {
+              setGameTerms(terms);
+              const resetSession =
+                sessionMatchedWords.size === gameTerms.length;
+              initializeRound(resetSession, terms);
+            }}
             className="py-1.5 px-4 bg-emerald-600 hover:bg-emerald-700 font-semibold text-white text-xs rounded-xl transition-all cursor-pointer"
           >
-            {sessionMatchedWords.size === terms.length
+            {sessionMatchedWords.size === gameTerms.length
               ? 'Restart Practice 🔄'
               : 'Load Next Board 🔄'}
           </button>

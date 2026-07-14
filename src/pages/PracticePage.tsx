@@ -28,17 +28,7 @@ export default function PracticePage({
           Graded Vocabulary Companion
         </h2>
         <p className="text-xs text-slate-400">
-          {selectedStory ? (
-            <span>
-              Terms extracted from{' '}
-              <strong className="font-serif italic">
-                {selectedStory.title}
-              </strong>{' '}
-              ({selectedStory.language} - {selectedStory.cefrLevel})
-            </span>
-          ) : (
-            <span>Practice your clicked and collected words deck.</span>
-          )}
+          <span>Practice your clicked and collected words deck.</span>
         </p>
       </div>
 

@@ -64,29 +64,6 @@ export default function FlashcardsDeck({
     null,
   );
 
-  const prevTermsKeyRef = useRef<string>('');
-
-  // Only reset/update deck when the actual set of words changes, not when individual metadata/sort changes
-  useEffect(() => {
-    if (terms && terms.length > 0) {
-      const currentTermsKey = terms
-        .map((t) => t.word.toLowerCase().trim())
-        .sort()
-        .join('|');
-      if (currentTermsKey !== prevTermsKeyRef.current) {
-        prevTermsKeyRef.current = currentTermsKey;
-        setDeckTerms(terms);
-        setCurrentIndex(0);
-        setKnownCount(0);
-        setIsFlipped(false);
-        if (transitionTimeoutRef.current) {
-          clearTimeout(transitionTimeoutRef.current);
-          transitionTimeoutRef.current = null;
-        }
-      }
-    }
-  }, [terms]);
-
   // Clean up timeout on unmount
   useEffect(() => {
     return () => {
@@ -218,8 +195,8 @@ export default function FlashcardsDeck({
             {/* FRONT Side: Target Word */}
             <div className="absolute inset-0 w-full h-full bg-tj-bg-card rounded-lg p-5 border border-tj-border-main flex flex-col justify-between backface-hidden shadow-none">
               <span className="text-[10px] font-mono text-tj-text-muted tracking-wider">
-                Card {(currentIndex % deckTerms.length) + 1} of {deckTerms.length} •
-                FRONT
+                Card {(currentIndex % deckTerms.length) + 1} of{' '}
+                {deckTerms.length} • FRONT
               </span>
               <div className="text-center py-2 flex flex-col items-center">
                 <div className="flex items-center justify-center gap-2">
@@ -336,8 +313,8 @@ export default function FlashcardsDeck({
             {/* BACK Side: English definition */}
             <div className="absolute inset-0 w-full h-full bg-tj-bg-recessed rounded-lg p-6 border border-tj-border-main flex flex-col justify-between backface-hidden rotate-y-180 shadow-none">
               <span className="text-[10px] font-mono text-tj-text-muted tracking-wider">
-                Card {(currentIndex % deckTerms.length) + 1} of {deckTerms.length} •
-                BACK (Translation)
+                Card {(currentIndex % deckTerms.length) + 1} of{' '}
+                {deckTerms.length} • BACK (Translation)
               </span>
               <div className="space-y-4 text-center my-auto">
                 <div>

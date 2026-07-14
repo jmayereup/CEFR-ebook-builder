@@ -47,7 +47,7 @@ export default function AppNav({
     setMounted(true);
   }, []);
 
-  const showVocabBuilder = !!selectedStory || savedVocabCount > 0;
+  const showVocabBuilder = true;
   const showAdmin = currentUser?.email === 'jmayereup@gmail.com';
 
   return (

@@ -1078,8 +1078,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 onLogin={handleLogin}
               />
             </motion.div>
-          ) : activeTab === 'practice' &&
-            (selectedStory || savedVocab.length > 0) ? (
+          ) : activeTab === 'practice' ? (
             <motion.div
               key="practice"
               initial={{ opacity: 0 }}
