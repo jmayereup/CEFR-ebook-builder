@@ -59,6 +59,7 @@ interface ChapterSidebarProps {
     forceRegenerate?: boolean,
   ) => Promise<void>;
   onStoryUpdated?: (story: Story) => void;
+  onGenerateCover?: (storyId: string, force?: boolean) => Promise<void>;
 }
 
 export default function ChapterSidebar({
@@ -85,8 +86,10 @@ export default function ChapterSidebar({
   onViewAudits,
   onGenerateGlossary,
   onStoryUpdated,
+  onGenerateCover,
 }: ChapterSidebarProps) {
   const { translationTargetLanguage } = useUIStore();
+  const [isGeneratingCover, setIsGeneratingCover] = useState<boolean>(false);
   const [selectedGlossaryLanguage, setSelectedGlossaryLanguage] =
     useState<string>(translationTargetLanguage || 'English');
 
@@ -579,6 +582,44 @@ export default function ChapterSidebar({
                       </button>
                     </div>
                   )}
+
+                  {isEditing &&
+                    currentUser?.email === 'jmayereup@gmail.com' &&
+                    onGenerateCover && (
+                      <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
+                          Story Cover
+                        </label>
+                        <button
+                          type="button"
+                          disabled={
+                            isLoadingNext ||
+                            isAutoGeneratingRemaining ||
+                            isGeneratingCover
+                          }
+                          onClick={async () => {
+                            setIsGeneratingCover(true);
+                            try {
+                              await onGenerateCover(story.id, true);
+                            } finally {
+                              setIsGeneratingCover(false);
+                            }
+                          }}
+                          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
+                        >
+                          {isGeneratingCover ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                          ) : (
+                            <Sparkles className="w-3.5 h-3.5 text-white" />
+                          )}
+                          <span>
+                            {isGeneratingCover
+                              ? 'Generating...'
+                              : 'Regenerate Cover'}
+                          </span>
+                        </button>
+                      </div>
+                    )}
                 </>
               )}
           </div>

@@ -407,6 +407,17 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
       await createStory(savedStory);
 
+      if (savedStory.isCompleted) {
+        // Trigger cover generation in the background
+        fetch('/api/stories/generate-cover/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ storyId: sanitizedId, force: false }),
+        }).catch((err) => {
+          console.error('Failed to trigger cover generation on save:', err);
+        });
+      }
+
       const finalizedStory = {
         ...targetStory,
         id: sanitizedId,
@@ -470,6 +481,35 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       );
     } finally {
       setIsSavingStory(false);
+    }
+  };
+
+  const handleGenerateCover = async (
+    storyId: string,
+    force: boolean = false,
+  ) => {
+    try {
+      const response = await fetch('/api/stories/generate-cover/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ storyId, force }),
+      });
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to generate cover.');
+      }
+      showAlert(
+        'Cover Generated Successfully',
+        'The cover has been regenerated and saved.',
+        'info',
+      );
+    } catch (err: any) {
+      console.error(err);
+      showAlert(
+        'Cover Generation Failed',
+        `Failed to generate cover: ${err.message || err}`,
+        'error',
+      );
     }
   };
 
@@ -981,6 +1021,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 isZenMode={isZenMode}
                 setIsZenMode={setIsZenMode}
                 handleGenerateGlossary={handleGenerateGlossary}
+                onGenerateCover={handleGenerateCover}
                 onSaveStory={handleSaveUnsavedStory}
                 onChapterFinished={handleChapterFinished}
                 onStoryFinished={handleStoryFinished}

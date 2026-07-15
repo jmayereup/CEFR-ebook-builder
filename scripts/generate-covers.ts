@@ -33,7 +33,8 @@ const args = process.argv.slice(2);
 const isTestRun = args.includes('--test') || args.includes('-t');
 const isForce = args.includes('--force') || args.includes('-f');
 const storyIndex = args.findIndex((arg) => arg.startsWith('--story='));
-const targetStoryId = storyIndex !== -1 ? args[storyIndex].split('=')[1] : undefined;
+const targetStoryId =
+  storyIndex !== -1 ? args[storyIndex].split('=')[1] : undefined;
 const limitIndex = args.findIndex((arg) => arg.startsWith('--limit='));
 const limitVal =
   limitIndex !== -1 ? parseInt(args[limitIndex].split('=')[1], 10) : undefined;
@@ -99,7 +100,7 @@ async function main() {
         `Genre: ${story.genre} | CEFR: ${story.cefrLevel} | Language: ${story.language}`,
       );
 
-      // Formulate a robust prompt to enforce a cozy, flat vector illustration, and strictly forbid 
+      // Formulate a robust prompt to enforce a cozy, flat vector illustration, and strictly forbid
       // technical diagrams, flowcharts, floating icons, and device mockup frames.
       const prompt = `A professional, clean, minimalist flat vector book cover design.
 Title text: The image for the book cover must clearly feature the title "${story.title}" written in a clean, legible, and elegant font at the top or center, spelled correctly.

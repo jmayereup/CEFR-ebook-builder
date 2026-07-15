@@ -95,6 +95,7 @@ interface ReaderPanelProps {
     forceRegenerate?: boolean,
   ) => Promise<void>;
   onSaveStory?: (story?: Story) => Promise<any>;
+  onGenerateCover?: (storyId: string, force?: boolean) => Promise<void>;
   onChapterFinished?: () => void;
   onStoryFinished?: (storyId: string) => void;
   onStoryUnfinished?: (storyId: string) => void;
@@ -135,6 +136,7 @@ export default function ReaderPanel({
   isAutoGenerationPaused = false,
   onGenerateGlossary,
   onSaveStory,
+  onGenerateCover,
   onChapterFinished,
   onStoryFinished,
   onStoryUnfinished,
@@ -166,6 +168,7 @@ export default function ReaderPanel({
   const hasFinishedRef = useRef(false);
   const [sessionFinished, setSessionFinished] = useState(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
+  const [coverImgError, setCoverImgError] = useState(false);
 
   // Reset hasFinishedChapter when chapter or story changes, and set up scroll observer
   useEffect(() => {
@@ -175,6 +178,7 @@ export default function ReaderPanel({
 
     hasFinishedRef.current = false;
     setHasFinishedChapter(false);
+    setCoverImgError(false);
 
     if (!sentinelRef.current) return;
 
@@ -1021,6 +1025,7 @@ export default function ReaderPanel({
           }}
           onGenerateGlossary={onGenerateGlossary}
           onStoryUpdated={onStoryUpdated}
+          onGenerateCover={onGenerateCover}
         />
       )}
 
@@ -1194,6 +1199,31 @@ export default function ReaderPanel({
                     </button>
                   </div>
                 )}
+
+                {/* Chapter Cover Image (for Chapter 1) */}
+                {activeChapterIndex === 0 &&
+                  activeChapter &&
+                  !coverImgError && (
+                    <div className="flex justify-center mb-8 mt-2 select-none">
+                      <motion.div
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                        className="relative w-full max-w-[240px] sm:max-w-[280px] aspect-[3/4.2] rounded-lg overflow-hidden shadow-[0_8px_24px_-4px_rgba(0,0,0,0.15),_0_2px_8px_-2px_rgba(0,0,0,0.1)] border border-slate-200/60 dark:border-white/10"
+                      >
+                        <img
+                          src={`/covers/${story.id}.webp`}
+                          onError={() => setCoverImgError(true)}
+                          className="w-full h-full object-cover"
+                          alt={`${story.title} Cover`}
+                          loading="eager"
+                        />
+                        {/* Left Spine Crease for book feel */}
+                        <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/15 via-black/[0.03] to-transparent pointer-events-none rounded-l-md" />
+                        <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.08] dark:bg-white/[0.05] pointer-events-none" />
+                      </motion.div>
+                    </div>
+                  )}
 
                 {/* Chapter header titles */}
                 {activeChapter && (

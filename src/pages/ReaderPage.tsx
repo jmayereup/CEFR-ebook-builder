@@ -71,6 +71,7 @@ interface ReaderPageProps {
     forceRegenerate?: boolean,
   ) => Promise<void>;
   onSaveStory: (story?: Story) => Promise<any>;
+  onGenerateCover?: (storyId: string, force?: boolean) => Promise<void>;
   onChapterFinished?: () => void;
   onStoryFinished?: (storyId: string) => void;
   onStoryUnfinished?: (storyId: string) => void;
@@ -126,6 +127,7 @@ export default function ReaderPage({
   setIsZenMode,
   handleGenerateGlossary,
   onSaveStory,
+  onGenerateCover,
   onChapterFinished,
   onStoryFinished,
   onStoryUnfinished,
@@ -300,6 +302,7 @@ export default function ReaderPage({
         onToggleZen={setIsZenMode}
         onGenerateGlossary={handleGenerateGlossary}
         onSaveStory={onSaveStory}
+        onGenerateCover={onGenerateCover}
         onChapterFinished={onChapterFinished}
         onStoryFinished={onStoryFinished}
         onStoryUnfinished={onStoryUnfinished}

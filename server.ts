@@ -13,6 +13,7 @@ import {
 } from './src/server/lib/database';
 import batchChapterRouter from './src/server/routes/batch-chapter';
 import chapterRouter from './src/server/routes/chapter';
+import coverRouter from './src/server/routes/cover';
 import glossaryRouter from './src/server/routes/glossary';
 import maintenanceRouter from './src/server/routes/maintenance';
 import outlineRouter from './src/server/routes/outline';
@@ -88,6 +89,7 @@ app.use('/api/stories/generate-outline', generationLimiter, outlineRouter);
 app.use('/api/stories/generate-chapter', generationLimiter, chapterRouter);
 app.use('/api/stories/generate-batch', generationLimiter, batchChapterRouter);
 app.use('/api/stories/generate-glossary', generationLimiter, glossaryRouter);
+app.use('/api/stories/generate-cover', generationLimiter, coverRouter);
 app.use('/api/stories/maintenance', generationLimiter, maintenanceRouter);
 app.use('/api/translate', translationLimiter, translateRouter);
 
@@ -128,6 +130,12 @@ app.post('/api/users/sync', async (req, res) => {
 });
 
 async function bootstrap() {
+  // Serve dynamic public covers directly from public directory (works in both dev & prod)
+  app.use(
+    '/covers',
+    express.static(path.join(process.cwd(), 'public', 'covers')),
+  );
+
   // Start the Firestore real-time listener on server startup
   initStoriesMetadataListener();
 
@@ -219,18 +227,42 @@ async function bootstrap() {
         const title = `${story.title} - Graded ${story.language} Reader (${story.cefrLevel})`;
         const description = `Read "${story.title}" graded for ${story.language} at CEFR ${story.cefrLevel} difficulty. Includes interactive dictionary lookups and custom eBook downloads.`;
 
+        const hasCover = fs.existsSync(
+          path.join(process.cwd(), 'public', 'covers', `${story.id}.webp`),
+        );
+        const coverUrl = hasCover
+          ? `${req.protocol}://${req.get('host')}/covers/${story.id}.webp`
+          : `${req.protocol}://${req.get('host')}/tj-logo.svg`;
+
         template = template.replace(
           /<title>.*?<\/title>/,
           `<title>${title}</title>`,
         );
+
+        // Strip existing tags to prevent duplicates
+        template = template
+          .replace(/<meta name="description" content=".*?"\s*\/?>/gi, '')
+          .replace(/<meta property="og:title" content=".*?"\s*\/?>/gi, '')
+          .replace(/<meta property="og:description" content=".*?"\s*\/?>/gi, '')
+          .replace(/<meta property="og:image" content=".*?"\s*\/?>/gi, '')
+          .replace(/<meta name="twitter:title" content=".*?"\s*\/?>/gi, '')
+          .replace(
+            /<meta name="twitter:description" content=".*?"\s*\/?>/gi,
+            '',
+          )
+          .replace(/<meta name="twitter:image" content=".*?"\s*\/?>/gi, '')
+          .replace(/<meta name="twitter:card" content=".*?"\s*\/?>/gi, '');
 
         const dynamicMeta = `
           <meta name="description" content="${description}" />
           <meta property="og:title" content="${title}" />
           <meta property="og:description" content="${description}" />
           <meta property="og:url" content="${req.protocol}://${req.get('host')}${req.originalUrl}" />
+          <meta property="og:image" content="${coverUrl}" />
           <meta name="twitter:title" content="${title}" />
           <meta name="twitter:description" content="${description}" />
+          <meta name="twitter:image" content="${coverUrl}" />
+          <meta name="twitter:card" content="summary_large_image" />
         `;
         template = template.replace('</head>', `${dynamicMeta}</head>`);
       }

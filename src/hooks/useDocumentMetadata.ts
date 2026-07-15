@@ -16,6 +16,17 @@ export function useDocumentMetadata(
       updateMetaTag('name', 'description', defaultDesc);
       updateMetaTag('property', 'og:title', defaultTitle);
       updateMetaTag('property', 'og:description', defaultDesc);
+      updateMetaTag(
+        'property',
+        'og:image',
+        `${window.location.origin}/tj-logo.svg`,
+      );
+      updateMetaTag(
+        'name',
+        'twitter:image',
+        `${window.location.origin}/tj-logo.svg`,
+      );
+      updateMetaTag('name', 'twitter:card', 'summary_large_image');
       removeJsonLdSchema();
       return;
     }
@@ -33,6 +44,11 @@ export function useDocumentMetadata(
     updateMetaTag('name', 'description', newDesc);
     updateMetaTag('property', 'og:title', newTitle);
     updateMetaTag('property', 'og:description', newDesc);
+
+    const coverUrl = `${window.location.origin}/covers/${story.id}.webp`;
+    updateMetaTag('property', 'og:image', coverUrl);
+    updateMetaTag('name', 'twitter:image', coverUrl);
+    updateMetaTag('name', 'twitter:card', 'summary_large_image');
 
     // Dynamic JSON-LD structured data for Google Books SEO
     injectJsonLdSchema({
