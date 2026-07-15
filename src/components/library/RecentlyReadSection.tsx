@@ -120,15 +120,12 @@ export default function RecentlyReadSection({
                   } border flex flex-col justify-between p-2 text-center`}
                 >
                   {hasCoverImage && (
-                    <>
-                      <img
-                        src={`/covers/${story.id}.webp`}
-                        onError={() => handleImgError(story.id)}
-                        className="absolute inset-0 w-full h-full object-cover z-0"
-                        alt=""
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30 z-0 pointer-events-none" />
-                    </>
+                    <img
+                      src={`/covers/${story.id}.webp`}
+                      onError={() => handleImgError(story.id)}
+                      className="absolute inset-0 w-full h-full object-cover z-0"
+                      alt=""
+                    />
                   )}
 
                   {/* Left Spine Fold / Crease */}

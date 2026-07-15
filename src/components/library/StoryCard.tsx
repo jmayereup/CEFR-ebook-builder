@@ -176,16 +176,12 @@ export default function StoryCard({
         }`}
       >
         {hasCoverImage && (
-          <>
-            <img
-              src={`/covers/${story.id}.webp`}
-              onError={() => setImgError(true)}
-              className="absolute inset-0 w-full h-full object-cover z-0"
-              alt=""
-            />
-            {/* Dark gradient overlay depending on theme to keep text legible */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/50 dark:from-black/85 dark:via-black/40 dark:to-black/70 z-0 pointer-events-none" />
-          </>
+          <img
+            src={`/covers/${story.id}.webp`}
+            onError={() => setImgError(true)}
+            className="absolute inset-0 w-full h-full object-cover z-0"
+            alt=""
+          />
         )}
 
         {/* Left Spine Fold / Crease (adds beautiful book texture) */}
