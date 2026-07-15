@@ -36,6 +36,43 @@ function getLanguageCodeFromName(langName: string): string {
   return 'en';
 }
 
+// Helper to convert WebP Blob to JPEG Blob in browser using Canvas
+async function convertWebPToJpeg(webpBlob: Blob): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(webpBlob);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to get canvas 2d context'));
+        return;
+      }
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(
+        (blob) => {
+          URL.revokeObjectURL(url);
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Canvas toBlob failed'));
+          }
+        },
+        'image/jpeg',
+        0.85,
+      ); // 85% JPEG quality is optimal for size vs quality
+    };
+    img.onerror = (err) => {
+      URL.revokeObjectURL(url);
+      reject(err);
+    };
+    img.src = url;
+  });
+}
+
 export async function generateEpub(story: Story): Promise<Blob> {
   const zip = new JSZip();
   const languageCode = getLanguageCodeFromName(story.language);
@@ -47,6 +84,44 @@ export async function generateEpub(story: Story): Promise<Blob> {
   const isBilingual =
     !!story.translationLanguage ||
     story.chapters.some((ch) => ch.content.includes('Translation:'));
+
+  // Attempt to load the cover image
+  let coverBlob: Blob | null = null;
+  let coverMediaType = 'image/jpeg';
+  let coverExtension = 'jpg';
+
+  try {
+    const response = await fetch(`/covers/${story.id}.webp`);
+    if (response.ok) {
+      const webpBlob = await response.blob();
+      try {
+        if (
+          typeof window !== 'undefined' &&
+          typeof HTMLCanvasElement !== 'undefined'
+        ) {
+          coverBlob = await convertWebPToJpeg(webpBlob);
+        } else {
+          // Fallback to raw WebP if not in a browser context (e.g., node test runners)
+          coverBlob = webpBlob;
+          coverMediaType = 'image/webp';
+          coverExtension = 'webp';
+        }
+      } catch (convErr) {
+        console.warn(
+          'Cover image conversion failed, embedding raw WebP instead:',
+          convErr,
+        );
+        coverBlob = webpBlob;
+        coverMediaType = 'image/webp';
+        coverExtension = 'webp';
+      }
+    }
+  } catch (err) {
+    console.warn(
+      'Could not fetch story cover image, generating EPUB without cover:',
+      err,
+    );
+  }
 
   // 1. mimetype: Must be the absolute first file, uncompressed, with mime text
   zip.file('mimetype', 'application/epub+zip', { compression: 'STORE' });
@@ -66,18 +141,20 @@ export async function generateEpub(story: Story): Promise<Blob> {
   let chaptersManifest = '';
   let chaptersSpine = '';
   let chaptersToc = '';
+  const coverOffset = coverBlob ? 1 : 0;
 
   story.chapters.forEach((chapter, index) => {
     const idx = index + 1;
+    const playOrder = idx + 1 + coverOffset;
     chaptersManifest += `    <item id="chapter_${idx}" href="chapter_${idx}.html" media-type="application/xhtml+xml"/>\n`;
     chaptersSpine += `    <itemref idref="chapter_${idx}"/>\n`;
-    chaptersToc += `    <navPoint id="navpoint-${idx + 1}" playOrder="${idx + 1}">
+    chaptersToc += `    <navPoint id="navpoint-${idx + 1}" playOrder="${playOrder}">
       <navLabel><text>Chapter ${idx}: ${escapeXml(chapter.title)}</text></navLabel>
       <content src="chapter_${idx}.html"/>
     </navPoint>\n`;
   });
 
-  const endingPlayOrder = story.chapters.length + 2;
+  const endingPlayOrder = story.chapters.length + 2 + coverOffset;
   chaptersManifest += `    <item id="ending" href="ending.html" media-type="application/xhtml+xml"/>
 `;
   chaptersSpine += `    <itemref idref="ending"/>
@@ -87,6 +164,23 @@ export async function generateEpub(story: Story): Promise<Blob> {
       <content src="ending.html"/>
     </navPoint>
 `;
+
+  // Setup cover manifests and structures
+  let metadataCover = '';
+  let manifestCover = '';
+  let spineCover = '';
+  let ncxCoverPoint = '';
+
+  if (coverBlob) {
+    metadataCover = `\n    <meta name="cover" content="cover-image"/>`;
+    manifestCover = `\n    <item id="cover-image" href="cover.${coverExtension}" media-type="${coverMediaType}" properties="cover"/>
+    <item id="cover-html" href="cover.html" media-type="application/xhtml+xml"/>`;
+    spineCover = `\n    <itemref idref="cover-html"/>`;
+    ncxCoverPoint = `\n    <navPoint id="navpoint-cover" playOrder="1">
+      <navLabel><text>Cover Image</text></navLabel>
+      <content src="cover.html"/>
+    </navPoint>`;
+  }
 
   // 3. OEBPS/content.opf
   zip.file(
@@ -98,14 +192,14 @@ export async function generateEpub(story: Story): Promise<Blob> {
     <dc:language>${languageCode}</dc:language>
     <dc:identifier id="BookId">urn:uuid:${uuid}</dc:identifier>
     <dc:creator>CEFR Short Story Graded Reader</dc:creator>
-    <dc:description>${escapeXml(story.description || `Bilingual CEFR Graded reader for learning ${story.language} at ${story.cefrLevel} proficiency level.`)}</dc:description>
+    <dc:description>${escapeXml(story.description || `Bilingual CEFR Graded reader for learning ${story.language} at ${story.cefrLevel} proficiency level.`)}</dc:description>${metadataCover}
   </metadata>
   <manifest>
     <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
     <item id="style" href="style.css" media-type="text/css"/>
-    <item id="title" href="title.html" media-type="application/xhtml+xml"/>
+    <item id="title" href="title.html" media-type="application/xhtml+xml"/>${manifestCover}
 ${chaptersManifest}  </manifest>
-  <spine toc="ncx">
+  <spine toc="ncx">${spineCover}
     <itemref idref="title"/>
 ${chaptersSpine}  </spine>
 </package>`,
@@ -126,8 +220,8 @@ ${chaptersSpine}  </spine>
   <docTitle>
     <text>${escapeXml(story.title)}</text>
   </docTitle>
-  <navMap>
-    <navPoint id="navpoint-1" playOrder="1">
+  <navMap>${ncxCoverPoint}
+    <navPoint id="navpoint-1" playOrder="${1 + coverOffset}">
       <navLabel><text>Cover &amp; Information</text></navLabel>
       <content src="title.html"/>
     </navPoint>
@@ -401,6 +495,46 @@ ${glossaryHtml}
 </body>
 </html>`,
   );
+
+  // Write cover page and image if fetched successfully
+  if (coverBlob) {
+    zip.file(`OEBPS/cover.${coverExtension}`, coverBlob);
+    zip.file(
+      'OEBPS/cover.html',
+      `<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Cover</title>
+  <style type="text/css">
+    @page { padding: 0; margin: 0; }
+    body {
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      background-color: #ffffff;
+    }
+    .cover-container {
+      text-align: center;
+      padding: 0;
+      margin: 0;
+    }
+    img.cover-image {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="cover-container">
+    <img class="cover-image" src="cover.${coverExtension}" alt="Book Cover" />
+  </div>
+</body>
+</html>`,
+    );
+  }
 
   // Generate the zip binary with standard container compression
   return await zip.generateAsync({

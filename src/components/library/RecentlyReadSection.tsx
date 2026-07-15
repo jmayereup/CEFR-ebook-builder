@@ -132,8 +132,6 @@ export default function RecentlyReadSection({
                   <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
                   <div className="absolute left-2 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
 
-
-
                   {/* Title Mini - only rendered if there is no cover image */}
                   {!hasCoverImage && (
                     <h4

@@ -93,7 +93,7 @@ export default function LibraryGrid({
       if (typeof window === 'undefined') return;
       const width = window.innerWidth;
       if (width >= 1280) {
-        setItemsPerPage(10); // 5 columns * 2 rows = 10
+        setItemsPerPage(12); // 3 columns * 4 rows = 12, or 4 columns * 3 rows = 12 (multiple of 3 to avoid blank spots)
       } else if (width >= 640) {
         setItemsPerPage(12); // 4 columns * 3 rows = 12, or 3 columns * 4 rows = 12
       } else {

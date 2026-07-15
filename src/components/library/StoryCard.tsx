@@ -109,7 +109,9 @@ export default function StoryCard({
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+      setIsTouchDevice(
+        'ontouchstart' in window || navigator.maxTouchPoints > 0,
+      );
     }
   }, []);
 
@@ -272,11 +274,9 @@ export default function StoryCard({
         </div>
 
         {/* Centerpiece Cover Art / Title Block */}
-        <div 
+        <div
           className={`flex-1 flex flex-col text-center z-10 relative rounded-xl transition-all duration-300 ${
-            hasCoverImage 
-              ? 'justify-end mt-2 mb-0.5'
-              : 'justify-start my-1'
+            hasCoverImage ? 'justify-end mt-2 mb-0.5' : 'justify-start my-1'
           }`}
         >
           {hasCoverImage ? (
@@ -289,7 +289,9 @@ export default function StoryCard({
                     : 'opacity-0 max-h-0 line-clamp-none group-hover:opacity-100 group-hover:max-h-64'
                 }`}
               >
-                <p className={`text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left`}>
+                <p
+                  className={`text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left`}
+                >
                   "{story.description}"
                 </p>
                 {/* Mobile tap-to-read instruction */}
@@ -324,7 +326,9 @@ export default function StoryCard({
         </div>
 
         {/* Footer Area */}
-        <div className={`z-10 relative ${hasCoverImage ? 'pt-1.5 mt-1' : 'pt-2.5'}`}>
+        <div
+          className={`z-10 relative ${hasCoverImage ? 'pt-1.5 mt-1' : 'pt-2.5'}`}
+        >
           <div className="text-[9px] font-mono font-bold">
             {/* Line: Word Count, Ratings & Reads */}
             <div className="flex items-center justify-between gap-2 mt-0.5">

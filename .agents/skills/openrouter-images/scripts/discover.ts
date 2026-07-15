@@ -1,9 +1,13 @@
-import type { CapabilityDescriptor, ImageEndpoint, ImageModelListItem } from "./lib.js";
+import type {
+  CapabilityDescriptor,
+  ImageEndpoint,
+  ImageModelListItem,
+} from './lib.js';
 
-import { parseArgs, getImageModels, getImageModelEndpoints } from "./lib.js";
+import { getImageModelEndpoints, getImageModels, parseArgs } from './lib.js';
 
 const args = parseArgs(process.argv.slice(2));
-const model = args.get("_0") as string | undefined;
+const model = args.get('_0') as string | undefined;
 
 if (model) {
   await showEndpoints(model);
@@ -27,7 +31,9 @@ async function listModels(): Promise<void> {
     supported_parameters: describeParameters(m.supported_parameters),
     endpoints_url: m.endpoints,
   }));
-  console.log(JSON.stringify({ count: summary.length, models: summary }, null, 2));
+  console.log(
+    JSON.stringify({ count: summary.length, models: summary }, null, 2),
+  );
 }
 
 /**
@@ -53,7 +59,7 @@ async function showEndpoints(modelSlug: string): Promise<void> {
  * output reads like "resolution: 1K | 2K | 4K" instead of nested objects.
  */
 function describeParameters(
-  parameters: Record<string, CapabilityDescriptor> | undefined
+  parameters: Record<string, CapabilityDescriptor> | undefined,
 ): Record<string, string> {
   const result: Record<string, string> = {};
   for (const [name, descriptor] of Object.entries(parameters ?? {})) {
@@ -64,13 +70,13 @@ function describeParameters(
 
 function describeDescriptor(descriptor: CapabilityDescriptor): string {
   switch (descriptor.type) {
-    case "enum":
-      return descriptor.values.join(" | ");
-    case "range":
+    case 'enum':
+      return descriptor.values.join(' | ');
+    case 'range':
       return `${descriptor.min}–${descriptor.max}`;
-    case "boolean":
-      return "supported";
+    case 'boolean':
+      return 'supported';
     default:
-      return "unknown";
+      return 'unknown';
   }
 }
