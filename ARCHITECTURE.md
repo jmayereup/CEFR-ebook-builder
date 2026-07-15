@@ -28,6 +28,7 @@ graph TD
         Routes --> Outline[generate-outline]
         Routes --> Batch[generate-batch]
         Routes --> Glossary[generate-glossary]
+        Routes --> Cover[generate-cover]
         
         MetadataCache[In-Memory publicStoriesCache] <--> Server
         DiskBackupCache[(.metadata-cache-pb.json)] <--> Server
@@ -145,3 +146,21 @@ The application uses OpenRouter to communicate with various language models. To 
 1. **Delete from Definitions**: Remove the model option from `GEMINI_MODELS` in [src/constants/models.ts](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/constants/models.ts).
 2. **Remove Recommendations & Details**: Clean up its entry in `MODEL_RECOMMENDATIONS` inside [src/components/StoryConfigForm.tsx](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/components/StoryConfigForm.tsx) and the `MODEL_DETAILS` entry in [src/components/creator/ModelSelectionModal.tsx](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/components/creator/ModelSelectionModal.tsx).
 3. **Verify Code References**: Ensure the model is not set as the default model in server route fallbacks (e.g., in [src/server/routes/chapter.ts](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/server/routes/chapter.ts) or [src/utils/creditCalculation.ts](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/utils/creditCalculation.ts)).
+
+---
+
+## 5. Book Cover Image Generation System
+
+The application features an automated book cover generation system that utilizes OpenRouter's Image API and processes the output images.
+
+### A. Routing and Endpoints
+* **API Endpoint**: `/api/stories/generate-cover/generate` (mapped via `coverRouter` in [src/server/routes/cover.ts](file:///var/home/jmayer/Dev/CEFR-ebook-builder/src/server/routes/cover.ts)).
+* **Static Serving Path**: `/covers/:storyId.webp` (mapped statically on the Express server to serve from the local directory `public/covers/`).
+
+### B. Generation Pipeline
+1. **Trigger**: Cover generation is triggered either in-app via the Reader sidebar (by clicking "Regenerate Cover") or from the command line using the batch CLI script.
+2. **Metadata Fetch**: The server fetches the story's title, genre, and description from the database.
+3. **OpenRouter Image Request**: An image request is dispatched to `https://openrouter.ai/api/v1/images` using the model specified by `COVER_IMAGE_MODEL` (defaults to `google/gemini-3.1-flash-lite-image`).
+4. **Image Processing via Sharp**: The generated image is downloaded, cropped/resized to exactly `480x672` (using a `'cover'` fit centered to fit standard book aspect ratio `3:4.2`), converted to `.webp` format with `80%` quality, and saved to `public/covers/[storyId].webp`.
+5. **Static Serving**: The client renders the cover dynamically at Chapter 1.
+

@@ -29,10 +29,13 @@ POCKETBASE_ADMIN_EMAIL=admin@example.com
 POCKETBASE_ADMIN_PASSWORD=your_admin_password
 ```
 
-### AI Model configuration (OpenRouter/Gemini)
+### AI Model & Cover Image configuration (OpenRouter)
 ```env
 # API Key for OpenRouter integration
 OPENROUTER_API_KEY=your_openrouter_api_key
+
+# Optional: Model to use for generating book covers (defaults to google/gemini-3.1-flash-lite-image)
+COVER_IMAGE_MODEL=google/gemini-3.1-flash-lite-image
 ```
 
 ---
@@ -63,3 +66,20 @@ OPENROUTER_API_KEY=your_openrouter_api_key
    ```bash
    npm run build
    ```
+
+---
+
+## 4. CLI Scripts
+
+The project includes CLI commands to generate book covers in batch:
+
+* **Full Cover Generation Run**:
+  Attempts to generate covers for all completed stories that do not yet have one:
+  ```bash
+  npm run generate-covers
+  ```
+* **Test Cover Generation Run**:
+  Runs generation on up to 2 eligible stories to test the OpenRouter connection and image processing:
+  ```bash
+  npm run generate-covers:test
+  ```
