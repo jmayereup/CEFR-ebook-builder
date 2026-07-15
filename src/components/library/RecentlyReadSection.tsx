@@ -53,7 +53,12 @@ export default function RecentlyReadSection({
   onSelectStory,
 }: RecentlyReadSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [imgErrorMap, setImgErrorMap] = useState<Record<string, boolean>>({});
   const currentUser = useAuthStore((state) => state.currentUser);
+
+  const handleImgError = (storyId: string) => {
+    setImgErrorMap((prev) => ({ ...prev, [storyId]: true }));
+  };
 
   if (!items || items.length === 0) return null;
 
@@ -96,6 +101,8 @@ export default function RecentlyReadSection({
             GENRES.find((g) => g.id === story.genre)?.label || story.genre,
           );
 
+          const hasCoverImage = !imgErrorMap[story.id];
+
           return (
             <motion.div
               key={story.id}
@@ -106,14 +113,30 @@ export default function RecentlyReadSection({
               {/* Cover Art Miniature */}
               <div className="relative w-16 h-24 shrink-0 aspect-[3/4.2] overflow-hidden rounded-md shadow-xs">
                 <div
-                  className={`absolute inset-0 ${coverStyle.card} border flex flex-col justify-between p-2 text-center`}
+                  className={`absolute inset-0 ${
+                    hasCoverImage
+                      ? 'text-[#F9F6F0] dark:text-[#EBE4D5] border-black/10 dark:border-white/10'
+                      : coverStyle.card
+                  } border flex flex-col justify-between p-2 text-center`}
                 >
+                  {hasCoverImage && (
+                    <>
+                      <img
+                        src={`/covers/${story.id}.webp`}
+                        onError={() => handleImgError(story.id)}
+                        className="absolute inset-0 w-full h-full object-cover z-0"
+                        alt=""
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30 z-0 pointer-events-none" />
+                    </>
+                  )}
+
                   {/* Left Spine Fold / Crease */}
                   <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
                   <div className="absolute left-2 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
 
                   {/* Top tags */}
-                  <div className="flex justify-center gap-0.5 z-10">
+                  <div className="flex justify-center gap-0.5 z-10 relative">
                     <span className="text-[6px] font-mono font-bold uppercase py-0.5 px-1 bg-black/5 dark:bg-white/10 rounded border border-current/10">
                       {story.cefrLevel}
                     </span>
@@ -133,7 +156,7 @@ export default function RecentlyReadSection({
                   {/* Title Mini */}
                   <h4
                     lang={getLanguageCodeFromName(story.language)}
-                    className="text-[9px] font-serif font-black leading-tight line-clamp-3 my-auto z-10 px-0.5"
+                    className="text-[9px] font-serif font-black leading-tight line-clamp-3 my-auto z-10 relative px-0.5"
                   >
                     {story.title}
                   </h4>

@@ -8,7 +8,7 @@ import {
   Star,
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import type React from 'react';
+import React, { useState } from 'react';
 import {
   GENRES,
   getAverageRating,
@@ -96,6 +96,14 @@ export default function StoryCard({
     GENRES.find((g) => g.id === story.genre)?.label || story.genre,
   );
   const coverStyle = getCefrCoverStyles(story.cefrLevel);
+  const [imgError, setImgError] = useState(false);
+  const hasCoverImage = !imgError;
+  const cardThemeClass = hasCoverImage
+    ? 'text-[#F9F6F0] dark:text-[#EBE4D5] border-black/15 dark:border-white/10'
+    : coverStyle.card;
+  const textMutedClass = hasCoverImage
+    ? 'text-[#F9F6F0]/70 dark:text-[#EBE4D5]/70'
+    : coverStyle.textMuted;
 
   // 1. User completion count (logged-in count + guest fallback)
   const completedByObj = story.completedBy || {};
@@ -143,27 +151,40 @@ export default function StoryCard({
         }}
         transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
         onClick={onSelect}
-        className={`relative ${coverStyle.card} border rounded-l-md rounded-r-lg p-5 flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden`}
+        className={`relative ${cardThemeClass} border rounded-l-md rounded-r-lg p-5 flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden`}
       >
+        {hasCoverImage && (
+          <>
+            <img
+              src={`/covers/${story.id}.webp`}
+              onError={() => setImgError(true)}
+              className="absolute inset-0 w-full h-full object-cover z-0"
+              alt=""
+            />
+            {/* Dark gradient overlay depending on theme to keep text legible */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/50 dark:from-black/85 dark:via-black/40 dark:to-black/70 z-0 pointer-events-none" />
+          </>
+        )}
+
         {/* Left Spine Fold / Crease (adds beautiful book texture) */}
         <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
         <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
 
-        <div>
-          <div className="flex items-center justify-between pl-2.5 mb-2.5 z-10 w-full">
+        <div className="relative z-10">
+          <div className="flex items-center justify-between pl-2.5 mb-2.5 w-full">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono font-bold uppercase py-0.5 text-current">
                 {story.cefrLevel}
               </span>
               <div className="flex items-center">
                 <span
-                  className={`text-[10px] font-mono font-bold uppercase py-0.5 ${coverStyle.textMuted}`}
+                  className={`text-[10px] font-mono font-bold uppercase py-0.5 ${textMutedClass}`}
                 >
                   {mainLangCode}
                 </span>
                 {showBilingualTag && (
                   <span
-                    className={`text-[10px] font-mono font-bold uppercase py-0.5 ${coverStyle.textMuted}`}
+                    className={`text-[10px] font-mono font-bold uppercase py-0.5 ${textMutedClass}`}
                   >
                     -{transLangCode}
                   </span>
@@ -175,7 +196,7 @@ export default function StoryCard({
               {story.isPublic === false && (
                 <span title="Private Story">
                   <Lock
-                    className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
+                    className={`w-3.5 h-3.5 ${textMutedClass} opacity-60`}
                   />
                 </span>
               )}
@@ -192,20 +213,20 @@ export default function StoryCard({
                   title="Download for offline reading"
                 >
                   <Cloud
-                    className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60 hover:opacity-100`}
+                    className={`w-3.5 h-3.5 ${textMutedClass} opacity-60 hover:opacity-100`}
                   />
                 </button>
               )}
               {isRead ? (
                 <span title="Completed reading">
                   <BookCheck
-                    className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
+                    className={`w-3.5 h-3.5 ${textMutedClass} opacity-60`}
                   />
                 </span>
               ) : inRecentlyRead ? (
                 <span title="Recently Read (In Progress)">
                   <BookOpenText
-                    className={`w-3.5 h-3.5 ${coverStyle.textMuted} opacity-60`}
+                    className={`w-3.5 h-3.5 ${textMutedClass} opacity-60`}
                   />
                 </span>
               ) : null}
@@ -216,7 +237,7 @@ export default function StoryCard({
                     e.stopPropagation();
                     onToggleSaved(story.id, e);
                   }}
-                  className={`p-0.5 rounded transition-all cursor-pointer ${coverStyle.textMuted} opacity-50 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5`}
+                  className={`p-0.5 rounded transition-all cursor-pointer ${textMutedClass} opacity-50 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5`}
                   title={
                     isSaved ? 'Remove from Bookshelf' : 'Save to Bookshelf'
                   }
@@ -233,7 +254,7 @@ export default function StoryCard({
         </div>
 
         {/* Centerpiece Cover Art / Title Block */}
-        <div className="flex-1 flex flex-col justify-start text-center px-2 py-3 z-10">
+        <div className="flex-1 flex flex-col justify-start text-center px-2 py-3 z-10 relative">
           <h3
             lang={getLanguageCodeFromName(story.language)}
             className="text-base md:text-lg font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-1 hyphens-auto"
@@ -241,14 +262,14 @@ export default function StoryCard({
             {story.title}
           </h3>
           <p
-            className={`text-[9px] uppercase tracking-wider font-mono font-bold ${coverStyle.textMuted} mt-0.5`}
+            className={`text-[9px] uppercase tracking-wider font-mono font-bold ${textMutedClass} mt-0.5`}
           >
             Theme: {resolvedGenreLabel}
           </p>
 
           {story.description && (
             <p
-              className={`text-[10px] ${coverStyle.textMuted} mt-2.5 line-clamp-8 leading-relaxed font-sans italic opacity-85 px-0.5 text-left`}
+              className={`text-[10px] ${textMutedClass} mt-2.5 line-clamp-8 leading-relaxed font-sans italic opacity-85 px-0.5 text-left`}
             >
               "{story.description}"
             </p>
@@ -256,11 +277,11 @@ export default function StoryCard({
         </div>
 
         {/* Footer Area */}
-        <div className="z-10 pt-2.5">
+        <div className="z-10 relative pt-2.5">
           <div className="text-[9px] font-mono font-bold">
             {/* Line: Word Count, Ratings & Reads */}
             <div className="flex items-center justify-between gap-2 mt-0.5">
-              <div className={`${coverStyle.textMuted}`}>
+              <div className={`${textMutedClass}`}>
                 {story.isCompleted || chaptersCount === story.totalChapters ? (
                   <span className="whitespace-nowrap">
                     {(Math.round(wordCount / 50) * 50).toLocaleString()} WORDS
@@ -276,7 +297,7 @@ export default function StoryCard({
               <div className="flex items-center gap-2.5">
                 {story.ratings && Object.keys(story.ratings).length > 0 && (
                   <div
-                    className={`flex items-center gap-0.5 ${coverStyle.textMuted}`}
+                    className={`flex items-center gap-0.5 ${textMutedClass}`}
                     title={`Avg: ${getAverageRating(story.ratings).toFixed(1)}`}
                   >
                     {[1, 2, 3, 4, 5].map((starValue) => {
@@ -293,7 +314,7 @@ export default function StoryCard({
                 )}
 
                 {totalReads > 0 && (
-                  <span className={`${coverStyle.textMuted} whitespace-nowrap`}>
+                  <span className={`${textMutedClass} whitespace-nowrap`}>
                     READS: {totalReads}
                   </span>
                 )}
