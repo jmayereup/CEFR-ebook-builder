@@ -118,14 +118,19 @@ Subject: A simple, serene scene symbolizing the theme of the book (${story.descr
         .json({ error: 'Image data missing from OpenRouter response.' });
     }
 
-    // Process image: crop & resize to 480x672 (aspect-ratio matched), convert to WebP
-    await sharp(buffer)
-      .resize(480, 672, {
-        fit: 'cover',
-        position: 'center',
-      })
-      .webp({ quality: 80 })
-      .toFile(coverPath);
+    // Process image: crop & resize to 480x672 (aspect-ratio matched)
+    const processed = sharp(buffer).resize(480, 672, {
+      fit: 'cover',
+      position: 'center',
+    });
+
+    const coverJpgPath = path.join(COVERS_DIR, `${storyId}.jpg`);
+
+    // Write WebP and JPEG formats concurrently
+    await Promise.all([
+      processed.clone().webp({ quality: 80 }).toFile(coverPath),
+      processed.clone().jpeg({ quality: 85 }).toFile(coverJpgPath),
+    ]);
 
     return res.status(200).json({
       success: true,

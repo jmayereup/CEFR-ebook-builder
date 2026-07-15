@@ -178,20 +178,24 @@ Subject: A simple, serene scene symbolizing the theme of the book (${story.descr
         }
 
         console.log(
-          `Processing image with sharp (crop & resize to 480x672, WebP format)...`,
+          `Processing image with sharp (crop & resize to 480x672, WebP and JPEG formats)...`,
         );
 
+        const coverJpgPath = path.join(COVERS_DIR, `${story.id}.jpg`);
+
         // Resize to aspect-[3/4.2] -> 480x672 to match our front-end cover aspect ratio perfectly
-        await sharp(buffer)
-          .resize(480, 672, {
-            fit: 'cover',
-            position: 'center',
-          })
-          .webp({ quality: 80 })
-          .toFile(coverPath);
+        const processed = sharp(buffer).resize(480, 672, {
+          fit: 'cover',
+          position: 'center',
+        });
+
+        await Promise.all([
+          processed.clone().webp({ quality: 80 }).toFile(coverPath),
+          processed.clone().jpeg({ quality: 85 }).toFile(coverJpgPath),
+        ]);
 
         console.log(
-          `[SUCCESS] Saved cover to: ${coverPath} (${(fs.statSync(coverPath).size / 1024).toFixed(1)} KB)`,
+          `[SUCCESS] Saved covers to:\n  - WebP: ${coverPath} (${(fs.statSync(coverPath).size / 1024).toFixed(1)} KB)\n  - JPEG: ${coverJpgPath} (${(fs.statSync(coverJpgPath).size / 1024).toFixed(1)} KB)`,
         );
         generatedCount++;
 

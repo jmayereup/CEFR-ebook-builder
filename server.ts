@@ -2,6 +2,7 @@ import './src/server/lib/loadEnv';
 import fs from 'node:fs';
 import path from 'node:path';
 import express from 'express';
+import sharp from 'sharp';
 import { rateLimit } from 'express-rate-limit';
 import { createServer as createViteServer } from 'vite';
 import {
@@ -131,6 +132,28 @@ app.post('/api/users/sync', async (req, res) => {
 
 async function bootstrap() {
   // Serve dynamic public covers directly from public directory (works in both dev & prod)
+  app.get('/covers/:storyId.jpg', async (req, res, next) => {
+    const { storyId } = req.params;
+    const jpgPath = path.join(process.cwd(), 'public', 'covers', `${storyId}.jpg`);
+    const webpPath = path.join(process.cwd(), 'public', 'covers', `${storyId}.webp`);
+
+    if (fs.existsSync(jpgPath)) {
+      return next();
+    }
+
+    if (fs.existsSync(webpPath)) {
+      try {
+        await sharp(webpPath)
+          .jpeg({ quality: 85 })
+          .toFile(jpgPath);
+        return next();
+      } catch (err) {
+        console.error(`[Server API] Failed to convert ${storyId}.webp to JPEG on-the-fly:`, err);
+      }
+    }
+    next();
+  });
+
   app.use(
     '/covers',
     express.static(path.join(process.cwd(), 'public', 'covers')),
@@ -227,11 +250,15 @@ async function bootstrap() {
         const title = `${story.title} - Graded ${story.language} Reader (${story.cefrLevel})`;
         const description = `Read "${story.title}" graded for ${story.language} at CEFR ${story.cefrLevel} difficulty. Includes interactive dictionary lookups and custom eBook downloads.`;
 
-        const hasCover = fs.existsSync(
-          path.join(process.cwd(), 'public', 'covers', `${story.id}.webp`),
-        );
+        const hasCover =
+          fs.existsSync(
+            path.join(process.cwd(), 'public', 'covers', `${story.id}.webp`),
+          ) ||
+          fs.existsSync(
+            path.join(process.cwd(), 'public', 'covers', `${story.id}.jpg`),
+          );
         const coverUrl = hasCover
-          ? `${req.protocol}://${req.get('host')}/covers/${story.id}.webp`
+          ? `${req.protocol}://${req.get('host')}/covers/${story.id}.jpg`
           : `${req.protocol}://${req.get('host')}/tj-logo.svg`;
 
         template = template.replace(
