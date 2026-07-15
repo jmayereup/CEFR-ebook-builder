@@ -14,7 +14,7 @@ const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
 const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
 const openrouterApiKey = process.env.OPENROUTER_API_KEY;
 const modelId =
-  process.env.COVER_IMAGE_MODEL || 'black-forest-labs/flux.2-klein-4b';
+  process.env.COVER_IMAGE_MODEL || 'google/gemini-3.1-flash-lite-image';
 
 if (!url || !adminEmail || !adminPassword || !openrouterApiKey) {
   console.error('Missing required environment variables in .env file.');
@@ -102,10 +102,9 @@ async function main() {
       // Formulate a robust prompt to enforce a cozy, flat vector illustration, and strictly forbid 
       // technical diagrams, flowcharts, floating icons, and device mockup frames.
       const prompt = `A professional, clean, minimalist flat vector book cover design.
-Title text: The book cover must clearly feature the title "${story.title}" written in a clean, legible, and elegant font at the top or center, spelled correctly.
+Title text: The image for the book cover must clearly feature the title "${story.title}" written in a clean, legible, and elegant font at the top or center, spelled correctly.
 Visual style: A cozy, warm, and inviting soft vector illustration (lofi study vibe, pastel colors, clean lines, gentle shading). Flat 2D graphic from edge to edge.
-Subject: A simple, serene scene symbolizing the theme of the book (${story.description || story.genre}). Depict this through a single character or a simple symbolic object (e.g. a person reading, walking in nature, or sitting by a window), rather than a literal diagram or depiction of abstract concepts.
-Strict Exclusions: Do NOT include any flowcharts, diagrams, arrows, floating icons, multiple grids, gears, or technical symbols. Do NOT include any mockups, device/tablet borders, phone frames, or simulated screens. The image must be a flat 2D graphic with no physical borders or device mockups.`;
+Subject: A simple, serene scene symbolizing the theme of the book (${story.description || story.genre}). Depict this through a single character or a simple symbolic object (e.g. a person reading, walking in nature, or sitting by a window), rather than a literal diagram or depiction of abstract concepts. The image must be a flat 2D graphic with no physical bordersps.`;
 
       console.log(`Prompt: "${prompt}"`);
       console.log(`Model: ${modelId}`);
