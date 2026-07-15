@@ -96,7 +96,7 @@ ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "bash -s" << E
   npm install --omit=dev --no-audit --no-fund
   
   # Ensure proper ownership for all files (ghost-mgr owns the application)
-  chown -R ghost-mgr:ghost-mgr "$SERVER_PATH/dist" "$SERVER_PATH/node_modules" "$SERVER_PATH/package.json" "$SERVER_PATH/package-lock.json"
+  chown -R ghost-mgr:ghost-mgr "$SERVER_PATH/dist" "$SERVER_PATH/node_modules" "$SERVER_PATH/package.json" "$SERVER_PATH/package-lock.json" "$SERVER_PATH/public"
   
   # Restart systemd service
   echo "Restarting service: $SERVICE_NAME"
