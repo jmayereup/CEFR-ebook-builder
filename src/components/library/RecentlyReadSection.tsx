@@ -135,31 +135,17 @@ export default function RecentlyReadSection({
                   <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
                   <div className="absolute left-2 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
 
-                  {/* Top tags */}
-                  <div className="flex justify-center gap-0.5 z-10 relative">
-                    <span className="text-[6px] font-mono font-bold uppercase py-0.5 px-1 bg-black/5 dark:bg-white/10 rounded border border-current/10">
-                      {story.cefrLevel}
-                    </span>
-                    <span className="text-[6px] font-mono font-bold uppercase py-0.5 px-1 bg-black/5 dark:bg-white/10 rounded border border-current/10 flex items-center">
-                      {getLanguageCodeFromName(story.language).toUpperCase()}
-                      {story.translationLanguage &&
-                        getLanguageCodeFromName(
-                          story.translationLanguage,
-                        ).toUpperCase() !==
-                          getLanguageCodeFromName(
-                            story.language,
-                          ).toUpperCase() &&
-                        `-${getLanguageCodeFromName(story.translationLanguage).toUpperCase()}`}
-                    </span>
-                  </div>
 
-                  {/* Title Mini */}
-                  <h4
-                    lang={getLanguageCodeFromName(story.language)}
-                    className="text-[9px] font-serif font-black leading-tight line-clamp-3 my-auto z-10 relative px-0.5"
-                  >
-                    {story.title}
-                  </h4>
+
+                  {/* Title Mini - only rendered if there is no cover image */}
+                  {!hasCoverImage && (
+                    <h4
+                      lang={getLanguageCodeFromName(story.language)}
+                      className="text-[9px] font-serif font-black leading-tight line-clamp-3 my-auto z-10 relative px-0.5"
+                    >
+                      {story.title}
+                    </h4>
+                  )}
 
                   {/* Empty footer spacing for spine */}
                   <div className="h-1" />
@@ -169,10 +155,29 @@ export default function RecentlyReadSection({
               {/* Info Column */}
               <div className="flex-1 flex flex-col justify-between min-w-0">
                 <div>
-                  <h4 className="text-sm font-serif font-extrabold text-tj-text-main leading-tight line-clamp-2 mb-0.5">
-                    {story.title}
-                  </h4>
-                  <p className="text-[9px] font-mono font-bold text-tj-text-muted/80 tracking-wide uppercase truncate">
+                  <div className="flex items-start justify-between gap-4">
+                    <h4 className="text-sm font-serif font-extrabold text-tj-text-main leading-tight line-clamp-2 mb-0.5">
+                      {story.title}
+                    </h4>
+                    {/* CEFR & Language tags */}
+                    <div className="flex items-center gap-1 shrink-0 mt-0.5">
+                      <span className="text-[7px] font-mono font-bold uppercase py-0.5 px-1 bg-tj-bg-card border border-tj-border-main text-tj-text-muted rounded">
+                        {story.cefrLevel}
+                      </span>
+                      <span className="text-[7px] font-mono font-bold uppercase py-0.5 px-1 bg-tj-bg-card border border-tj-border-main text-tj-text-muted rounded flex items-center">
+                        {getLanguageCodeFromName(story.language).toUpperCase()}
+                        {story.translationLanguage &&
+                          getLanguageCodeFromName(
+                            story.translationLanguage,
+                          ).toUpperCase() !==
+                            getLanguageCodeFromName(
+                              story.language,
+                            ).toUpperCase() &&
+                          `-${getLanguageCodeFromName(story.translationLanguage).toUpperCase()}`}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-[9px] font-mono font-bold text-tj-text-muted/80 tracking-wide uppercase truncate mt-0.5">
                     {resolvedGenreLabel} • {story.language}
                   </p>
                 </div>

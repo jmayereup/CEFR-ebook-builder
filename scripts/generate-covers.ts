@@ -27,13 +27,28 @@ const pb = new PocketBase(url);
 
 const COVERS_DIR = path.resolve(process.cwd(), 'public', 'covers');
 
+// Parse CLI arguments
+const args = process.argv.slice(2);
+const isTestRun = args.includes('--test') || args.includes('-t');
+const limitIndex = args.findIndex(arg => arg.startsWith('--limit='));
+const limitVal = limitIndex !== -1 ? parseInt(args[limitIndex].split('=')[1], 10) : undefined;
+const maxToGenerate = isTestRun ? 2 : limitVal;
+
 // Ensure output directory exists
 if (!fs.existsSync(COVERS_DIR)) {
+  console.log(`[Init] Creating covers directory at: ${COVERS_DIR}`);
   fs.mkdirSync(COVERS_DIR, { recursive: true });
 }
 
 async function main() {
   try {
+    console.log(`==================================================`);
+    console.log(`Starting Cover Generator CLI`);
+    if (isTestRun) console.log(`Mode: TEST RUN (Limit: 2 new covers max)`);
+    else if (maxToGenerate) console.log(`Mode: LIMITED RUN (Limit: ${maxToGenerate} new covers max)`);
+    else console.log(`Mode: FULL RUN (All eligible stories)`);
+    console.log(`==================================================`);
+
     console.log(`Connecting to PocketBase at: ${url}`);
     console.log(`Authenticating as: ${adminEmail}`);
     await pb.admins.authWithPassword(adminEmail, adminPassword);
@@ -50,6 +65,11 @@ async function main() {
     let generatedCount = 0;
 
     for (const story of stories) {
+      if (maxToGenerate !== undefined && generatedCount >= maxToGenerate) {
+        console.log(`\n[Info] Reached generation limit of ${maxToGenerate}. Stopping execution.`);
+        break;
+      }
+
       const coverPath = path.join(COVERS_DIR, `${story.id}.webp`);
 
       if (fs.existsSync(coverPath)) {
@@ -62,25 +82,32 @@ async function main() {
       console.log(`Genre: ${story.genre} | CEFR: ${story.cefrLevel} | Language: ${story.language}`);
 
       // Formulate prompt instructing the model to produce a flat vector illustration suitable for a book cover,
-      // with no text, letters, titles, or authors, using clean design.
-      const prompt = `A clean, minimalist flat vector illustration for a book cover, depicting: ${story.title}. Theme/Context: ${story.description || story.genre}. Soft textures, professional artistic illustration, cozy atmosphere, centered design. Crucially, there must be NO text, NO letters, NO words, NO title, and NO author name on the image.`;
+      // clearly printing the title, using clean design.
+      const prompt = `A clean, minimalist flat vector illustration for a book cover. The book cover must clearly feature the title "${story.title}" written in a clean, legible, and elegant font at the top or center. Subject: A scene representing ${story.description || story.genre}. Cozy atmosphere, professional artistic illustration, clean design. Ensure the title text is spelled correctly and is highly readable against the background art.`;
 
       console.log(`Prompt: "${prompt}"`);
       console.log(`Model: ${modelId}`);
 
       try {
+        const requestBody: any = {
+          model: modelId,
+          prompt: prompt,
+          response_format: 'url',
+        };
+
+        if (modelId.includes('gemini') || modelId.includes('flux') || modelId.includes('recraft')) {
+          requestBody.aspect_ratio = '3:4';
+        } else {
+          requestBody.size = '1024x1024';
+        }
+
         const response = await fetch('https://openrouter.ai/api/v1/images', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${openrouterApiKey}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            model: modelId,
-            prompt: prompt,
-            size: '1024x1024',
-            response_format: 'url',
-          }),
+          body: JSON.stringify(requestBody),
         });
 
         if (!response.ok) {
@@ -89,21 +116,28 @@ async function main() {
         }
 
         const data = (await response.json()) as any;
-        const imageUrl = data.data?.[0]?.url;
+        const imageObj = data.data?.[0];
 
-        if (!imageUrl) {
-          throw new Error(`Invalid response format from OpenRouter: ${JSON.stringify(data)}`);
+        if (!imageObj) {
+          throw new Error(`Invalid response format from OpenRouter (no data array found).`);
         }
 
-        console.log(`Image generated successfully. Downloading from: ${imageUrl}`);
+        let buffer: Buffer;
 
-        const imageRes = await fetch(imageUrl);
-        if (!imageRes.ok) {
-          throw new Error(`Failed to download image from URL: ${imageUrl}`);
+        if (imageObj.b64_json) {
+          console.log(`Image generated successfully (returned inline as base64). Converting to buffer...`);
+          buffer = Buffer.from(imageObj.b64_json, 'base64');
+        } else if (imageObj.url) {
+          console.log(`Image generated successfully. Downloading from URL: ${imageObj.url}`);
+          const imageRes = await fetch(imageObj.url);
+          if (!imageRes.ok) {
+            throw new Error(`Failed to download image from URL: ${imageObj.url}`);
+          }
+          const arrayBuffer = await imageRes.arrayBuffer();
+          buffer = Buffer.from(arrayBuffer);
+        } else {
+          throw new Error(`Invalid response format: neither url nor b64_json was found in the response.`);
         }
-
-        const arrayBuffer = await imageRes.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
 
         console.log(`Processing image with sharp (crop & resize to 480x672, WebP format)...`);
         

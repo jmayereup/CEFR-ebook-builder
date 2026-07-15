@@ -97,6 +97,8 @@ export default function StoryCard({
   );
   const coverStyle = getCefrCoverStyles(story.cefrLevel);
   const [imgError, setImgError] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [showMobileOverlay, setShowMobileOverlay] = useState(false);
   const hasCoverImage = !imgError;
   const cardThemeClass = hasCoverImage
     ? 'text-[#F9F6F0] dark:text-[#EBE4D5] border-black/15 dark:border-white/10'
@@ -104,6 +106,23 @@ export default function StoryCard({
   const textMutedClass = hasCoverImage
     ? 'text-[#F9F6F0]/70 dark:text-[#EBE4D5]/70'
     : coverStyle.textMuted;
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    }
+  }, []);
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (hasCoverImage && isTouchDevice) {
+      if (!showMobileOverlay) {
+        e.stopPropagation();
+        setShowMobileOverlay(true);
+        return;
+      }
+    }
+    onSelect();
+  };
 
   // 1. User completion count (logged-in count + guest fallback)
   const completedByObj = story.completedBy || {};
@@ -150,8 +169,11 @@ export default function StoryCard({
             '4px 12px 24px -5px rgba(0,0,0,0.18), 1px 4px 8px -1px rgba(0,0,0,0.06)',
         }}
         transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-        onClick={onSelect}
-        className={`relative ${cardThemeClass} border rounded-l-md rounded-r-lg p-5 flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden`}
+        onClick={handleCardClick}
+        onMouseLeave={() => setShowMobileOverlay(false)}
+        className={`relative ${cardThemeClass} border rounded-l-md rounded-r-lg flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 ${
+          hasCoverImage ? 'p-3.5' : 'p-5'
+        }`}
       >
         {hasCoverImage && (
           <>
@@ -254,30 +276,59 @@ export default function StoryCard({
         </div>
 
         {/* Centerpiece Cover Art / Title Block */}
-        <div className="flex-1 flex flex-col justify-start text-center px-2 py-3 z-10 relative">
-          <h3
-            lang={getLanguageCodeFromName(story.language)}
-            className="text-base md:text-lg font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-1 hyphens-auto"
-          >
-            {story.title}
-          </h3>
-          <p
-            className={`text-[9px] uppercase tracking-wider font-mono font-bold ${textMutedClass} mt-0.5`}
-          >
-            Theme: {resolvedGenreLabel}
-          </p>
-
-          {story.description && (
-            <p
-              className={`text-[10px] ${textMutedClass} mt-2.5 line-clamp-8 leading-relaxed font-sans italic opacity-85 px-0.5 text-left`}
-            >
-              "{story.description}"
-            </p>
+        <div 
+          className={`flex-1 flex flex-col text-center z-10 relative rounded-xl transition-all duration-300 ${
+            hasCoverImage 
+              ? 'justify-end mt-2 mb-0.5'
+              : 'justify-start my-1'
+          }`}
+        >
+          {hasCoverImage ? (
+            // For covers, we only render the description box on hover near the bottom
+            story.description && (
+              <div
+                className={`transition-all duration-500 ease-out rounded-xl px-3 py-3 bg-black/45 dark:bg-black/65 backdrop-blur-md border border-white/10 shadow-lg mx-1 overflow-hidden ${
+                  showMobileOverlay
+                    ? 'opacity-100 max-h-64'
+                    : 'opacity-0 max-h-0 line-clamp-none group-hover:opacity-100 group-hover:max-h-64'
+                }`}
+              >
+                <p className={`text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left`}>
+                  "{story.description}"
+                </p>
+                {/* Mobile tap-to-read instruction */}
+                <p className="text-[8px] uppercase tracking-wider font-mono font-bold text-center mt-2 opacity-75 text-white/90 animate-pulse block md:hidden">
+                  Tap again to read
+                </p>
+              </div>
+            )
+          ) : (
+            // Original behavior for gradient cards
+            <div className="transition-all duration-500 ease-out rounded-xl px-3 py-3">
+              <h3
+                lang={getLanguageCodeFromName(story.language)}
+                className="text-base md:text-lg font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-0.5 hyphens-auto"
+              >
+                {story.title}
+              </h3>
+              <p
+                className={`text-[9px] uppercase tracking-wider font-mono font-bold ${textMutedClass}`}
+              >
+                Theme: {resolvedGenreLabel}
+              </p>
+              {story.description && (
+                <p
+                  className={`text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left line-clamp-8 mt-2.5`}
+                >
+                  "{story.description}"
+                </p>
+              )}
+            </div>
           )}
         </div>
 
         {/* Footer Area */}
-        <div className="z-10 relative pt-2.5">
+        <div className={`z-10 relative ${hasCoverImage ? 'pt-1.5 mt-1' : 'pt-2.5'}`}>
           <div className="text-[9px] font-mono font-bold">
             {/* Line: Word Count, Ratings & Reads */}
             <div className="flex items-center justify-between gap-2 mt-0.5">
