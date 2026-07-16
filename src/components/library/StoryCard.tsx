@@ -115,6 +115,11 @@ export default function StoryCard({
     }
   }, []);
 
+  // Reset image error state when story is updated (e.g. cover regenerated)
+  React.useEffect(() => {
+    setImgError(false);
+  }, [story.updated]);
+
   const handleCardClick = (e: React.MouseEvent) => {
     if (hasCoverImage && isTouchDevice) {
       if (!showMobileOverlay) {
@@ -179,7 +184,7 @@ export default function StoryCard({
       >
         {hasCoverImage && (
           <img
-            src={`/covers/${story.id}.webp`}
+            src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
             onError={() => setImgError(true)}
             className="absolute inset-0 w-full h-full object-cover z-0"
             alt=""

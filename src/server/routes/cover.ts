@@ -141,10 +141,21 @@ Subject: A simple, serene scene symbolizing the theme of the book (${story.descr
       processed.clone().jpeg({ quality: 85 }).toFile(coverJpgPath),
     ]);
 
+    // Update story record in PocketBase to bump the 'updated' timestamp
+    let updatedRecord: any = null;
+    try {
+      updatedRecord = await pb.collection('stories').update(storyId, {
+        description: story.description || '',
+      });
+    } catch (dbErr) {
+      console.error('[Cover Route] Warning: failed to bump story updated timestamp in PocketBase:', dbErr);
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Cover generated successfully.',
       url: `/covers/${storyId}.webp`,
+      updated: updatedRecord ? updatedRecord.updated : new Date().toISOString(),
     });
   } catch (err: any) {
     console.error('[Cover Generation Error]:', err);

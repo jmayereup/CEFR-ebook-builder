@@ -91,14 +91,15 @@ export async function generateEpub(story: Story): Promise<Blob> {
   let coverExtension = 'jpg';
 
   try {
-    const response = await fetch(`/covers/${story.id}.jpg`);
+    const t = story.updated ? `?t=${new Date(story.updated).getTime()}` : '';
+    const response = await fetch(`/covers/${story.id}.jpg${t}`);
     if (response.ok) {
       coverBlob = await response.blob();
       coverMediaType = 'image/jpeg';
       coverExtension = 'jpg';
     } else {
       // Fallback to WebP if JPEG isn't found, and convert it to JPEG in browser
-      const webpResponse = await fetch(`/covers/${story.id}.webp`);
+      const webpResponse = await fetch(`/covers/${story.id}.webp${t}`);
       if (webpResponse.ok) {
         const webpBlob = await webpResponse.blob();
         try {

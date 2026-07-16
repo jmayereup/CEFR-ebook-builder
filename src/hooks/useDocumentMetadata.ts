@@ -45,7 +45,8 @@ export function useDocumentMetadata(
     updateMetaTag('property', 'og:title', newTitle);
     updateMetaTag('property', 'og:description', newDesc);
 
-    const coverUrl = `${window.location.origin}/covers/${story.id}.jpg`;
+    const t = story.updated ? `?t=${new Date(story.updated).getTime()}` : '';
+    const coverUrl = `${window.location.origin}/covers/${story.id}.jpg${t}`;
     updateMetaTag('property', 'og:image', coverUrl);
     updateMetaTag('name', 'twitter:image', coverUrl);
     updateMetaTag('name', 'twitter:card', 'summary_large_image');

@@ -170,6 +170,11 @@ export default function ReaderPanel({
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [coverImgError, setCoverImgError] = useState(false);
 
+  // Reset coverImgError when cover is generated or story updates
+  useEffect(() => {
+    setCoverImgError(false);
+  }, [story.updated]);
+
   // Reset hasFinishedChapter when chapter or story changes, and set up scroll observer
   useEffect(() => {
     // Reference activeChapterIndex and story.id to ensure effect re-runs when they change
@@ -1212,7 +1217,7 @@ export default function ReaderPanel({
                         className="relative w-full max-w-[240px] sm:max-w-[280px] aspect-[3/4.2] rounded-lg overflow-hidden shadow-[0_8px_24px_-4px_rgba(0,0,0,0.15),_0_2px_8px_-2px_rgba(0,0,0,0.1)] border border-slate-200/60 dark:border-white/10"
                       >
                         <img
-                          src={`/covers/${story.id}.webp`}
+                          src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
                           onError={() => setCoverImgError(true)}
                           className="w-full h-full object-cover"
                           alt={`${story.title} Cover`}

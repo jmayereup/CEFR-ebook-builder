@@ -7,7 +7,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { GENRES, getLanguageCodeFromName, type Story } from '../../types';
 
@@ -59,6 +59,22 @@ export default function RecentlyReadSection({
   const handleImgError = (storyId: string) => {
     setImgErrorMap((prev) => ({ ...prev, [storyId]: true }));
   };
+
+  // Reset image error map entry for any story when its updated timestamp changes
+  const updatedTimestamps = items.map(item => `${item.story.id}-${item.story.updated}`).join(',');
+  useEffect(() => {
+    setImgErrorMap((prev) => {
+      let changed = false;
+      const next = { ...prev };
+      for (const item of items) {
+        if (item.story.id && next[item.story.id]) {
+          delete next[item.story.id];
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [updatedTimestamps, items]);
 
   if (!items || items.length === 0) return null;
 
@@ -121,7 +137,7 @@ export default function RecentlyReadSection({
                 >
                   {hasCoverImage && (
                     <img
-                      src={`/covers/${story.id}.webp`}
+                      src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
                       onError={() => handleImgError(story.id)}
                       className="absolute inset-0 w-full h-full object-cover z-0"
                       alt=""

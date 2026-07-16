@@ -498,6 +498,19 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         const errData = await response.json().catch(() => ({}));
         throw new Error(errData.error || 'Failed to generate cover.');
       }
+      const data = await response.json();
+
+      // Update local state to reflect the new cover timestamp immediately
+      if (selectedStory && selectedStory.id === storyId) {
+        setSelectedStory({
+          ...selectedStory,
+          updated: data.updated || new Date().toISOString(),
+        });
+      }
+
+      // Refresh stories metadata in the library list
+      loadStoriesMetadata({ refresh: true, storyId });
+
       showAlert(
         'Cover Generated Successfully',
         'The cover has been regenerated and saved.',
