@@ -5,9 +5,9 @@ import {
   useState,
 } from 'react';
 import type { RecentlyReadItem } from '../services/db';
+import type { IUser } from '../services/types';
 import type { Chapter, Story, VocabularyTerm } from '../types';
 import { cleanCompletedStory } from '../utils/storyCleanup';
-import type { IUser } from '../services/types';
 
 interface UseActiveStoryOptions {
   currentUser: IUser | null;

@@ -3,9 +3,9 @@ import type React from 'react';
 import LibraryGrid from '../components/library/LibraryGrid';
 import StreakDashboardCard from '../components/library/StreakDashboardCard';
 import type { GenerationLimitData } from '../services/db';
+import type { IUser } from '../services/types';
 import type { RecentlyReadItem, Story, UserStreakData } from '../types';
 import type { SortBy } from '../utils/storyFilters';
-import type { IUser } from '../services/types';
 
 interface BookshelfPageProps {
   streakData: UserStreakData | null;

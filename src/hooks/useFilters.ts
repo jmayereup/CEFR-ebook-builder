@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { IUser } from '../services/types';
 import type { Story } from '../types';
 import { filterAndSortStories, type SortBy } from '../utils/storyFilters';
-import type { IUser } from '../services/types';
 
 interface UseFiltersOptions {
   stories: Story[];

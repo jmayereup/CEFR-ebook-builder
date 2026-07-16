@@ -5,9 +5,9 @@ import {
   List,
   SlidersHorizontal,
 } from 'lucide-react';
-import type React from 'react';
-import { useEffect, useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import type { RecentlyReadItem, Story } from '../../types';
 import type { SortBy } from '../../utils/storyFilters';
@@ -129,7 +129,10 @@ export default function LibraryGrid({
   };
 
   const itemsPerPageVal = viewMode === 'condensed' ? 15 : itemsPerPage;
-  const paginatedStories = filteredStories.slice(0, currentPage * itemsPerPageVal);
+  const paginatedStories = filteredStories.slice(
+    0,
+    currentPage * itemsPerPageVal,
+  );
   const hasMore = currentPage * itemsPerPageVal < filteredStories.length;
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -152,7 +155,7 @@ export default function LibraryGrid({
           }, 250);
         }
       },
-      { rootMargin: '200px' }
+      { rootMargin: '200px' },
     );
 
     observer.observe(sentinel);
@@ -168,7 +171,7 @@ export default function LibraryGrid({
         const first = entries[0];
         setShowBackToTop(!first.isIntersecting);
       },
-      { threshold: 0 }
+      { threshold: 0 },
     );
 
     observer.observe(topSentinel);
@@ -313,7 +316,10 @@ export default function LibraryGrid({
             </div>
           ) : (
             <div className="space-y-6 relative">
-              <div ref={topSentinelRef} className="h-0 w-0 pointer-events-none absolute top-0" />
+              <div
+                ref={topSentinelRef}
+                className="h-0 w-0 pointer-events-none absolute top-0"
+              />
 
               {viewMode === 'condensed' ? (
                 <div className="flex flex-col gap-2">
@@ -322,7 +328,10 @@ export default function LibraryGrid({
                       key={story.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2, delay: Math.min((index % itemsPerPageVal) * 0.03, 0.3) }}
+                      transition={{
+                        duration: 0.2,
+                        delay: Math.min((index % itemsPerPageVal) * 0.03, 0.3),
+                      }}
                     >
                       <StoryCondensedRow
                         story={story}
@@ -353,7 +362,10 @@ export default function LibraryGrid({
                       key={story.id}
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.25, delay: Math.min((index % itemsPerPageVal) * 0.04, 0.4) }}
+                      transition={{
+                        duration: 0.25,
+                        delay: Math.min((index % itemsPerPageVal) * 0.04, 0.4),
+                      }}
                       className="w-full flex justify-center"
                     >
                       <StoryCard
@@ -381,14 +393,20 @@ export default function LibraryGrid({
               )}
 
               {/* Scroll Sentinel for Infinite Loading */}
-              <div ref={sentinelRef} className="h-4 w-full pointer-events-none" />
+              <div
+                ref={sentinelRef}
+                className="h-4 w-full pointer-events-none"
+              />
 
               {/* Progress & Loading State Indicators */}
               <div className="flex flex-col items-center justify-center gap-3 pt-8 border-t border-tj-border-main text-xs text-tj-text-muted">
                 <span>
                   Showing{' '}
                   <strong className="font-semibold text-tj-text-main">
-                    {Math.min(currentPage * itemsPerPageVal, filteredStories.length)}
+                    {Math.min(
+                      currentPage * itemsPerPageVal,
+                      filteredStories.length,
+                    )}
                   </strong>{' '}
                   of{' '}
                   <strong className="font-semibold text-tj-text-main">
@@ -418,7 +436,9 @@ export default function LibraryGrid({
                     initial={{ opacity: 0, scale: 0.8, y: 10 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    onClick={() =>
+                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }
                     className="fixed bottom-6 right-6 p-3 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main rounded-xl shadow-lg cursor-pointer transition-all duration-200 z-40 border border-tj-primary-border flex items-center justify-center"
                     aria-label="Back to top"
                     title="Back to top"

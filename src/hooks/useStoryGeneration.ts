@@ -18,9 +18,9 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import type { IUser } from '../services/types';
 import { useUIStore } from '../store/uiStore';
 import type { Chapter, Story } from '../types';
-import type { IUser } from '../services/types';
 import {
   calculateChapterCreditCost,
   calculateInitialCreditEstimate,

@@ -2,12 +2,12 @@ import { BookMarked, Globe, Lock, Share2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import ExportPanel from '../components/app/ExportPanel';
 import ReaderPanel from '../components/ReaderPanel';
+import type { IUser } from '../services/types';
 import {
   getLanguageCodeFromName,
   type Story,
   type VocabularyTerm,
 } from '../types';
-import type { IUser } from '../services/types';
 
 interface ReaderPageProps {
   currentUser: IUser | null;

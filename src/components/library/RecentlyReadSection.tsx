@@ -61,7 +61,9 @@ export default function RecentlyReadSection({
   };
 
   // Reset image error map entry for any story when its updated timestamp changes
-  const updatedTimestamps = items.map(item => `${item.story.id}-${item.story.updated}`).join(',');
+  const updatedTimestamps = items
+    .map((item) => `${item.story.id}-${item.story.updated}`)
+    .join(',');
   useEffect(() => {
     setImgErrorMap((prev) => {
       let changed = false;

@@ -8,9 +8,9 @@ import {
   rateStory,
   updateStoryVisibility,
 } from '../services/db';
+import type { IUser } from '../services/types';
 import type { Story } from '../types';
 import { countWords } from '../utils/wordCounter';
-import type { IUser } from '../services/types';
 
 interface UseLibraryOptions {
   currentUser: IUser | null;

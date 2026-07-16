@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchStory, type RecentlyReadItem } from '../services/db';
+import type { IUser } from '../services/types';
 import type { Story } from '../types';
 import { getStoryIdFromSegment, slugify } from '../utils/slugify';
-import type { IUser } from '../services/types';
 
 interface UseUrlRoutingOptions {
   selectedStory: Story | null;
