@@ -109,6 +109,10 @@ ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "bash -s" << E
   echo "Server deployment actions completed successfully."
 EOF
 
+# 5. Sync dynamic covers from the server back to local public/covers/ directory for git tracking
+echo "-> Syncing covers from server to local public/covers/..."
+rsync -avz -e "ssh -o StrictHostKeyChecking=accept-new" "$SERVER_USER@$SERVER_IP:$SERVER_PATH/public/covers/" "$SCRIPT_DIR/public/covers/"
+
 echo "========================================="
 echo " Deployment Finished Successfully!"
 echo "========================================="
