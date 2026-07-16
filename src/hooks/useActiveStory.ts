@@ -7,9 +7,10 @@ import {
 import type { RecentlyReadItem } from '../services/db';
 import type { Chapter, Story, VocabularyTerm } from '../types';
 import { cleanCompletedStory } from '../utils/storyCleanup';
+import type { IUser } from '../services/types';
 
 interface UseActiveStoryOptions {
-  currentUser: { uid: string; email: string | null } | null;
+  currentUser: IUser | null;
   recentlyRead: RecentlyReadItem[];
   setRecentlyRead: Dispatch<SetStateAction<RecentlyReadItem[]>>;
   libHandleSelectStory: (story: Story) => Promise<Story | null>;

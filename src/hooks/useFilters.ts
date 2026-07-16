@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Story } from '../types';
 import { filterAndSortStories, type SortBy } from '../utils/storyFilters';
+import type { IUser } from '../services/types';
 
 interface UseFiltersOptions {
   stories: Story[];
   bookshelf: string[];
   recentlyRead: { storyId: string; chapterIdx: number }[];
-  currentUser: { uid: string; email: string | null } | null;
+  currentUser: IUser | null;
 }
 
 export function useFilters(options: UseFiltersOptions) {

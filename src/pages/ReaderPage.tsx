@@ -7,9 +7,10 @@ import {
   type Story,
   type VocabularyTerm,
 } from '../types';
+import type { IUser } from '../services/types';
 
 interface ReaderPageProps {
-  currentUser: { uid: string; email: string | null } | null;
+  currentUser: IUser | null;
   selectedStory: Story;
   setSelectedStory: (story: Story | null) => void;
   activeChapterIdx: number;

@@ -40,6 +40,7 @@ interface StoryCondensedRowProps {
   onDownload?: (e: React.MouseEvent) => void;
   recentlyRead?: RecentlyReadItem[];
   key?: any;
+  className?: string;
 }
 
 export default function StoryCondensedRow({
@@ -53,6 +54,7 @@ export default function StoryCondensedRow({
   isCachedOffline = false,
   onDownload,
   recentlyRead = [],
+  className = '',
 }: StoryCondensedRowProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -114,7 +116,7 @@ export default function StoryCondensedRow({
           '0 4px 12px -2px rgba(0,0,0,0.04), 0 2px 4px -1px rgba(0,0,0,0.02)',
       }}
       transition={{ duration: 0.15, ease: 'easeOut' }}
-      className="w-full flex flex-col p-3.5 bg-tj-bg-card border border-tj-border-main hover:border-tj-text-muted/40 rounded-xl transition duration-150 select-none relative gap-1.5"
+      className={`w-full flex flex-col p-3.5 bg-tj-bg-card border border-tj-border-main hover:border-tj-text-muted/40 rounded-xl transition duration-150 select-none relative gap-1.5 ${className}`}
     >
       {/* Title Line */}
       <div className="flex items-center justify-between gap-3 w-full">

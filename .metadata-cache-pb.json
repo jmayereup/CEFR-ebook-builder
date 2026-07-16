@@ -1,6 +1,26 @@
 {
-  "lastFetchTime": 1784109193709,
+  "lastFetchTime": 1784195635420,
   "stories": [
+    {
+      "id": "sazm8upukcqbd8r",
+      "title": "Easy Targets: Why Propaganda Blames the Outsider",
+      "language": "English",
+      "cefrLevel": "B1",
+      "genre": "nonfiction",
+      "totalChapters": 5,
+      "createdAt": "2026-07-15T23:40:52.523Z",
+      "isCompleted": true,
+      "description": "Why do some groups become repeated targets of hate and blame? This book explains the psychological and social reasons behind propaganda campaigns, showing how power imbalances, lack of contact, and political distraction make out-groups easy victims. By understanding these patterns, readers can learn to recognize manipulation and help build a more fair-minded society.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2151,
+      "updated": "2026-07-16 02:57:10.564Z"
+    },
     {
       "id": "s8qzcoxku6jrjg3",
       "title": "ชีวิตที่เบาลง",
@@ -19,7 +39,7 @@
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 4467,
-      "updated": "2026-07-15 09:49:33.660Z"
+      "updated": "2026-07-15 10:42:55.450Z"
     },
     {
       "id": "spuejvujlc31371",
@@ -34,12 +54,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1695,
-      "updated": "2026-07-15 00:56:57.673Z"
+      "updated": "2026-07-15 14:15:50.845Z"
     },
     {
       "id": "s36vz9hlo592any",
@@ -419,7 +443,7 @@
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 2036,
-      "updated": "2026-06-29 02:31:58.853Z"
+      "updated": "2026-07-16 09:55:01.263Z"
     },
     {
       "id": "s3ll6n31ozoxvdi",
@@ -439,7 +463,7 @@
       "isPublic": true,
       "chaptersCount": 15,
       "wordCount": 7633,
-      "updated": "2026-06-29 02:14:59.552Z"
+      "updated": "2026-07-16 09:56:16.818Z"
     },
     {
       "id": "s7i3p58ou01ekmk",

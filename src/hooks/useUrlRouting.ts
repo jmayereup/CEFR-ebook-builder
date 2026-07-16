@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchStory, type RecentlyReadItem } from '../services/db';
 import type { Story } from '../types';
 import { getStoryIdFromSegment, slugify } from '../utils/slugify';
+import type { IUser } from '../services/types';
 
 interface UseUrlRoutingOptions {
   selectedStory: Story | null;
@@ -15,7 +16,7 @@ interface UseUrlRoutingOptions {
   storiesLoading: boolean;
   isOnline: boolean;
   cachedStoryIds: string[];
-  currentUser: { uid: string; email: string | null } | null;
+  currentUser: IUser | null;
   recentlyRead: RecentlyReadItem[];
   showAlert: (
     title: string,

@@ -20,6 +20,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useUIStore } from '../store/uiStore';
 import type { Chapter, Story } from '../types';
+import type { IUser } from '../services/types';
 import {
   calculateChapterCreditCost,
   calculateInitialCreditEstimate,
@@ -65,7 +66,7 @@ export interface StoryConfig {
 
 export interface GenerationOptions {
   /** Authenticated user (or null). */
-  currentUser: { uid: string; email?: string | null } | null;
+  currentUser: IUser | null;
   isPaid: boolean;
   customOpenRouterKey: string;
   freeModelCount: number;

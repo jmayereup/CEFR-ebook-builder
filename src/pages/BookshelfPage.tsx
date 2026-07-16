@@ -5,12 +5,13 @@ import StreakDashboardCard from '../components/library/StreakDashboardCard';
 import type { GenerationLimitData } from '../services/db';
 import type { RecentlyReadItem, Story, UserStreakData } from '../types';
 import type { SortBy } from '../utils/storyFilters';
+import type { IUser } from '../services/types';
 
 interface BookshelfPageProps {
   streakData: UserStreakData | null;
   isPaid: boolean;
   generationLimitData: GenerationLimitData;
-  currentUser: { uid: string; email: string | null } | null;
+  currentUser: IUser | null;
   handleSelectStory: (story: Story) => void;
   onDownloadStory?: (story: Story) => void;
   cachedStoryIds: string[];

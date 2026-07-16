@@ -1,6 +1,7 @@
 import { WifiOff } from 'lucide-react';
 import StoryConfigForm from '../components/StoryConfigForm';
 import type { GenerationLimitData } from '../services/db';
+import type { IUser } from '../services/types';
 
 interface CreateStoryConfig {
   language: string;
@@ -25,7 +26,7 @@ interface CreatePageProps {
   isOnline: boolean;
   handleInitiateStory: (config: CreateStoryConfig) => void;
   isGenerating: boolean;
-  currentUser: { uid: string; email: string | null } | null;
+  currentUser: IUser | null;
   isPaid: boolean;
   generationLimitData: GenerationLimitData;
   onLogin?: () => void;

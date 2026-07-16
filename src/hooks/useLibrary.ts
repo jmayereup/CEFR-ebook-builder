@@ -10,9 +10,10 @@ import {
 } from '../services/db';
 import type { Story } from '../types';
 import { countWords } from '../utils/wordCounter';
+import type { IUser } from '../services/types';
 
 interface UseLibraryOptions {
-  currentUser: { uid: string; email: string | null } | null;
+  currentUser: IUser | null;
   isPaid: boolean;
   isOnline: boolean;
   cachedStoryIds: string[];

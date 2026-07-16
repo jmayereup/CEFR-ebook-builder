@@ -199,3 +199,15 @@
     padding: 0;
   }
 }
+
+/* Defer rendering of off-screen stories (optimized for infinite scroll) */
+@utility story-card-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 476px; /* Estimated height of StoryCard */
+}
+
+@utility story-row-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 88px; /* Estimated height of StoryCondensedRow */
+}
+

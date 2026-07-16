@@ -1,13 +1,13 @@
 import {
-  ChevronLeft,
-  ChevronRight,
+  ChevronUp,
   HelpCircle,
   LayoutGrid,
   List,
   SlidersHorizontal,
 } from 'lucide-react';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useAuthStore } from '../../store/authStore';
 import type { RecentlyReadItem, Story } from '../../types';
 import type { SortBy } from '../../utils/storyFilters';
@@ -129,60 +129,51 @@ export default function LibraryGrid({
   };
 
   const itemsPerPageVal = viewMode === 'condensed' ? 15 : itemsPerPage;
-  const totalPages = Math.ceil(filteredStories.length / itemsPerPageVal);
-  const startIndex = (currentPage - 1) * itemsPerPageVal;
-  const paginatedStories = filteredStories.slice(
-    startIndex,
-    startIndex + itemsPerPageVal,
-  );
+  const paginatedStories = filteredStories.slice(0, currentPage * itemsPerPageVal);
+  const hasMore = currentPage * itemsPerPageVal < filteredStories.length;
 
-  // Helper to generate page numbers with ellipses
-  const getPageNumbers = () => {
-    const delta = 1;
-    const range: number[] = [];
-    const rangeWithDots: {
-      type: 'page' | 'dots';
-      value: number | string;
-      key: string;
-    }[] = [];
-    let l: number | undefined;
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const topSentinelRef = useRef<HTMLDivElement | null>(null);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-    for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - delta && i <= currentPage + delta)
-      ) {
-        range.push(i);
-      }
-    }
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel || !hasMore) return;
 
-    for (const i of range) {
-      if (l !== undefined) {
-        if (i - l === 2) {
-          rangeWithDots.push({
-            type: 'page',
-            value: l + 1,
-            key: `page-${l + 1}`,
-          });
-        } else if (i - l > 2) {
-          rangeWithDots.push({
-            type: 'dots',
-            value: '...',
-            key: `dots-${l}-${i}`,
-          });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && !isLoadingMore) {
+          setIsLoadingMore(true);
+          setTimeout(() => {
+            setCurrentPage((prev) => prev + 1);
+            setIsLoadingMore(false);
+          }, 250);
         }
-      }
-      rangeWithDots.push({
-        type: 'page',
-        value: i,
-        key: `page-${i}`,
-      });
-      l = i;
-    }
+      },
+      { rootMargin: '200px' }
+    );
 
-    return rangeWithDots;
-  };
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore, isLoadingMore]);
+
+  useEffect(() => {
+    const topSentinel = topSentinelRef.current;
+    if (!topSentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        setShowBackToTop(!first.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(topSentinel);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -321,135 +312,121 @@ export default function LibraryGrid({
               </button>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-6 relative">
+              <div ref={topSentinelRef} className="h-0 w-0 pointer-events-none absolute top-0" />
+
               {viewMode === 'condensed' ? (
                 <div className="flex flex-col gap-2">
-                  {paginatedStories.map((story) => (
-                    <StoryCondensedRow
+                  {paginatedStories.map((story, index) => (
+                    <motion.div
                       key={story.id}
-                      story={story}
-                      currentUser={currentUser}
-                      onSelect={() => onSelectStory(story)}
-                      onDelete={onDeleteStory}
-                      isSaved={bookshelf.includes(story.id)}
-                      onToggleSaved={onToggleSaved}
-                      isCachedOffline={cachedStoryIds.includes(story.id)}
-                      onDownload={
-                        onDownloadStory
-                          ? (e) => {
-                              e.stopPropagation();
-                              onDownloadStory(story);
-                            }
-                          : undefined
-                      }
-                      recentlyRead={recentlyRead}
-                    />
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2, delay: Math.min((index % itemsPerPageVal) * 0.03, 0.3) }}
+                    >
+                      <StoryCondensedRow
+                        story={story}
+                        currentUser={currentUser}
+                        onSelect={() => onSelectStory(story)}
+                        onDelete={onDeleteStory}
+                        isSaved={bookshelf.includes(story.id)}
+                        onToggleSaved={onToggleSaved}
+                        isCachedOffline={cachedStoryIds.includes(story.id)}
+                        onDownload={
+                          onDownloadStory
+                            ? (e) => {
+                                e.stopPropagation();
+                                onDownloadStory(story);
+                              }
+                            : undefined
+                        }
+                        recentlyRead={recentlyRead}
+                        className={index >= 12 ? 'story-row-deferred' : ''}
+                      />
+                    </motion.div>
                   ))}
                 </div>
               ) : (
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-x-6 gap-y-8 justify-items-center">
-                  {paginatedStories.map((story) => (
-                    <StoryCard
+                  {paginatedStories.map((story, index) => (
+                    <motion.div
                       key={story.id}
-                      story={story}
-                      currentUser={currentUser}
-                      onSelect={() => onSelectStory(story)}
-                      onDelete={onDeleteStory}
-                      isSaved={bookshelf.includes(story.id)}
-                      onToggleSaved={onToggleSaved}
-                      isCachedOffline={cachedStoryIds.includes(story.id)}
-                      onDownload={
-                        onDownloadStory
-                          ? (e) => {
-                              e.stopPropagation();
-                              onDownloadStory(story);
-                            }
-                          : undefined
-                      }
-                      recentlyRead={recentlyRead}
-                    />
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25, delay: Math.min((index % itemsPerPageVal) * 0.04, 0.4) }}
+                      className="w-full flex justify-center"
+                    >
+                      <StoryCard
+                        story={story}
+                        currentUser={currentUser}
+                        onSelect={() => onSelectStory(story)}
+                        onDelete={onDeleteStory}
+                        isSaved={bookshelf.includes(story.id)}
+                        onToggleSaved={onToggleSaved}
+                        isCachedOffline={cachedStoryIds.includes(story.id)}
+                        onDownload={
+                          onDownloadStory
+                            ? (e) => {
+                                e.stopPropagation();
+                                onDownloadStory(story);
+                              }
+                            : undefined
+                        }
+                        recentlyRead={recentlyRead}
+                        className={index >= 12 ? 'story-card-deferred' : ''}
+                      />
+                    </motion.div>
                   ))}
                 </div>
               )}
 
-              {totalPages > 1 && (
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-tj-border-main">
-                  <span className="text-xs text-tj-text-muted">
-                    Showing{' '}
-                    <strong className="font-semibold text-tj-text-main">
-                      {startIndex + 1}
-                    </strong>{' '}
-                    to{' '}
-                    <strong className="font-semibold text-tj-text-main">
-                      {Math.min(
-                        startIndex + itemsPerPageVal,
-                        filteredStories.length,
-                      )}
-                    </strong>{' '}
-                    of{' '}
-                    <strong className="font-semibold text-tj-text-main">
-                      {filteredStories.length}
-                    </strong>{' '}
-                    stories
-                  </span>
+              {/* Scroll Sentinel for Infinite Loading */}
+              <div ref={sentinelRef} className="h-4 w-full pointer-events-none" />
 
-                  <div className="flex items-center gap-1.5">
-                    {/* Previous Page */}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(prev - 1, 1))
-                      }
-                      disabled={currentPage === 1}
-                      className="p-2 rounded border border-tj-border-main hover:border-tj-text-muted bg-tj-bg-card text-tj-text-muted disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
-                      title="Previous Page"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
+              {/* Progress & Loading State Indicators */}
+              <div className="flex flex-col items-center justify-center gap-3 pt-8 border-t border-tj-border-main text-xs text-tj-text-muted">
+                <span>
+                  Showing{' '}
+                  <strong className="font-semibold text-tj-text-main">
+                    {Math.min(currentPage * itemsPerPageVal, filteredStories.length)}
+                  </strong>{' '}
+                  of{' '}
+                  <strong className="font-semibold text-tj-text-main">
+                    {filteredStories.length}
+                  </strong>{' '}
+                  stories
+                </span>
 
-                    {/* Page Numbers */}
-                    {getPageNumbers().map((item) => {
-                      if (item.type === 'dots') {
-                        return (
-                          <span
-                            key={item.key}
-                            className="min-w-[34px] h-[34px] flex items-center justify-center text-xs font-semibold text-tj-text-muted select-none"
-                          >
-                            {item.value}
-                          </span>
-                        );
-                      }
-                      return (
-                        <button
-                          type="button"
-                          key={item.key}
-                          onClick={() => setCurrentPage(item.value as number)}
-                          className={`min-w-[34px] h-[34px] flex items-center justify-center text-xs font-semibold rounded transition cursor-pointer ${
-                            currentPage === item.value
-                              ? 'bg-tj-primary text-tj-bg-main border border-tj-primary shadow-none font-bold'
-                              : 'border border-tj-border-main hover:border-tj-text-muted bg-tj-bg-card text-tj-text-muted'
-                          }`}
-                        >
-                          {item.value}
-                        </button>
-                      );
-                    })}
-
-                    {/* Next Page */}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                      }
-                      disabled={currentPage === totalPages}
-                      className="p-2 rounded border border-tj-border-main hover:border-tj-text-muted bg-tj-bg-card text-tj-text-muted disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
-                      title="Next Page"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                {isLoadingMore && (
+                  <div className="flex items-center gap-2 text-tj-primary py-2 font-medium">
+                    <span className="w-1.5 h-1.5 bg-tj-primary rounded-full animate-ping" />
+                    <span>Loading more…</span>
                   </div>
-                </div>
-              )}
+                )}
+
+                {!hasMore && filteredStories.length > 0 && (
+                  <span className="text-tj-text-muted/60 mt-1">
+                    You've reached the end of the archives.
+                  </span>
+                )}
+              </div>
+
+              {/* Back to Top Floating Action Button */}
+              <AnimatePresence>
+                {showBackToTop && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    className="fixed bottom-6 right-6 p-3 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main rounded-xl shadow-lg cursor-pointer transition-all duration-200 z-40 border border-tj-primary-border flex items-center justify-center"
+                    aria-label="Back to top"
+                    title="Back to top"
+                  >
+                    <ChevronUp className="w-5 h-5" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
           )}
         </>
