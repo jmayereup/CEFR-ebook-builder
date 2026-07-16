@@ -64,8 +64,9 @@ router.post('/generate', async (req, res) => {
 
     const prompt = `A professional, clean, minimalist flat vector book cover design.
 Title text: The image for the book cover must clearly feature the title "${story.title}" written in a clean, legible, and elegant font at the top or center, spelled correctly.
+Author text: The image must clearly feature the author name "CEFR Stories" written in a smaller, clean, legible, and elegant font near the bottom, spelled correctly.
 Visual style: A cozy, warm, and inviting soft vector illustration (lofi study vibe, pastel colors, clean lines, gentle shading). Flat 2D graphic from edge to edge.
-Subject: A simple, serene scene symbolizing the theme of the book (${story.description || story.genre}). Depict this through a single character or a simple symbolic object (e.g. a person reading, walking in nature, or sitting by a window), rather than a literal diagram or depiction of abstract concepts. The image must be a flat 2D graphic with no physical borders.`;
+Subject: A simple, serene scene symbolizing the theme of the book (${story.description || story.genre}). Depict this through a single character or a simple symbolic object (e.g. a person reading, walking in nature, or sitting by a window), rather than a literal diagram or depiction of abstract concepts. The image must be a flat 2D graphic with no physical borders. Do not include any other text, random letters, or other author names.`;
 
     const requestBody: any = {
       model: modelId,
