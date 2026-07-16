@@ -48,7 +48,7 @@ export default function AppNav({
   }, []);
 
   const showVocabBuilder = true;
-  const showAdmin = currentUser?.email === 'jmayereup@gmail.com';
+  const showAdmin = currentUser?.isAdmin === true;
 
   return (
     <nav className="bg-tj-bg-main dark:bg-[#121310] border-b border-tj-border-main py-2 sm:py-3 px-4">

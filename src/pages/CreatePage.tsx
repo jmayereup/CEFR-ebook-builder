@@ -63,7 +63,7 @@ export default function CreatePage({
         <StoryConfigForm
           onSubmit={handleInitiateStory}
           isLoading={isGenerating}
-          isAdmin={currentUser?.email === 'jmayereup@gmail.com'}
+          isAdmin={currentUser?.isAdmin === true}
           isPaid={isPaid}
           freeModelCount={generationLimitData.freeModelCount ?? 0}
           monthlyCreditsUsed={generationLimitData.monthlyCreditsUsed ?? 0}

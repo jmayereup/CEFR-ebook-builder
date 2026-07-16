@@ -2,8 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { config } from 'dotenv';
 import { resolve } from 'path';
-import PocketBase from 'pocketbase';
+import PocketBaseClass from 'pocketbase';
 import sharp from 'sharp';
+
+const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
 // Load environment variables from .env files
 config({ path: resolve(process.cwd(), '.env') });
@@ -58,8 +60,12 @@ async function main() {
 
     console.log(`Connecting to PocketBase at: ${url}`);
     console.log(`Authenticating as: ${adminEmail}`);
-    await pb.admins.authWithPassword(adminEmail, adminPassword);
-    console.log('Successfully authenticated as Admin.');
+    if (typeof (pb as any).admins !== 'undefined') {
+      await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
+    } else {
+      await pb.collection('_superusers').authWithPassword(adminEmail, adminPassword);
+    }
+    console.log('Successfully authenticated as Admin/Superuser.');
 
     console.log('Fetching completed stories...');
     const stories = await pb.collection('stories').getFullList({
@@ -87,9 +93,28 @@ async function main() {
 
       if (fs.existsSync(coverPath) && !isForce) {
         console.log(
-          `[SKIP] "${story.title}" (ID: ${story.id}) - Cover already exists.`,
+          `[SKIP] "${story.title}" (ID: ${story.id}) - Cover already exists locally.`,
         );
         continue;
+      }
+
+      // Check if cover already exists on the remote server
+      if (!isForce) {
+        const appUrl = (process.env.APP_URL || url).replace(/\/$/, '');
+        const remoteCoverUrl = `${appUrl}/covers/${story.id}.webp`;
+        try {
+          const checkRes = await fetch(remoteCoverUrl, { method: 'HEAD' });
+          if (checkRes.ok) {
+            console.log(
+              `[SKIP] "${story.title}" (ID: ${story.id}) - Cover already exists on server (${remoteCoverUrl}).`,
+            );
+            continue;
+          }
+        } catch (err: any) {
+          console.log(
+            `[Warning] Failed to verify remote cover at ${remoteCoverUrl}: ${err.message}`,
+          );
+        }
       }
 
       console.log(`\n--------------------------------------------------`);
@@ -105,7 +130,7 @@ async function main() {
       const prompt = `A professional, clean, minimalist flat vector book cover design.
 Title text: The image for the book cover must clearly feature the title "${story.title}" written in a clean, legible, and elegant font at the top or center, spelled correctly.
 Visual style: A cozy, warm, and inviting soft vector illustration (lofi study vibe, pastel colors, clean lines, gentle shading). Flat 2D graphic from edge to edge.
-Subject: A simple, serene scene symbolizing the theme of the book (${story.description || story.genre}). Depict this through a single character or a simple symbolic object (e.g. a person reading, walking in nature, or sitting by a window), rather than a literal diagram or depiction of abstract concepts. The image must be a flat 2D graphic with no physical bordersps.`;
+Subject: A simple, serene scene symbolizing the theme of the book (${story.description || story.genre}). Depict this through a single character or a simple symbolic object (e.g. a person reading, walking in nature, or sitting by a window), rather than a literal diagram or depiction of abstract concepts. The image must be a flat 2D graphic with no physical borders Never add an author name.`;
 
       console.log(`Prompt: "${prompt}"`);
       console.log(`Model: ${modelId}`);

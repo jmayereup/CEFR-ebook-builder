@@ -163,12 +163,12 @@ export default function AppHeader({
                       <p className="text-xs font-bold text-tj-text-main truncate">
                         {currentUser.displayName || 'Learner'}
                       </p>
-                      {currentUser.email === 'jmayereup@gmail.com' && (
+                      {currentUser.isAdmin === true && (
                         <Crown className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
                       )}
                     </div>
                     <p className="text-[10px] text-tj-text-muted font-mono leading-tight mt-0.5">
-                      {currentUser.email === 'jmayereup@gmail.com'
+                      {currentUser.isAdmin === true
                         ? 'Super Admin'
                         : isPaid
                           ? 'Paid Tier'

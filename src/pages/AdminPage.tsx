@@ -6,7 +6,7 @@ const AdminUsersDashboard = lazy(
 );
 
 interface AdminPageProps {
-  currentAdminEmail: string | null;
+  isAdmin: boolean;
   showAlert: (
     title: string,
     message: string,
@@ -16,7 +16,7 @@ interface AdminPageProps {
 }
 
 export default function AdminPage({
-  currentAdminEmail,
+  isAdmin,
   showAlert,
   onRefreshCache,
 }: AdminPageProps) {
@@ -30,7 +30,7 @@ export default function AdminPage({
       }
     >
       <AdminUsersDashboard
-        currentAdminEmail={currentAdminEmail}
+        isAdmin={isAdmin}
         onShowAlert={showAlert}
         onRefreshCache={onRefreshCache}
       />

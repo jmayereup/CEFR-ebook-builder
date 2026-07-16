@@ -183,7 +183,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         if (directStory) {
           const isOwner =
             currentUser && directStory.creatorId === currentUser.uid;
-          const isAdmin = currentUser?.email === 'jmayereup@gmail.com';
+          const isAdmin = currentUser?.isAdmin === true;
           const isAllowed =
             directStory.isPublic !== false || isOwner || isAdmin;
 

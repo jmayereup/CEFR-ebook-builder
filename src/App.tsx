@@ -1135,7 +1135,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
               />
             </motion.div>
           ) : activeTab === 'admin' &&
-            currentUser?.email === 'jmayereup@gmail.com' ? (
+            currentUser?.isAdmin === true ? (
             <motion.div
               key="admin"
               initial={{ opacity: 0 }}
@@ -1143,7 +1143,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
               exit={{ opacity: 0 }}
             >
               <AdminPage
-                currentAdminEmail={currentUser.email}
+                isAdmin={currentUser?.isAdmin === true}
                 showAlert={showAlert}
                 onRefreshCache={() =>
                   loadStoriesMetadata({ refresh: true, forceAll: true })

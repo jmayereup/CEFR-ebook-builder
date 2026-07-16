@@ -69,7 +69,7 @@ export function useFilters(options: UseFiltersOptions) {
         story.isPublic !== false ||
         (currentUser &&
           (story.creatorId === currentUser.uid ||
-            currentUser.email === 'jmayereup@gmail.com'))
+            currentUser.isAdmin === true))
       );
     });
   }, [stories, currentUser]);
@@ -108,7 +108,7 @@ export function useFilters(options: UseFiltersOptions) {
       const canRead =
         story.isPublic !== false ||
         isOwner ||
-        currentUser?.email === 'jmayereup@gmail.com';
+        currentUser?.isAdmin === true;
       return (isOwner || isSaved) && canRead;
     });
   }, [stories, bookshelf, currentUser]);

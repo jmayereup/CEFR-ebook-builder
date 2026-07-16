@@ -1,8 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Router } from 'express';
-import PocketBase from 'pocketbase';
+import PocketBaseClass from 'pocketbase';
 import sharp from 'sharp';
+
+const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
 const router = Router();
 
@@ -46,7 +48,11 @@ router.post('/generate', async (req, res) => {
     }
 
     const pb = new PocketBase(pbUrl);
-    await pb.admins.authWithPassword(adminEmail, adminPassword);
+    if (typeof (pb as any).admins !== 'undefined') {
+      await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
+    } else {
+      await pb.collection('_superusers').authWithPassword(adminEmail, adminPassword);
+    }
 
     // Fetch completed story
     const story = await pb.collection('stories').getOne(storyId);

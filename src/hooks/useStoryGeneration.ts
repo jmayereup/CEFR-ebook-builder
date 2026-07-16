@@ -210,7 +210,7 @@ export const useStoryGeneration = (
       return;
     }
 
-    const isAdmin = currentUser?.email === 'jmayereup@gmail.com';
+    const isAdmin = currentUser?.isAdmin === true;
     if (!isPaid && !isAdmin && config.totalChapters > 10) {
       showAlert(
         'Chapter Limit Reached',
@@ -476,7 +476,7 @@ export const useStoryGeneration = (
       return;
     }
 
-    const isAdmin = currentUser?.email === 'jmayereup@gmail.com';
+    const isAdmin = currentUser?.isAdmin === true;
     const currentChapters = selectedStory.chapters?.length ?? 0;
     const nextChapterNumber = currentChapters + 1;
 
@@ -652,7 +652,7 @@ export const useStoryGeneration = (
       return;
     }
 
-    const isAdmin = currentUser?.email === 'jmayereup@gmail.com';
+    const isAdmin = currentUser?.isAdmin === true;
     const chapterNumber = chapterIndex + 1;
     const regenerationsCount = selectedStory.regenerationsCount ?? 0;
 
@@ -817,7 +817,7 @@ export const useStoryGeneration = (
     const remainingChapters =
       selectedStory.totalChapters - (selectedStory.chapters?.length ?? 0);
     const currentChapters = selectedStory.chapters?.length ?? 0;
-    const isAdmin = currentUser?.email === 'jmayereup@gmail.com';
+    const isAdmin = currentUser?.isAdmin === true;
 
     if (!isPaid && !isAdmin && selectedStory.totalChapters > 10) {
       showAlert(

@@ -8,6 +8,7 @@ function toIUser(record: any): IUser {
     email: record.email || null,
     displayName: record.name || null,
     photoURL: record.photoUrl || record.photoURL || null,
+    isAdmin: record.isAdmin === true,
   };
 }
 

@@ -22,12 +22,13 @@ interface DashboardUser {
   photoURL: string;
   canGenerate: boolean;
   isPaid?: boolean;
+  isAdmin?: boolean;
   createdAt?: any;
   updatedAt?: any;
 }
 
 interface AdminUsersDashboardProps {
-  currentAdminEmail: string;
+  isAdmin: boolean;
   onShowAlert?: (
     title: string,
     message: string,
@@ -37,7 +38,7 @@ interface AdminUsersDashboardProps {
 }
 
 export default function AdminUsersDashboard({
-  currentAdminEmail,
+  isAdmin,
   onShowAlert,
   onRefreshCache,
 }: AdminUsersDashboardProps) {
@@ -58,7 +59,7 @@ export default function AdminUsersDashboard({
   const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
 
   const fetchLogs = useCallback(async () => {
-    if (!currentAdminEmail || currentAdminEmail !== 'jmayereup@gmail.com') {
+    if (!isAdmin) {
       return;
     }
     setLoadingLogs(true);
@@ -71,12 +72,12 @@ export default function AdminUsersDashboard({
     } catch (err: any) {
       console.error('Failed to load generation logs:', err);
       setLogsError(
-        'Failed to load error logs. Ensure you are signed in as jmayereup@gmail.com.',
+        'Failed to load error logs. Ensure you are signed in as an admin.',
       );
     } finally {
       setLoadingLogs(false);
     }
-  }, [currentAdminEmail]);
+  }, [isAdmin]);
 
   const handleResetCache = async () => {
     if (
@@ -166,10 +167,10 @@ export default function AdminUsersDashboard({
   };
 
   useEffect(() => {
-    if (!currentAdminEmail || currentAdminEmail !== 'jmayereup@gmail.com') {
+    if (!isAdmin) {
       setLoading(false);
       setErrorMsg(
-        'Permission denied or failed to load users. Ensure you are signed in as jmayereup@gmail.com.',
+        'Permission denied or failed to load users. Ensure you are signed in as an admin.',
       );
       return;
     }
@@ -188,17 +189,16 @@ export default function AdminUsersDashboard({
           displayName: r.name || '',
           photoURL: r.photoUrl || '',
           isPaid: r.isPaid === true,
+          isAdmin: r.isAdmin === true,
           canGenerate: r.canGenerate !== false,
           createdAt: r.created,
           updatedAt: r.updated,
         }));
         // Sort users: admins first, then by email
         usersList.sort((a, b) => {
-          const emailA = a.email || '';
-          const emailB = b.email || '';
-          if (emailA === 'jmayereup@gmail.com') return -1;
-          if (emailB === 'jmayereup@gmail.com') return 1;
-          return emailA.localeCompare(emailB);
+          if (a.isAdmin && !b.isAdmin) return -1;
+          if (!a.isAdmin && b.isAdmin) return 1;
+          return (a.email || '').localeCompare(b.email || '');
         });
         setUsers(usersList);
         setLoading(false);
@@ -221,10 +221,10 @@ export default function AdminUsersDashboard({
     return () => {
       pb.collection('users').unsubscribe('*');
     };
-  }, [currentAdminEmail]);
+  }, [isAdmin]);
 
   const handleTogglePaidStatus = async (targetUser: DashboardUser) => {
-    if (targetUser.email === 'jmayereup@gmail.com') return;
+    if (targetUser.isAdmin) return;
 
     setUpdatingId(targetUser.userId);
     try {
@@ -368,7 +368,7 @@ export default function AdminUsersDashboard({
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredUsers.map((user) => {
-                    const isAdminUser = user.email === 'jmayereup@gmail.com';
+                    const isAdminUser = user.isAdmin === true;
                     const isUpdating = updatingId === user.userId;
 
                     return (

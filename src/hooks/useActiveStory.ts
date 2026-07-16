@@ -235,7 +235,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     if (!selectedStory) return;
     try {
       const nextChapterNumber = selectedStory.chapters.length + 1;
-      const isAdmin = currentUser?.email === 'jmayereup@gmail.com';
+      const isAdmin = currentUser?.isAdmin === true;
       if (!isPaid && !isAdmin && nextChapterNumber > 10) {
         showAlert(
           'Chapter Limit Reached',

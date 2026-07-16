@@ -160,7 +160,7 @@ export default function ReaderPage({
               {/* Public/Private visibility badge toggle */}
               {currentUser &&
                 (selectedStory.creatorId === currentUser.uid ||
-                  currentUser.email === 'jmayereup@gmail.com') && (
+                  currentUser.isAdmin === true) && (
                   <button
                     type="button"
                     onClick={() => handleToggleStoryPrivacy(selectedStory.id)}
@@ -285,7 +285,7 @@ export default function ReaderPage({
         onSaveWord={handleSaveWord}
         onRemoveWord={onRemoveWord}
         isPaid={isPaid}
-        isAdmin={currentUser?.email === 'jmayereup@gmail.com'}
+        isAdmin={currentUser?.isAdmin === true}
         onOpenSettings={onOpenSettings}
         onShowAlert={showAlert}
         generationStatus={generationStatus}

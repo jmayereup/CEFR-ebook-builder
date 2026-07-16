@@ -233,7 +233,7 @@ export function useLibrary(options: UseLibraryOptions) {
     if (!story) return null;
 
     const isCreator = currentUser && story.creatorId === currentUser.uid;
-    const isAdmin = currentUser?.email === 'jmayereup@gmail.com';
+    const isAdmin = currentUser?.isAdmin === true;
 
     if (!isAdmin && !isCreator) {
       showAlert(

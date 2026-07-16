@@ -392,7 +392,7 @@ export default function ChapterSidebar({
                   let isModelRestricted = false;
                   let restrictionLabel = '';
 
-                  const isAdmin = currentUser?.email === 'jmayereup@gmail.com';
+                  const isAdmin = currentUser?.isAdmin === true;
                   if (!isAdmin && !isPaid && !isFreeModelLocal(model.id)) {
                     isModelRestricted = true;
                     restrictionLabel = ' 🔒 (Paid Tier Required)';
@@ -504,7 +504,7 @@ export default function ChapterSidebar({
             {story.cefrLevel !== 'A1' &&
               story.cefrLevel !== 'Pre-A1' &&
               onGenerateGlossary &&
-              (isCreator || currentUser?.email === 'jmayereup@gmail.com') && (
+              (isCreator || currentUser?.isAdmin === true) && (
                 <>
                   {hasChaptersLackingVocabulary && (
                     <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
@@ -584,7 +584,7 @@ export default function ChapterSidebar({
                   )}
 
                   {isEditing &&
-                    currentUser?.email === 'jmayereup@gmail.com' &&
+                    currentUser?.isAdmin === true &&
                     onGenerateCover && (
                       <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
                         <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
