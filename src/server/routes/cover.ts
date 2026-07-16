@@ -51,7 +51,9 @@ router.post('/generate', async (req, res) => {
     if (typeof (pb as any).admins !== 'undefined') {
       await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
     } else {
-      await pb.collection('_superusers').authWithPassword(adminEmail, adminPassword);
+      await pb
+        .collection('_superusers')
+        .authWithPassword(adminEmail, adminPassword);
     }
 
     // Fetch completed story

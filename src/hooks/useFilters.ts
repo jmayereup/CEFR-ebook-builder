@@ -68,8 +68,7 @@ export function useFilters(options: UseFiltersOptions) {
       return (
         story.isPublic !== false ||
         (currentUser &&
-          (story.creatorId === currentUser.uid ||
-            currentUser.isAdmin === true))
+          (story.creatorId === currentUser.uid || currentUser.isAdmin === true))
       );
     });
   }, [stories, currentUser]);
@@ -106,9 +105,7 @@ export function useFilters(options: UseFiltersOptions) {
       const isOwner = currentUser && story.creatorId === currentUser.uid;
       const isSaved = bookshelf.includes(story.id);
       const canRead =
-        story.isPublic !== false ||
-        isOwner ||
-        currentUser?.isAdmin === true;
+        story.isPublic !== false || isOwner || currentUser?.isAdmin === true;
       return (isOwner || isSaved) && canRead;
     });
   }, [stories, bookshelf, currentUser]);

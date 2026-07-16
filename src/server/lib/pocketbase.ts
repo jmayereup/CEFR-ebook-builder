@@ -23,10 +23,14 @@ async function ensureAdminAuth() {
       if (typeof (pb as any).admins !== 'undefined') {
         await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
       } else {
-        await pb.collection('_superusers').authWithPassword(adminEmail, adminPassword);
+        await pb
+          .collection('_superusers')
+          .authWithPassword(adminEmail, adminPassword);
       }
       isAdminAuthenticated = true;
-      console.log('[Server PocketBase] Authenticated successfully as Admin/Superuser.');
+      console.log(
+        '[Server PocketBase] Authenticated successfully as Admin/Superuser.',
+      );
     } catch (err) {
       console.error(
         '[Server PocketBase] Failed to authenticate as Admin:',

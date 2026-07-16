@@ -122,6 +122,9 @@ export async function callOpenRouter(options: {
     model: options.model,
     messages,
     temperature: options.temperature ?? 0.8,
+    provider: {
+      sort: 'price',
+    },
   };
 
   // Configure provider routing preferences for open-weights models to ensure cost-efficiency,

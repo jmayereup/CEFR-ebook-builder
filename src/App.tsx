@@ -1134,8 +1134,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 onUpdateWordSRS={handleUpdateWordSRS}
               />
             </motion.div>
-          ) : activeTab === 'admin' &&
-            currentUser?.isAdmin === true ? (
+          ) : activeTab === 'admin' && currentUser?.isAdmin === true ? (
             <motion.div
               key="admin"
               initial={{ opacity: 0 }}

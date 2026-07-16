@@ -2,8 +2,8 @@ import './src/server/lib/loadEnv';
 import fs from 'node:fs';
 import path from 'node:path';
 import express from 'express';
-import sharp from 'sharp';
 import { rateLimit } from 'express-rate-limit';
+import sharp from 'sharp';
 import { createServer as createViteServer } from 'vite';
 import {
   fetchStoryServer,
@@ -134,8 +134,18 @@ async function bootstrap() {
   // Serve dynamic public covers directly from public directory (works in both dev & prod)
   app.get('/covers/:storyId.jpg', async (req, res, next) => {
     const { storyId } = req.params;
-    const jpgPath = path.join(process.cwd(), 'public', 'covers', `${storyId}.jpg`);
-    const webpPath = path.join(process.cwd(), 'public', 'covers', `${storyId}.webp`);
+    const jpgPath = path.join(
+      process.cwd(),
+      'public',
+      'covers',
+      `${storyId}.jpg`,
+    );
+    const webpPath = path.join(
+      process.cwd(),
+      'public',
+      'covers',
+      `${storyId}.webp`,
+    );
 
     if (fs.existsSync(jpgPath)) {
       return next();
@@ -143,12 +153,13 @@ async function bootstrap() {
 
     if (fs.existsSync(webpPath)) {
       try {
-        await sharp(webpPath)
-          .jpeg({ quality: 85 })
-          .toFile(jpgPath);
+        await sharp(webpPath).jpeg({ quality: 85 }).toFile(jpgPath);
         return next();
       } catch (err) {
-        console.error(`[Server API] Failed to convert ${storyId}.webp to JPEG on-the-fly:`, err);
+        console.error(
+          `[Server API] Failed to convert ${storyId}.webp to JPEG on-the-fly:`,
+          err,
+        );
       }
     }
     next();
