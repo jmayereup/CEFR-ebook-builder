@@ -3,6 +3,7 @@ import { fetchStory, type RecentlyReadItem } from '../services/db';
 import type { IUser } from '../services/types';
 import type { Story } from '../types';
 import { getStoryIdFromSegment, slugify } from '../utils/slugify';
+import type { SortBy } from '../utils/storyFilters';
 
 interface UseUrlRoutingOptions {
   selectedStory: Story | null;
@@ -23,6 +24,14 @@ interface UseUrlRoutingOptions {
     message: string,
     type?: 'info' | 'error' | 'warning',
   ) => void;
+  searchQuery?: string;
+  setSearchQuery?: (query: string) => void;
+  filterLanguage?: string[];
+  setFilterLanguage?: (lang: string[]) => void;
+  filterCefrLevel?: string[];
+  setFilterCefrLevel?: (level: string[]) => void;
+  sortBy?: SortBy;
+  setSortBy?: (sort: SortBy) => void;
 }
 
 export function useUrlRouting(options: UseUrlRoutingOptions) {
@@ -39,12 +48,22 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     currentUser,
     recentlyRead,
     showAlert,
+    searchQuery,
+    setSearchQuery,
+    filterLanguage,
+    setFilterLanguage,
+    filterCefrLevel,
+    setFilterCefrLevel,
+    sortBy,
+    setSortBy,
   } = options;
 
   const [pendingNavigation, setPendingNavigation] = useState<{
     storyId: string;
     chapterNum: number | null;
   } | null>(null);
+
+  const isFirstRender = useRef(true);
 
   // Helper to parse current URL and update states accordingly
   const handleUrlRouting = useCallback(() => {
@@ -53,6 +72,38 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     const bookChapterMatch = path.match(/^\/book\/([^/]+)\/chapter\/(\d+)/);
     const bookMatch = path.match(/^\/book\/([^/]+)/);
     const tabMatch = path.match(/^\/(browse|bookshelf|create|practice|admin)/);
+
+    // Sync search/filters from URL query parameters
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const urlCefr = searchParams.get('cefr')
+        ? searchParams.get('cefr')?.split(',')
+        : [];
+      const urlLang = searchParams.get('lang')
+        ? searchParams.get('lang')?.split(',')
+        : [];
+      const urlQ = searchParams.get('q') || '';
+      const urlSort = (searchParams.get('sort') || 'newest') as SortBy;
+
+      if (
+        setFilterCefrLevel &&
+        JSON.stringify(filterCefrLevel) !== JSON.stringify(urlCefr)
+      ) {
+        setFilterCefrLevel(urlCefr);
+      }
+      if (
+        setFilterLanguage &&
+        JSON.stringify(filterLanguage) !== JSON.stringify(urlLang)
+      ) {
+        setFilterLanguage(urlLang);
+      }
+      if (setSearchQuery && searchQuery !== urlQ) {
+        setSearchQuery(urlQ);
+      }
+      if (setSortBy && sortBy !== urlSort) {
+        setSortBy(urlSort);
+      }
+    }
 
     if (bookChapterMatch) {
       const storyId = getStoryIdFromSegment(bookChapterMatch[1]);
@@ -111,6 +162,14 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     setActiveTab,
     setSelectedStory,
     currentUser,
+    searchQuery,
+    setSearchQuery,
+    filterLanguage,
+    setFilterLanguage,
+    filterCefrLevel,
+    setFilterCefrLevel,
+    sortBy,
+    setSortBy,
   ]);
 
   const handleUrlRoutingRef = useRef(handleUrlRouting);
@@ -267,6 +326,8 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     if (pendingNavigation) return;
 
     let targetPath = '/';
+    const queryParams = new URLSearchParams();
+
     if (selectedStory) {
       const slug = slugify(selectedStory.title);
       const slugSegment = slug
@@ -278,11 +339,41 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         targetPath = `/${activeTab}`;
       } else {
         targetPath = '/';
+        // Add browse page filters to query params
+        if (filterCefrLevel && filterCefrLevel.length > 0) {
+          queryParams.set('cefr', filterCefrLevel.join(','));
+        }
+        if (filterLanguage && filterLanguage.length > 0) {
+          queryParams.set('lang', filterLanguage.join(','));
+        }
+        if (searchQuery) {
+          queryParams.set('q', searchQuery);
+        }
+        if (sortBy && sortBy !== 'newest') {
+          queryParams.set('sort', sortBy);
+        }
       }
     }
 
-    if (window.location.pathname !== targetPath) {
-      window.history.pushState(null, '', targetPath);
+    const queryString = queryParams.toString();
+    const targetUrl = queryString ? `${targetPath}?${queryString}` : targetPath;
+
+    if (window.location.pathname + window.location.search !== targetUrl) {
+      if (isFirstRender.current) {
+        window.history.replaceState(null, '', targetUrl);
+      } else {
+        window.history.pushState(null, '', targetUrl);
+      }
     }
-  }, [selectedStory, activeChapterIdx, activeTab, pendingNavigation]);
+    isFirstRender.current = false;
+  }, [
+    selectedStory,
+    activeChapterIdx,
+    activeTab,
+    pendingNavigation,
+    searchQuery,
+    filterLanguage,
+    filterCefrLevel,
+    sortBy,
+  ]);
 }

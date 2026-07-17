@@ -793,21 +793,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     setCustomOpenRouterKey(trimmed);
   };
 
-  useUrlRouting({
-    selectedStory,
-    setSelectedStory,
-    activeChapterIdx,
-    setActiveChapterIdx,
-    activeTab,
-    setActiveTab,
-    storiesLoading,
-    isOnline,
-    cachedStoryIds,
-    currentUser,
-    recentlyRead,
-    showAlert,
-  });
-
   // Filters & computed story lists — extracted to useFilters hook
   const {
     searchQuery,
@@ -832,6 +817,30 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     bookshelf,
     recentlyRead,
     currentUser,
+    ssrPath,
+  });
+
+  useUrlRouting({
+    selectedStory,
+    setSelectedStory,
+    activeChapterIdx,
+    setActiveChapterIdx,
+    activeTab,
+    setActiveTab,
+    storiesLoading,
+    isOnline,
+    cachedStoryIds,
+    currentUser,
+    recentlyRead,
+    showAlert,
+    searchQuery,
+    setSearchQuery,
+    filterLanguage,
+    setFilterLanguage,
+    filterCefrLevel,
+    setFilterCefrLevel,
+    sortBy,
+    setSortBy,
   });
 
   return (

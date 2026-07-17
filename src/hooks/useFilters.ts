@@ -8,13 +8,37 @@ interface UseFiltersOptions {
   bookshelf: string[];
   recentlyRead: { storyId: string; chapterIdx: number }[];
   currentUser: IUser | null;
+  ssrPath?: string;
+}
+
+function getSearchString(ssrPath?: string): string {
+  if (typeof window !== 'undefined') {
+    return window.location.search;
+  }
+  if (ssrPath) {
+    const qIdx = ssrPath.indexOf('?');
+    return qIdx !== -1 ? ssrPath.substring(qIdx) : '';
+  }
+  return '';
 }
 
 export function useFilters(options: UseFiltersOptions) {
-  const { stories, bookshelf, recentlyRead, currentUser } = options;
+  const { stories, bookshelf, recentlyRead, currentUser, ssrPath } = options;
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const queryParams = useMemo(() => {
+    const searchStr = getSearchString(ssrPath);
+    if (!searchStr) return { cefr: null, lang: null, q: null, sort: null };
+    const params = new URLSearchParams(searchStr);
+    const cefr = params.get('cefr') ? params.get('cefr')?.split(',') : null;
+    const lang = params.get('lang') ? params.get('lang')?.split(',') : null;
+    const q = params.get('q') || null;
+    const sort = params.get('sort') || null;
+    return { cefr, lang, q, sort };
+  }, [ssrPath]);
+
+  const [searchQuery, setSearchQuery] = useState(() => queryParams.q || '');
   const [filterLanguage, setFilterLanguage] = useState<string[]>(() => {
+    if (queryParams.lang) return queryParams.lang;
     if (typeof window === 'undefined') return [];
     try {
       const stored = localStorage.getItem('library_filter_language');
@@ -30,6 +54,7 @@ export function useFilters(options: UseFiltersOptions) {
     }
   });
   const [filterCefrLevel, setFilterCefrLevel] = useState<string[]>(() => {
+    if (queryParams.cefr) return queryParams.cefr;
     if (typeof window === 'undefined') return [];
     try {
       const stored = localStorage.getItem('library_filter_cefr_level');
@@ -46,7 +71,10 @@ export function useFilters(options: UseFiltersOptions) {
   });
   const [filterGenre, setFilterGenre] = useState<string[]>([]);
   const [filterReadingStatus, setFilterReadingStatus] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<SortBy>('newest');
+  const [sortBy, setSortBy] = useState<SortBy>(() => {
+    if (queryParams.sort) return queryParams.sort as SortBy;
+    return 'newest';
+  });
 
   // Remember library filters
   useEffect(() => {
