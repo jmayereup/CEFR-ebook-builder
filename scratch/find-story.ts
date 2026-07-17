@@ -1,6 +1,6 @@
-import PocketBaseClass from 'pocketbase';
 import { config } from 'dotenv';
 import { resolve } from 'path';
+import PocketBaseClass from 'pocketbase';
 
 const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
@@ -21,7 +21,9 @@ async function main() {
   if (typeof (pb as any).admins !== 'undefined') {
     await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
   } else {
-    await pb.collection('_superusers').authWithPassword(adminEmail, adminPassword);
+    await pb
+      .collection('_superusers')
+      .authWithPassword(adminEmail, adminPassword);
   }
 
   const stories = await pb.collection('stories').getFullList({

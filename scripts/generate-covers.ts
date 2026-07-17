@@ -251,7 +251,7 @@ async function main() {
       };
 
       try {
-        const textModel = story.model || 'google/gemini-3.1-flash-lite';
+        const textModel = 'deepseek/deepseek-v4-flash';
         const systemInstruction = `You are a professional graphic designer and book cover illustrator.
 Given a book's metadata (title, genre, description, concept notes, outline), create a unique, tailored visual concept for its cover art.
 The concept must fit the book's specific theme and genre. Avoid generic ideas. Do NOT suggest a person reading or sitting in front of a window unless it is highly relevant to the story.
