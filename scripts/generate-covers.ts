@@ -132,7 +132,7 @@ async function main() {
         `Genre: ${story.genre} | CEFR: ${story.cefrLevel} | Language: ${story.language}`,
       );
 
-      // Formulate a robust prompt to enforce a cozy, flat vector illustration, and strictly forbid
+      // Formulate a robust prompt to enforce a cozy, soft, colorful book cover design, and strictly forbid
       // technical diagrams, flowcharts, floating icons, and device mockup frames.
       let sceneDescription = '';
       let visualStyle = '';
@@ -162,92 +162,92 @@ async function main() {
           scene:
             'A mysterious magnifying glass magnifying a clue, a single old key, or a shadow of a person under a streetlamp',
           style:
-            'A suspenseful, high-contrast flat vector illustration. Dark navy blue, charcoal gray, and pale amber accents',
+            'A suspenseful, high-contrast, cozy digital illustration. Dark navy blue, charcoal gray, and warm amber accents with clean outlines and gentle shading',
         },
         scifi: {
           scene:
             'A futuristic spaceship silhouette travelling past a large ringed planet, or a cosmic starry sky',
           style:
-            'A clean retro-futuristic flat vector design. Deep space blacks, cool blues, and vibrant neon purple or cyan accents',
+            'A vibrant, retro-futuristic cozy digital illustration. Deep space blacks, cool blues, and bright neon purple or cyan accents with clean outlines and gentle shading',
         },
         fantasy: {
           scene:
             'A glowing magical book or amulet, a mystical forest pathway, or a castle silhouette against a full moon',
           style:
-            'A whimsical, magical flat vector illustration. Deep emerald greens, rich purples, and glowing golden sparkles',
+            'A whimsical, magical cozy digital illustration. Deep emerald greens, rich purples, and glowing golden sparkles with clean outlines and gentle shading',
         },
         scifi_fantasy: {
           scene:
             'A futuristic city rising above a forest of ancient magical trees, or a glowing crystal engine',
           style:
-            'A blended science-fantasy flat vector illustration. Mystical violet, deep blue, and shimmering gold colors',
+            'A colorful, blended science-fantasy cozy digital illustration. Mystical violet, deep blue, and shimmering gold colors with clean outlines and gentle shading',
         },
         horror: {
           scene:
             'A spooky dark house silhouette on a hill under a full moon, or a single lantern glowing in a foggy wood',
           style:
-            'An eerie, atmospheric flat vector illustration. Dark muted tones, deep crimson red, and stark white highlights',
+            'An eerie, atmospheric cozy digital illustration. Dark muted tones, deep crimson red, and stark white highlights with clean outlines and gentle shading',
         },
         adventure: {
           scene:
             'A backpacker standing on a mountain peak looking out at a winding valley, or a compass on a vintage map',
           style:
-            'An inspiring, bold flat vector design. Warm earthy tones, forest greens, mountain blues, and golden sunset colors',
+            'An inspiring, colorful cozy digital illustration. Warm earthy tones, forest greens, mountain blues, and golden sunset colors with clean outlines and gentle shading',
         },
         romance: {
           scene:
             'Two silhouettes sharing an umbrella in the rain under a streetlamp, or a cozy cafe table with two cups',
           style:
-            'A warm, romantic flat vector illustration. Soft rose pink, warm peach, gentle pastel purples, and soft lighting',
+            'A warm, romantic cozy digital illustration. Soft rose pink, warm peach, gentle pastel purples, and soft lighting with clean outlines and gentle shading',
         },
         sliceoflife: {
           scene:
             'A cozy window overlooking a garden, a steaming coffee mug on a table, or a bicycle parked next to a bakery',
           style:
-            'A cozy, inviting flat vector illustration. Warm pastel colors, soft earth tones, and gentle lighting',
+            'A cozy, warm, and inviting soft digital illustration (lofi study vibe, warm pastel colors, soft earth tones, clean outlines, and gentle shading)',
         },
         folklore: {
           scene:
             'A legendary mythical creature or creature silhouette in a mystical natural setting, or a glowing ancient stone',
           style:
-            'A traditional, mythic flat vector design. Deep forest greens, rich browns, and amber tones',
+            'A traditional, mythic cozy  digital illustration. Deep forest greens, rich browns, and amber tones with clean outlines and gentle shading',
         },
         philosophy: {
           scene:
             'A single green leaf floating on a ripple of water, a quiet stone pathway, or a simple candle flame',
           style:
-            'A serene, meditative flat vector design. Soft grays, calm blues, and warm cream colors',
+            'A serene, meditative cozy  digital illustration. Soft grays, calm blues, and warm cream colors with clean outlines and gentle shading',
         },
         historical: {
           scene:
             'An old quill pen on parchment paper, a vintage carriage, or a historical town square silhouette',
           style:
-            'A nostalgic, classic flat vector design. Sepia tones, deep mahogany, and antique gold colors',
+            'A nostalgic, classic cozy  digital illustration. Sepia tones, deep mahogany, and antique gold colors with clean outlines and gentle shading',
         },
         comedy: {
           scene:
             'A quirky, funny cartoonish animal, a smiling cloud, or an open suitcase with funny objects spilling out',
           style:
-            'A lighthearted, playful flat vector illustration. Bright cheerful yellow, sky blue, and vibrant orange colors',
+            'A lighthearted, playful, and colorful cozy  digital illustration. Bright cheerful yellow, sky blue, and vibrant orange colors with clean outlines and gentle shading',
         },
         fairy: {
           scene:
             'A whimsical fairy wand, a tiny house in a mushroom, or a sparkling carriage',
           style:
-            'A whimsical, charming flat vector illustration. Soft lavender, powder blue, and magic gold dust accents',
+            'A whimsical, colorful cozy  digital illustration. Soft lavender, powder blue, and magic gold dust accents with clean outlines and gentle shading',
         },
         nonfiction: {
           scene:
             'A clean stack of books, a lightbulb representing an idea, or a globe',
           style:
-            'A clean, modern, professional flat vector design. Crisp white, teal, dark navy, and gray tones',
+            'A clean, colorful cozy  digital illustration. Crisp white, teal, dark navy, and gray tones with clean outlines and gentle shading',
         },
       };
 
       const fallback = fallbackStyles[story.genre] || {
         scene: `A simple, serene scene symbolizing the theme of the book`,
         style:
-          'A cozy, warm, and inviting soft vector illustration. Pastel colors, clean lines, and gentle shading',
+          'A cozy, warm, and inviting soft  digital illustration. Pastel colors, clean outlines, and gentle shading',
       };
 
       try {
@@ -289,8 +289,8 @@ ${promptNotes}
 ${outlineText}
 
 Please generate:
-1. A concise, specific scene description (sceneDescription) for a minimalist flat vector illustration representing the book's unique story. Focus on a single key character, symbolic object, or setting from the story.
-2. A visual style and color palette (visualStyle) that matches the genre and mood of the book.`;
+1. A concise, specific scene description (sceneDescription) for a detailed, colorful, soft  digital illustration representing the book's unique story. Focus on a single key character, symbolic object, or setting from the story.
+2. A visual style and color palette (visualStyle) that matches the genre and mood of the book, using a cozy, warm, and inviting soft  digital illustration aesthetic (lofi study vibe, rich colors, clean outlines, and gentle shading).`;
 
         const responseText = await handleModelCall({
           model: textModel,
@@ -318,11 +318,12 @@ Please generate:
         visualStyle = fallback.style;
       }
 
-      const prompt = `A professional, clean, minimalist flat vector book cover design.
+      const cefrLabel = `CEFR ${story.cefrLevel || 'A1'}`;
+      const prompt = `A professional, clean, cozy  book cover design.
 Title text: The image for the book cover must clearly feature the title "${story.title}" written in a clean, legible, and elegant font at the top or center, spelled correctly.
-Author text: The image must clearly feature the author name "CEFR Stories" written in a smaller, clean, legible, and elegant font near the bottom, spelled correctly.
-Visual style: ${visualStyle}. Flat 2D graphic from edge to edge.
-Subject: ${sceneDescription}. The image must be a flat 2D graphic with no physical borders. Do not include any other text, random letters, or other author names.`;
+Author text: The image must clearly feature the text "${cefrLabel}" written in a smaller, clean, legible, and elegant font near the bottom, spelled correctly.
+Visual style: ${visualStyle}. Cozy, warm, and inviting soft  digital illustration style (lofi study vibe, rich colors, clean outlines, and gentle shading) from edge to edge.
+Subject: ${sceneDescription}. The image must be a soft  illustration with no physical borders. Do not include any other text, random letters, or other author names.`;
 
       console.log(`Prompt: "${prompt}"`);
       console.log(`Model: ${modelId}`);
