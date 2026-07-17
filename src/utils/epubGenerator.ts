@@ -373,6 +373,18 @@ ${chaptersToc}  </navMap>
 }
 .highlight {
   border-bottom: 1px dotted #718096;
+}
+a.vocab-link {
+  color: inherit;
+  text-decoration: none;
+  border: none;
+}
+a.vocab-link:hover {
+  color: #1a0dab;
+}
+a.glossary-backlink {
+  text-decoration: none;
+  color: inherit;
 }`,
   );
 
@@ -407,6 +419,7 @@ ${chaptersToc}  </navMap>
   // 7. Core individual chapter files
   story.chapters.forEach((chapter, index) => {
     const idx = index + 1;
+    const occurrenceTracker: { [key: string]: number } = {};
 
     // Split text into lines/paragraphs safely
     const paragraphLines = chapter.content
@@ -428,11 +441,16 @@ ${chaptersToc}  </navMap>
 
         const highlightedContent = segments
           .map((seg) => {
-            const isGlossary = glossaryWordsSet.has(
-              seg.segment.toLowerCase().trim(),
+            const segLower = seg.segment.toLowerCase().trim();
+            const vocabIndex = (chapter.vocabulary || []).findIndex(
+              (v) => v.word.toLowerCase().trim() === segLower,
             );
-            if (isGlossary && seg.isWordLike) {
-              return `<span class="highlight">${escapeXml(seg.segment)}</span>`;
+            if (vocabIndex !== -1 && seg.isWordLike) {
+              const occurrences = occurrenceTracker[segLower] || 0;
+              occurrenceTracker[segLower] = occurrences + 1;
+              const refId = `ref-${idx}-${vocabIndex}${occurrences > 0 ? `-occ-${occurrences}` : ''}`;
+              const noteId = `note-${idx}-${vocabIndex}`;
+              return `<a epub:type="noteref" class="vocab-link" id="${refId}" href="#${noteId}"><span class="highlight">${escapeXml(seg.segment)}</span></a>`;
             }
             return escapeXml(seg.segment);
           })
@@ -445,17 +463,21 @@ ${chaptersToc}  </navMap>
     let glossaryHtml = '';
     if (chapter.vocabulary && chapter.vocabulary.length > 0) {
       const itemsHtml = chapter.vocabulary
-        .map(
-          (v) => `      <div class="glossary-item">
+        .map((v, vocabIndex) => {
+          const noteId = `note-${idx}-${vocabIndex}`;
+          const refId = `ref-${idx}-${vocabIndex}`;
+          return `      <aside epub:type="footnote" id="${noteId}" class="glossary-item">
         <div class="glossary-word-row">
-          <span class="glossary-word">${escapeXml(v.word)}</span>
+          <a href="#${refId}" class="glossary-backlink">
+            <span class="glossary-word">${escapeXml(v.word)}</span>
+          </a>
           ${v.transliteration ? `<span class="glossary-transliteration">[${escapeXml(v.transliteration)}]</span>` : ''}
           <span class="glossary-pos">${escapeXml(v.partOfSpeech)}</span>
         </div>
         <div class="glossary-definition">${escapeXml(v.definition)}</div>
         ${v.contextSentence ? `        <div class="glossary-context">e.g. &quot;${escapeXml(v.contextSentence)}&quot;</div>` : ''}
-      </div>`,
-        )
+      </aside>`;
+        })
         .join('\n');
 
       glossaryHtml = `    <div class="glossary-title">Chapter Vocabulary Key Glossary</div>
@@ -468,7 +490,7 @@ ${itemsHtml}
       `OEBPS/chapter_${idx}.html`,
       `<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
 <head>
   <title>${escapeXml(chapter.title)}</title>
   <link rel="stylesheet" href="style.css" type="text/css"/>
