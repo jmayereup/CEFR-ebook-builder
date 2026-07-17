@@ -1,6 +1,86 @@
 {
-  "lastFetchTime": 1784195635420,
+  "lastFetchTime": 1784293511881,
   "stories": [
+    {
+      "id": "sov16mdwfor7a06",
+      "title": "จังหวะในสายเลือด: ทำไมมนุษย์ถึงร้องเพลงและเต้นรำ",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "nonfiction",
+      "totalChapters": 10,
+      "createdAt": "2026-07-17T12:48:00.204Z",
+      "isCompleted": true,
+      "description": "This book explores the evolutionary, social, and neurological mysteries of why rhythm and melody move us so deeply. From Darwin's sexual selection theory to modern brain science, it reveals how music and dance shaped human survival, bonding, and emotional life, and why we simply can't stop moving to the beat.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 10,
+      "wordCount": 5665,
+      "updated": "2026-07-17 12:54:28.962Z"
+    },
+    {
+      "id": "s8pvg6vc0t79h14",
+      "title": "Smart Study: Skills for Success in School and College",
+      "language": "English",
+      "cefrLevel": "B1",
+      "genre": "nonfiction",
+      "totalChapters": 10,
+      "createdAt": "2026-07-17T06:02:14.966Z",
+      "isCompleted": true,
+      "description": "This practical guide helps high school and college students build essential study skills for lasting success. Each chapter explains a key topic—like time management, note-taking, and exam prep—with clear steps and real-world examples. Learn to study smarter, reduce stress, and reach your academic goals with confidence.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 10,
+      "wordCount": 3534,
+      "updated": "2026-07-17 06:07:59.293Z"
+    },
+    {
+      "id": "ssmgriyroecucpv",
+      "title": "ศูนย์กลางอันสงบ: เรียนรู้การภาวนาจากยักษ์ใหญ่แห่งความเชื่อ",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 10,
+      "createdAt": "2026-07-16T23:52:07.922Z",
+      "isCompleted": true,
+      "description": "This contemplative guide takes readers on a journey through Christian history, pairing each chapter with a spiritual giant—from the desert solitude of Antony to the everyday mindfulness of Brother Lawrence and the social justice of Thomas Merton. Through descriptive narratives and timeless practices like Lectio Divina and the Examen, it shows how to cultivate inner quiet and transform ordinary life into a prayerful existence. Ultimately, it invites readers to find peace within and carry it outward in love and service to a noisy world.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 10,
+      "wordCount": 4937,
+      "updated": "2026-07-17 10:46:40.417Z"
+    },
+    {
+      "id": "svovgdlb6j7x19j",
+      "title": "กลุ่มนอก: ทำไมถึงถูกโจมตีด้วยโฆษณาชวนเชื่อ?",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "nonfiction",
+      "totalChapters": 5,
+      "createdAt": "2026-07-16T11:55:43.939Z",
+      "isCompleted": true,
+      "description": "This analytical non-fiction book explores why minority out-groups are frequently targeted by propaganda. It presents three core reasons: their low power to retaliate, the lack of direct contact that breeds stereotypes, and the scapegoating that distracts from internal failures. Designed for intermediate Thai readers, it provides clear explanations and practical tools to recognize and resist manipulation.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 5,
+      "wordCount": 2517,
+      "updated": "2026-07-16 12:02:51.899Z"
+    },
     {
       "id": "sazm8upukcqbd8r",
       "title": "Easy Targets: Why Propaganda Blames the Outsider",
@@ -14,12 +94,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 2151,
-      "updated": "2026-07-16 02:57:10.564Z"
+      "updated": "2026-07-16 11:23:20.978Z"
     },
     {
       "id": "s8qzcoxku6jrjg3",
@@ -191,7 +275,7 @@
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 2500,
-      "updated": "2026-07-09 19:33:16.009Z"
+      "updated": "2026-07-16 11:04:07.248Z"
     },
     {
       "id": "s1kvrzbh1g1jya4",
@@ -250,12 +334,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "qwen/qwen3.7-plus",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1696,
-      "updated": "2026-07-08 06:40:58.401Z"
+      "updated": "2026-07-17 11:04:52.864Z"
     },
     {
       "id": "swolfaj2xrhatiu",
@@ -965,7 +1053,7 @@
       "isPublic": true,
       "chaptersCount": 30,
       "wordCount": 12586,
-      "updated": "2026-06-27 04:47:52.882Z"
+      "updated": "2026-07-16 09:57:39.481Z"
     },
     {
       "id": "stv7kuqd1ffq74x",
@@ -1129,8 +1217,8 @@
       "createdAt": "2026-06-18T09:43:11.816Z",
       "isCompleted": true,
       "description": "Rashid leaves his quiet life in the mountains of northern Pakistan to teach English in a lively Thai provincial school. As he struggles to connect with his students, he discovers that the greatest adventures are not only found in new landscapes but in the bridges we build between hearts. A gentle story of cultural exchange, courage, and finding home in unexpected places.",
-      "creatorId": "",
-      "creatorEmail": "teacherjakerru@gmail.com",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
       "ratings": {
         "S2tDTbev85RmlwDnnEhT4oBswsf1": 4
@@ -1139,7 +1227,7 @@
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1774,
-      "updated": "2026-06-29 08:41:18.526Z"
+      "updated": "2026-07-16 10:05:38.022Z"
     },
     {
       "id": "story1781732083793",

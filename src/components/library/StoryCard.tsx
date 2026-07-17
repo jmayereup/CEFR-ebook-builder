@@ -3,6 +3,7 @@ import {
   Bookmark,
   BookmarkCheck,
   BookOpenText,
+  ChevronDown,
   Cloud,
   Lock,
   Star,
@@ -68,6 +69,7 @@ export default function StoryCard({
   story,
   currentUser,
   onSelect,
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: Matches interface but not currently rendered
   onDelete,
   isSaved = false,
   onToggleSaved,
@@ -76,6 +78,7 @@ export default function StoryCard({
   recentlyRead = [],
   className = '',
 }: StoryCardProps) {
+  const cardRef = React.useRef<HTMLDivElement>(null);
   const wordCount =
     story.wordCount !== undefined
       ? story.wordCount
@@ -99,8 +102,7 @@ export default function StoryCard({
   );
   const coverStyle = getCefrCoverStyles(story.cefrLevel);
   const [imgError, setImgError] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [showMobileOverlay, setShowMobileOverlay] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
   const hasCoverImage = !imgError;
   const cardThemeClass = hasCoverImage
     ? 'text-[#F9F6F0] dark:text-[#EBE4D5] border-black/15 dark:border-white/10'
@@ -109,27 +111,34 @@ export default function StoryCard({
     ? 'text-[#F9F6F0]/70 dark:text-[#EBE4D5]/70'
     : coverStyle.textMuted;
 
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsTouchDevice(
-        'ontouchstart' in window || navigator.maxTouchPoints > 0,
-      );
-    }
-  }, []);
-
   // Reset image error state when story is updated (e.g. cover regenerated)
   React.useEffect(() => {
     setImgError(false);
   }, [story.updated]);
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    if (hasCoverImage && isTouchDevice) {
-      if (!showMobileOverlay) {
-        e.stopPropagation();
-        setShowMobileOverlay(true);
-        return;
-      }
-    }
+  // Close details overlay when card is scrolled completely out of view
+  React.useEffect(() => {
+    if (!showDescription || !cardRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) {
+            setShowDescription(false);
+          }
+        }
+      },
+      { threshold: 0 },
+    );
+
+    observer.observe(cardRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [showDescription]);
+
+  const handleCardClick = (_e: React.MouseEvent) => {
     onSelect();
   };
 
@@ -165,70 +174,210 @@ export default function StoryCard({
   const inRecentlyRead = recentlyRead.some((item) => item.storyId === story.id);
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: Click triggers reading story
+    // biome-ignore lint/a11y/noStaticElementInteractions: Click triggers reading story
     <div
-      className={`relative group w-full max-w-[360px] min-w-[340px] mx-auto aspect-[3/4.2] min-h-[476px] cursor-pointer ${className}`}
+      ref={cardRef}
+      className={`flex flex-col group w-full max-w-[360px] min-w-[340px] mx-auto cursor-pointer ${className}`}
+      onClick={handleCardClick}
     >
-      {/* 3D Pages Stack Effects (behind card, moves slightly less on hover to look like book cover lifting) */}
-      <div className="absolute right-[-3px] top-1.5 bottom-1.5 w-1.5 bg-[#faf9f6] dark:bg-[#323330] border-y border-r border-[#e3dfd3] dark:border-[#424546] rounded-r-md z-0 shadow-xs transition-all duration-300 group-hover:translate-x-[0.5px]" />
-      <div className="absolute right-[-6px] top-3 bottom-3 w-1.5 bg-[#f4ebd9] dark:bg-[#282927] border-y border-r border-[#dacfae]/70 dark:border-[#383a3b] rounded-r-md z-[-1] shadow-xs transition-all duration-300 group-hover:translate-x-[1px]" />
+      {/* 3D Book Cover Wrapper */}
+      <div className="relative w-full aspect-[3/4.2] min-h-[476px] flex-shrink-0">
+        {/* 3D Pages Stack Effects (behind card, moves slightly less on hover to look like book cover lifting) */}
+        <div className="absolute right-[-3px] top-1.5 bottom-1.5 w-1.5 bg-[#faf9f6] dark:bg-[#323330] border-y border-r border-[#e3dfd3] dark:border-[#424546] rounded-r-md z-0 shadow-xs transition-all duration-300 group-hover:translate-x-[0.5px]" />
+        <div className="absolute right-[-6px] top-3 bottom-3 w-1.5 bg-[#f4ebd9] dark:bg-[#282927] border-y border-r border-[#dacfae]/70 dark:border-[#383a3b] rounded-r-md z-[-1] shadow-xs transition-all duration-300 group-hover:translate-x-[1px]" />
 
-      {/* Main Book Card */}
-      <motion.div
-        whileHover={{
-          scale: 1.02,
-          boxShadow:
-            '4px 12px 24px -5px rgba(0,0,0,0.18), 1px 4px 8px -1px rgba(0,0,0,0.06)',
-        }}
-        transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-        onClick={handleCardClick}
-        onMouseLeave={() => setShowMobileOverlay(false)}
-        className={`relative ${cardThemeClass} border rounded-l-md rounded-r-lg flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 ${
-          hasCoverImage ? 'p-3.5' : 'p-5'
-        }`}
-      >
-        {hasCoverImage && (
-          <img
-            src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
-            onError={() => setImgError(true)}
-            className="absolute inset-0 w-full h-full object-cover z-0"
-            alt=""
-          />
-        )}
+        {/* Main Book Card */}
+        <motion.div
+          whileHover={{
+            scale: 1.02,
+            boxShadow:
+              '4px 12px 24px -5px rgba(0,0,0,0.18), 1px 4px 8px -1px rgba(0,0,0,0.06)',
+          }}
+          transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
+          onMouseLeave={() => setShowDescription(false)}
+          className={`relative ${cardThemeClass} border rounded-l-md rounded-r-lg flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 ${
+            hasCoverImage ? 'p-3.5' : 'p-5'
+          }`}
+        >
+          {hasCoverImage && (
+            <img
+              src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
+              onError={() => setImgError(true)}
+              className="absolute inset-0 w-full h-full object-cover z-0"
+              alt=""
+            />
+          )}
 
-        {/* Left Spine Fold / Crease (adds beautiful book texture) */}
-        <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
-        <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
+          {/* Left Spine Fold / Crease (adds beautiful book texture) */}
+          <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
+          <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
 
-        <div className="relative z-10">
-          <div className="flex items-center justify-between pl-2.5 mb-2.5 w-full">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase py-0.5 text-current">
-                {story.cefrLevel}
-              </span>
-              <div className="flex items-center">
-                <span
-                  className={`text-[10px] font-mono font-bold uppercase py-0.5 ${textMutedClass}`}
+          {/* Centerpiece Cover Art / Title Block */}
+          <div
+            className={`flex-1 flex flex-col text-center z-10 relative rounded-xl transition-all duration-300 ${
+              hasCoverImage ? 'justify-end mt-2 mb-0.5' : 'justify-start my-1'
+            }`}
+          >
+            {hasCoverImage ? null : (
+              // Original behavior for gradient cards
+              <div className="transition-all duration-500 ease-out rounded-xl px-3 py-3">
+                <h3
+                  lang={getLanguageCodeFromName(story.language)}
+                  className="text-base md:text-lg font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-0.5 hyphens-auto"
                 >
-                  {mainLangCode}
-                </span>
-                {showBilingualTag && (
-                  <span
-                    className={`text-[10px] font-mono font-bold uppercase py-0.5 ${textMutedClass}`}
+                  {story.title}
+                </h3>
+                <p
+                  className={`text-[9px] uppercase tracking-wider font-mono font-bold ${textMutedClass}`}
+                >
+                  Theme: {resolvedGenreLabel}
+                </p>
+                {story.description && (
+                  <p
+                    className={`text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left line-clamp-8 mt-2.5`}
                   >
-                    -{transLangCode}
-                  </span>
+                    "{story.description}"
+                  </p>
                 )}
               </div>
-            </div>
+            )}
+          </div>
 
-            <div className="flex items-center gap-2">
-              {story.isPublic === false && (
-                <span title="Private Story">
-                  <Lock
-                    className={`w-3.5 h-3.5 ${textMutedClass} opacity-60`}
-                  />
+          {/* Large Description Overlay (toggled via Info button) */}
+          {showDescription && story.description && (
+            // biome-ignore lint/a11y/useKeyWithClickEvents: Stop propagation click
+            // biome-ignore lint/a11y/noStaticElementInteractions: Stop propagation click
+            <div
+              className="absolute inset-2.5 z-30 flex flex-col justify-between bg-white/75 dark:bg-black/75 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-lg p-4 text-tj-text-main dark:text-white transition-all duration-300 shadow-xl"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              {/* Header stats inside overlay */}
+              <div className="flex items-center justify-between w-full border-b border-tj-border-main/50 dark:border-white/10 pb-2 mb-2 text-[10px] font-mono tracking-wider text-tj-text-muted dark:text-white/80">
+                <div>
+                  {totalReads > 0 ? (
+                    <span>READS: {totalReads}</span>
+                  ) : (
+                    <span className="opacity-50">NOT READ YET</span>
+                  )}
+                </div>
+
+                {story.ratings && Object.keys(story.ratings).length > 0 ? (
+                  <div
+                    className="flex items-center gap-0.5"
+                    title={`Avg: ${getAverageRating(story.ratings).toFixed(1)}`}
+                  >
+                    {[1, 2, 3, 4, 5].map((starValue) => {
+                      const ratingVal = getAverageRating(story.ratings);
+                      const isFilled = starValue <= Math.round(ratingVal);
+                      return (
+                        <Star
+                          key={starValue}
+                          className={`w-3 h-3 ${
+                            isFilled
+                              ? 'fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400'
+                              : 'opacity-25'
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <span className="opacity-50 text-[9px]">NO RATINGS</span>
+                )}
+              </div>
+
+              {/* Description text */}
+              <div className="flex-1 flex items-center justify-center overflow-y-auto pr-1">
+                <p className="text-sm md:text-base font-sans text-center leading-relaxed opacity-95">
+                  "{story.description}"
+                </p>
+              </div>
+
+              {/* Small Down Arrow Close Button in Lower-Right */}
+              <div className="flex justify-end w-full mt-2">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDescription(false);
+                  }}
+                  className="p-1.5 hover:bg-tj-primary-light/50 dark:hover:bg-white/10 rounded-full transition-all cursor-pointer text-tj-text-muted dark:text-white/70 hover:text-tj-text-main dark:hover:text-white flex items-center justify-center"
+                  title="Close Details"
+                >
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Metadata Row Outside Book Cover */}
+      <div className="mt-2.5 px-1.5 flex flex-col gap-1 select-none">
+        <div className="flex items-center justify-between text-xs font-mono w-full">
+          {/* Left Block: CEFR, Language, and Lock Icon */}
+          <div className="flex items-center gap-1.5 flex-1 justify-start">
+            <span className="px-1.5 py-0.5 bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-text-main rounded text-[10px] font-bold border border-tj-border-main/60 uppercase">
+              {story.cefrLevel}
+            </span>
+            <span className="text-[10px] text-tj-text-muted font-bold uppercase">
+              {mainLangCode}
+              {showBilingualTag && `-${transLangCode}`}
+            </span>
+            {story.isPublic === false && (
+              <span
+                title="Private Story"
+                className="text-tj-text-muted opacity-60"
+              >
+                <Lock className="w-3.5 h-3.5" />
+              </span>
+            )}
+          </div>
+
+          {/* Middle Block (Centered): Word Count & Intro (Description) Toggle */}
+          <div className="flex items-center gap-2 flex-initial justify-center px-2">
+            {story.isCompleted || chaptersCount === story.totalChapters ? (
+              <span className="text-[10px] text-tj-text-muted font-bold whitespace-nowrap">
+                {(Math.round(wordCount / 50) * 50).toLocaleString()} WORDS
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 font-sans uppercase text-[9px] font-bold text-amber-600 dark:text-amber-400 tracking-wide whitespace-nowrap">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
+                In Progress
+              </span>
+            )}
+
+            {story.description && (
+              <>
+                <span className="text-tj-border-main dark:text-tj-border-main/50 text-[10px]">
+                  |
                 </span>
-              )}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDescription(!showDescription);
+                  }}
+                  className={`cursor-pointer text-[10px] font-bold uppercase tracking-wider transition-colors underline underline-offset-2 ${
+                    showDescription
+                      ? 'text-tj-primary decoration-tj-primary'
+                      : 'text-tj-text-muted hover:text-tj-text-main decoration-tj-text-muted/50 hover:decoration-tj-text-main'
+                  }`}
+                  title="View Description"
+                >
+                  Intro
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Right Block: Action Icons */}
+          <div className="flex items-center gap-2 flex-1 justify-end">
+            {/* Actions / Status Icons Group (Separated by border) */}
+            <div className="flex items-center gap-1.5 ml-1 pl-1.5 border-l border-tj-border-main dark:border-tj-border-main/50">
               {!isCachedOffline && (
                 <button
                   type="button"
@@ -238,25 +387,22 @@ export default function StoryCard({
                       onDownload(e);
                     }
                   }}
-                  className="p-0.5 hover:bg-black/5 dark:hover:bg-white/5 rounded cursor-pointer transition-all flex items-center justify-center border-0 bg-transparent text-current"
+                  className="p-0.5 hover:bg-tj-primary-light dark:hover:bg-tj-primary-light/10 rounded cursor-pointer transition-all flex items-center justify-center border-0 bg-transparent text-tj-text-muted hover:text-tj-text-main"
                   title="Download for offline reading"
                 >
-                  <Cloud
-                    className={`w-3.5 h-3.5 ${textMutedClass} opacity-60 hover:opacity-100`}
-                  />
+                  <Cloud className="w-3.5 h-3.5" />
                 </button>
               )}
               {isRead ? (
-                <span title="Completed reading">
-                  <BookCheck
-                    className={`w-3.5 h-3.5 ${textMutedClass} opacity-60`}
-                  />
+                <span title="Completed reading" className="text-tj-text-muted">
+                  <BookCheck className="w-3.5 h-3.5" />
                 </span>
               ) : inRecentlyRead ? (
-                <span title="Recently Read (In Progress)">
-                  <BookOpenText
-                    className={`w-3.5 h-3.5 ${textMutedClass} opacity-60`}
-                  />
+                <span
+                  title="Recently Read (In Progress)"
+                  className="text-tj-text-muted"
+                >
+                  <BookOpenText className="w-3.5 h-3.5" />
                 </span>
               ) : null}
               {onToggleSaved && (
@@ -266,13 +412,13 @@ export default function StoryCard({
                     e.stopPropagation();
                     onToggleSaved(story.id, e);
                   }}
-                  className={`p-0.5 rounded transition-all cursor-pointer ${textMutedClass} opacity-50 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5`}
+                  className="p-0.5 rounded transition-all cursor-pointer text-tj-text-muted hover:text-tj-text-main hover:bg-tj-primary-light dark:hover:bg-tj-primary-light/10"
                   title={
                     isSaved ? 'Remove from Bookshelf' : 'Save to Bookshelf'
                   }
                 >
                   {isSaved ? (
-                    <BookmarkCheck className="w-3.5 h-3.5 fill-current opacity-100" />
+                    <BookmarkCheck className="w-3.5 h-3.5 fill-current" />
                   ) : (
                     <Bookmark className="w-3.5 h-3.5" />
                   )}
@@ -281,108 +427,7 @@ export default function StoryCard({
             </div>
           </div>
         </div>
-
-        {/* Centerpiece Cover Art / Title Block */}
-        <div
-          className={`flex-1 flex flex-col text-center z-10 relative rounded-xl transition-all duration-300 ${
-            hasCoverImage ? 'justify-end mt-2 mb-0.5' : 'justify-start my-1'
-          }`}
-        >
-          {hasCoverImage ? (
-            // For covers, we only render the description box on hover near the bottom
-            story.description && (
-              <div
-                className={`transition-all duration-500 ease-out rounded-xl px-3 py-3 bg-black/45 dark:bg-black/65 backdrop-blur-md border border-white/10 shadow-lg mx-1 overflow-hidden ${
-                  showMobileOverlay
-                    ? 'opacity-100 max-h-64'
-                    : 'opacity-0 max-h-0 line-clamp-none group-hover:opacity-100 group-hover:max-h-64'
-                }`}
-              >
-                <p
-                  className={`text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left`}
-                >
-                  "{story.description}"
-                </p>
-                {/* Mobile tap-to-read instruction */}
-                <p className="text-[8px] uppercase tracking-wider font-mono font-bold text-center mt-2 opacity-75 text-white/90 animate-pulse block md:hidden">
-                  Tap again to read
-                </p>
-              </div>
-            )
-          ) : (
-            // Original behavior for gradient cards
-            <div className="transition-all duration-500 ease-out rounded-xl px-3 py-3">
-              <h3
-                lang={getLanguageCodeFromName(story.language)}
-                className="text-base md:text-lg font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-0.5 hyphens-auto"
-              >
-                {story.title}
-              </h3>
-              <p
-                className={`text-[9px] uppercase tracking-wider font-mono font-bold ${textMutedClass}`}
-              >
-                Theme: {resolvedGenreLabel}
-              </p>
-              {story.description && (
-                <p
-                  className={`text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left line-clamp-8 mt-2.5`}
-                >
-                  "{story.description}"
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Footer Area */}
-        <div
-          className={`z-10 relative ${hasCoverImage ? 'pt-1.5 mt-1' : 'pt-2.5'}`}
-        >
-          <div className="text-[9px] font-mono font-bold">
-            {/* Line: Word Count, Ratings & Reads */}
-            <div className="flex items-center justify-between gap-2 mt-0.5">
-              <div className={`${textMutedClass}`}>
-                {story.isCompleted || chaptersCount === story.totalChapters ? (
-                  <span className="whitespace-nowrap">
-                    {(Math.round(wordCount / 50) * 50).toLocaleString()} WORDS
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1 font-sans uppercase text-[8px] tracking-wide whitespace-nowrap">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
-                    In Progress
-                  </span>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                {story.ratings && Object.keys(story.ratings).length > 0 && (
-                  <div
-                    className={`flex items-center gap-0.5 ${textMutedClass}`}
-                    title={`Avg: ${getAverageRating(story.ratings).toFixed(1)}`}
-                  >
-                    {[1, 2, 3, 4, 5].map((starValue) => {
-                      const ratingVal = getAverageRating(story.ratings);
-                      const isFilled = starValue <= Math.round(ratingVal);
-                      return (
-                        <Star
-                          key={starValue}
-                          className={`w-2 h-2 ${isFilled ? 'fill-current' : 'opacity-30'}`}
-                        />
-                      );
-                    })}
-                  </div>
-                )}
-
-                {totalReads > 0 && (
-                  <span className={`${textMutedClass} whitespace-nowrap`}>
-                    READS: {totalReads}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

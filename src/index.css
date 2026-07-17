@@ -203,7 +203,7 @@
 /* Defer rendering of off-screen stories (optimized for infinite scroll) */
 @utility story-card-deferred {
   content-visibility: auto;
-  contain-intrinsic-size: auto none auto 476px; /* Estimated height of StoryCard */
+  contain-intrinsic-size: auto none auto 508px; /* Estimated height of StoryCard */
 }
 
 @utility story-row-deferred {
