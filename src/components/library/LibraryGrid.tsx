@@ -183,7 +183,7 @@ export default function LibraryGrid({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-tj-text-main font-sans tracking-tight">
-            {isBookshelf ? 'My Bookshelf' : 'Narrative Archives'}
+            {isBookshelf ? 'My Bookshelf' : 'Library'}
           </h2>
           <p className="text-xs text-tj-text-muted">
             {isBookshelf
@@ -424,7 +424,7 @@ export default function LibraryGrid({
 
                 {!hasMore && filteredStories.length > 0 && (
                   <span className="text-tj-text-muted/60 mt-1">
-                    You've reached the end of the archives.
+                    You've reached the end of the library.
                   </span>
                 )}
               </div>

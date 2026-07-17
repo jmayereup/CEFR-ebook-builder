@@ -1,4 +1,12 @@
-import { ChevronDown, Search, X } from 'lucide-react';
+import {
+  Award,
+  BookOpen,
+  ChevronDown,
+  Globe,
+  Search,
+  Tag,
+  X,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { CEFR_LEVELS, GENRES, SUPPORTED_LANGUAGES } from '../../types';
 import type { SortBy } from '../../utils/storyFilters';
@@ -40,6 +48,11 @@ export default function LibraryFilters({
     'language' | 'cefr' | 'genre' | 'status' | null
   >(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const isLanguageActive = filterLanguage.length > 0;
+  const isCefrActive = filterCefrLevel.length > 0;
+  const isGenreActive = filterGenre.length > 0;
+  const isStatusActive = filterReadingStatus.length > 0;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -158,6 +171,7 @@ export default function LibraryFilters({
           />
           {searchQuery && (
             <button
+              type="button"
               onClick={() => setSearchQuery('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 hover:bg-tj-primary-light text-tj-text-muted hover:text-tj-text-main rounded-full cursor-pointer transition"
             >
@@ -171,7 +185,7 @@ export default function LibraryFilters({
           <div className="relative">
             <select
               value={sortBy}
-              onChange={(e: any) => setSortBy(e.target.value)}
+              onChange={(e) => setSortBy(e.target.value as SortBy)}
               className="w-full appearance-none pl-3 pr-8 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-xs rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans"
             >
               <option value="newest" className="dark:bg-slate-900">
@@ -201,23 +215,42 @@ export default function LibraryFilters({
         className="grid grid-cols-2 md:grid-cols-4 gap-2.5 border-t border-tj-border-main pt-3"
       >
         {/* Language */}
-        <div className="relative">
+        <div className="flex flex-col gap-1.5 relative">
+          <span className="text-[10px] font-bold text-tj-text-muted/80 uppercase tracking-wider block font-sans">
+            Language
+          </span>
           <button
             type="button"
             onClick={() =>
               setOpenDropdown(openDropdown === 'language' ? null : 'language')
             }
-            className="w-full flex items-center justify-between pl-3 pr-3 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-[11px] font-medium rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans text-left"
+            className={`w-full flex items-center justify-between pl-3 pr-3 py-2 border rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-all duration-150 font-sans text-left text-[11px] ${
+              isLanguageActive
+                ? 'bg-tj-primary-light dark:bg-tj-primary-light/10 border-tj-primary text-tj-primary font-bold shadow-xs'
+                : 'bg-tj-bg-card/60 dark:bg-slate-900/20 border-tj-border-main hover:border-tj-primary/30 text-tj-text-main font-medium'
+            }`}
           >
-            <span className="truncate">{getLanguageLabel()}</span>
-            <ChevronDown
-              className={`w-3.5 h-3.5 text-tj-text-muted pointer-events-none transition-transform duration-200 ${
-                openDropdown === 'language' ? 'rotate-180' : ''
-              }`}
-            />
+            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+              <Globe
+                className={`w-3.5 h-3.5 shrink-0 ${isLanguageActive ? 'text-tj-primary' : 'text-tj-text-muted/70'}`}
+              />
+              <span className="truncate">{getLanguageLabel()}</span>
+            </div>
+            <div className="flex items-center gap-1 shrink-0 ml-1">
+              {isLanguageActive && (
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-tj-primary px-1 text-[9px] font-bold text-tj-bg-main">
+                  {filterLanguage.length}
+                </span>
+              )}
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-tj-text-muted pointer-events-none transition-transform duration-200 ${
+                  openDropdown === 'language' ? 'rotate-180' : ''
+                }`}
+              />
+            </div>
           </button>
           {openDropdown === 'language' && (
-            <div className="absolute left-0 right-0 mt-1.5 bg-tj-bg-card border border-tj-border-main rounded-2xl shadow-xl z-50 py-1.5 max-h-60 overflow-y-auto flex flex-col gap-0.5">
+            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-tj-bg-card border border-tj-border-main rounded-2xl shadow-xl py-1.5 max-h-60 overflow-y-auto flex flex-col gap-0.5">
               <button
                 type="button"
                 onClick={() => setFilterLanguage([])}
@@ -256,23 +289,42 @@ export default function LibraryFilters({
         </div>
 
         {/* CEFR Level */}
-        <div className="relative">
+        <div className="flex flex-col gap-1.5 relative">
+          <span className="text-[10px] font-bold text-tj-text-muted/80 uppercase tracking-wider block font-sans">
+            CEFR Level
+          </span>
           <button
             type="button"
             onClick={() =>
               setOpenDropdown(openDropdown === 'cefr' ? null : 'cefr')
             }
-            className="w-full flex items-center justify-between pl-3 pr-3 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-[11px] font-medium rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans text-left"
+            className={`w-full flex items-center justify-between pl-3 pr-3 py-2 border rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-all duration-150 font-sans text-left text-[11px] ${
+              isCefrActive
+                ? 'bg-tj-primary-light dark:bg-tj-primary-light/10 border-tj-primary text-tj-primary font-bold shadow-xs'
+                : 'bg-tj-bg-card/60 dark:bg-slate-900/20 border-tj-border-main hover:border-tj-primary/30 text-tj-text-main font-medium'
+            }`}
           >
-            <span className="truncate">{getCefrLabel()}</span>
-            <ChevronDown
-              className={`w-3.5 h-3.5 text-tj-text-muted pointer-events-none transition-transform duration-200 ${
-                openDropdown === 'cefr' ? 'rotate-180' : ''
-              }`}
-            />
+            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+              <Award
+                className={`w-3.5 h-3.5 shrink-0 ${isCefrActive ? 'text-tj-primary' : 'text-tj-text-muted/70'}`}
+              />
+              <span className="truncate">{getCefrLabel()}</span>
+            </div>
+            <div className="flex items-center gap-1 shrink-0 ml-1">
+              {isCefrActive && (
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-tj-primary px-1 text-[9px] font-bold text-tj-bg-main">
+                  {filterCefrLevel.length}
+                </span>
+              )}
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-tj-text-muted pointer-events-none transition-transform duration-200 ${
+                  openDropdown === 'cefr' ? 'rotate-180' : ''
+                }`}
+              />
+            </div>
           </button>
           {openDropdown === 'cefr' && (
-            <div className="absolute left-0 right-0 mt-1.5 bg-tj-bg-card border border-tj-border-main rounded-2xl shadow-xl z-50 py-1.5 max-h-60 overflow-y-auto flex flex-col gap-0.5">
+            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-tj-bg-card border border-tj-border-main rounded-2xl shadow-xl py-1.5 max-h-60 overflow-y-auto flex flex-col gap-0.5">
               <button
                 type="button"
                 onClick={() => setFilterCefrLevel([])}
@@ -311,23 +363,42 @@ export default function LibraryFilters({
         </div>
 
         {/* Genre/Theme */}
-        <div className="relative">
+        <div className="flex flex-col gap-1.5 relative">
+          <span className="text-[10px] font-bold text-tj-text-muted/80 uppercase tracking-wider block font-sans">
+            Genre / Theme
+          </span>
           <button
             type="button"
             onClick={() =>
               setOpenDropdown(openDropdown === 'genre' ? null : 'genre')
             }
-            className="w-full flex items-center justify-between pl-3 pr-3 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-[11px] font-medium rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans text-left"
+            className={`w-full flex items-center justify-between pl-3 pr-3 py-2 border rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-all duration-150 font-sans text-left text-[11px] ${
+              isGenreActive
+                ? 'bg-tj-primary-light dark:bg-tj-primary-light/10 border-tj-primary text-tj-primary font-bold shadow-xs'
+                : 'bg-tj-bg-card/60 dark:bg-slate-900/20 border-tj-border-main hover:border-tj-primary/30 text-tj-text-main font-medium'
+            }`}
           >
-            <span className="truncate">{getGenreLabel()}</span>
-            <ChevronDown
-              className={`w-3.5 h-3.5 text-tj-text-muted pointer-events-none transition-transform duration-200 ${
-                openDropdown === 'genre' ? 'rotate-180' : ''
-              }`}
-            />
+            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+              <Tag
+                className={`w-3.5 h-3.5 shrink-0 ${isGenreActive ? 'text-tj-primary' : 'text-tj-text-muted/70'}`}
+              />
+              <span className="truncate">{getGenreLabel()}</span>
+            </div>
+            <div className="flex items-center gap-1 shrink-0 ml-1">
+              {isGenreActive && (
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-tj-primary px-1 text-[9px] font-bold text-tj-bg-main">
+                  {filterGenre.length}
+                </span>
+              )}
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-tj-text-muted pointer-events-none transition-transform duration-200 ${
+                  openDropdown === 'genre' ? 'rotate-180' : ''
+                }`}
+              />
+            </div>
           </button>
           {openDropdown === 'genre' && (
-            <div className="absolute left-0 right-0 mt-1.5 bg-tj-bg-card border border-tj-border-main rounded-2xl shadow-xl z-50 py-1.5 max-h-60 overflow-y-auto flex flex-col gap-0.5">
+            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-tj-bg-card border border-tj-border-main rounded-2xl shadow-xl py-1.5 max-h-60 overflow-y-auto flex flex-col gap-0.5">
               <button
                 type="button"
                 onClick={() => setFilterGenre([])}
@@ -364,23 +435,42 @@ export default function LibraryFilters({
         </div>
 
         {/* Reading Status */}
-        <div className="relative">
+        <div className="flex flex-col gap-1.5 relative">
+          <span className="text-[10px] font-bold text-tj-text-muted/80 uppercase tracking-wider block font-sans">
+            Reading Status
+          </span>
           <button
             type="button"
             onClick={() =>
               setOpenDropdown(openDropdown === 'status' ? null : 'status')
             }
-            className="w-full flex items-center justify-between pl-3 pr-3 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main text-[11px] font-medium rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-colors font-sans text-left"
+            className={`w-full flex items-center justify-between pl-3 pr-3 py-2 border rounded-xl outline-none focus:border-tj-primary focus:ring-0 cursor-pointer transition-all duration-150 font-sans text-left text-[11px] ${
+              isStatusActive
+                ? 'bg-tj-primary-light dark:bg-tj-primary-light/10 border-tj-primary text-tj-primary font-bold shadow-xs'
+                : 'bg-tj-bg-card/60 dark:bg-slate-900/20 border-tj-border-main hover:border-tj-primary/30 text-tj-text-main font-medium'
+            }`}
           >
-            <span className="truncate">{getReadingStatusLabel()}</span>
-            <ChevronDown
-              className={`w-3.5 h-3.5 text-tj-text-muted pointer-events-none transition-transform duration-200 ${
-                openDropdown === 'status' ? 'rotate-180' : ''
-              }`}
-            />
+            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+              <BookOpen
+                className={`w-3.5 h-3.5 shrink-0 ${isStatusActive ? 'text-tj-primary' : 'text-tj-text-muted/70'}`}
+              />
+              <span className="truncate">{getReadingStatusLabel()}</span>
+            </div>
+            <div className="flex items-center gap-1 shrink-0 ml-1">
+              {isStatusActive && (
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-tj-primary px-1 text-[9px] font-bold text-tj-bg-main">
+                  {filterReadingStatus.length}
+                </span>
+              )}
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-tj-text-muted pointer-events-none transition-transform duration-200 ${
+                  openDropdown === 'status' ? 'rotate-180' : ''
+                }`}
+              />
+            </div>
           </button>
           {openDropdown === 'status' && (
-            <div className="absolute left-0 right-0 mt-1.5 bg-tj-bg-card border border-tj-border-main rounded-2xl shadow-xl z-50 py-1.5 max-h-60 overflow-y-auto flex flex-col gap-0.5">
+            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-tj-bg-card border border-tj-border-main rounded-2xl shadow-xl py-1.5 max-h-60 overflow-y-auto flex flex-col gap-0.5">
               <button
                 type="button"
                 onClick={() => setFilterReadingStatus([])}
@@ -434,6 +524,7 @@ export default function LibraryFilters({
             </span>
           </div>
           <button
+            type="button"
             onClick={handleReset}
             className="text-[10px] hover:text-tj-primary text-tj-text-muted transition-colors cursor-pointer font-bold flex items-center gap-1 bg-transparent border-0"
           >
