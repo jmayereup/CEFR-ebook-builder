@@ -149,6 +149,57 @@ export default function VocabListView({
     });
   };
 
+  const downloadForAnki = () => {
+    let text = '';
+    filteredAndSortedTerms.forEach((t) => {
+      // Sanitize fields to prevent breaking TSV formatting (remove tabs and newlines)
+      const word = t.word.replace(/\t/g, ' ').replace(/\n/g, ' ').trim();
+      const definition = t.definition
+        .replace(/\t/g, ' ')
+        .replace(/\n/g, ' ')
+        .trim();
+      const partOfSpeech = (t.partOfSpeech || '')
+        .replace(/\t/g, ' ')
+        .replace(/\n/g, ' ')
+        .trim();
+      const transliteration = (t.transliteration || '')
+        .replace(/\t/g, ' ')
+        .replace(/\n/g, ' ')
+        .trim();
+
+      const sanitizedContext = t.contextSentence
+        ? limitContextToTenWords(t.contextSentence, t.word, langCode)
+        : '';
+      const context = sanitizedContext
+        .replace(/\t/g, ' ')
+        .replace(/\n/g, ' ')
+        .trim();
+
+      text += `${word}\t${definition}\t${partOfSpeech}\t${transliteration}\t${context}\n`;
+    });
+
+    const blob = new Blob([text], {
+      type: 'text/tab-separated-values;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    // Create a safe, descriptive filename
+    const safeTitle = story?.title
+      ? story.title
+          .replace(/[/\\?%*:|"<>]/g, '_')
+          .replace(/\s+/g, ' ')
+          .trim()
+      : 'vocabulary';
+
+    link.href = url;
+    link.setAttribute('download', `${safeTitle}_anki.txt`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
@@ -194,6 +245,17 @@ export default function VocabListView({
                 Copied Rich Format!
               </span>
             )}
+          </button>
+
+          {/* Download for Anki */}
+          <button
+            type="button"
+            onClick={downloadForAnki}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-tj-primary-light hover:bg-tj-primary-light/90 text-tj-text-main text-xs font-bold rounded border border-tj-success/40 cursor-pointer transition-all relative"
+            title="Download tab-separated vocabulary list file (.txt)"
+          >
+            <FileText className="w-3.5 h-3.5 text-tj-primary" />
+            <span>Download for Anki</span>
           </button>
         </div>
       </div>

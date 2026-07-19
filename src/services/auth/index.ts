@@ -43,6 +43,10 @@ export const getAccessToken = () => authService.getAccessToken();
 export const syncUserProfile = (user: IUser) =>
   authService.syncUserProfile(user);
 
+export const updateUsername = (userId: string, displayName: string) =>
+  authService.updateUsername(userId, displayName);
+
 export type { IAuthService, Unsubscribe };
+
 // Export the active service instance for advanced use
 export { authService };

@@ -1,5 +1,15 @@
-import { Crown, Flame, LogOut, Moon, Settings, Sun, User } from 'lucide-react';
+import {
+  Crown,
+  Flame,
+  LogOut,
+  Moon,
+  Pencil,
+  Settings,
+  Sun,
+  User,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { updateUsername } from '../../services/auth';
 import { getLocalTodayStr } from '../../services/db';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
@@ -36,8 +46,14 @@ export default function AppHeader({
 }: AppHeaderProps) {
   const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
   const currentUser = useAuthStore((state) => state.currentUser);
+  const setCurrentUser = useAuthStore((state) => state.setCurrentUser);
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [isSavingUsername, setIsSavingUsername] = useState(false);
+  const [usernameError, setUsernameError] = useState('');
+
   const menuRef = useRef<HTMLDivElement>(null);
 
   const todayStr = getLocalTodayStr();
@@ -45,6 +61,47 @@ export default function AppHeader({
     !!streakData &&
     (streakData.lastActiveDate === todayStr ||
       streakData.activityHistory?.includes(todayStr));
+
+  useEffect(() => {
+    if (!isProfileMenuOpen) {
+      setIsEditingUsername(false);
+      setUsernameError('');
+    }
+  }, [isProfileMenuOpen]);
+
+  const handleStartEdit = () => {
+    setNewUsername(currentUser?.displayName || '');
+    setIsEditingUsername(true);
+    setUsernameError('');
+  };
+
+  const handleSaveUsername = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) return;
+    const trimmed = newUsername.trim();
+    if (!trimmed) {
+      setUsernameError('Username cannot be empty');
+      return;
+    }
+    if (trimmed === currentUser.displayName) {
+      setIsEditingUsername(false);
+      return;
+    }
+    setIsSavingUsername(true);
+    setUsernameError('');
+    try {
+      const updatedUser = await updateUsername(currentUser.uid, trimmed);
+      setCurrentUser(updatedUser);
+      setIsEditingUsername(false);
+    } catch (err) {
+      console.error('Failed to update username:', err);
+      const message =
+        err instanceof Error ? err.message : 'Failed to update username';
+      setUsernameError(message);
+    } finally {
+      setIsSavingUsername(false);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -158,22 +215,78 @@ export default function AppHeader({
                   style={{ top: '100%' }}
                 >
                   {/* User Name & Tier info */}
-                  <div className="pb-2 border-b border-tj-border-main/50">
-                    <div className="flex items-center gap-2">
-                      <p className="text-xs font-bold text-tj-text-main truncate">
-                        {currentUser.displayName || 'Learner'}
-                      </p>
-                      {currentUser.isAdmin === true && (
-                        <Crown className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
-                      )}
-                    </div>
-                    <p className="text-[10px] text-tj-text-muted font-mono leading-tight mt-0.5">
-                      {currentUser.isAdmin === true
-                        ? 'Super Admin'
-                        : isPaid
-                          ? 'Paid Tier'
-                          : 'Free Tier'}
-                    </p>
+                  <div className="pb-2.5 border-b border-tj-border-main/50 space-y-1.5">
+                    {isEditingUsername ? (
+                      <form
+                        onSubmit={handleSaveUsername}
+                        className="flex flex-col gap-1.5"
+                      >
+                        <input
+                          type="text"
+                          value={newUsername}
+                          onChange={(e) => setNewUsername(e.target.value)}
+                          disabled={isSavingUsername}
+                          className="w-full text-xs px-2.5 py-1.5 bg-tj-bg-recessed border border-tj-border-main rounded-lg focus:outline-none focus:border-tj-primary text-tj-text-main font-semibold"
+                          placeholder="Username"
+                          // biome-ignore lint/a11y/noAutofocus: autofocus input on entering edit mode
+                          autoFocus
+                          maxLength={50}
+                        />
+                        {usernameError && (
+                          <p className="text-[10px] text-tj-error font-medium leading-none">
+                            {usernameError}
+                          </p>
+                        )}
+                        <div className="flex gap-1.5">
+                          <button
+                            type="submit"
+                            disabled={isSavingUsername || !newUsername.trim()}
+                            className="px-2.5 py-1 text-[10px] font-bold bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main rounded-lg cursor-pointer disabled:opacity-50 transition-colors"
+                          >
+                            {isSavingUsername ? 'Saving...' : 'Save'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsEditingUsername(false)}
+                            disabled={isSavingUsername}
+                            className="px-2.5 py-1 text-[10px] font-bold bg-tj-bg-recessed hover:bg-tj-border-main/30 text-tj-text-muted rounded-lg cursor-pointer transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2 justify-between">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <p className="text-xs font-bold text-tj-text-main truncate">
+                              {currentUser.displayName || 'Learner'}
+                            </p>
+                            {currentUser.isAdmin === true && (
+                              <Crown className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" />
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleStartEdit}
+                            className="p-1 text-tj-text-muted hover:text-tj-primary rounded transition-all cursor-pointer hover:bg-tj-primary-light"
+                            title="Edit username"
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-tj-text-muted truncate leading-tight">
+                          {currentUser.email || 'No email registered'}
+                        </p>
+                        <p className="text-[10px] text-tj-text-muted font-mono leading-tight">
+                          {currentUser.isAdmin === true
+                            ? 'Super Admin'
+                            : isPaid
+                              ? 'Paid Tier'
+                              : 'Free Tier'}
+                        </p>
+                      </>
+                    )}
                   </div>
 
                   {/* Streak Option (always accessible in dropdown) */}

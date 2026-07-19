@@ -208,4 +208,15 @@ export class PocketBaseAuthService implements IAuthService {
       return { isPaid: false };
     }
   }
+
+  async updateUsername(userId: string, displayName: string): Promise<IUser> {
+    const record = await pb.collection('users').update(userId, {
+      name: displayName,
+    });
+    // Also update pb.authStore.record
+    if (pb.authStore.record && pb.authStore.record.id === userId) {
+      pb.authStore.record.name = displayName;
+    }
+    return toIUser(record);
+  }
 }

@@ -52,4 +52,7 @@ export interface IAuthService {
    * or admin access (read from the `isAdmin` field).
    */
   syncUserProfile(user: IUser): Promise<{ isPaid: boolean }>;
+
+  /** Update user display name */
+  updateUsername(userId: string, name: string): Promise<IUser>;
 }
