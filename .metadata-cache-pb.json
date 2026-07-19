@@ -1,6 +1,86 @@
 {
-  "lastFetchTime": 1784293511881,
+  "lastFetchTime": 1784467583193,
   "stories": [
+    {
+      "id": "snobt6kzpcwgd8a",
+      "title": "จิตใจที่ตั้งมั่น: คู่มือพัฒนาตนเองอย่างแท้จริงและวิธีจับผิดกูรูขายปาฏิหาริย์",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "nonfiction",
+      "totalChapters": 8,
+      "createdAt": "2026-07-18T09:56:49.191Z",
+      "isCompleted": true,
+      "description": "This book provides simple, scientifically validated self-improvement tools and teaches readers to recognize manipulative marketing in the self-help industry. Written in clear Thai for intermediate learners, it offers a grounded path to real personal growth without falling for gurus selling miracles.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 8,
+      "wordCount": 4011,
+      "updated": "2026-07-18 10:00:34.898Z"
+    },
+    {
+      "id": "st68poevxui19jo",
+      "title": "ถอดรหัสครูฝรั่ง: คู่มือวัฒนธรรมสำหรับนักการศึกษาไทย",
+      "language": "Thai",
+      "cefrLevel": "B2",
+      "genre": "nonfiction",
+      "totalChapters": 15,
+      "createdAt": "2026-07-18T07:27:48.077Z",
+      "isCompleted": true,
+      "description": "This practical cultural guide unravels the puzzling behaviors of Western teachers in Thai schools, from their direct speech and rigid timekeeping to their chaotic active-learning classrooms. Written for Thai educators, it provides insights and strategies to bridge the gap, turning potential friction into a powerful collaboration that blends Thai harmony with Western dynamism.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 15,
+      "wordCount": 6592,
+      "updated": "2026-07-18 07:53:43.456Z"
+    },
+    {
+      "id": "sfvf7sqti1ldlia",
+      "title": "The Culturally Responsive Classroom: A Guide for ESL Teachers in Thailand",
+      "language": "English",
+      "cefrLevel": "B2",
+      "genre": "nonfiction",
+      "totalChapters": 15,
+      "createdAt": "2026-07-18T07:03:54.254Z",
+      "isCompleted": true,
+      "description": "This practical guide helps new ESL teachers in Thailand move beyond survival mode by explaining essential cultural values—from the Wai greeting to saving face in the classroom. Through 15 thematic chapters, you’ll learn to navigate daily life, school hierarchies, and deep-rooted traditions with confidence, transforming culture confusion into cultural responsiveness.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 15,
+      "wordCount": 6756,
+      "updated": "2026-07-18 07:20:55.003Z"
+    },
+    {
+      "id": "s10a8o5up4ngxo9",
+      "title": "30 deutsche Traditionen: Eine Reise durch das Jahr",
+      "language": "German",
+      "cefrLevel": "A1",
+      "genre": "sliceoflife",
+      "totalChapters": 30,
+      "createdAt": "2026-07-17T21:18:36.488Z",
+      "isCompleted": true,
+      "description": "Join Anna, a curious student, on a year-long journey through Germany as she explores 30 beloved traditions, from festive fireworks on New Year's Eve to the colorful lantern parades of St. Martin's Day. This bilingual German-English story for beginners (CEFR A1) introduces cultural customs in simple, repetitive language, making learning fun and accessible. Discover the heart of German culture, one tradition at a time, and build your vocabulary along the way.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "google/gemma-4-31b-it",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 30,
+      "wordCount": 8269,
+      "updated": "2026-07-17 22:02:32.714Z"
+    },
     {
       "id": "sov16mdwfor7a06",
       "title": "จังหวะในสายเลือด: ทำไมมนุษย์ถึงร้องเพลงและเต้นรำ",
@@ -1413,7 +1493,7 @@
       "isPublic": true,
       "chaptersCount": 30,
       "wordCount": 8456,
-      "updated": "2026-06-29 02:15:06.249Z"
+      "updated": "2026-07-17 23:39:28.528Z"
     },
     {
       "id": "story1781024645364",
@@ -1473,7 +1553,7 @@
       "isPublic": true,
       "chaptersCount": 7,
       "wordCount": 4573,
-      "updated": "2026-06-27 04:47:44.124Z"
+      "updated": "2026-07-17 23:01:47.821Z"
     },
     {
       "id": "story1780981737222",
@@ -1653,7 +1733,7 @@
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 3337,
-      "updated": "2026-06-27 04:47:46.483Z"
+      "updated": "2026-07-17 23:19:56.334Z"
     },
     {
       "id": "story1780880791703",
@@ -1713,7 +1793,7 @@
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1486,
-      "updated": "2026-06-27 04:47:32.810Z"
+      "updated": "2026-07-17 23:02:45.391Z"
     },
     {
       "id": "story1780755245223",
@@ -1813,7 +1893,7 @@
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1259,
-      "updated": "2026-06-29 02:15:07.397Z"
+      "updated": "2026-07-17 23:30:53.905Z"
     },
     {
       "id": "story1780749298825",
@@ -1833,7 +1913,7 @@
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 889,
-      "updated": "2026-06-27 04:47:37.320Z"
+      "updated": "2026-07-17 23:29:30.760Z"
     },
     {
       "id": "story1780749084242",
@@ -1953,7 +2033,7 @@
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1119,
-      "updated": "2026-06-27 04:47:33.094Z"
+      "updated": "2026-07-17 23:32:37.850Z"
     },
     {
       "id": "story1780733359838",
@@ -1973,7 +2053,7 @@
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 3610,
-      "updated": "2026-06-29 02:15:08.568Z"
+      "updated": "2026-07-17 23:34:20.713Z"
     },
     {
       "id": "story1780662814416",
@@ -2239,7 +2319,7 @@
       "isPublic": true,
       "chaptersCount": 7,
       "wordCount": 908,
-      "updated": "2026-06-27 04:47:40.593Z"
+      "updated": "2026-07-17 23:31:36.498Z"
     },
     {
       "id": "story1780474707404",
@@ -2324,26 +2404,6 @@
       "updated": "2026-06-29 02:15:04.418Z"
     },
     {
-      "id": "story1780453209522",
-      "title": "The Hero Without a Cape",
-      "language": "English",
-      "cefrLevel": "A1",
-      "genre": "adventure",
-      "totalChapters": 7,
-      "createdAt": "2026-06-03T02:20:09.522Z",
-      "isCompleted": true,
-      "description": "",
-      "creatorId": "kjksljovpk623jy",
-      "creatorEmail": "jmayereup@gmail.com",
-      "model": "x-ai/grok-4.3",
-      "ratings": null,
-      "completedBy": {},
-      "isPublic": true,
-      "chaptersCount": 7,
-      "wordCount": 820,
-      "updated": "2026-06-29 02:15:08.710Z"
-    },
-    {
       "id": "story1780438479911",
       "title": "Mein Herz in Berlin",
       "language": "German",
@@ -2361,7 +2421,7 @@
       "isPublic": true,
       "chaptersCount": 7,
       "wordCount": 575,
-      "updated": "2026-06-29 02:15:08.394Z"
+      "updated": "2026-07-17 23:33:12.855Z"
     },
     {
       "id": "story1780407549825",
@@ -2463,7 +2523,7 @@
       "isPublic": true,
       "chaptersCount": 5,
       "wordCount": 1257,
-      "updated": "2026-06-29 02:15:06.697Z"
+      "updated": "2026-07-17 23:52:00.777Z"
     },
     {
       "id": "story1780385643471",
