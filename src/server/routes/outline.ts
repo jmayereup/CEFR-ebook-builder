@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
       totalChapters,
       promptNotes,
       chapterLength,
-      model = 'deepseek/deepseek-v4-flash',
+      model = 'deepseek/deepseek-v4-pro',
       thinkingLevel,
       thinkingBudget,
       translationLanguage,

@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { FREE_MODEL_IDS, GEMINI_MODELS } from '../../constants/models';
+import { FREE_MODEL_IDS, AI_MODELS } from '../../constants/models';
 import { updateStoryModel } from '../../services/db';
 import { useUIStore } from '../../store/uiStore';
 import {
@@ -381,14 +381,14 @@ export default function ChapterSidebar({
                 const isFreeModelLocal = (id: string) =>
                   FREE_MODEL_IDS.has(id) || id.endsWith(':free');
 
-                const freeModels = GEMINI_MODELS.filter((m) =>
+                const freeModels = AI_MODELS.filter((m) =>
                   isFreeModelLocal(m.id),
                 );
-                const paidModels = GEMINI_MODELS.filter(
+                const paidModels = AI_MODELS.filter(
                   (m) => !isFreeModelLocal(m.id),
                 );
 
-                const renderOption = (model: (typeof GEMINI_MODELS)[0]) => {
+                const renderOption = (model: (typeof AI_MODELS)[0]) => {
                   let isModelRestricted = false;
                   let restrictionLabel = '';
 

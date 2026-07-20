@@ -3,7 +3,7 @@
  * Extracted from App.tsx to eliminate duplicate logic.
  */
 
-import { GEMINI_MODELS } from '../constants/models';
+import { AI_MODELS } from '../constants/models';
 
 /** Returns the human-readable provider name for a given model ID. */
 export const getModelBaseName = (modelId?: string): string => {
@@ -22,7 +22,7 @@ export const getModelBaseName = (modelId?: string): string => {
 /** Returns the short, user-facing display name for a given model ID. */
 export const getModelDisplayName = (modelId?: string): string => {
   if (!modelId) return 'Dolphin Mistral 24B Venice Edition (Free)';
-  const found = GEMINI_MODELS.find((m) => m.id === modelId);
+  const found = AI_MODELS.find((m) => m.id === modelId);
   if (found) return found.name;
   return modelId;
 };

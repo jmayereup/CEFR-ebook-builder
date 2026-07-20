@@ -64,7 +64,7 @@ export default function SettingsModal({
           word: 'test',
           language: 'English',
           context: 'Testing key connection',
-          model: 'deepseek/deepseek-v4-flash',
+          model: 'deepseek/deepseek-chat',
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
         }),

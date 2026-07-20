@@ -179,7 +179,7 @@ router.post('/generate', async (req, res) => {
     };
 
     try {
-      const textModel = 'deepseek/deepseek-v4-flash';
+      const textModel = 'deepseek/deepseek-chat';
       const systemInstruction = `You are a professional graphic designer and book cover illustrator.
 Given a book's metadata (title, genre, description, concept notes, outline), create a unique, tailored visual concept for its cover art.
 The concept must fit the book's specific theme and genre. Avoid generic ideas. Do NOT suggest a person reading or sitting in front of a window unless it is highly relevant to the story.
@@ -220,12 +220,20 @@ Please generate:
 1. A concise, specific scene description (sceneDescription) for a detailed, colorful, soft hand-drawn digital illustration representing the book's unique story. Focus on a single key character, symbolic object, or setting from the story.
 2. A visual style and color palette (visualStyle) that matches the genre and mood of the book, using a cozy, warm, and inviting soft hand-drawn digital illustration aesthetic (lofi study vibe, rich colors, clean outlines, and gentle shading).`;
 
+      const customOpenRouterKey =
+        req.headers['x-openrouter-api-key'] ||
+        req.headers['X-OpenRouter-API-Key'];
+
       const responseText = await handleModelCall({
         model: textModel,
         systemInstruction,
         prompt: promptText,
         responseSchema,
         temperature: 0.7,
+        customOpenRouterKey:
+          typeof customOpenRouterKey === 'string'
+            ? customOpenRouterKey
+            : undefined,
         userId: story.creatorId,
         userEmail: story.creatorEmail,
         action: 'generate-cover-prompt',

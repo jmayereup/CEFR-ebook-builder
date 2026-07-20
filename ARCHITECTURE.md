@@ -115,7 +115,7 @@ The application uses OpenRouter to communicate with various language models. To 
 
 1. **Define the Model Option**
    * Edit [src/constants/models.ts](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/constants/models.ts).
-   * Add a new `GeminiModelOption` configuration object to the `GEMINI_MODELS` array.
+   * Add a new `AIModelOption` configuration object to the `AI_MODELS` array.
    * Provide the following parameters:
      * `id`: The exact model identifier on OpenRouter (e.g., `'provider/model-name'`).
      * `name`: The human-readable label shown in selection dropdowns.
@@ -143,7 +143,7 @@ The application uses OpenRouter to communicate with various language models. To 
 
 ### Checklist for Removing a Model
 
-1. **Delete from Definitions**: Remove the model option from `GEMINI_MODELS` in [src/constants/models.ts](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/constants/models.ts).
+1. **Delete from Definitions**: Remove the model option from `AI_MODELS` in [src/constants/models.ts](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/constants/models.ts).
 2. **Remove Recommendations & Details**: Clean up its entry in `MODEL_RECOMMENDATIONS` inside [src/components/StoryConfigForm.tsx](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/components/StoryConfigForm.tsx) and the `MODEL_DETAILS` entry in [src/components/creator/ModelSelectionModal.tsx](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/components/creator/ModelSelectionModal.tsx).
 3. **Verify Code References**: Ensure the model is not set as the default model in server route fallbacks (e.g., in [src/server/routes/chapter.ts](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/server/routes/chapter.ts) or [src/utils/creditCalculation.ts](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/utils/creditCalculation.ts)).
 

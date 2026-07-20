@@ -1,7 +1,7 @@
 import { Brain, Check, Cpu, Sparkles, X, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
-import { GEMINI_MODELS } from '../../constants/models';
+import { AI_MODELS } from '../../constants/models';
 
 interface ModelSelectionModalProps {
   isOpen: boolean;
@@ -101,12 +101,12 @@ const MODEL_DETAILS: Record<
       'Paid version of Gemma 4 31B. Highly precise for East Asian languages with strong logical reasoning capabilities.',
     languages: 'Japanese, Chinese, Korean, Thai',
   },
-  'deepseek/deepseek-v4-flash': {
+  'deepseek/deepseek-chat': {
     verdict:
       'Extremely cost-efficient reasoning model supporting native chain-of-thought to solve complex contextual relationships.',
     languages: 'English, Chinese, Spanish, Japanese',
   },
-  'deepseek/deepseek-v4-pro': {
+  'deepseek/deepseek-r1': {
     verdict:
       'Flagship pro reasoning model with state-of-the-art code generation, logical deduction, and deep narrative capability.',
     languages: 'English, Chinese, Spanish, Japanese, French',
@@ -136,8 +136,8 @@ export default function ModelSelectionModal({
   const isFreeModelLocal = (id: string) =>
     id.endsWith(':free') || id.includes('free');
 
-  const freeModels = GEMINI_MODELS.filter((m) => isFreeModelLocal(m.id));
-  const paidModels = GEMINI_MODELS.filter((m) => !isFreeModelLocal(m.id));
+  const freeModels = AI_MODELS.filter((m) => isFreeModelLocal(m.id));
+  const paidModels = AI_MODELS.filter((m) => !isFreeModelLocal(m.id));
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm">

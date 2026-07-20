@@ -4,7 +4,7 @@
  */
 
 import { Router } from 'express';
-import { GEMINI_MODELS } from '../../constants/models';
+import { AI_MODELS } from '../../constants/models';
 import { cleanJSONString, handleModelCall, Type } from '../lib/aiProviders';
 
 const router = Router();
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
       previousChapters,
       promptNotes,
       chapterLength,
-      model = 'deepseek/deepseek-v4-flash',
+      model = 'deepseek/deepseek-v4-pro',
       thinkingLevel,
       thinkingBudget,
       translationLanguage,
@@ -319,7 +319,7 @@ Please write Chapter ${chapterNumber} of ${totalChapters}, ensuring a seamless c
     const multiplier = isBilingual ? 2.5 : 1.5;
     const estOutputTokens =
       Math.ceil(targetWordCount * 1.33 * multiplier) + 1200;
-    const selectedModelObj = GEMINI_MODELS.find((m) => m.id === model);
+    const selectedModelObj = AI_MODELS.find((m) => m.id === model);
     const modelMaxOutput = selectedModelObj?.maxOutputTokens ?? 4096;
     const maxTokens = Math.min(Math.max(estOutputTokens, 4096), modelMaxOutput);
 

@@ -13,8 +13,8 @@ interface GlossaryGenerationToastProps {
 }
 
 const FALLBACK_MODELS = [
-  { id: 'google/gemma-4-31b-it:free', name: 'Gemma 4 31B (Free)' },
   { id: 'deepseek/deepseek-v4-flash', name: 'DeepSeek V4 Flash' },
+  { id: 'google/gemma-4-31b-it:free', name: 'Gemma 4 31B (Free)' },
   { id: 'google/gemma-4-31b-it', name: 'Gemma 4 31B (Paid)' },
   { id: 'openrouter/free', name: 'OpenRouter Free' },
 ];

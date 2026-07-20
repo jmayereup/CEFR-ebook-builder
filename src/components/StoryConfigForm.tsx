@@ -17,7 +17,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { FREE_MODEL_IDS, GEMINI_MODELS } from '../constants/models';
+import { AI_MODELS, FREE_MODEL_IDS } from '../constants/models';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import { CEFR_LEVELS, GENRES, SUPPORTED_LANGUAGES } from '../types';
@@ -29,8 +29,8 @@ import {
 import ModelSelectionModal from './creator/ModelSelectionModal';
 import StoryOutlineReview from './creator/StoryOutlineReview';
 
-export type { GeminiModelOption } from '../constants/models';
-export { GEMINI_MODELS } from '../constants/models';
+export type { AIModelOption, GeminiModelOption } from '../constants/models';
+export { AI_MODELS, GEMINI_MODELS } from '../constants/models';
 
 const getCefrBadgeStyle = (level: string) => {
   const lvl = level.toUpperCase();
@@ -183,7 +183,7 @@ export default function StoryConfigForm({
     setSelectedModel(newModel);
 
     // Auto-update thinkingOption for the new model
-    const modelObj = GEMINI_MODELS.find((m) => m.id === newModel);
+    const modelObj = AI_MODELS.find((m) => m.id === newModel);
     if (modelObj?.supportsThinkingLevel || modelObj?.supportsThinkingBudget) {
       setThinkingOption('medium');
     } else {
@@ -260,7 +260,7 @@ export default function StoryConfigForm({
     let finalThinkingLevel: string | undefined;
     let finalThinkingBudget: number | undefined;
 
-    const currentModelObj = GEMINI_MODELS.find((m) => m.id === selectedModel);
+    const currentModelObj = AI_MODELS.find((m) => m.id === selectedModel);
     if (currentModelObj?.supportsThinkingLevel) {
       if (thinkingOption !== 'disabled') {
         finalThinkingLevel = thinkingOption;
@@ -344,7 +344,7 @@ export default function StoryConfigForm({
     let finalThinkingLevel: string | undefined;
     let finalThinkingBudget: number | undefined;
 
-    const currentModelObj = GEMINI_MODELS.find((m) => m.id === selectedModel);
+    const currentModelObj = AI_MODELS.find((m) => m.id === selectedModel);
     if (currentModelObj?.supportsThinkingLevel) {
       if (thinkingOption !== 'disabled') {
         finalThinkingLevel = thinkingOption;
@@ -721,7 +721,7 @@ export default function StoryConfigForm({
                     value={selectedModel}
                     onChange={(e) => {
                       setSelectedModel(e.target.value);
-                      const model = GEMINI_MODELS.find(
+                      const model = AI_MODELS.find(
                         (m) => m.id === e.target.value,
                       );
                       if (
@@ -738,11 +738,11 @@ export default function StoryConfigForm({
                     {(() => {
                       const isFreeModelLocal = (id: string) =>
                         FREE_MODEL_IDS.has(id) || id.endsWith(':free');
-                      const sortedModels = [...GEMINI_MODELS].sort(
+                      const sortedModels = [...AI_MODELS].sort(
                         (a, b) => a.outputCost1M - b.outputCost1M,
                       );
                       const renderOption = (
-                        model: (typeof GEMINI_MODELS)[0],
+                        model: (typeof AI_MODELS)[0],
                       ) => {
                         let isModelRestricted = false;
                         let restrictionLabel = '';
@@ -788,8 +788,8 @@ export default function StoryConfigForm({
                         );
                       };
 
-                      const freeModels: typeof GEMINI_MODELS = [];
-                      const paidModels: typeof GEMINI_MODELS = [];
+                      const freeModels: typeof AI_MODELS = [];
+                      const paidModels: typeof AI_MODELS = [];
 
                       sortedModels.forEach((model) => {
                         if (isFreeModelLocal(model.id)) {
@@ -858,7 +858,7 @@ export default function StoryConfigForm({
                             Reasoning / Thinking Level
                           </label>
                           {(() => {
-                            const currentModelObj = GEMINI_MODELS.find(
+                            const currentModelObj = AI_MODELS.find(
                               (m) => m.id === selectedModel,
                             );
                             const isSimpleThinking =
@@ -950,7 +950,7 @@ export default function StoryConfigForm({
 
                       {/* Temperature Slider */}
                       {(() => {
-                        const currentModelObj = GEMINI_MODELS.find(
+                        const currentModelObj = AI_MODELS.find(
                           (m) => m.id === selectedModel,
                         );
                         const supportsTemp =
@@ -1117,16 +1117,16 @@ export default function StoryConfigForm({
                   <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-tj-primary dark:text-tj-primary-hover" />
                   <span>
                     Estimates are progressive using standard{' '}
-                    {GEMINI_MODELS.find((m) => m.id === selectedModel)?.name ||
+                    {AI_MODELS.find((m) => m.id === selectedModel)?.name ||
                       'Dolphin Mistral 24B Venice Edition (Free)'}{' '}
                     rates (
                     {(
-                      (GEMINI_MODELS.find((m) => m.id === selectedModel)
+                      (AI_MODELS.find((m) => m.id === selectedModel)
                         ?.inputCost1M || 0) * 100
                     ).toFixed(1)}{' '}
                     credits/1M input,{' '}
                     {(
-                      (GEMINI_MODELS.find((m) => m.id === selectedModel)
+                      (AI_MODELS.find((m) => m.id === selectedModel)
                         ?.outputCost1M || 0) * 100
                     ).toFixed(1)}{' '}
                     credits/1M output tokens). Full-text context is dynamically

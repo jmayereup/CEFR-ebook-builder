@@ -3,7 +3,7 @@
  * Moving these here prevents two sources of truth for model IDs and pricing.
  */
 
-export interface GeminiModelOption {
+export interface AIModelOption {
   id: string;
   name: string;
   inputCost1M: number;
@@ -15,7 +15,10 @@ export interface GeminiModelOption {
   maxOutputTokens?: number;
 }
 
-export const GEMINI_MODELS: GeminiModelOption[] = [
+/** Legacy alias */
+export type GeminiModelOption = AIModelOption;
+
+export const AI_MODELS: AIModelOption[] = [
   // --- Free Tier Models ---
   {
     id: 'openrouter/free',
@@ -250,3 +253,6 @@ export const FREE_MODEL_IDS = new Set([
   'google/gemma-4-31b-it:free',
   'openai/gpt-oss-120b:free',
 ]);
+
+/** Legacy alias for backward compatibility */
+export const GEMINI_MODELS = AI_MODELS;

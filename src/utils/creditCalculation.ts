@@ -12,7 +12,7 @@
 import { FREE_MODEL_IDS } from '../constants/models';
 import { calculateEstimatedUsage } from './storyEstimation';
 
-const DEFAULT_MODEL = 'deepseek/deepseek-v4-flash';
+const DEFAULT_MODEL = 'deepseek/deepseek-v4-pro';
 
 /** Returns the model ID to use for estimation, falling back to the default free model. */
 const resolveModel = (model?: string): string => model || DEFAULT_MODEL;

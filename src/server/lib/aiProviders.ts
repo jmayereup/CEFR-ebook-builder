@@ -282,9 +282,7 @@ export async function handleModelCall(
   const customApiKeyStr = customOpenRouterKey?.trim() || undefined;
 
   let targetModel = model;
-  if (model === 'deepseek-v4-flash' || model === 'deepseek/deepseek-v4-flash') {
-    targetModel = 'deepseek/deepseek-chat';
-  } else if (model === 'gemini-3.5-flash') {
+  if (model === 'gemini-3.5-flash') {
     targetModel = '~google/gemini-flash-latest';
   }
 

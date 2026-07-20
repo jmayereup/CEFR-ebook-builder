@@ -17,8 +17,8 @@ import { cleanJSONString, handleModelCall, Type } from '../lib/aiProviders';
 
 const router = Router();
 
-// Always use this cheap model for glossary regardless of story model.
-const GLOSSARY_MODEL = 'google/gemma-4-31b-it:free';
+// Default model for glossary generation
+const GLOSSARY_MODEL = 'deepseek/deepseek-v4-flash';
 
 // Vocabulary schema item generator (reused for both modes)
 const getVocabItemSchema = (targetTranslationLanguage: string) => ({

@@ -334,11 +334,14 @@ export default function ChapterEditForm({
                   onChange={(e) => setSelectedModel(e.target.value)}
                   className="w-full text-xs p-2 rounded-lg border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:outline-none cursor-pointer"
                 >
-                  <option value="google/gemma-4-31b-it:free">
-                    Gemma 4 31B (Free)
+                  <option value="deepseek/deepseek-v4-pro">
+                    DeepSeek V4 Pro
                   </option>
                   <option value="deepseek/deepseek-v4-flash">
                     DeepSeek V4 Flash
+                  </option>
+                  <option value="google/gemma-4-31b-it:free">
+                    Gemma 4 31B (Free)
                   </option>
                   <option value="google/gemma-4-31b-it">
                     Gemma 4 31B (Paid)

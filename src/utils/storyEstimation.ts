@@ -7,7 +7,7 @@
  * complete story history as input, so costs grow progressively with each batch.
  */
 
-import { GEMINI_MODELS } from '../constants/models';
+import { AI_MODELS } from '../constants/models';
 
 /** Returns the recommended chapter word count for a CEFR level. */
 export const getRecommendedWordCount = (level: string): number => {
@@ -54,10 +54,10 @@ export const calculateEstimatedUsage = (
   const staticOutputTokensPerChapter = 100;
 
   // Find model matching modelId robustly (exact match first, then fuzzy contains match)
-  let model = GEMINI_MODELS.find((m) => m.id === modelId);
+  let model = AI_MODELS.find((m) => m.id === modelId);
   if (!model && modelId) {
     const cleanId = modelId.toLowerCase().replace(/[^a-z0-9]/g, '');
-    model = GEMINI_MODELS.find((m) => {
+    model = AI_MODELS.find((m) => {
       const cleanMId = m.id.toLowerCase().replace(/[^a-z0-9]/g, '');
       return cleanMId.includes(cleanId) || cleanId.includes(cleanMId);
     });
@@ -65,8 +65,8 @@ export const calculateEstimatedUsage = (
   // Default to DeepSeek V4 Flash instead of a free model if not found
   if (!model) {
     model =
-      GEMINI_MODELS.find((m) => m.id === 'deepseek/deepseek-v4-flash') ||
-      GEMINI_MODELS[0];
+      AI_MODELS.find((m) => m.id === 'deepseek/deepseek-v4-pro') ||
+      AI_MODELS[0];
   }
 
   // Detect reasoning/thinking models to budget for internal chain-of-thought tokens
