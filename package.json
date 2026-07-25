@@ -52,5 +52,10 @@
   },
   "overrides": {
     "esbuild": "$esbuild"
+  },
+  "allowScripts": {
+    "@openrouter/sdk@0.12.79": true,
+    "better-sqlite3@12.11.1": true,
+    "esbuild@0.28.1": true
   }
 }

@@ -14,9 +14,8 @@ interface GlossaryGenerationToastProps {
 
 const FALLBACK_MODELS = [
   { id: 'deepseek/deepseek-v4-flash', name: 'DeepSeek V4 Flash' },
-  { id: 'google/gemma-4-31b-it:free', name: 'Gemma 4 31B (Free)' },
-  { id: 'google/gemma-4-31b-it', name: 'Gemma 4 31B (Paid)' },
-  { id: 'openrouter/free', name: 'OpenRouter Free' },
+  { id: 'google/gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash-Lite' },
+  { id: 'deepseek/deepseek-v4-pro', name: 'DeepSeek V4 Pro' },
 ];
 
 export default function GlossaryGenerationToast({
@@ -29,7 +28,7 @@ export default function GlossaryGenerationToast({
   onDismiss,
 }: GlossaryGenerationToastProps) {
   const [selectedModel, setSelectedModel] = useState(
-    'google/gemma-4-31b-it:free',
+    'deepseek/deepseek-v4-flash',
   );
 
   return (

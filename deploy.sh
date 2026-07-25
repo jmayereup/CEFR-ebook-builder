@@ -3,12 +3,6 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-# Self-reentry pattern: if run on host, restart inside the distrobox container
-if [ ! -f /run/.containerenv ] && command -v distrobox &> /dev/null; then
-  echo "=== Running deploy script inside 'dev-box' container ==="
-  exec distrobox enter -T dev-box -- "$0" "$@"
-fi
-
 # Get the directory of this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

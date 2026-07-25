@@ -44,16 +44,16 @@ const getCefrBadgeStyle = (level: string) => {
 };
 
 const DEFAULT_MODEL_FOR_LANGUAGE: Record<string, string> = {
-  en: 'openrouter/free',
-  es: 'openrouter/free',
-  fr: 'openrouter/free',
-  de: 'openrouter/free',
-  it: 'openrouter/free',
-  pt: 'openrouter/free',
-  ja: 'openrouter/free',
-  zh: 'openrouter/free',
-  th: 'openrouter/free',
-  ko: 'openrouter/free',
+  en: 'deepseek/deepseek-v4-pro',
+  es: 'deepseek/deepseek-v4-pro',
+  fr: 'deepseek/deepseek-v4-pro',
+  de: 'deepseek/deepseek-v4-pro',
+  it: 'deepseek/deepseek-v4-pro',
+  pt: 'deepseek/deepseek-v4-pro',
+  ja: 'deepseek/deepseek-v4-pro',
+  zh: 'deepseek/deepseek-v4-pro',
+  th: 'deepseek/deepseek-v4-pro',
+  ko: 'deepseek/deepseek-v4-pro',
 };
 
 const WRITING_TYPES = [
@@ -134,7 +134,9 @@ export default function StoryConfigForm({
   const [totalChapters, setTotalChapters] = useState(5);
   const [chapterLength, setChapterLength] = useState(350);
   const [promptNotes, setPromptNotes] = useState('');
-  const [selectedModel, setSelectedModel] = useState('openrouter/free');
+  const [selectedModel, setSelectedModel] = useState(
+    'deepseek/deepseek-v4-pro',
+  );
   const [thinkingOption, setThinkingOption] = useState('medium');
   const [temperature, setTemperature] = useState(0.8);
   const [isPublic, setIsPublic] = useState(true);
@@ -179,7 +181,8 @@ export default function StoryConfigForm({
     } catch (e) {
       console.error(e);
     }
-    const newModel = DEFAULT_MODEL_FOR_LANGUAGE[langCode] || 'openrouter/free';
+    const newModel =
+      DEFAULT_MODEL_FOR_LANGUAGE[langCode] || 'deepseek/deepseek-v4-pro';
     setSelectedModel(newModel);
 
     // Auto-update thinkingOption for the new model

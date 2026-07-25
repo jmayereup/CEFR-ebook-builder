@@ -87,9 +87,9 @@ router.post('/', async (req, res) => {
       req.headers['x-openrouter-api-key'] ||
       req.headers['X-OpenRouter-API-Key'];
 
-    // Try OpenRouter's free Gemma model first, fall back to paid if it fails or returns invalid output
-    const primaryModel = 'google/gemma-4-31b-it:free';
-    const fallbackModel = 'google/gemma-4-31b-it';
+    // Use DeepSeek V4 Flash for dictionary lookups
+    const primaryModel = 'deepseek/deepseek-v4-flash';
+    const fallbackModel = 'deepseek/deepseek-v4-flash';
 
     const systemInstruction = `You are a professional dictionary and language translation assistant. 
 Translate the student's selected word into ${targetLanguage} based on its surrounding context if provided. Make it extremely concise and beginner-friendly.`;

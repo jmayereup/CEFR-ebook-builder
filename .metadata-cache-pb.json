@@ -1,6 +1,148 @@
 {
-  "lastFetchTime": 1784467583193,
+  "lastFetchTime": 1784964446120,
   "stories": [
+    {
+      "id": "stc99bymavpd220",
+      "title": "กลิ่นลำดวนในสวนเก่า",
+      "language": "Thai",
+      "cefrLevel": "B2",
+      "genre": "sliceoflife",
+      "totalChapters": 15,
+      "createdAt": "2026-07-23T13:04:30.696Z",
+      "isCompleted": true,
+      "description": "After years away in the bustling city, a young woman returns to her grandmother’s quiet village by the canal, drawn by the scent of lamduan flowers and a longing for connection. As she settles into the old house and rekindles ties with the community, she unravels a long-hidden family secret that reshapes her understanding of love, sacrifice, and the meaning of home. This tender slice-of-life novel celebrates the enduring beauty of Thai rural traditions, the quiet wisdom of elders, and the delicate memories that bind us across generations.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 15,
+      "wordCount": 7293,
+      "updated": "2026-07-23 13:14:19.455Z"
+    },
+    {
+      "id": "sz5izf29wa01sch",
+      "title": "ทางเดินแห่งความยินดี: ตามรอยนักบุญฟรานซิสในโลกสมัยใหม่",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 15,
+      "createdAt": "2026-07-21T22:53:19.208Z",
+      "isCompleted": true,
+      "description": "This descriptive narrative invites readers on a contemplative walk through the modern world, guided by the timeless wisdom of St. Francis of Assisi. Each chapter explores a contemporary landscape—from digital noise to environmental grief—and gently reframes it through Franciscan joy, simplicity, and compassion. The journey reveals that even amid the chaos of the 21st century, one can find sacred silence, kinship with creation, and true freedom of the heart.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 15,
+      "wordCount": 6107,
+      "updated": "2026-07-24 17:34:40.431Z"
+    },
+    {
+      "id": "s7415w1i96rn1qz",
+      "title": "โอดิสซีอุส: การเดินทางกลับบ้าน",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "folklore",
+      "totalChapters": 20,
+      "createdAt": "2026-07-20T14:01:05.522Z",
+      "isCompleted": true,
+      "description": "A graded reader retelling Homer's epic for intermediate Thai learners. Follow Odysseus's ten-year struggle to return home from the Trojan War, while his son Telemachus searches for him and his wife Penelope fends off greedy suitors. This adaptation captures monsters, magic, and a hero's final triumph in clear, accessible language.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 20,
+      "wordCount": 10398,
+      "updated": "2026-07-20 14:15:54.769Z"
+    },
+    {
+      "id": "sf56bzwx1l0h4g6",
+      "title": "The Odyssey Retold: A Hero's Return",
+      "language": "English",
+      "cefrLevel": "B1",
+      "genre": "folklore",
+      "totalChapters": 20,
+      "createdAt": "2026-07-20T13:48:46.284Z",
+      "isCompleted": true,
+      "description": "After the Trojan War, the Greek hero Odysseus faces monsters, sorceresses, and the anger of the gods on his ten-year voyage home. While his wife Penelope and son Telemachus defend their house from greedy suitors, Odysseus tells his incredible story of survival. This exciting retelling brings Homer's epic to life for modern readers, celebrating courage, loyalty, and the power of homecoming.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 20,
+      "wordCount": 9265,
+      "updated": "2026-07-20 13:56:46.756Z"
+    },
+    {
+      "id": "scn4h34x97dpsx6",
+      "title": "Beyond the App: The True Journey of Mindfulness",
+      "language": "English",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 10,
+      "createdAt": "2026-07-19T21:33:01.663Z",
+      "isCompleted": true,
+      "description": "This book explores the hidden side of mindfulness meditation. It explains why real practice is often difficult, not just calm, and shows how to navigate the challenges safely. Learn to grow stronger by embracing the full journey of your mind.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 10,
+      "wordCount": 3619,
+      "updated": "2026-07-19 21:38:05.639Z"
+    },
+    {
+      "id": "sjrtaxz9ntn0w4c",
+      "title": "เหนือกว่าแอป: ความจริงที่ลึกซึ้งของสติ",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 10,
+      "createdAt": "2026-07-19T21:20:35.576Z",
+      "isCompleted": true,
+      "description": "This book uncovers the hidden challenges of mindfulness, blending scientific findings with Buddhist wisdom to show why real practice is often difficult but transformative. It guides readers through potential pitfalls and offers practical advice for building a resilient, mature mindfulness. Written in clear Thai for intermediate learners, it makes complex ideas accessible and deeply human.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 10,
+      "wordCount": 4509,
+      "updated": "2026-07-25 00:32:14.817Z"
+    },
+    {
+      "id": "sec355jd9yxk0g0",
+      "title": "มนุษย์เทพ: อนาคตของมนุษยชาติในยุคข้อมูล – คู่มือศึกษาแนวคิดของ ยูวัล โนอาห์ แฮรารี",
+      "language": "Thai",
+      "cefrLevel": "B1",
+      "genre": "nonfiction",
+      "totalChapters": 20,
+      "createdAt": "2026-07-19T15:21:13.722Z",
+      "isCompleted": true,
+      "description": "A simplified analytical study guide of Yuval Noah Harari's 'Homo Deus,' breaking down 20 key chapters into easy-to-understand Thai for intermediate learners. It traces humanity's journey from conquering famine and war to facing a future where technology may render us obsolete, challenging the very meaning of being human.",
+      "creatorId": "kjksljovpk623jy",
+      "creatorEmail": "jmayereup@gmail.com",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "completedBy": {},
+      "isPublic": true,
+      "chaptersCount": 20,
+      "wordCount": 9845,
+      "updated": "2026-07-19 15:34:42.071Z"
+    },
     {
       "id": "snobt6kzpcwgd8a",
       "title": "จิตใจที่ตั้งมั่น: คู่มือพัฒนาตนเองอย่างแท้จริงและวิธีจับผิดกูรูขายปาฏิหาริย์",
@@ -14,12 +156,14 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
+      "ratings": {
+        "kjksljovpk623jy": 3
+      },
       "completedBy": {},
       "isPublic": true,
       "chaptersCount": 8,
       "wordCount": 4011,
-      "updated": "2026-07-18 10:00:34.898Z"
+      "updated": "2026-07-24 13:47:52.099Z"
     },
     {
       "id": "st68poevxui19jo",
@@ -94,12 +238,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 5665,
-      "updated": "2026-07-17 12:54:28.962Z"
+      "updated": "2026-07-20 23:26:14.114Z"
     },
     {
       "id": "s8pvg6vc0t79h14",
@@ -134,12 +282,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 10,
       "wordCount": 4937,
-      "updated": "2026-07-17 10:46:40.417Z"
+      "updated": "2026-07-22 13:12:12.764Z"
     },
     {
       "id": "svovgdlb6j7x19j",
@@ -626,12 +778,16 @@
       "creatorId": "kjksljovpk623jy",
       "creatorEmail": "jmayereup@gmail.com",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "chaptersCount": 15,
       "wordCount": 7633,
-      "updated": "2026-07-16 09:56:16.818Z"
+      "updated": "2026-07-20 23:25:38.441Z"
     },
     {
       "id": "s7i3p58ou01ekmk",
