@@ -92,6 +92,17 @@ export async function callOpenRouter(options: {
       promptText += `\n\nIMPORTANT: You MUST respond with a JSON object that strictly conforms to the following JSON schema:\n${JSON.stringify(options.responseSchema, null, 2)}\nOnly return the raw JSON object. Do NOT wrap it in markdown code blocks or provide any extra explanation outside the JSON.`;
     }
     messages.push({ role: 'user', content: promptText });
+  } else if (options.responseSchema) {
+    const lastUserMsgIdx = messages.reduce(
+      (last, m, idx) => (m.role === 'user' ? idx : last),
+      -1,
+    );
+    const schemaNotice = `\n\nIMPORTANT: You MUST respond with a JSON object that strictly conforms to the following JSON schema:\n${JSON.stringify(options.responseSchema, null, 2)}\nOnly return the raw JSON object. Do NOT wrap it in markdown code blocks or provide any extra explanation outside the JSON.`;
+    if (lastUserMsgIdx !== -1) {
+      messages[lastUserMsgIdx].content += schemaNotice;
+    } else {
+      messages.push({ role: 'user', content: schemaNotice.trim() });
+    }
   }
 
   const promptLength = messages.reduce((acc, m) => acc + m.content.length, 0);
@@ -145,10 +156,20 @@ export async function callOpenRouter(options: {
       order: ['Together', 'Fireworks', 'DeepInfra'],
       allow_fallbacks: true,
     };
+  } else if (lowerModel.includes('mistral')) {
+    chatRequest.provider = {
+      order: ['Mistral', 'Mistral AI', 'Together', 'DeepInfra'],
+      allow_fallbacks: true,
+    };
   }
 
   if (options.responseSchema) {
     chatRequest.response_format = { type: 'json_object' };
+    const hasJsonWord = messages.some((m) => /json/i.test(m.content));
+    if (!hasJsonWord && messages.length > 0) {
+      messages[messages.length - 1].content +=
+        '\n\nRespond with a valid JSON object.';
+    }
   }
 
   if (options.thinkingLevel && options.thinkingLevel !== 'disabled') {
@@ -306,31 +327,69 @@ export async function handleModelCall(
 // JSON sanitiser
 // ---------------------------------------------------------------------------
 
-/** Strips markdown code fences and extracts the first valid JSON object/array. */
+/** Strips markdown code fences, preambles, postscripts, and extracts valid JSON object/array. */
 export function cleanJSONString(str: string): string {
+  if (!str) return '{}';
   let cleaned = str.trim();
 
+  // 1. Direct JSON parse check
+  try {
+    JSON.parse(cleaned);
+    return cleaned;
+  } catch {
+    // Continue to extraction logic
+  }
+
+  // 2. Extract content from markdown code fences ```json ... ``` or ``` ... ```
+  const fenceMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fenceMatch && fenceMatch[1]) {
+    const fencedContent = fenceMatch[1].trim();
+    try {
+      JSON.parse(fencedContent);
+      return fencedContent;
+    } catch {
+      cleaned = fencedContent;
+    }
+  }
+
+  // 3. Extract JSON object or array by finding balanced braces/brackets
   const firstBrace = cleaned.indexOf('{');
   const firstBracket = cleaned.indexOf('[');
-  let startIdx = -1;
-  let endIdx = -1;
 
+  let candidate: string | null = null;
   if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
-    startIdx = firstBrace;
-    endIdx = cleaned.lastIndexOf('}');
+    const lastBrace = cleaned.lastIndexOf('}');
+    if (lastBrace > firstBrace) {
+      candidate = cleaned.substring(firstBrace, lastBrace + 1);
+    }
   } else if (firstBracket !== -1) {
-    startIdx = firstBracket;
-    endIdx = cleaned.lastIndexOf(']');
+    const lastBracket = cleaned.lastIndexOf(']');
+    if (lastBracket > firstBracket) {
+      candidate = cleaned.substring(firstBracket, lastBracket + 1);
+    }
   }
 
-  if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
-    return cleaned.substring(startIdx, endIdx + 1);
+  if (candidate) {
+    try {
+      JSON.parse(candidate);
+      return candidate;
+    } catch {
+      // If outer bounds failed because of extra braces in preamble/postscript, search for inner JSON
+      const innerMatch = candidate.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+      if (innerMatch) {
+        const subCandidate = innerMatch[1];
+        try {
+          JSON.parse(subCandidate);
+          return subCandidate;
+        } catch {
+          // ignore
+        }
+      }
+      return candidate;
+    }
   }
 
-  // Fallback: strip code fences
-  if (cleaned.startsWith('```json')) cleaned = cleaned.substring(7);
-  else if (cleaned.startsWith('```')) cleaned = cleaned.substring(3);
-  if (cleaned.endsWith('```'))
-    cleaned = cleaned.substring(0, cleaned.length - 3);
-  return cleaned.trim();
+  // Fallback: strip any remaining backticks
+  cleaned = cleaned.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+  return cleaned;
 }
