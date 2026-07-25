@@ -327,7 +327,48 @@ export async function handleModelCall(
 // JSON sanitiser
 // ---------------------------------------------------------------------------
 
-/** Strips markdown code fences, preambles, postscripts, and extracts valid JSON object/array. */
+/** Escapes unescaped control characters (ASCII 0-31 like raw newlines and tabs) inside JSON double-quoted string literals. */
+function sanitizeJSONControlChars(str: string): string {
+  let result = '';
+  let inString = false;
+  let isEscaped = false;
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    const code = char.charCodeAt(0);
+
+    if (inString) {
+      if (isEscaped) {
+        result += char;
+        isEscaped = false;
+      } else if (char === '\\') {
+        result += char;
+        isEscaped = true;
+      } else if (char === '"') {
+        result += char;
+        inString = false;
+      } else if (code < 0x20) {
+        if (char === '\n') result += '\\n';
+        else if (char === '\r') result += '\\r';
+        else if (char === '\t') result += '\\t';
+        else {
+          const hex = code.toString(16).padStart(4, '0');
+          result += `\\u${hex}`;
+        }
+      } else {
+        result += char;
+      }
+    } else {
+      if (char === '"') {
+        inString = true;
+      }
+      result += char;
+    }
+  }
+  return result;
+}
+
+/** Strips markdown code fences, preambles, postscripts, escapes control chars inside strings, and extracts valid JSON object/array. */
 export function cleanJSONString(str: string): string {
   if (!str) return '{}';
   let cleaned = str.trim();
@@ -337,7 +378,16 @@ export function cleanJSONString(str: string): string {
     JSON.parse(cleaned);
     return cleaned;
   } catch {
-    // Continue to extraction logic
+    // Continue
+  }
+
+  // Check with control characters sanitized
+  const sanitizedDirect = sanitizeJSONControlChars(cleaned);
+  try {
+    JSON.parse(sanitizedDirect);
+    return sanitizedDirect;
+  } catch {
+    // Continue
   }
 
   // 2. Extract content from markdown code fences ```json ... ``` or ``` ... ```
@@ -348,7 +398,13 @@ export function cleanJSONString(str: string): string {
       JSON.parse(fencedContent);
       return fencedContent;
     } catch {
-      cleaned = fencedContent;
+      const sanitizedFenced = sanitizeJSONControlChars(fencedContent);
+      try {
+        JSON.parse(sanitizedFenced);
+        return sanitizedFenced;
+      } catch {
+        cleaned = fencedContent;
+      }
     }
   }
 
@@ -374,22 +430,34 @@ export function cleanJSONString(str: string): string {
       JSON.parse(candidate);
       return candidate;
     } catch {
-      // If outer bounds failed because of extra braces in preamble/postscript, search for inner JSON
-      const innerMatch = candidate.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
-      if (innerMatch) {
-        const subCandidate = innerMatch[1];
-        try {
-          JSON.parse(subCandidate);
-          return subCandidate;
-        } catch {
-          // ignore
+      const sanitizedCand = sanitizeJSONControlChars(candidate);
+      try {
+        JSON.parse(sanitizedCand);
+        return sanitizedCand;
+      } catch {
+        // If outer bounds failed because of extra braces in preamble/postscript, search for inner JSON
+        const innerMatch = candidate.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+        if (innerMatch) {
+          const subCandidate = innerMatch[1];
+          try {
+            JSON.parse(subCandidate);
+            return subCandidate;
+          } catch {
+            const sanitizedSub = sanitizeJSONControlChars(subCandidate);
+            try {
+              JSON.parse(sanitizedSub);
+              return sanitizedSub;
+            } catch {
+              // ignore
+            }
+          }
         }
+        return sanitizedCand;
       }
-      return candidate;
     }
   }
 
   // Fallback: strip any remaining backticks
   cleaned = cleaned.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
-  return cleaned;
+  return sanitizeJSONControlChars(cleaned);
 }
