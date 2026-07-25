@@ -328,6 +328,9 @@ export default function StoryConfigForm({
       }
 
       const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
       setDraftTitle(data.storyTitle || '');
       setDraftOutline(data.outline || '');
       setDraftDescription(data.description || '');

@@ -275,6 +275,9 @@ Extract 5 to 10 vocabulary terms/phrases that are relevant, interesting, or chal
         .status(500)
         .json({ error: e.message || 'Error generating glossary.' });
     } else {
+      res.write(
+        JSON.stringify({ error: e.message || 'Error generating glossary.' }),
+      );
       res.end();
     }
   }

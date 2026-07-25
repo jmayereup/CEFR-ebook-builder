@@ -342,6 +342,11 @@ Please write exactly ${batchCount} new consecutive chapters (Chapters ${batchNum
         .status(500)
         .json({ error: e.message || 'Error generating chapter batch.' });
     } else {
+      res.write(
+        JSON.stringify({
+          error: e.message || 'Error generating chapter batch.',
+        }),
+      );
       res.end();
     }
   }

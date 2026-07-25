@@ -193,6 +193,9 @@ Draft an overarching narrative outline. For each of the ${totalChapters} chapter
         .status(500)
         .json({ error: e.message || 'Error drafting outline.' });
     } else {
+      res.write(
+        JSON.stringify({ error: e.message || 'Error drafting outline.' }),
+      );
       res.end();
     }
   }

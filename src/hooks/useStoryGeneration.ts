@@ -403,6 +403,9 @@ export const useStoryGeneration = (
       );
 
       const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
       setGenerationLogs((prev) => [
         ...prev,
         `Chapters 1–${batchCount} successfully graded.`,
@@ -591,6 +594,9 @@ export const useStoryGeneration = (
       );
 
       const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
       const newChapter: Chapter = sanitizeChapter({
         chapterNumber: nextChapterNumber,
         title: data.chapterTitle,
@@ -1139,6 +1145,9 @@ export const useStoryGeneration = (
 
       if (res.ok) {
         const data = await res.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
         const chapterVocabulary: Record<number, unknown[]> =
           data.chapterVocabulary ?? {};
 

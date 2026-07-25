@@ -372,6 +372,9 @@ Please write Chapter ${chapterNumber} of ${totalChapters}, ensuring a seamless c
         .status(500)
         .json({ error: e.message || 'Error generating chapter.' });
     } else {
+      res.write(
+        JSON.stringify({ error: e.message || 'Error generating chapter.' }),
+      );
       res.end();
     }
   }
