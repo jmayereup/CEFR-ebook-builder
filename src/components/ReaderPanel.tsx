@@ -26,7 +26,11 @@ import {
   SUPPORTED_LANGUAGES,
   type VocabularyTerm,
 } from '../types';
-import { limitContextToTenWords, segmentText } from '../utils/segmenter';
+import {
+  limitContextToTenWords,
+  segmentText,
+  stripMarkdown,
+} from '../utils/segmenter';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
 import ChapterEditForm from './reader/ChapterEditForm';
@@ -445,11 +449,13 @@ export default function ReaderPanel({
   // Core TTS executors using custom hook actions
   const handleReadChapter = () => {
     if (!activeChapter) return;
-    const textToSpeak = activeChapter.content
-      .split(/\n+/)
-      .map((p) => p.trim())
-      .filter((p) => p.length > 0 && !p.startsWith('Translation:'))
-      .join('\n');
+    const textToSpeak = stripMarkdown(
+      activeChapter.content
+        .split(/\n+/)
+        .map((p) => p.trim())
+        .filter((p) => p.length > 0 && !p.startsWith('Translation:'))
+        .join('\n'),
+    );
     speak(textToSpeak);
   };
 

@@ -12,6 +12,14 @@ function escapeHtml(unsafe: string): string {
     .replace(/'/g, '&#039;');
 }
 
+function formatInlineMarkdownToHtml(str: string): string {
+  if (!str) return '';
+  return str
+    .replace(/(\*\*|__)(.*?)\1/g, '<strong>$2</strong>')
+    .replace(/(\*|_)(.*?)\1/g, '<em>$2</em>')
+    .replace(/~~(.*?)~~/g, '<del>$1</del>');
+}
+
 interface UseExportOptions {
   selectedStory: Story | null;
   activeChapterIdx: number;
@@ -132,17 +140,19 @@ export function useExport(options: UseExportOptions) {
                   glossaryWordsSet,
                 );
 
-                const highlightedContent = segments
-                  .map((seg) => {
-                    const isGlossary = glossaryWordsSet.has(
-                      seg.segment.toLowerCase().trim(),
-                    );
-                    if (isGlossary && seg.isWordLike) {
-                      return `<span style="border-bottom: 1px dotted #718096; text-decoration: underline dotted #718096;">${escapeHtml(seg.segment)}</span>`;
-                    }
-                    return escapeHtml(seg.segment);
-                  })
-                  .join('');
+                const highlightedContent = formatInlineMarkdownToHtml(
+                  segments
+                    .map((seg) => {
+                      const isGlossary = glossaryWordsSet.has(
+                        seg.segment.toLowerCase().trim(),
+                      );
+                      if (isGlossary && seg.isWordLike) {
+                        return `<span style="border-bottom: 1px dotted #718096; text-decoration: underline dotted #718096;">${escapeHtml(seg.segment)}</span>`;
+                      }
+                      return escapeHtml(seg.segment);
+                    })
+                    .join(''),
+                );
 
                 return `<p style="text-indent: ${isBilingual ? '0px' : '30px'}; margin-top: 0px; margin-bottom: 6px; line-height: 1.5; text-align: justify;">${highlightedContent}</p>`;
               })

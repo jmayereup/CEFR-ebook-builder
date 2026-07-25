@@ -3,6 +3,18 @@ export interface Segment {
   isWordLike: boolean;
 }
 
+/** Strips inline and block markdown formatting syntax for clean TTS reading and plain-text operations. */
+export function stripMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/(\*\*|__)(.*?)\1/g, '$2')
+    .replace(/(\*|_)(.*?)\1/g, '$2')
+    .replace(/~~(.*?)~~/g, '$1')
+    .replace(/^#+\s+/gm, '')
+    .replace(/^>\s+/gm, '')
+    .replace(/`([^`]+)`/g, '$1');
+}
+
 export function segmentText(
   text: string,
   langCode: string,

@@ -36,6 +36,14 @@ function getLanguageCodeFromName(langName: string): string {
   return 'en';
 }
 
+function formatInlineMarkdownToHtml(str: string): string {
+  if (!str) return '';
+  return str
+    .replace(/(\*\*|__)(.*?)\1/g, '<strong>$2</strong>')
+    .replace(/(\*|_)(.*?)\1/g, '<em>$2</em>')
+    .replace(/~~(.*?)~~/g, '<del>$1</del>');
+}
+
 // Helper to convert WebP Blob to JPEG Blob in browser using Canvas
 async function convertWebPToJpeg(webpBlob: Blob): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -439,22 +447,24 @@ a.glossary-backlink {
         );
         const segments = segmentText(p, languageCode, glossaryWordsSet);
 
-        const highlightedContent = segments
-          .map((seg) => {
-            const segLower = seg.segment.toLowerCase().trim();
-            const vocabIndex = (chapter.vocabulary || []).findIndex(
-              (v) => v.word.toLowerCase().trim() === segLower,
-            );
-            if (vocabIndex !== -1 && seg.isWordLike) {
-              const occurrences = occurrenceTracker[segLower] || 0;
-              occurrenceTracker[segLower] = occurrences + 1;
-              const refId = `ref-${idx}-${vocabIndex}${occurrences > 0 ? `-occ-${occurrences}` : ''}`;
-              const noteId = `note-${idx}-${vocabIndex}`;
-              return `<a epub:type="noteref" class="vocab-link" id="${refId}" href="#${noteId}"><span class="highlight">${escapeXml(seg.segment)}</span></a>`;
-            }
-            return escapeXml(seg.segment);
-          })
-          .join('');
+        const highlightedContent = formatInlineMarkdownToHtml(
+          segments
+            .map((seg) => {
+              const segLower = seg.segment.toLowerCase().trim();
+              const vocabIndex = (chapter.vocabulary || []).findIndex(
+                (v) => v.word.toLowerCase().trim() === segLower,
+              );
+              if (vocabIndex !== -1 && seg.isWordLike) {
+                const occurrences = occurrenceTracker[segLower] || 0;
+                occurrenceTracker[segLower] = occurrences + 1;
+                const refId = `ref-${idx}-${vocabIndex}${occurrences > 0 ? `-occ-${occurrences}` : ''}`;
+                const noteId = `note-${idx}-${vocabIndex}`;
+                return `<a epub:type="noteref" class="vocab-link" id="${refId}" href="#${noteId}"><span class="highlight">${escapeXml(seg.segment)}</span></a>`;
+              }
+              return escapeXml(seg.segment);
+            })
+            .join(''),
+        );
 
         return `      <p class="chapter-p">${highlightedContent}</p>`;
       })
