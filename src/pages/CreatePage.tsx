@@ -68,6 +68,7 @@ export default function CreatePage({
           isPaid={isPaid}
           freeModelCount={generationLimitData.freeModelCount ?? 0}
           monthlyCreditsUsed={generationLimitData.monthlyCreditsUsed ?? 0}
+          dailyCreditsUsed={generationLimitData.dailyCreditsUsed ?? 0}
           onLogin={onLogin}
         />
       )}

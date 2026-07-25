@@ -95,6 +95,16 @@ export const incrementStoryCompletion = (storyId: string, userId: string) =>
 export const decrementStoryCompletion = (storyId: string, userId: string) =>
   dbService.decrementStoryCompletion(storyId, userId);
 export const deleteStory = (storyId: string) => dbService.deleteStory(storyId);
+export const flagStoryForDeletion = (
+  flag: Parameters<IDatabaseService['flagStoryForDeletion']>[0],
+) => dbService.flagStoryForDeletion(flag);
+export const fetchPendingDeletionFlags = () =>
+  dbService.fetchPendingDeletionFlags();
+export const resolveDeletionFlag = (
+  flagId: string,
+  action: 'approved' | 'dismissed',
+  storyId?: string,
+) => dbService.resolveDeletionFlag(flagId, action, storyId);
 
 // User profile
 export const fetchUserProfile = (userId: string) =>

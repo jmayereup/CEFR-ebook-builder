@@ -26,6 +26,7 @@ import {
   calculateInitialCreditEstimate,
   calculateRemainingCreditCost,
   isFreeModel,
+  REGENERATION_CREDIT_COST,
 } from '../utils/creditCalculation';
 import { fetchWithRetry } from '../utils/fetchWithRetry';
 import { buildApiHeaders, getModelBaseName } from '../utils/modelUtils';
@@ -71,6 +72,7 @@ export interface GenerationOptions {
   customOpenRouterKey: string;
   freeModelCount: number;
   monthlyCreditsUsed: number;
+  dailyCreditsUsed?: number;
   onGenerationSuccess?: (modelId: string, creditsCost: number) => void;
   /** Currently open story (needed for next-chapter / auto-generate). */
   selectedStory: Story | null;
@@ -145,6 +147,7 @@ export const useStoryGeneration = (
     customOpenRouterKey,
     freeModelCount,
     monthlyCreditsUsed,
+    dailyCreditsUsed = 0,
     onGenerationSuccess,
     selectedStory,
     stories,
@@ -252,9 +255,10 @@ export const useStoryGeneration = (
       isAdmin,
       customOpenRouterKey,
       freeModelCount,
-      monthlyCreditsUsed,
+      dailyCreditsUsed,
       estimatedCreditsCost,
       batchCount,
+      currentUser?.emailVerified ?? true,
     );
     if (denied) {
       showAlert(denied.title, denied.message, 'warning');
@@ -507,9 +511,10 @@ export const useStoryGeneration = (
       isAdmin,
       customOpenRouterKey,
       freeModelCount,
-      monthlyCreditsUsed,
+      dailyCreditsUsed,
       actualCharge,
       1,
+      currentUser?.emailVerified ?? true,
     );
     if (denied) {
       showAlert(denied.title, denied.message, 'warning');
@@ -668,8 +673,7 @@ export const useStoryGeneration = (
           selectedStory.creditsCharged,
         );
 
-    // First 3 regenerations are free
-    const actualCharge = regenerationsCount < 3 ? 0 : baseCost;
+    const actualCharge = REGENERATION_CREDIT_COST;
 
     const denied = checkGenerationPermission(
       selectedStory.model,
@@ -677,9 +681,10 @@ export const useStoryGeneration = (
       isAdmin,
       customOpenRouterKey,
       freeModelCount,
-      monthlyCreditsUsed,
+      dailyCreditsUsed,
       actualCharge,
       1,
+      currentUser?.emailVerified ?? true,
     );
     if (denied) {
       showAlert(denied.title, denied.message, 'warning');
@@ -846,9 +851,10 @@ export const useStoryGeneration = (
       isAdmin,
       customOpenRouterKey,
       freeModelCount,
-      monthlyCreditsUsed,
+      dailyCreditsUsed,
       actualCreditsCost,
       remainingChapters,
+      currentUser?.emailVerified ?? true,
     );
     if (denied) {
       showAlert(denied.title, denied.message, 'warning');

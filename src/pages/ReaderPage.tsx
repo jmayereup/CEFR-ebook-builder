@@ -63,6 +63,7 @@ interface ReaderPageProps {
     vocabulary: VocabularyTerm[],
   ) => Promise<void>;
   handleDeleteStory: (bypass?: boolean) => void;
+  onFlagStory?: (story: Story) => void;
   isZenMode: boolean;
   setIsZenMode: (zen: boolean) => void;
   handleGenerateGlossary: (
@@ -124,6 +125,7 @@ export default function ReaderPage({
   handleDeleteChapter,
   handleSaveNewChapter,
   handleDeleteStory,
+  onFlagStory,
   isZenMode,
   setIsZenMode,
   handleGenerateGlossary,
@@ -299,6 +301,7 @@ export default function ReaderPage({
         onDeleteChapter={handleDeleteChapter}
         onAddCustomChapter={handleSaveNewChapter}
         onDeleteStory={handleDeleteStory}
+        onFlagStory={onFlagStory}
         isZenMode={isZenMode}
         onToggleZen={setIsZenMode}
         onGenerateGlossary={handleGenerateGlossary}

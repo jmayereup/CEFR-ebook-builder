@@ -7,6 +7,7 @@
 
 import type {
   ConsistencyAudit,
+  DeletionFlag,
   GenerationLimitData,
   LookupLimitData,
   RecentlyReadItem,
@@ -15,7 +16,7 @@ import type {
   UserProfileData,
   UserStreakData,
   VocabularyTerm,
-} from '../types';
+} from '../../types';
 
 // ---------------------------------------------------------------------------
 // Shared option / payload types
@@ -110,6 +111,21 @@ export interface IDatabaseService {
 
   /** Delete a story document. */
   deleteStory(storyId: string): Promise<void>;
+
+  /** Flag a story for deletion with a reason and comment. */
+  flagStoryForDeletion(
+    flag: Omit<DeletionFlag, 'id' | 'createdAt' | 'status'>,
+  ): Promise<void>;
+
+  /** Fetch all unreviewed story deletion flags (Admin feature). */
+  fetchPendingDeletionFlags(): Promise<DeletionFlag[]>;
+
+  /** Resolve a story deletion flag (Approve & Delete or Dismiss). */
+  resolveDeletionFlag(
+    flagId: string,
+    action: 'approved' | 'dismissed',
+    storyId?: string,
+  ): Promise<void>;
 
   // ── User profile ──────────────────────────────────────────────────────────
 

@@ -21,6 +21,9 @@ const resolveModel = (model?: string): string => model || DEFAULT_MODEL;
 export const isFreeModel = (model?: string): boolean =>
   !!model && (FREE_MODEL_IDS.has(model) || model.endsWith(':free'));
 
+/** Credit cost for regenerating a single chapter. */
+export const REGENERATION_CREDIT_COST = 0.5;
+
 /**
  * Calculates the estimated credit cost for generating a single chapter.
  *

@@ -31,6 +31,9 @@
   <!-- PWA & Theme Bootstrapping Scripts -->
   <script>
     (() => {
+      // Ensure Vite React preamble guard is set
+      window.__vite_plugin_react_preamble_installed__ = true;
+
       // Immediately apply dark class to prevent screen flashing before React mounts
       try {
         if (

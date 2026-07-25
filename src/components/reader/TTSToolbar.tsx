@@ -1,17 +1,28 @@
 import {
+  AArrowDown,
+  AArrowUp,
   AlignCenter,
   AlignJustify,
   AlignLeft,
   AlignRight,
+  Check,
   ChevronDown,
   Edit,
+  Edit3,
   Eye,
+  Flag,
   Languages,
+  Maximize2,
+  Minimize2,
   Pause,
   Play,
+  RotateCcw,
+  Settings,
   Sliders,
+  Square,
   Trash2,
   Type,
+  Volume2,
   VolumeX,
   X,
   ZoomIn,
@@ -47,6 +58,7 @@ interface TTSToolbarProps {
   isEditing?: boolean;
   onEditClick?: () => void;
   onDeleteClick?: () => void;
+  onFlagClick?: () => void;
 }
 
 export default function TTSToolbar({
@@ -76,6 +88,7 @@ export default function TTSToolbar({
   isEditing = false,
   onEditClick,
   onDeleteClick,
+  onFlagClick,
 }: TTSToolbarProps) {
   const [isTTSModalOpen, setIsTTSModalOpen] = useState<boolean>(false);
   const [isStylesModalOpen, setIsStylesModalOpen] = useState<boolean>(false);
@@ -177,15 +190,26 @@ export default function TTSToolbar({
       </div>
 
       <div className="flex items-center gap-1.5 shrink-0">
-        {/* DELETE STORY BUTTON (icon-only, on the far right) */}
-        {(isCreator || isAdmin) && !isEditing && onDeleteClick && (
+        {/* DELETE STORY BUTTON (Admin Only) */}
+        {isAdmin && !isEditing && onDeleteClick && (
           <button
             type="button"
             onClick={onDeleteClick}
             className="h-8 w-8 rounded-lg border border-red-200 dark:border-red-900/30 text-tj-error hover:bg-rose-50 dark:hover:bg-rose-955/20 transition-all cursor-pointer flex items-center justify-center bg-transparent"
-            title="Delete Entire Story"
+            title="Delete Entire Story (Admin)"
           >
             <Trash2 className="w-4 h-4" />
+          </button>
+        )}
+        {/* FLAG FOR DELETION BUTTON (Non-Admin Users) */}
+        {!isAdmin && !isEditing && onFlagClick && (
+          <button
+            type="button"
+            onClick={onFlagClick}
+            className="h-8 w-8 rounded-lg border border-tj-border-main text-tj-text-muted hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-955/20 transition-all cursor-pointer flex items-center justify-center bg-transparent"
+            title="Flag Story for Deletion"
+          >
+            <Flag className="w-4 h-4" />
           </button>
         )}
       </div>

@@ -28,44 +28,37 @@ export interface PermissionDenied {
  * @returns `null` if permitted, or a `PermissionDenied` reason if blocked.
  */
 export const checkGenerationPermission = (
-  modelId: string | undefined,
-  isPaid: boolean,
+  _modelId: string | undefined,
+  _isPaid: boolean,
   isAdmin: boolean,
   customOpenRouterKey: string,
   _freeModelCount: number,
-  monthlyCreditsUsed: number,
+  dailyCreditsUsed: number,
   estimatedCreditsCost: number,
   _chaptersToAdd: number,
+  isEmailVerified: boolean = true,
 ): PermissionDenied | null => {
-  // 1. Super Admin or users with their own API key have no limits and can use any model
+  // 1. Super Admin or users with their own API key have unlimited generations
+  // (BYOK users use their own key only, bypassing the system pool entirely)
   if (isAdmin || customOpenRouterKey) {
     return null;
   }
 
-  // Classify selected model
-  const isFreeModel =
-    !!modelId && (FREE_MODEL_IDS.has(modelId) || modelId.endsWith(':free'));
-
-  // 2. Free Tier models are unlimited for all signed-in users
-  if (isFreeModel) {
-    return null;
-  }
-
-  // 3. Premium Models (not free) require the user to be Paid (or Admin/have own key, which we checked above)
-  if (!isPaid) {
+  // 2. Unverified email accounts cannot use free system credits
+  if (!isEmailVerified) {
     return {
-      title: 'Premium Model Locked',
+      title: 'Email Verification Required',
       message:
-        'Free accounts can only use free models. To use premium or Paid Tier models, please upgrade to the Paid Tier, or configure your own OpenRouter API key in Settings.',
+        'Please verify your email address to use daily free generation credits. (Alternatively, configure your own OpenRouter API key in Settings for unlimited access).',
     };
   }
 
-  // 4. Paid tier users using premium models with the shared key consume monthly credits
-  if (monthlyCreditsUsed + estimatedCreditsCost > 100) {
-    const remaining = Math.max(0, 100 - monthlyCreditsUsed);
+  // 3. Regular users using system key get 25 daily credits across all models
+  if (dailyCreditsUsed + estimatedCreditsCost > 25) {
+    const remaining = Math.max(0, 25 - dailyCreditsUsed);
     return {
-      title: 'Monthly Credits Exceeded',
-      message: `Generating this would cost ${estimatedCreditsCost} credits, which exceeds your remaining monthly budget of ${remaining} credits. You have used ${monthlyCreditsUsed} of 100 credits this month. Please configure your own API key in Settings for unlimited generations.`,
+      title: 'Daily Credits Limit Reached',
+      message: `Generating this would cost ${estimatedCreditsCost} credit(s), which exceeds your remaining daily allocation of ${remaining} credit(s). All users receive 25 credits/day during our limited-time library build drive. Configure your own OpenRouter API key in Settings for unlimited generations.`,
     };
   }
 

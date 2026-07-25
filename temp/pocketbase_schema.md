@@ -153,6 +153,39 @@ false
 
 ---
 
+## 4. `deletion_flags`
+
+Stores user flags for stories requesting administrative deletion.
+
+### Fields
+| Field | PB type | Required | Notes |
+|-------|---------|----------|-------|
+| `storyId` | text | Yes | Story ID |
+| `storyTitle` | text | Yes | Title of the story |
+| `flaggerId` | text | Yes | User ID of the flagger |
+| `flaggerEmail` | text | No | Email of the flagger |
+| `reason` | text | Yes | `inappropriate` \| `quality` \| `formatting` \| `duplicate` \| `other` |
+| `comment` | text | Yes | Mandatory user explanation |
+| `status` | text | Yes | `pending` \| `reviewed` \| `resolved` (Default: `"pending"`) |
+| `createdAt` | text | Yes | ISO date string |
+
+### API Rules
+```
+// List / Search — admin only
+@request.auth.record.isAdmin = true
+
+// View — admin or flagger
+@request.auth.id != "" && (@request.auth.id = flaggerId || @request.auth.record.isAdmin = true)
+
+// Create — authenticated users
+@request.auth.id != ""
+
+// Update / Delete — admin only
+@request.auth.record.isAdmin = true
+```
+
+---
+
 ## Firestore → PocketBase Field Mapping Summary
 
 | Firestore concept | PocketBase equivalent |

@@ -1,5 +1,7 @@
 import {
+  AlertTriangle,
   Crown,
+  Flag,
   Flame,
   LogOut,
   Moon,
@@ -29,6 +31,7 @@ interface AppHeaderProps {
   ) => void;
   streakData: UserStreakData | null;
   onOpenStreakDashboard: () => void;
+  pendingFlagCount?: number;
 }
 
 export default function AppHeader({
@@ -43,6 +46,7 @@ export default function AppHeader({
   setActiveTab,
   streakData,
   onOpenStreakDashboard,
+  pendingFlagCount = 0,
 }: AppHeaderProps) {
   const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
   const currentUser = useAuthStore((state) => state.currentUser);
@@ -119,6 +123,24 @@ export default function AppHeader({
 
   return (
     <header className="sticky top-0 z-50 bg-tj-bg-main dark:bg-[#121310] border-b border-tj-border-main">
+      {currentUser?.isAdmin === true && pendingFlagCount > 0 && (
+        <div className="bg-amber-500 text-slate-950 font-bold px-4 py-2 text-xs flex items-center justify-between shadow-md">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-slate-950 shrink-0" />
+            <span>
+              Admin Alert: {pendingFlagCount} story deletion request(s) pending review.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setActiveTab('admin')}
+            className="px-3 py-1 bg-slate-950 text-white font-bold rounded-lg text-[11px] hover:bg-slate-900 transition-colors cursor-pointer flex items-center gap-1"
+          >
+            <Flag className="w-3 h-3" />
+            <span>Review Flags</span>
+          </button>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         {/* biome-ignore lint/a11y/useSemanticElements: logo wrapper contains block-level headings and must be a div */}
         <div

@@ -83,6 +83,7 @@ interface ReaderPanelProps {
     vocabulary: VocabularyTerm[],
   ) => Promise<void>;
   onDeleteStory?: (bypassConfirm?: boolean) => void;
+  onFlagStory?: (story: Story) => void;
   onStoryUpdated?: (story: Story) => void;
   isZenMode: boolean;
   onToggleZen: (zen: boolean) => void;
@@ -130,6 +131,7 @@ export default function ReaderPanel({
   onDeleteChapter,
   onAddCustomChapter,
   onDeleteStory,
+  onFlagStory,
   isZenMode,
   onToggleZen,
   onDownloadEpub,
@@ -1190,6 +1192,7 @@ export default function ReaderPanel({
                       isEditing={isEditing}
                       onEditClick={() => setIsEditing(true)}
                       onDeleteClick={() => setShowDeleteModal(true)}
+                      onFlagClick={() => onFlagStory && onFlagStory(story)}
                     />
                   ) : null
                 ) : (

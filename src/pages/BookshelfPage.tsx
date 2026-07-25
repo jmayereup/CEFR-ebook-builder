@@ -25,6 +25,7 @@ interface BookshelfPageProps {
     e: React.MouseEvent | null,
     bypass?: boolean,
   ) => void;
+  onFlagStory?: (story: Story) => void;
   setActiveTab: (
     tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin',
   ) => void;
@@ -58,6 +59,7 @@ export default function BookshelfPage({
   recentlyRead,
   handleToggleBookshelf,
   handleDeleteStory,
+  onFlagStory,
   setActiveTab,
   searchQuery,
   setSearchQuery,
@@ -119,6 +121,7 @@ export default function BookshelfPage({
         onSelectStory={handleSelectStory}
         onDownloadStory={onDownloadStory}
         onDeleteStory={handleDeleteStory}
+        onFlagStory={onFlagStory}
         setActiveTab={setActiveTab}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}

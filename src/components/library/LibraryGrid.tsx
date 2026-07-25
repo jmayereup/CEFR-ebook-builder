@@ -23,6 +23,7 @@ interface LibraryGridProps {
     storyId: string,
     e: React.MouseEvent | React.KeyboardEvent | null,
   ) => void;
+  onFlagStory?: (story: Story) => void;
   setActiveTab: (tab: 'browse' | 'create' | 'practice' | 'admin') => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -52,6 +53,7 @@ export default function LibraryGrid({
   filteredStories,
   onSelectStory,
   onDeleteStory,
+  onFlagStory,
   setActiveTab,
   searchQuery,
   setSearchQuery,
@@ -338,6 +340,7 @@ export default function LibraryGrid({
                         currentUser={currentUser}
                         onSelect={() => onSelectStory(story)}
                         onDelete={onDeleteStory}
+                        onFlagStory={onFlagStory}
                         isSaved={bookshelf.includes(story.id)}
                         onToggleSaved={onToggleSaved}
                         isCachedOffline={cachedStoryIds.includes(story.id)}
@@ -373,6 +376,7 @@ export default function LibraryGrid({
                         currentUser={currentUser}
                         onSelect={() => onSelectStory(story)}
                         onDelete={onDeleteStory}
+                        onFlagStory={onFlagStory}
                         isSaved={bookshelf.includes(story.id)}
                         onToggleSaved={onToggleSaved}
                         isCachedOffline={cachedStoryIds.includes(story.id)}

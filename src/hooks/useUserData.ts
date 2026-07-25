@@ -289,11 +289,16 @@ export function useUserData(options: UseUserDataOptions) {
       const prevMonthIsThisMonth = prev.monthlyCreditsMonth === thisMonthStr;
 
       const prevFreeCount = prevDateIsToday ? (prev.freeModelCount ?? 0) : 0;
+      const prevDailyCredits = prevDateIsToday
+        ? (prev.dailyCreditsUsed ?? 0)
+        : 0;
       const prevCreditsUsed = prevMonthIsThisMonth
         ? (prev.monthlyCreditsUsed ?? 0)
         : 0;
 
       const updated: GenerationLimitData = {
+        dailyCreditsUsed: prevDailyCredits + creditsCost,
+        dailyCreditsDate: todayStr,
         freeModelCount: isFreeModel ? prevFreeCount + 1 : prevFreeCount,
         monthlyCreditsUsed: !isFreeModel
           ? prevCreditsUsed + creditsCost
@@ -587,6 +592,11 @@ export function useUserData(options: UseUserDataOptions) {
 
             if (profile.generationLimitData) {
               const dataWithFallbacks = {
+                dailyCreditsUsed:
+                  profile.generationLimitData.date === todayStr
+                    ? (profile.generationLimitData.dailyCreditsUsed ?? 0)
+                    : 0,
+                dailyCreditsDate: todayStr,
                 freeModelCount:
                   profile.generationLimitData.date === todayStr
                     ? (profile.generationLimitData.freeModelCount ??
@@ -610,6 +620,8 @@ export function useUserData(options: UseUserDataOptions) {
               );
             } else {
               const resetData = {
+                dailyCreditsUsed: 0,
+                dailyCreditsDate: todayStr,
                 freeModelCount: 0,
                 monthlyCreditsUsed: 0,
                 monthlyCreditsMonth: thisMonthStr,

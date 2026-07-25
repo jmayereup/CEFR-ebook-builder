@@ -38,9 +38,11 @@ import {
   logout,
   syncUserProfile,
 } from './services/auth';
+import FlagStoryModal from './components/library/FlagStoryModal';
 import {
   createStory,
   decrementStoryCompletion,
+  fetchPendingDeletionFlags,
   fetchStory,
   type GenerationLimitData,
   incrementStoryCompletion,
@@ -48,7 +50,7 @@ import {
 } from './services/db';
 import { useAuthStore } from './store/authStore';
 import { useUIStore } from './store/uiStore';
-import type { Story } from './types';
+import type { DeletionFlag, Story } from './types';
 import { cleanCompletedStory } from './utils/storyCleanup';
 
 interface AppProps {
@@ -280,6 +282,26 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     showAlert,
   });
 
+  // Flagging story modal state
+  const [flaggingStory, setFlaggingStory] = useState<Story | null>(null);
+  const [isFlagModalOpen, setIsFlagModalOpen] = useState(false);
+  const [pendingFlags, setPendingFlags] = useState<DeletionFlag[]>([]);
+
+  const handleOpenFlagModal = (story: Story) => {
+    setFlaggingStory(story);
+    setIsFlagModalOpen(true);
+  };
+
+  useEffect(() => {
+    if (currentUser?.isAdmin === true) {
+      fetchPendingDeletionFlags()
+        .then((flags) => setPendingFlags(flags))
+        .catch((err) =>
+          console.error('Error fetching admin deletion flags:', err),
+        );
+    }
+  }, [currentUser]);
+
   // Story generation — all state and handlers live in the hook
   const {
     isGenerating,
@@ -303,6 +325,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     customOpenRouterKey,
     freeModelCount: generationLimitData.freeModelCount ?? 0,
     monthlyCreditsUsed: generationLimitData.monthlyCreditsUsed ?? 0,
+    dailyCreditsUsed: generationLimitData.dailyCreditsUsed ?? 0,
     onGenerationSuccess: handleIncrementGenerationCount,
     selectedStory,
     stories,
@@ -859,6 +882,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
           setSelectedStory={handleRequestClearStory}
           setActiveTab={handleRequestTabChange}
           streakData={streakData}
+          pendingFlagCount={pendingFlags.length}
           onOpenStreakDashboard={() => {
             if (dirty) {
               syncChangesToDatabase().catch((err) =>
@@ -1040,6 +1064,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 handleDeleteStory={(bypass) =>
                   handleDeleteStory(selectedStory.id, null, bypass)
                 }
+                onFlagStory={handleOpenFlagModal}
                 isZenMode={isZenMode}
                 setIsZenMode={setIsZenMode}
                 handleGenerateGlossary={handleGenerateGlossary}
@@ -1071,6 +1096,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 handleSelectStory={handleSelectStory}
                 onDownloadStory={handleDownloadStory}
                 handleDeleteStory={handleDeleteStory}
+                onFlagStory={handleOpenFlagModal}
                 setActiveTab={setActiveTab}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
@@ -1107,6 +1133,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 recentlyRead={recentlyRead}
                 handleToggleBookshelf={handleToggleBookshelfWithAuth}
                 handleDeleteStory={handleDeleteStory}
+                onFlagStory={handleOpenFlagModal}
                 setActiveTab={setActiveTab}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
@@ -1252,6 +1279,13 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onLogin={handleLogin}
+      />
+      <FlagStoryModal
+        isOpen={isFlagModalOpen}
+        onClose={() => setIsFlagModalOpen(false)}
+        story={flaggingStory}
+        currentUser={currentUser}
+        onSuccess={(msg) => showAlert('Story Flagged', msg, 'info')}
       />
       <CookieConsent />
       <PwaUpdateNotification />

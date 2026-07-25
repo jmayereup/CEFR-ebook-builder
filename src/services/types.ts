@@ -12,6 +12,7 @@ export interface IUser {
   displayName: string | null;
   photoURL: string | null;
   isAdmin?: boolean;
+  emailVerified?: boolean;
 }
 
 // Re-export domain types consumed by service interfaces so callers can import

@@ -194,10 +194,24 @@ export interface LookupLimitData {
 }
 
 export interface GenerationLimitData {
+  dailyCreditsUsed?: number;
+  dailyCreditsDate?: string;
   freeModelCount: number;
   monthlyCreditsUsed: number;
   monthlyCreditsMonth: string;
   date: string;
+}
+
+export interface DeletionFlag {
+  id?: string;
+  storyId: string;
+  storyTitle: string;
+  flaggerId: string;
+  flaggerEmail: string;
+  reason: 'inappropriate' | 'quality' | 'formatting' | 'duplicate' | 'other';
+  comment: string;
+  createdAt: string;
+  status: 'pending' | 'reviewed' | 'resolved';
 }
 
 export interface RecentlyReadItem {

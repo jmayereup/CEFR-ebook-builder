@@ -6,8 +6,10 @@ import {
   ChevronDown,
   ChevronUp,
   Cloud,
+  Flag,
   Lock,
   Star,
+  Trash2,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import type React from 'react';
@@ -29,10 +31,11 @@ const cleanGenreLabel = (label: string) => {
 
 interface StoryCondensedRowProps {
   story: Story;
-  currentUser: { uid: string } | null;
+  currentUser: { uid: string; isAdmin?: boolean } | null;
   onSelect: () => void;
   // biome-ignore lint/suspicious/noExplicitAny: Matches parent onDelete signature
   onDelete: (storyId: string, e: any) => void;
+  onFlagStory?: (story: Story) => void;
   isSaved?: boolean;
   // biome-ignore lint/suspicious/noExplicitAny: Matches parent onToggleSaved signature
   onToggleSaved?: (storyId: string, e: any) => void;
@@ -47,8 +50,8 @@ export default function StoryCondensedRow({
   story,
   currentUser,
   onSelect,
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: Matches interface but not currently rendered
   onDelete,
+  onFlagStory,
   isSaved = false,
   onToggleSaved,
   isCachedOffline = false,
@@ -293,6 +296,30 @@ export default function StoryCondensedRow({
                 )}
               </button>
             )}
+
+            {/* Admin Delete vs Non-Admin Flag */}
+            {currentUser?.isAdmin === true ? (
+              <button
+                type="button"
+                onClick={(e) => onDelete(story.id, e)}
+                className="p-1.5 border border-rose-500/30 rounded-xl transition cursor-pointer text-rose-500 hover:bg-rose-500/10 flex items-center justify-center"
+                title="Delete Story (Admin)"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            ) : currentUser && onFlagStory ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFlagStory(story);
+                }}
+                className="p-1.5 border border-tj-border-main hover:border-rose-500/40 rounded-xl transition cursor-pointer text-tj-text-muted hover:text-rose-500 hover:bg-rose-500/10 flex items-center justify-center"
+                title="Flag Story for Deletion"
+              >
+                <Flag className="w-3.5 h-3.5" />
+              </button>
+            ) : null}
           </div>
         </div>
       )}

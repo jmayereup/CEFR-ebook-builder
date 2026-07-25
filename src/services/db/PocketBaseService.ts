@@ -3,6 +3,7 @@ import { pb } from '../pocketbase';
 import type {
   Chapter,
   ConsistencyAudit,
+  DeletionFlag,
   GenerationLimitData,
   LookupLimitData,
   RecentlyReadItem,
@@ -11,7 +12,7 @@ import type {
   UserProfileData,
   UserStreakData,
   VocabularyTerm,
-} from '../types';
+} from '../../types';
 import type {
   IDatabaseService,
   MetadataOptions,
@@ -314,6 +315,79 @@ export class PocketBaseService implements IDatabaseService {
 
   async deleteStory(storyId: string): Promise<void> {
     await pb.collection('stories').delete(storyId);
+  }
+
+  async flagStoryForDeletion(
+    flag: Omit<DeletionFlag, 'id' | 'createdAt' | 'status'>,
+  ): Promise<void> {
+    const recordPayload = {
+      ...flag,
+      createdAt: new Date().toISOString(),
+      status: 'pending' as const,
+    };
+    try {
+      await pb.collection('deletion_flags').create(recordPayload);
+    } catch (_err) {
+      // Local Storage fallback if collection is pending creation
+      const existing = localStorage.getItem('pending_deletion_flags');
+      const list: DeletionFlag[] = existing ? JSON.parse(existing) : [];
+      list.push({ ...recordPayload, id: `flag_${Date.now()}` });
+      localStorage.setItem('pending_deletion_flags', JSON.stringify(list));
+    }
+  }
+
+  async fetchPendingDeletionFlags(): Promise<DeletionFlag[]> {
+    try {
+      const records = await pb.collection('deletion_flags').getFullList({
+        filter: 'status = "pending"',
+        sort: '-createdAt',
+      });
+      return records.map((r: any) => ({
+        id: r.id,
+        storyId: r.storyId,
+        storyTitle: r.storyTitle || 'Untitled Story',
+        flaggerId: r.flaggerId,
+        flaggerEmail: r.flaggerEmail,
+        reason: r.reason,
+        comment: r.comment,
+        createdAt: r.createdAt,
+        status: r.status,
+      }));
+    } catch (_err) {
+      // Local Storage fallback
+      const existing = localStorage.getItem('pending_deletion_flags');
+      const list: DeletionFlag[] = existing ? JSON.parse(existing) : [];
+      return list.filter((f) => f.status === 'pending');
+    }
+  }
+
+  async resolveDeletionFlag(
+    flagId: string,
+    action: 'approved' | 'dismissed',
+    storyId?: string,
+  ): Promise<void> {
+    if (action === 'approved' && storyId) {
+      try {
+        await this.deleteStory(storyId);
+      } catch (e) {
+        console.error('Error deleting story during flag resolution:', e);
+      }
+    }
+    try {
+      await pb.collection('deletion_flags').update(flagId, {
+        status: 'resolved',
+      });
+    } catch (_err) {
+      // Local Storage fallback
+      const existing = localStorage.getItem('pending_deletion_flags');
+      if (existing) {
+        const list: DeletionFlag[] = JSON.parse(existing);
+        const updated = list.map((f) =>
+          f.id === flagId ? { ...f, status: 'resolved' as const } : f,
+        );
+        localStorage.setItem('pending_deletion_flags', JSON.stringify(updated));
+      }
+    }
   }
 
   // ── User profile ───────────────────────────────────────────────────────────

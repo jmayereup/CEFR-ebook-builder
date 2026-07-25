@@ -5,8 +5,10 @@ import {
   BookOpenText,
   ChevronDown,
   Cloud,
+  Flag,
   Lock,
   Star,
+  Trash2,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import React, { useState } from 'react';
@@ -51,11 +53,12 @@ const getCefrCoverStyles = (cefrLevel: string) => {
   };
 };
 
-interface StoryCardProps {
+export interface StoryCardProps {
   story: Story;
   currentUser: any;
   onSelect: () => void;
   onDelete: (storyId: string, e: any) => void;
+  onFlagStory?: (story: Story) => void;
   isSaved?: boolean;
   onToggleSaved?: (storyId: string, e: any) => void;
   isCachedOffline?: boolean;
@@ -69,8 +72,8 @@ export default function StoryCard({
   story,
   currentUser,
   onSelect,
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: Matches interface but not currently rendered
   onDelete,
+  onFlagStory,
   isSaved = false,
   onToggleSaved,
   isCachedOffline = false,
@@ -424,6 +427,28 @@ export default function StoryCard({
                   )}
                 </button>
               )}
+              {currentUser?.isAdmin === true ? (
+                <button
+                  type="button"
+                  onClick={(e) => onDelete(story.id, e)}
+                  className="p-0.5 rounded transition-all cursor-pointer text-rose-500 hover:text-rose-600 hover:bg-rose-500/10"
+                  title="Delete Story (Admin)"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              ) : currentUser && onFlagStory ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onFlagStory(story);
+                  }}
+                  className="p-0.5 rounded transition-all cursor-pointer text-tj-text-muted hover:text-rose-500 hover:bg-rose-500/10"
+                  title="Flag Story for Deletion"
+                >
+                  <Flag className="w-3.5 h-3.5" />
+                </button>
+              ) : null}
             </div>
           </div>
         </div>

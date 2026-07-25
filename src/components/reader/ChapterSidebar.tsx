@@ -328,13 +328,13 @@ export default function ChapterSidebar({
                 {isLoaded && (
                   <CheckCircle2
                     className={`w-3.5 h-3.5 ${isCurrent ? 'text-tj-success' : 'text-emerald-500'} ${
-                      isCreator && onDeleteChapter ? 'group-hover:hidden' : ''
+                      currentUser?.isAdmin === true && onDeleteChapter ? 'group-hover:hidden' : ''
                     }`}
                   />
                 )}
               </button>
 
-              {isLoaded && isCreator && onDeleteChapter && (
+              {isLoaded && currentUser?.isAdmin === true && onDeleteChapter && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();

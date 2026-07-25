@@ -16,9 +16,10 @@ interface BrowsePageProps {
   onDownloadStory?: (story: Story) => void;
   handleDeleteStory: (
     storyId: string,
-    e: React.MouseEvent | null,
-    bypass?: boolean,
-  ) => void;
+    e: React.MouseEvent | React.KeyboardEvent | null,
+    bypassConfirm?: boolean,
+  ) => Promise<void>;
+  onFlagStory?: (story: Story) => void;
   setActiveTab: (
     tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin',
   ) => void;
@@ -47,6 +48,7 @@ export default function BrowsePage({
   handleSelectStory,
   onDownloadStory,
   handleDeleteStory,
+  onFlagStory,
   setActiveTab,
   searchQuery,
   setSearchQuery,
@@ -80,6 +82,7 @@ export default function BrowsePage({
         onSelectStory={handleSelectStory}
         onDownloadStory={onDownloadStory}
         onDeleteStory={handleDeleteStory}
+        onFlagStory={onFlagStory}
         setActiveTab={setActiveTab}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}

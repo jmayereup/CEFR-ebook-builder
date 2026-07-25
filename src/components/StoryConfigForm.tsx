@@ -107,6 +107,7 @@ interface StoryConfigFormProps {
   isPaid?: boolean;
   freeModelCount?: number;
   monthlyCreditsUsed?: number;
+  dailyCreditsUsed?: number;
   onLogin?: () => void;
 }
 
@@ -117,6 +118,7 @@ export default function StoryConfigForm({
   isPaid = false,
   freeModelCount = 0,
   monthlyCreditsUsed = 0,
+  dailyCreditsUsed = 0,
   onLogin,
 }: StoryConfigFormProps) {
   const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
@@ -238,6 +240,7 @@ export default function StoryConfigForm({
       monthlyCreditsUsed,
       estimatedCreditsCost,
       1,
+      currentUser?.emailVerified ?? true,
     );
 
     if (denied) {
@@ -750,10 +753,12 @@ export default function StoryConfigForm({
                         let isModelRestricted = false;
                         let restrictionLabel = '';
 
-                        if (!isAdmin) {
-                          if (isPaid) {
-                            isModelRestricted = false;
-                          } else {
+                        if (!isAdmin && !customOpenRouterKey) {
+                          if (currentUser?.emailVerified === false) {
+                            isModelRestricted = true;
+                            restrictionLabel =
+                              ' 🔒 (Email Verification Required)';
+                          } else if (!isPaid) {
                             if (!isFreeModelLocal(model.id)) {
                               isModelRestricted = true;
                               restrictionLabel = ' 🔒 (Paid Tier Required)';
@@ -1141,38 +1146,47 @@ export default function StoryConfigForm({
               {/* Daily Quota Remaining card */}
               {!customOpenRouterKey && !isAdmin && (
                 <div className="p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl space-y-3">
-                  <div className="flex items-center gap-2 text-slate-700 dark:text-slate-350 font-semibold text-xs uppercase tracking-wider">
-                    <Layers className="w-4 h-4 shrink-0 text-tj-primary" />
-                    <span>Daily Quota Remaining</span>
+                  <div className="flex items-center justify-between text-slate-700 dark:text-slate-350 font-semibold text-xs uppercase tracking-wider">
+                    <div className="flex items-center gap-2">
+                      <Layers className="w-4 h-4 shrink-0 text-tj-primary" />
+                      <span>Daily Allocation (Community Drive)</span>
+                    </div>
+                    <span className="text-[10px] bg-tj-primary/10 text-tj-primary px-2 py-0.5 rounded font-bold">
+                      Limited Time
+                    </span>
                   </div>
+                  {currentUser?.emailVerified === false && (
+                    <div className="p-3 bg-amber-50 dark:bg-amber-955/20 text-amber-800 dark:text-amber-300 text-xs rounded-xl border border-amber-200 dark:border-amber-900/40 font-medium">
+                      ⚠️ <span className="font-bold">Email Verification Required:</span> Please verify your email address to use free daily credits or configure your own OpenRouter API Key in Settings.
+                    </div>
+                  )}
                   <div className="grid grid-cols-2 gap-3 text-center">
                     <div className="p-2.5 bg-tj-bg-card border border-tj-border-main rounded-xl">
                       <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                        Free Models
+                        Daily Credits
                       </p>
                       <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">
-                        {isPaid
-                          ? `${Math.max(0, 30 - freeModelCount)} / 30`
-                          : `${Math.max(0, 10 - freeModelCount)} / 10`}
+                        {Math.max(0, 25 - dailyCreditsUsed)} / 25
                       </p>
                       <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5">
-                        chapters remaining
+                        credits remaining today
                       </p>
                     </div>
                     <div className="p-2.5 bg-tj-bg-card border border-tj-border-main rounded-xl">
-                      <p className="text-[10px] text-slate-400 dark:text-slate-505 font-medium">
-                        Monthly Budget
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                        Lookups Allowance
                       </p>
                       <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">
-                        {isPaid
-                          ? `${Math.max(0, 100 - monthlyCreditsUsed)} / 100`
-                          : 'Locked 🔒'}
+                        100 / day
                       </p>
-                      <p className="text-[9px] text-slate-400 dark:text-slate-505 mt-0.5">
-                        {isPaid ? 'credits remaining' : 'Upgrade to Paid Tier'}
+                      <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5">
+                        lookups cost 0 credits
                       </p>
                     </div>
                   </div>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center italic">
+                    Note: Chapter regenerations cost 0.5 credits. BYOK users get unlimited access using their own API key.
+                  </p>
                 </div>
               )}
 
