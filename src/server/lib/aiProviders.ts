@@ -141,12 +141,7 @@ export async function callOpenRouter(options: {
   // Configure provider routing preferences for open-weights models to ensure cost-efficiency,
   // reliability, and native feature support (such as context caching).
   const lowerModel = options.model.toLowerCase();
-  if (lowerModel.includes('deepseek')) {
-    chatRequest.provider = {
-      order: ['DeepSeek'],
-      allow_fallbacks: false, // Prevent failover to more expensive third-party endpoints
-    };
-  } else if (lowerModel.includes('qwen')) {
+  if (lowerModel.includes('qwen')) {
     chatRequest.provider = {
       order: ['Alibaba', 'Together', 'Fireworks'],
       allow_fallbacks: true, // Allow fallback to Together/Fireworks if Alibaba is down
