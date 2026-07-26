@@ -1,12 +1,16 @@
 import {
   AlertTriangle,
   Crown,
+  FileText,
   Flag,
   Flame,
+  HelpCircle,
   LogOut,
+  Mail,
   Moon,
   Pencil,
   Settings,
+  Shield,
   Sun,
   User,
 } from 'lucide-react';
@@ -53,12 +57,14 @@ export default function AppHeader({
   const setCurrentUser = useAuthStore((state) => state.setCurrentUser);
 
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isHelpMenuOpen, setIsHelpMenuOpen] = useState(false);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [newUsername, setNewUsername] = useState('');
   const [isSavingUsername, setIsSavingUsername] = useState(false);
   const [usernameError, setUsernameError] = useState('');
 
   const menuRef = useRef<HTMLDivElement>(null);
+  const helpMenuRef = useRef<HTMLDivElement>(null);
 
   const todayStr = getLocalTodayStr();
   const isStreakMetToday =
@@ -112,14 +118,20 @@ export default function AppHeader({
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsProfileMenuOpen(false);
       }
+      if (
+        helpMenuRef.current &&
+        !helpMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsHelpMenuOpen(false);
+      }
     };
-    if (isProfileMenuOpen) {
+    if (isProfileMenuOpen || isHelpMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isProfileMenuOpen]);
+  }, [isProfileMenuOpen, isHelpMenuOpen]);
 
   return (
     <header className="sticky top-0 z-50 bg-tj-bg-main dark:bg-[#121310] border-b border-tj-border-main">
@@ -417,13 +429,95 @@ export default function AppHeader({
               )}
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={handleLogin}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer transition-all border-0 focus:outline-none"
-            >
-              Sign In / Sign Up
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleLogin}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer transition-all border-0 focus:outline-none"
+              >
+                Sign In / Sign Up
+              </button>
+
+              <div className="relative" ref={helpMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsHelpMenuOpen((prev) => !prev)}
+                  className="flex items-center justify-center p-1.5 text-tj-text-muted hover:text-tj-primary hover:bg-tj-primary-light rounded-xl cursor-pointer transition-all border-0 focus:outline-none"
+                  title="Help & Info"
+                  aria-label="Help and Info"
+                >
+                  <HelpCircle className="w-5 h-5" />
+                </button>
+
+                {isHelpMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 py-2 bg-tj-bg-card dark:bg-[#181916] border border-tj-border-main rounded-2xl shadow-xl z-50 flex flex-col gap-1 px-1 select-none">
+                    <a
+                      href="/privacy.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsHelpMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-tj-text-main hover:bg-tj-primary-light rounded-xl transition-all"
+                    >
+                      <Shield className="w-4 h-4 text-tj-primary shrink-0" />
+                      <span>Privacy Policy</span>
+                    </a>
+                    <a
+                      href="/terms.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsHelpMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-tj-text-main hover:bg-tj-primary-light rounded-xl transition-all"
+                    >
+                      <FileText className="w-4 h-4 text-tj-text-muted shrink-0" />
+                      <span>Terms of Service</span>
+                    </a>
+                    <a
+                      href="mailto:admin@teacherjake.com"
+                      onClick={() => setIsHelpMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-tj-text-main hover:bg-tj-primary-light rounded-xl transition-all"
+                    >
+                      <Mail className="w-4 h-4 text-tj-text-muted shrink-0" />
+                      <span>Contact Support</span>
+                    </a>
+
+                    <div className="my-1 border-t border-tj-border-main/60" />
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsHelpMenuOpen(false);
+                        toggleDarkMode();
+                      }}
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-tj-text-main hover:bg-tj-primary-light rounded-xl transition-all cursor-pointer text-left w-full focus:outline-none"
+                    >
+                      {darkMode ? (
+                        <>
+                          <Sun className="w-4 h-4 text-tj-text-muted shrink-0" />
+                          <span>Light Mode</span>
+                        </>
+                      ) : (
+                        <>
+                          <Moon className="w-4 h-4 text-tj-text-muted shrink-0" />
+                          <span>Dark Mode</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsHelpMenuOpen(false);
+                        setShowSettingsModal(true);
+                      }}
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-tj-text-main hover:bg-tj-primary-light rounded-xl transition-all cursor-pointer text-left w-full focus:outline-none"
+                    >
+                      <Settings className="w-4 h-4 text-tj-text-muted shrink-0" />
+                      <span>Settings</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
       </div>
