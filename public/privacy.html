@@ -133,45 +133,40 @@
     <a href="/" class="back-btn">← Back to App</a>
     <div class="card">
       <h1 style="margin-top: 0;">Privacy Notice</h1>
-      <p style="font-size: 0.85rem; font-style: italic;">Last Updated: June 21, 2026</p>
+      <p style="font-size: 0.85rem; font-style: italic;">Last Updated: July 26, 2026</p>
 
       <p>CEFR Stories is committed to protecting your privacy. This Privacy Notice describes how we collect, use, and share your personal information when you use our services.</p>
 
       <h2>1. Information We Collect</h2>
       <ul>
         <li><strong>Account Information:</strong> When you sign in (e.g. using Google Sign-In), we receive your email address, name, and profile picture URL.</li>
-        <li><strong>User-Generated Content:</strong> We store the parameters and text of the stories you generate, as well as review glossaries and vocabulary terms added to your practices collection.</li>
+        <li><strong>User-Generated Content:</strong> We store the parameters and text of the stories you generate, as well as review glossaries and vocabulary terms added to your practices collection. All generated stories are added to our public shared library catalog.</li>
         <li><strong>Reading History and Progress:</strong> We store your active reading placements (such as the last read chapter index) and the completion status of stories you read. If you are signed in, this data is saved to your account profile to sync your progress across devices; otherwise, it is stored locally on your browser's local storage.</li>
-        <li><strong>Billing and Transaction Data:</strong> Subscription checkout, invoices, and payment details are processed and hosted directly by Paddle, our payment reseller. We do not store or process your credit card numbers on our servers.</li>
         <li><strong>Technical Diagnostics:</strong> To help us identify and troubleshoot issues, we log diagnostic metadata (such as model identifiers, action names, request duration, and technical error descriptions) exclusively when AI generation or translation requests fail. Any user email addresses linked to these logs are automatically and permanently masked (e.g. u***@domain.com) on our servers before storage.</li>
       </ul>
 
       <h2>2. Data Ownership and Deletion</h2>
       <p>We respect your ownership rights over your creative output:</p>
       <ul>
-        <li><strong>Private Story Control:</strong> Paid users can designate their generated stories as private. Private stories are stored securely and are only visible to the account creator.</li>
-        <li><strong>Permanent Deletion:</strong> You have the right to delete your story generations at any time. When you click delete, all content is permanently purged from our Firestore databases.</li>
+        <li><strong>Public Catalog:</strong> Stories created on CEFR Stories are public and published to the community catalog for language learners.</li>
+        <li><strong>Story Deletion Requests:</strong> Users and community members can flag stories for deletion. Flagged stories are reviewed by administrators, who evaluate and execute permanent deletion from our databases in accordance with community guidelines.</li>
       </ul>
 
       <h2>3. How We Use Your Information</h2>
       <p>We use your information to:</p>
       <ul>
         <li>Deliver the language learning story generator service.</li>
-        <li>Maintain subscription status and billing records via Paddle.</li>
         <li>Support dictionary lookup operations and count API key transactions.</li>
-        <li>Enhance pedagogical grading configurations (only using public stories or aggregates).</li>
+        <li>Enhance pedagogical grading configurations (using public stories or aggregates).</li>
       </ul>
 
-      <h2>4. Payment Processing (Paddle)</h2>
-      <p>Our payment Reseller is Paddle.com. They handle transactions and customer data securely under compliance regulations (GDPR, PCI-DSS, etc.). You can read Paddle's privacy policies on the Paddle checkout screen or on their website.</p>
+      <h2>4. AI Integration (API Data Sharing)</h2>
+      <p>When you generate a story outline or chapter, we send the configuration prompts (genre, difficulty level, language, and custom notes) to third-party AI APIs (such as Google AI Studio/Gemini, DeepSeek, or OpenRouter) to fulfill the request. If you enter your own custom OpenRouter API Key in Settings, requests are processed using your API key. We do not send your email or identity details to these external AI model hosts.</p>
 
-      <h2>5. AI Integration (API Data Sharing)</h2>
-      <p>When you generate a story outline or chapter, we send the configuration prompts (genre, difficulty level, language, and custom notes) to third-party AI APIs (such as Google AI Studio/Gemini, DeepSeek, or OpenRouter) to fulfill the request. We do not send your email or identity details to these external AI model hosts.</p>
+      <h2>5. Google Advertising and Third-Party Cookies</h2>
+      <p>We may display Google AdSense advertisements on our platform in the future to support free access. Google uses cookies to serve ads based on your prior visits to our website or other websites on the internet. Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to our site and/or other sites on the Internet. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>. Alternatively, you can manage your advertising cookie choices directly using our Cookie Consent manager banner on our website.</p>
 
-      <h2>6. Google Advertising and Third-Party Cookies</h2>
-      <p>We may display Google AdSense advertisements on our platform in the future to keep the service free for non-paid users. Google uses cookies to serve ads based on your prior visits to our website or other websites on the internet. Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to our site and/or other sites on the Internet. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>. Alternatively, you can manage your advertising cookie choices directly using our Cookie Consent manager banner on our website.</p>
-
-      <h2>7. Contact Us</h2>
+      <h2>6. Contact Us</h2>
       <p>If you have any questions regarding your data privacy or request data extraction/removal, please feel free to reach out to us at <a href="mailto:admin@teacherjake.com">admin@teacherjake.com</a>.</p>
     </div>
   </main>

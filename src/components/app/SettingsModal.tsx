@@ -40,7 +40,6 @@ export default function SettingsModal({
   if (!isOpen) return null;
 
   const testApiKey = async (testKey: string) => {
-    if (!isPaid) return;
     if (!testKey.trim()) {
       setKeyTestResult({
         success: false,
@@ -105,7 +104,7 @@ export default function SettingsModal({
           <div className="flex items-center gap-2">
             <Settings className="w-5 h-5 text-tj-primary" />
             <h3 className="text-base font-bold text-tj-text-main">
-              Settings & Subscriptions
+              Settings
             </h3>
           </div>
           <button
@@ -122,11 +121,9 @@ export default function SettingsModal({
         <div className="space-y-4">
           <div className="bg-tj-bg-recessed p-4 rounded border border-tj-border-main text-xs text-tj-text-muted leading-normal space-y-3">
             <p>
-              <strong>CEFR Stories</strong> operates on a decentralized
-              contributor tier structure: Approved members get direct access,
-              while premium creators can connect their own{' '}
-              <strong>OpenRouter API Key</strong> to bypass all shared
-              generation caps!
+              <strong>CEFR Stories</strong> provides free story creation credits for a limited time while our shared library catalog is being built!
+              If you wish to create additional stories or bypass shared generation limits, you can connect your own{' '}
+              <strong>OpenRouter API Key</strong>.
             </p>
             <p className="text-[11px] text-amber-600 dark:text-amber-450 font-medium leading-normal bg-amber-500/5 dark:bg-amber-500/10 p-2.5 rounded border border-amber-500/20">
               ⚠️ <strong>Security Disclosure:</strong> Your key is stored in your
@@ -181,24 +178,22 @@ export default function SettingsModal({
               <label className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
                 My Custom OpenRouter API Key
               </label>
-              {isPaid && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const val =
-                      (
-                        document.getElementById(
-                          'custom-openrouter-key-input',
-                        ) as HTMLInputElement
-                      )?.value || '';
-                    testApiKey(val);
-                  }}
-                  disabled={isTestingKey}
-                  className="text-[10px] font-bold text-tj-primary hover:underline cursor-pointer disabled:opacity-50"
-                >
-                  Test Key
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  const val =
+                    (
+                      document.getElementById(
+                        'custom-openrouter-key-input',
+                      ) as HTMLInputElement
+                    )?.value || '';
+                  testApiKey(val);
+                }}
+                disabled={isTestingKey}
+                className="text-[10px] font-bold text-tj-primary hover:underline cursor-pointer disabled:opacity-50"
+              >
+                Test Key
+              </button>
             </div>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-tj-text-muted">
@@ -207,37 +202,27 @@ export default function SettingsModal({
               <input
                 type="password"
                 placeholder={
-                  !isPaid
-                    ? '🔒 Custom API Keys require Paid Tier'
-                    : customOpenRouterKey
-                      ? '••••••••••••••••••••••••••••'
-                      : 'Paste your OpenRouter API Key directly (sk-or-...)'
+                  customOpenRouterKey
+                    ? '••••••••••••••••••••••••••••'
+                    : 'Paste your OpenRouter API Key directly (sk-or-...)'
                 }
-                defaultValue={isPaid ? customOpenRouterKey : ''}
+                defaultValue={customOpenRouterKey}
                 id="custom-openrouter-key-input"
-                disabled={!isPaid}
-                className="w-full pl-10 pr-4 py-3 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono placeholder:font-sans focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors disabled:bg-tj-bg-recessed/40 disabled:text-tj-text-muted/50 disabled:cursor-not-allowed rounded-none"
+                className="w-full pl-10 pr-4 py-3 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono placeholder:font-sans focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
               />
             </div>
-            {isPaid ? (
-              <p className="text-[10px] text-tj-text-muted flex items-center gap-1">
-                💡 Don't have an OpenRouter API key?{' '}
-                <a
-                  href="https://openrouter.ai"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-tj-primary hover:underline inline-flex items-center gap-0.5"
-                >
-                  Get one at openrouter.ai{' '}
-                  <ExternalLink className="w-2.5 h-2.5" />
-                </a>
-              </p>
-            ) : (
-              <p className="text-[10px] text-tj-text-muted/80 font-medium">
-                🔒 Locked: Access key inputs are reserved for Paid Tier
-                accounts.
-              </p>
-            )}
+            <p className="text-[10px] text-tj-text-muted flex items-center gap-1">
+              💡 Need to generate more stories?{' '}
+              <a
+                href="https://openrouter.ai/keys"
+                target="_blank"
+                rel="noreferrer"
+                className="text-tj-primary hover:underline inline-flex items-center gap-0.5 font-semibold"
+              >
+                Purchase an API key at openrouter.ai/keys{' '}
+                <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            </p>
           </div>
 
           {/* Connection Test Outcome */}
@@ -272,7 +257,7 @@ export default function SettingsModal({
             </div>
 
             <div className="flex items-center gap-2">
-              {isPaid && customOpenRouterKey && (
+              {customOpenRouterKey && (
                 <button
                   type="button"
                   onClick={() => {
@@ -287,7 +272,7 @@ export default function SettingsModal({
                         'Custom API key removed. Restoring default authorization rules.',
                     });
                   }}
-                  className="px-3.5 py-2 px-3 text-xs text-tj-error hover:text-tj-error/80 bg-tj-error-light/10 hover:bg-tj-error-light/25 rounded border border-tj-error-light/35 transition-colors font-bold cursor-pointer"
+                  className="px-3.5 py-2 text-xs text-tj-error hover:text-tj-error/80 bg-tj-error-light/10 hover:bg-tj-error-light/25 rounded border border-tj-error-light/35 transition-colors font-bold cursor-pointer"
                 >
                   Remove Key
                 </button>
@@ -295,15 +280,13 @@ export default function SettingsModal({
               <button
                 type="button"
                 onClick={() => {
-                  if (isPaid) {
-                    const openrouterVal =
-                      (
-                        document.getElementById(
-                          'custom-openrouter-key-input',
-                        ) as HTMLInputElement
-                      )?.value || '';
-                    handleSaveCustomOpenRouterKey(openrouterVal);
-                  }
+                  const openrouterVal =
+                    (
+                      document.getElementById(
+                        'custom-openrouter-key-input',
+                      ) as HTMLInputElement
+                    )?.value || '';
+                  handleSaveCustomOpenRouterKey(openrouterVal);
                   onClose();
                 }}
                 className="px-5 py-2.5 text-xs text-tj-bg-main bg-tj-primary hover:bg-tj-primary-hover font-bold rounded cursor-pointer transition-all shadow-none"
