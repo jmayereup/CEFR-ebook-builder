@@ -311,6 +311,37 @@ export default function SettingsModal({
                 Save & Close
               </button>
             </div>
+
+            {/* Legal & Support Links */}
+            <div className="pt-3 border-t border-tj-border-main flex flex-wrap items-center justify-between text-xs text-tj-text-muted">
+              <span>CEFR Graded Short Story Builder</span>
+              <div className="flex items-center gap-3 font-medium text-xs">
+                <a
+                  href="/privacy.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-tj-primary transition-colors"
+                >
+                  Privacy
+                </a>
+                <span className="text-tj-border-main">•</span>
+                <a
+                  href="/terms.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-tj-primary transition-colors"
+                >
+                  Terms
+                </a>
+                <span className="text-tj-border-main">•</span>
+                <a
+                  href="mailto:admin@teacherjake.com"
+                  className="hover:text-tj-primary transition-colors"
+                >
+                  Support
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>

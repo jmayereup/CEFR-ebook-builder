@@ -1,10 +1,4 @@
-import {
-  ChevronUp,
-  HelpCircle,
-  LayoutGrid,
-  List,
-  SlidersHorizontal,
-} from 'lucide-react';
+import { HelpCircle, LayoutGrid, List, SlidersHorizontal } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
@@ -138,8 +132,6 @@ export default function LibraryGrid({
   const hasMore = currentPage * itemsPerPageVal < filteredStories.length;
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
-  const topSentinelRef = useRef<HTMLDivElement | null>(null);
-  const [showBackToTop, setShowBackToTop] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   useEffect(() => {
@@ -163,22 +155,6 @@ export default function LibraryGrid({
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [hasMore, isLoadingMore]);
-
-  useEffect(() => {
-    const topSentinel = topSentinelRef.current;
-    if (!topSentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const first = entries[0];
-        setShowBackToTop(!first.isIntersecting);
-      },
-      { threshold: 0 },
-    );
-
-    observer.observe(topSentinel);
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <div className="space-y-6">
@@ -318,11 +294,6 @@ export default function LibraryGrid({
             </div>
           ) : (
             <div className="space-y-6 relative">
-              <div
-                ref={topSentinelRef}
-                className="h-0 w-0 pointer-events-none absolute top-0"
-              />
-
               {viewMode === 'condensed' ? (
                 <div className="flex flex-col gap-2">
                   {paginatedStories.map((story, index) => (
@@ -432,25 +403,6 @@ export default function LibraryGrid({
                   </span>
                 )}
               </div>
-
-              {/* Back to Top Floating Action Button */}
-              <AnimatePresence>
-                {showBackToTop && (
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                    onClick={() =>
-                      window.scrollTo({ top: 0, behavior: 'smooth' })
-                    }
-                    className="fixed bottom-6 right-6 p-3 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main rounded-xl shadow-lg cursor-pointer transition-all duration-200 z-40 border border-tj-primary-border flex items-center justify-center"
-                    aria-label="Back to top"
-                    title="Back to top"
-                  >
-                    <ChevronUp className="w-5 h-5" />
-                  </motion.button>
-                )}
-              </AnimatePresence>
             </div>
           )}
         </>

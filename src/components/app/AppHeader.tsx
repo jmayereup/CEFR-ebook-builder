@@ -128,7 +128,8 @@ export default function AppHeader({
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-slate-950 shrink-0" />
             <span>
-              Admin Alert: {pendingFlagCount} story deletion request(s) pending review.
+              Admin Alert: {pendingFlagCount} story deletion request(s) pending
+              review.
             </span>
           </div>
           <button
@@ -384,6 +385,34 @@ export default function AppHeader({
                     <LogOut className="w-4 h-4 text-tj-error" />
                     <span>Log out</span>
                   </button>
+
+                  {/* Footer & Legal Links */}
+                  <div className="pt-2.5 border-t border-tj-border-main/60 flex items-center justify-between text-[11px] font-medium text-tj-text-muted px-1">
+                    <a
+                      href="/privacy.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-tj-primary transition-colors"
+                    >
+                      Privacy
+                    </a>
+                    <span className="text-tj-border-main">•</span>
+                    <a
+                      href="/terms.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-tj-primary transition-colors"
+                    >
+                      Terms
+                    </a>
+                    <span className="text-tj-border-main">•</span>
+                    <a
+                      href="mailto:admin@teacherjake.com"
+                      className="hover:text-tj-primary transition-colors"
+                    >
+                      Support
+                    </a>
+                  </div>
                 </div>
               )}
             </div>

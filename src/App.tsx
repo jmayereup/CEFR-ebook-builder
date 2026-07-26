@@ -8,6 +8,7 @@ import AppNav from './components/app/AppNav';
 import AuthModal from './components/app/AuthModal';
 import ChapterGenerationToast from './components/app/ChapterGenerationToast';
 import CookieConsent from './components/app/CookieConsent';
+import FloatingFooter from './components/app/FloatingFooter';
 import GlossaryGenerationToast from './components/app/GlossaryGenerationToast';
 import PwaUpdateNotification from './components/app/PwaUpdateNotification';
 import SettingsModal from './components/app/SettingsModal';
@@ -1202,39 +1203,42 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         </AnimatePresence>
       </main>
       {!isZenMode && (
-        <footer className="mt-20 border-t border-tj-border-main bg-tj-bg-card py-6 text-tj-text-muted select-none">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-slate-400 dark:text-slate-500">
-              CEFR Graded Short Story Builder.
-            </p>
-            <div className="flex items-center gap-4 text-xs font-medium">
-              <a
-                href="mailto:admin@teacherjake.com"
-                className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors"
-              >
-                Contact Support
-              </a>
-              <span className="text-slate-300 dark:text-slate-700">|</span>
-              <a
-                href="/privacy.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors"
-              >
-                Privacy Notice
-              </a>
-              <span className="text-slate-300 dark:text-slate-700">|</span>
-              <a
-                href="/terms.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors"
-              >
-                Terms of Service
-              </a>
+        <>
+          <FloatingFooter />
+          <footer className="mt-20 border-t border-tj-border-main bg-tj-bg-card py-6 text-tj-text-muted select-none">
+            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                CEFR Graded Short Story Builder.
+              </p>
+              <div className="flex items-center gap-4 text-xs font-medium">
+                <a
+                  href="mailto:admin@teacherjake.com"
+                  className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors"
+                >
+                  Contact Support
+                </a>
+                <span className="text-slate-300 dark:text-slate-700">|</span>
+                <a
+                  href="/privacy.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors"
+                >
+                  Privacy Notice
+                </a>
+                <span className="text-slate-300 dark:text-slate-700">|</span>
+                <a
+                  href="/terms.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors"
+                >
+                  Terms of Service
+                </a>
+              </div>
             </div>
-          </div>
-        </footer>
+          </footer>
+        </>
       )}
       <SettingsModal
         isOpen={showSettingsModal}
