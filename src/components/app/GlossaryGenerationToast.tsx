@@ -1,6 +1,7 @@
 import { AlertCircle, RotateCcw, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
+import { useUIStore } from '../../store/uiStore';
 
 interface GlossaryGenerationToastProps {
   isGeneratingGlossary: boolean;
@@ -27,8 +28,9 @@ export default function GlossaryGenerationToast({
   onRetry,
   onDismiss,
 }: GlossaryGenerationToastProps) {
+  const { customOpenRouterKey, defaultStoryModel } = useUIStore();
   const [selectedModel, setSelectedModel] = useState(
-    'deepseek/deepseek-v4-flash',
+    defaultStoryModel || 'deepseek/deepseek-v4-flash',
   );
 
   return (
@@ -76,15 +78,26 @@ export default function GlossaryGenerationToast({
                 </label>
                 <select
                   value={selectedModel}
+                  disabled={!!customOpenRouterKey}
                   onChange={(e) => setSelectedModel(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:border-tj-primary focus:outline-none cursor-pointer"
+                  className="w-full text-xs p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:border-tj-primary focus:outline-none cursor-pointer disabled:opacity-80 disabled:cursor-not-allowed"
                 >
+                  {customOpenRouterKey && (
+                    <option value={selectedModel}>
+                      {selectedModel} (BYOK Default Model)
+                    </option>
+                  )}
                   {FALLBACK_MODELS.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.name}
                     </option>
                   ))}
                 </select>
+                {customOpenRouterKey && (
+                  <p className="text-[10px] text-tj-text-muted">
+                    🔒 Locked to custom default model set in Settings.
+                  </p>
+                )}
               </div>
 
               {/* Action buttons */}

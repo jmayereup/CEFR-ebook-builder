@@ -122,6 +122,7 @@ export default function StoryConfigForm({
   onLogin,
 }: StoryConfigFormProps) {
   const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
+  const defaultStoryModel = useUIStore((state) => state.defaultStoryModel);
   const translationTargetLanguage = useUIStore(
     (state) => state.translationTargetLanguage,
   );
@@ -137,7 +138,7 @@ export default function StoryConfigForm({
   const [chapterLength, setChapterLength] = useState(350);
   const [promptNotes, setPromptNotes] = useState('');
   const [selectedModel, setSelectedModel] = useState(
-    'deepseek/deepseek-v4-pro',
+    defaultStoryModel || 'deepseek/deepseek-v4-pro',
   );
   const [thinkingOption, setThinkingOption] = useState('medium');
   const [temperature, setTemperature] = useState(0.8);
@@ -728,6 +729,7 @@ export default function StoryConfigForm({
                   </div>
                   <select
                     value={selectedModel}
+                    disabled={!!customOpenRouterKey}
                     onChange={(e) => {
                       setSelectedModel(e.target.value);
                       const model = AI_MODELS.find(
@@ -742,8 +744,13 @@ export default function StoryConfigForm({
                         setThinkingOption('disabled');
                       }
                     }}
-                    className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none"
+                    className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-tj-bg-recessed"
                   >
+                    {customOpenRouterKey && !AI_MODELS.some((m) => m.id === selectedModel) && (
+                      <option value={selectedModel}>
+                        {selectedModel} (BYOK Default Model)
+                      </option>
+                    )}
                     {(() => {
                       const isFreeModelLocal = (id: string) =>
                         FREE_MODEL_IDS.has(id) || id.endsWith(':free');
@@ -821,7 +828,7 @@ export default function StoryConfigForm({
                             </optgroup>
                           )}
                           {paidModels.length > 0 && (
-                            <optgroup label="Paid Tier Models">
+                            <optgroup label="Pro Tier Models">
                               {paidModels.map(renderOption)}
                             </optgroup>
                           )}
@@ -829,6 +836,11 @@ export default function StoryConfigForm({
                       );
                     })()}
                   </select>
+                  {customOpenRouterKey && (
+                    <p className="text-[11px] text-tj-text-muted mt-1.5 leading-normal bg-tj-primary/5 p-2 rounded-lg border border-tj-primary/20 font-medium">
+                      🔒 AI Model selection is locked for BYOK accounts. Using custom model <strong className="text-tj-primary font-mono">{selectedModel}</strong> set in Settings.
+                    </p>
+                  )}
                   <p className="text-[10px] text-slate-400 mt-1">
                     Choose the AI model. Flash is fast and economical, Pro
                     offers deep narrative quality.

@@ -4,6 +4,7 @@ interface UIState {
   isOnline: boolean;
   customOpenRouterKey: string;
   translationTargetLanguage: string | null;
+  defaultStoryModel: string;
   readerFontSize: number;
   readerUseSerif: boolean;
   readerTextAlignment: 'left' | 'center' | 'right' | 'justify';
@@ -11,6 +12,7 @@ interface UIState {
   setIsOnline: (isOnline: boolean) => void;
   setCustomOpenRouterKey: (key: string) => void;
   setTranslationTargetLanguage: (lang: string | null) => void;
+  setDefaultStoryModel: (model: string) => void;
   setReaderFontSize: (size: number) => void;
   setReaderUseSerif: (useSerif: boolean) => void;
   setReaderTextAlignment: (
@@ -26,6 +28,7 @@ export const useUIStore = create<UIState>((set) => ({
   isOnline: true,
   customOpenRouterKey: '',
   translationTargetLanguage: null,
+  defaultStoryModel: 'deepseek/deepseek-v4-pro',
   readerFontSize: 18,
   readerUseSerif: true,
   readerTextAlignment: 'justify',
@@ -46,6 +49,16 @@ export const useUIStore = create<UIState>((set) => ({
       }
     }
     set({ translationTargetLanguage: lang });
+  },
+  setDefaultStoryModel: (model) => {
+    if (typeof localStorage !== 'undefined') {
+      if (model) {
+        localStorage.setItem('custom_default_story_model', model);
+      } else {
+        localStorage.removeItem('custom_default_story_model');
+      }
+    }
+    set({ defaultStoryModel: model || 'deepseek/deepseek-v4-pro' });
   },
   setReaderFontSize: (size) => {
     const validatedSize =
@@ -77,6 +90,9 @@ export const useUIStore = create<UIState>((set) => ({
     if (typeof localStorage !== 'undefined') {
       const key = localStorage.getItem('custom_openrouter_api_key') || '';
       const lang = localStorage.getItem('translation_target_language') || null;
+      const model =
+        localStorage.getItem('custom_default_story_model') ||
+        'deepseek/deepseek-v4-pro';
       const sizeVal = localStorage.getItem('reader-font-size');
       let size = sizeVal ? Number.parseInt(sizeVal, 10) : 18;
       if (Number.isNaN(size) || size < 14 || size > 26) {
@@ -103,6 +119,7 @@ export const useUIStore = create<UIState>((set) => ({
       set({
         customOpenRouterKey: key,
         translationTargetLanguage: lang,
+        defaultStoryModel: model,
         readerFontSize: size,
         readerUseSerif: serif,
         readerTextAlignment: align,

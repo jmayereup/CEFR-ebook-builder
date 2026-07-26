@@ -29,6 +29,7 @@ export default function AddChapterModal({
   model = 'deepseek/deepseek-v4-pro',
   nextChapterNumber,
 }: AddChapterModalProps) {
+  const defaultStoryModel = useUIStore((state) => state.defaultStoryModel);
   const { currentUser } = useAuthStore();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -37,7 +38,9 @@ export default function AddChapterModal({
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState<string>(model);
+  const [selectedModel, setSelectedModel] = useState<string>(
+    model || defaultStoryModel || 'deepseek/deepseek-v4-pro',
+  );
 
   if (!isOpen) return null;
 
@@ -234,12 +237,18 @@ export default function AddChapterModal({
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-rose-100 dark:border-rose-900/20">
-                  <div className="flex-1">
+                  <div className="flex-1 space-y-1">
                     <select
                       value={selectedModel}
+                      disabled={!!customOpenRouterKey}
                       onChange={(e) => setSelectedModel(e.target.value)}
-                      className="w-full text-xs p-2 rounded-lg border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:outline-none cursor-pointer"
+                      className="w-full text-xs p-2 rounded-lg border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:outline-none cursor-pointer disabled:opacity-80 disabled:cursor-not-allowed"
                     >
+                      {customOpenRouterKey && (
+                        <option value={selectedModel}>
+                          {selectedModel} (BYOK Default Model)
+                        </option>
+                      )}
                       <option value="deepseek/deepseek-v4-flash">
                         DeepSeek V4 Flash
                       </option>
@@ -253,6 +262,11 @@ export default function AddChapterModal({
                         Mistral Large 2512
                       </option>
                     </select>
+                    {customOpenRouterKey && (
+                      <p className="text-[10px] text-tj-text-muted">
+                        🔒 Model locked to custom default model set in Settings.
+                      </p>
+                    )}
                   </div>
                   <button
                     type="button"
