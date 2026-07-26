@@ -618,7 +618,7 @@ export default function ReaderPanel({
         const proposedStart = Math.min(start, clickedFlatIdx);
         const proposedEnd = Math.max(end, clickedFlatIdx);
         const wordCount = proposedEnd - proposedStart + 1;
-        if (wordCount <= 5) {
+        if (wordCount <= 10) {
           newRange = [proposedStart, proposedEnd];
         }
       }
@@ -664,7 +664,7 @@ export default function ReaderPanel({
     selectedWordRange[0] > 0 &&
     chapterWords[selectedWordRange[0] - 1].pIdx ===
       chapterWords[selectedWordRange[0]].pIdx &&
-    selectedWordRange[1] - (selectedWordRange[0] - 1) + 1 <= 5;
+    selectedWordRange[1] - (selectedWordRange[0] - 1) + 1 <= 10;
 
   const canShrinkLeft =
     selectedWordRange !== null && selectedWordRange[0] < selectedWordRange[1];
@@ -677,7 +677,7 @@ export default function ReaderPanel({
     selectedWordRange[1] < chapterWords.length - 1 &&
     chapterWords[selectedWordRange[1] + 1].pIdx ===
       chapterWords[selectedWordRange[1]].pIdx &&
-    selectedWordRange[1] + 1 - selectedWordRange[0] + 1 <= 5;
+    selectedWordRange[1] + 1 - selectedWordRange[0] + 1 <= 10;
 
   const handleExtendLeft = () => {
     if (canExtendLeft && selectedWordRange) {

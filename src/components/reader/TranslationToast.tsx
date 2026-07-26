@@ -190,7 +190,7 @@ export default function TranslationToast({
                     <span className="flex items-center gap-1.5 select-none">
                       Phrase length:{' '}
                       <strong className="text-tj-text-main font-bold font-mono">
-                        {selectedWordRange[1] - selectedWordRange[0] + 1}/5
+                        {selectedWordRange[1] - selectedWordRange[0] + 1}/10
                         words
                       </strong>
                     </span>
