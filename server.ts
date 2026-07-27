@@ -165,6 +165,19 @@ async function bootstrap() {
     next();
   });
 
+  // Handle missing cover images cleanly with no-cache headers (prevents browser 404 caching & SSR fallthrough)
+  app.use('/covers', (req, res, next) => {
+    const filename = req.path.replace(/^\//, '');
+    if (filename && filename.includes('.')) {
+      const filePath = path.join(process.cwd(), 'public', 'covers', filename);
+      if (!fs.existsSync(filePath)) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        return res.status(404).send('Cover image not found');
+      }
+    }
+    next();
+  });
+
   app.use(
     '/covers',
     express.static(path.join(process.cwd(), 'public', 'covers')),

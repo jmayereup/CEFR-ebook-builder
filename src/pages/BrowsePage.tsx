@@ -35,6 +35,7 @@ interface BrowsePageProps {
   setFilterGenre: (genre: string[]) => void;
   filterReadingStatus: string[];
   setFilterReadingStatus: (status: string[]) => void;
+  generatingCoverIds?: Set<string>;
 }
 
 export default function BrowsePage({
@@ -62,12 +63,14 @@ export default function BrowsePage({
   setFilterGenre,
   filterReadingStatus,
   setFilterReadingStatus,
+  generatingCoverIds,
 }: BrowsePageProps) {
   return (
     <div className="space-y-8">
       <RecentlyReadSection
         items={recentlyReadStories}
         onSelectStory={handleSelectStory}
+        generatingCoverIds={generatingCoverIds}
       />
       <LibraryGrid
         cachedStoryIds={cachedStoryIds}
@@ -75,6 +78,7 @@ export default function BrowsePage({
         filteredStories={filteredStories}
         bookshelf={bookshelf}
         recentlyRead={recentlyRead}
+        generatingCoverIds={generatingCoverIds}
         onToggleSaved={(id, e) => {
           e.stopPropagation();
           handleToggleBookshelf(id);

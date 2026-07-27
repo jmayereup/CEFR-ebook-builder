@@ -40,6 +40,7 @@ interface LibraryGridProps {
   cachedStoryIds?: string[];
   onDownloadStory?: (story: Story) => void;
   recentlyRead?: RecentlyReadItem[];
+  generatingCoverIds?: Set<string>;
 }
 
 export default function LibraryGrid({
@@ -67,6 +68,7 @@ export default function LibraryGrid({
   cachedStoryIds = [],
   onDownloadStory,
   recentlyRead = [],
+  generatingCoverIds,
 }: LibraryGridProps) {
   const currentUser = useAuthStore((state) => state.currentUser);
   const [currentPage, setCurrentPage] = useState(1);
@@ -360,6 +362,7 @@ export default function LibraryGrid({
                             : undefined
                         }
                         recentlyRead={recentlyRead}
+                        isGeneratingCover={generatingCoverIds?.has(story.id)}
                         className={index >= 12 ? 'story-card-deferred' : ''}
                       />
                     </motion.div>

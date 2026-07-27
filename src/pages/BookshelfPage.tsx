@@ -43,6 +43,7 @@ interface BookshelfPageProps {
   setFilterReadingStatus: (status: string[]) => void;
   onRefreshPrivateStories: () => Promise<void>;
   privateStoriesLoading: boolean;
+  generatingCoverIds?: Set<string>;
 }
 
 export default function BookshelfPage({
@@ -75,6 +76,7 @@ export default function BookshelfPage({
   setFilterReadingStatus,
   onRefreshPrivateStories,
   privateStoriesLoading,
+  generatingCoverIds,
 }: BookshelfPageProps) {
   return (
     <div className="space-y-8">
@@ -114,6 +116,7 @@ export default function BookshelfPage({
         filteredStories={filteredBookshelfStories}
         bookshelf={bookshelf}
         recentlyRead={recentlyRead}
+        generatingCoverIds={generatingCoverIds}
         onToggleSaved={(id, e) => {
           e.stopPropagation();
           handleToggleBookshelf(id);

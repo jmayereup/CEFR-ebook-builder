@@ -17,6 +17,7 @@ interface RecentlyReadSectionProps {
     chapterIdx: number;
   }[];
   onSelectStory: (story: Story) => void;
+  generatingCoverIds?: Set<string>;
 }
 
 const cleanGenreLabel = (label: string) => {
@@ -51,6 +52,7 @@ const getCefrCoverStyles = (cefrLevel: string) => {
 export default function RecentlyReadSection({
   items,
   onSelectStory,
+  generatingCoverIds,
 }: RecentlyReadSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [imgErrorMap, setImgErrorMap] = useState<Record<string, boolean>>({});
@@ -60,7 +62,8 @@ export default function RecentlyReadSection({
     setImgErrorMap((prev) => ({ ...prev, [storyId]: true }));
   };
 
-  // Reset image error map entry for any story when its updated timestamp changes
+  // Reset image error map entry for any story when its updated timestamp changes or generation status updates
+  const generatingKey = Array.from(generatingCoverIds || []).join(',');
   const updatedTimestamps = items
     .map((item) => `${item.story.id}-${item.story.updated}`)
     .join(',');
@@ -76,7 +79,7 @@ export default function RecentlyReadSection({
       }
       return changed ? next : prev;
     });
-  }, [updatedTimestamps, items]);
+  }, [updatedTimestamps, generatingKey, items]);
 
   if (!items || items.length === 0) return null;
 
@@ -119,7 +122,8 @@ export default function RecentlyReadSection({
             GENRES.find((g) => g.id === story.genre)?.label || story.genre,
           );
 
-          const hasCoverImage = !imgErrorMap[story.id];
+          const isGeneratingCover = generatingCoverIds?.has(story.id);
+          const hasCoverImage = !imgErrorMap[story.id] && !isGeneratingCover;
 
           return (
             <motion.div
@@ -137,6 +141,12 @@ export default function RecentlyReadSection({
                       : coverStyle.card
                   } border flex flex-col justify-between p-2 text-center`}
                 >
+                  {isGeneratingCover && (
+                    <div className="absolute inset-0 z-20 bg-black/45 backdrop-blur-xs flex flex-col items-center justify-center p-1 text-center text-white">
+                      <div className="w-5 h-5 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  )}
+
                   {hasCoverImage && (
                     <img
                       src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}

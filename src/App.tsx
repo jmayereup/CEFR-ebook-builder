@@ -162,6 +162,10 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   // AdSense dynamic integration (Option 1: respect paid tier & cookie consent)
   useAdSense(isPaid);
 
+  const [generatingCoverIds, setGeneratingCoverIds] = useState<Set<string>>(
+    new Set(),
+  );
+
   // Streak — extracted to useStreak hook
   const {
     streakData,
@@ -441,13 +445,49 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
       if (savedStory.isCompleted) {
         // Trigger cover generation in the background
+        setGeneratingCoverIds((prev) => new Set(prev).add(sanitizedId));
         fetch('/api/stories/generate-cover/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ storyId: sanitizedId, force: false }),
-        }).catch((err) => {
-          console.error('Failed to trigger cover generation on save:', err);
-        });
+        })
+          .then(async (res) => {
+            if (res.ok) {
+              const data = await res.json();
+              const updatedTime = data.updated || new Date().toISOString();
+              setSelectedStory((prev) =>
+                prev && prev.id === sanitizedId
+                  ? { ...prev, updated: updatedTime }
+                  : prev,
+              );
+              const cachedStr = localStorage.getItem(
+                `cefr_story_cache_${sanitizedId}`,
+              );
+              if (cachedStr) {
+                try {
+                  const cachedObj = JSON.parse(cachedStr);
+                  cachedObj.updated = updatedTime;
+                  localStorage.setItem(
+                    `cefr_story_cache_${sanitizedId}`,
+                    JSON.stringify(cachedObj),
+                  );
+                } catch (e) {
+                  // ignore
+                }
+              }
+              await loadStoriesMetadata({ refresh: true, storyId: sanitizedId });
+            }
+          })
+          .catch((err) => {
+            console.error('Failed to trigger cover generation on save:', err);
+          })
+          .finally(() => {
+            setGeneratingCoverIds((prev) => {
+              const next = new Set(prev);
+              next.delete(sanitizedId);
+              return next;
+            });
+          });
       }
 
       const finalizedStory = {
@@ -520,6 +560,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     storyId: string,
     force: boolean = false,
   ) => {
+    setGeneratingCoverIds((prev) => new Set(prev).add(storyId));
     try {
       const response = await fetch('/api/stories/generate-cover/generate', {
         method: 'POST',
@@ -531,17 +572,32 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         throw new Error(errData.error || 'Failed to generate cover.');
       }
       const data = await response.json();
+      const updatedTime = data.updated || new Date().toISOString();
 
       // Update local state to reflect the new cover timestamp immediately
       if (selectedStory && selectedStory.id === storyId) {
         setSelectedStory({
           ...selectedStory,
-          updated: data.updated || new Date().toISOString(),
+          updated: updatedTime,
         });
       }
 
+      const cachedStr = localStorage.getItem(`cefr_story_cache_${storyId}`);
+      if (cachedStr) {
+        try {
+          const cachedObj = JSON.parse(cachedStr);
+          cachedObj.updated = updatedTime;
+          localStorage.setItem(
+            `cefr_story_cache_${storyId}`,
+            JSON.stringify(cachedObj),
+          );
+        } catch (e) {
+          // ignore
+        }
+      }
+
       // Refresh stories metadata in the library list
-      loadStoriesMetadata({ refresh: true, storyId });
+      await loadStoriesMetadata({ refresh: true, storyId });
 
       showAlert(
         'Cover Generated Successfully',
@@ -555,6 +611,12 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         `Failed to generate cover: ${err.message || err}`,
         'error',
       );
+    } finally {
+      setGeneratingCoverIds((prev) => {
+        const next = new Set(prev);
+        next.delete(storyId);
+        return next;
+      });
     }
   };
 
@@ -1085,6 +1147,9 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 dirty={dirty}
                 isSyncing={isSyncing}
                 syncChangesToDatabase={syncChangesToDatabase}
+                isGeneratingCover={
+                  selectedStory ? generatingCoverIds.has(selectedStory.id) : false
+                }
               />
             </motion.div>
           ) : activeTab === 'browse' ? (
@@ -1101,6 +1166,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 bookshelf={bookshelf}
                 recentlyReadStories={recentlyReadStories}
                 recentlyRead={recentlyRead}
+                generatingCoverIds={generatingCoverIds}
                 handleToggleBookshelf={handleToggleBookshelfWithAuth}
                 handleSelectStory={handleSelectStory}
                 onDownloadStory={handleDownloadStory}
@@ -1140,6 +1206,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 filteredBookshelfStories={filteredBookshelfStories}
                 bookshelf={bookshelf}
                 recentlyRead={recentlyRead}
+                generatingCoverIds={generatingCoverIds}
                 handleToggleBookshelf={handleToggleBookshelfWithAuth}
                 handleDeleteStory={handleDeleteStory}
                 onFlagStory={handleOpenFlagModal}

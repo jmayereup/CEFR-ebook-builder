@@ -108,6 +108,7 @@ interface ReaderPanelProps {
   isSyncing?: boolean;
   syncChangesToDatabase?: () => Promise<void>;
   onExit?: () => void;
+  isGeneratingCover?: boolean;
 }
 
 export default function ReaderPanel({
@@ -150,6 +151,7 @@ export default function ReaderPanel({
   isSyncing = false,
   syncChangesToDatabase,
   onExit,
+  isGeneratingCover = false,
 }: ReaderPanelProps) {
   const readerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -179,7 +181,7 @@ export default function ReaderPanel({
   // Reset coverImgError when cover is generated or story updates
   useEffect(() => {
     setCoverImgError(false);
-  }, [story.updated]);
+  }, [story.updated, isGeneratingCover]);
 
   // Reset hasFinishedChapter when chapter or story changes, and set up scroll observer
   useEffect(() => {
@@ -1217,8 +1219,7 @@ export default function ReaderPanel({
 
                 {/* Chapter Cover Image (for Chapter 1) */}
                 {activeChapterIndex === 0 &&
-                  activeChapter &&
-                  !coverImgError && (
+                  activeChapter && (isGeneratingCover || !coverImgError) && (
                     <div className="flex justify-center mb-8 mt-2 select-none">
                       <motion.div
                         initial={{ opacity: 0, y: 15 }}
@@ -1226,16 +1227,27 @@ export default function ReaderPanel({
                         transition={{ duration: 0.5, ease: 'easeOut' }}
                         className="relative w-full max-w-[240px] sm:max-w-[280px] aspect-[3/4.2] rounded-lg overflow-hidden shadow-[0_8px_24px_-4px_rgba(0,0,0,0.15),_0_2px_8px_-2px_rgba(0,0,0,0.1)] border border-slate-200/60 dark:border-white/10"
                       >
-                        <img
-                          src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
-                          onError={() => setCoverImgError(true)}
-                          className="w-full h-full object-cover"
-                          alt={`${story.title} Cover`}
-                          loading="eager"
-                        />
-                        {/* Left Spine Crease for book feel */}
-                        <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/15 via-black/[0.03] to-transparent pointer-events-none rounded-l-md" />
-                        <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.08] dark:bg-white/[0.05] pointer-events-none" />
+                        {isGeneratingCover ? (
+                          <div className="absolute inset-0 bg-tj-bg-card border flex flex-col items-center justify-center p-4 text-center">
+                            <div className="w-8 h-8 border-2 border-tj-primary border-t-transparent rounded-full animate-spin mb-2" />
+                            <span className="text-xs font-bold text-tj-text-main">
+                              Generating Cover...
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            <img
+                              src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
+                              onError={() => setCoverImgError(true)}
+                              className="w-full h-full object-cover"
+                              alt={`${story.title} Cover`}
+                              loading="eager"
+                            />
+                            {/* Left Spine Crease for book feel */}
+                            <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/15 via-black/[0.03] to-transparent pointer-events-none rounded-l-md" />
+                            <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.08] dark:bg-white/[0.05] pointer-events-none" />
+                          </>
+                        )}
                       </motion.div>
                     </div>
                   )}

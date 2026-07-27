@@ -64,6 +64,7 @@ export interface StoryCardProps {
   isCachedOffline?: boolean;
   onDownload?: (e: React.MouseEvent) => void;
   recentlyRead?: RecentlyReadItem[];
+  isGeneratingCover?: boolean;
   key?: any;
   className?: string;
 }
@@ -79,6 +80,7 @@ export default function StoryCard({
   isCachedOffline = false,
   onDownload,
   recentlyRead = [],
+  isGeneratingCover = false,
   className = '',
 }: StoryCardProps) {
   const cardRef = React.useRef<HTMLDivElement>(null);
@@ -106,7 +108,7 @@ export default function StoryCard({
   const coverStyle = getCefrCoverStyles(story.cefrLevel);
   const [imgError, setImgError] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const hasCoverImage = !imgError;
+  const hasCoverImage = !imgError && !isGeneratingCover;
   const cardThemeClass = hasCoverImage
     ? 'text-[#F9F6F0] dark:text-[#EBE4D5] border-black/15 dark:border-white/10'
     : coverStyle.card;
@@ -114,10 +116,10 @@ export default function StoryCard({
     ? 'text-[#F9F6F0]/70 dark:text-[#EBE4D5]/70'
     : coverStyle.textMuted;
 
-  // Reset image error state when story is updated (e.g. cover regenerated)
+  // Reset image error state when story is updated or cover finishes generating
   React.useEffect(() => {
     setImgError(false);
-  }, [story.updated]);
+  }, [story.updated, isGeneratingCover]);
 
   // Close details overlay when card is scrolled completely out of view
   React.useEffect(() => {
@@ -203,6 +205,15 @@ export default function StoryCard({
             hasCoverImage ? 'p-3.5' : 'p-5'
           }`}
         >
+          {isGeneratingCover && (
+            <div className="absolute inset-0 z-20 bg-black/45 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center text-white">
+              <div className="w-8 h-8 border-2 border-white/80 border-t-transparent rounded-full animate-spin mb-2" />
+              <span className="text-xs font-bold tracking-wide font-sans drop-shadow-xs">
+                Generating Cover...
+              </span>
+            </div>
+          )}
+
           {hasCoverImage && (
             <img
               src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
