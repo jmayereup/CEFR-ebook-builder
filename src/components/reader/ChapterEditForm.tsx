@@ -343,14 +343,11 @@ export default function ChapterEditForm({
                   <option value="deepseek/deepseek-v4-flash">
                     DeepSeek V4 Flash
                   </option>
-                  <option value="google/gemini-3.5-flash-lite">
-                    Gemini 3.5 Flash-Lite
-                  </option>
                   <option value="deepseek/deepseek-v4-pro">
                     DeepSeek V4 Pro
                   </option>
-                  <option value="mistralai/mistral-large-2512">
-                    Mistral Large 2512
+                  <option value="nousresearch/hermes-3-llama-3.1-405b">
+                    Hermes 3 405B
                   </option>
                 </select>
                 {customOpenRouterKey && (

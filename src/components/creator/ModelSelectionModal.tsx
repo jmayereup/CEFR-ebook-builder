@@ -22,15 +22,10 @@ const MODEL_DETAILS: Record<
       'Default flagship story model. High-capacity reasoning model delivering superior prose, character voice, and plot consistency.',
     languages: 'All supported languages',
   },
-  'google/gemini-3.5-flash-lite': {
+  'nousresearch/hermes-3-llama-3.1-405b': {
     verdict:
-      'Ultra-fast, cost-effective reasoning model. Excellent for high-speed chapter drafting and outline generation.',
+      'Frontier 405B open-weights model fine-tuned by Nous Research. Exceptional creative writing, roleplaying, reasoning, and complex narrative capabilities.',
     languages: 'All supported languages',
-  },
-  'mistralai/mistral-large-2512': {
-    verdict:
-      'Flagship European AI model with exceptional multilingual prose quality and complex narrative structure.',
-    languages: 'French, Spanish, German, Italian, English, Portuguese',
   },
   'deepseek/deepseek-v4-flash': {
     verdict:
@@ -73,7 +68,10 @@ export default function ModelSelectionModal({
         {/* Content Area */}
         <div className="space-y-4 text-xs font-sans text-tj-text-main overflow-y-auto pr-1 flex-1">
           <p className="leading-relaxed text-tj-text-muted">
-            Select an AI model for story generation. Standard &ldquo;Flash&rdquo; models are cost-efficient and fast, while &ldquo;Pro&rdquo; models offer deep narrative nuances and high structural complexity.
+            Select an AI model for story generation. Standard
+            &ldquo;Flash&rdquo; models are cost-efficient and fast, while
+            &ldquo;Pro&rdquo; models offer deep narrative nuances and high
+            structural complexity.
           </p>
 
           <div className="space-y-3">
@@ -122,7 +120,8 @@ export default function ModelSelectionModal({
 
                     <div className="text-right shrink-0">
                       <p className="font-semibold text-tj-text-main">
-                        ${model.inputCost1M.toFixed(3)} in / ${model.outputCost1M.toFixed(3)} out (per 1M)
+                        ${model.inputCost1M.toFixed(3)} in / $
+                        {model.outputCost1M.toFixed(3)} out (per 1M)
                       </p>
                       {model.maxOutputTokens && (
                         <p className="text-[9px] text-tj-text-muted mt-0.5">

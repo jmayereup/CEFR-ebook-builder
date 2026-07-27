@@ -8,14 +8,16 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLogin: () => void;
+  initialMode?: 'signin' | 'signup';
 }
 
 export default function AuthModal({
   isOpen,
   onClose,
   onLogin,
+  initialMode = 'signin',
 }: AuthModalProps) {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(initialMode === 'signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -29,9 +31,9 @@ export default function AuthModal({
       setName('');
       setError(null);
       setLoading(false);
-      setIsSignUp(false);
+      setIsSignUp(initialMode === 'signup');
     }
-  }, [isOpen]);
+  }, [isOpen, initialMode]);
 
   if (!isOpen) return null;
 

@@ -29,7 +29,7 @@ interface CreatePageProps {
   currentUser: IUser | null;
   isPaid: boolean;
   generationLimitData: GenerationLimitData;
-  onLogin?: () => void;
+  onLogin?: (mode?: 'signin' | 'signup') => void;
 }
 
 export default function CreatePage({

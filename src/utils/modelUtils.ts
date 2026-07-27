@@ -10,6 +10,7 @@ export const getModelBaseName = (modelId?: string): string => {
   if (!modelId) return 'DeepSeek';
   if (modelId.includes('deepseek')) return 'DeepSeek';
   if (modelId.includes('gemini') || modelId.includes('gemma')) return 'Gemini';
+  if (modelId.includes('hermes')) return 'Hermes';
   if (modelId.includes('mistral')) return 'Mistral';
   return 'DeepSeek';
 };

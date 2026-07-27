@@ -1,5 +1,6 @@
 import { AlertTriangle, Flag, Loader2, Mail, X } from 'lucide-react';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { flagStoryForDeletion } from '../../services/db';
 import type { IUser } from '../../services/types';
 import type { DeletionFlag, Story } from '../../types';
@@ -19,8 +20,7 @@ export default function FlagStoryModal({
   currentUser,
   onSuccess,
 }: FlagStoryModalProps) {
-  const [reason, setReason] =
-    useState<DeletionFlag['reason']>('inappropriate');
+  const [reason, setReason] = useState<DeletionFlag['reason']>('inappropriate');
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -71,9 +71,7 @@ export default function FlagStoryModal({
       onClose();
     } catch (err: any) {
       console.error('Error submitting story flag:', err);
-      setError(
-        err.message || 'Failed to submit story flag. Please try again.',
-      );
+      setError(err.message || 'Failed to submit story flag. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -120,7 +118,8 @@ export default function FlagStoryModal({
               <div>
                 <p className="font-bold">Email Verification Required</p>
                 <p className="mt-0.5 leading-relaxed text-[11px]">
-                  Please verify your email address to submit story deletion requests.
+                  Please verify your email address to submit story deletion
+                  requests.
                 </p>
               </div>
             </div>
@@ -146,10 +145,18 @@ export default function FlagStoryModal({
               }
               className="w-full text-xs p-3 rounded-xl border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:border-tj-primary focus:outline-none cursor-pointer disabled:opacity-50"
             >
-              <option value="inappropriate">🚩 Inappropriate / Offensive Content</option>
-              <option value="quality">⚠️ Low Text Quality / Inaccurate CEFR Level</option>
-              <option value="formatting">🛠️ Formatting or Rendering Errors</option>
-              <option value="duplicate">📄 Duplicate or Copyright Concern</option>
+              <option value="inappropriate">
+                🚩 Inappropriate / Offensive Content
+              </option>
+              <option value="quality">
+                ⚠️ Low Text Quality / Inaccurate CEFR Level
+              </option>
+              <option value="formatting">
+                🛠️ Formatting or Rendering Errors
+              </option>
+              <option value="duplicate">
+                📄 Duplicate or Copyright Concern
+              </option>
               <option value="other">📝 Other Reason</option>
             </select>
           </div>
@@ -157,7 +164,8 @@ export default function FlagStoryModal({
           {/* Comment / Explanation Textarea */}
           <div>
             <label className="block text-xs font-bold text-tj-text-muted uppercase tracking-wider mb-2">
-              Detailed Explanation / Comment <span className="text-rose-500">*</span>
+              Detailed Explanation / Comment{' '}
+              <span className="text-rose-500">*</span>
             </label>
             <textarea
               rows={3}

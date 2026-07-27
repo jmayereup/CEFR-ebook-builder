@@ -13,7 +13,9 @@ let fetchPromise: Promise<Map<string, OpenRouterModelInfo>> | null = null;
  * Fetches dynamic model pricing from OpenRouter public API.
  * Caches in memory & sessionStorage for fast subsequent lookups.
  */
-export async function fetchOpenRouterModels(): Promise<Map<string, OpenRouterModelInfo>> {
+export async function fetchOpenRouterModels(): Promise<
+  Map<string, OpenRouterModelInfo>
+> {
   if (cachedModels) return cachedModels;
 
   // Check sessionStorage
@@ -49,7 +51,9 @@ export async function fetchOpenRouterModels(): Promise<Map<string, OpenRouterMod
         for (const m of data.data) {
           if (!m.id) continue;
           const promptRate = Number.parseFloat(m.pricing?.prompt || '0');
-          const completionRate = Number.parseFloat(m.pricing?.completion || '0');
+          const completionRate = Number.parseFloat(
+            m.pricing?.completion || '0',
+          );
           const info: OpenRouterModelInfo = {
             id: m.id,
             name: m.name || m.id,
@@ -66,7 +70,10 @@ export async function fetchOpenRouterModels(): Promise<Map<string, OpenRouterMod
 
       if (typeof window !== 'undefined' && window.sessionStorage) {
         try {
-          sessionStorage.setItem('openrouter_models_cache', JSON.stringify(listToCache));
+          sessionStorage.setItem(
+            'openrouter_models_cache',
+            JSON.stringify(listToCache),
+          );
         } catch {
           // Storage quota exceeded or unavailable
         }
@@ -92,7 +99,11 @@ export function calculateBaselineStoryCost(
   chapters: number,
   promptPrice1M: number,
   completionPrice1M: number,
-): { totalInputCost: number; totalOutputCost: number; totalEstimatedCost: number } {
+): {
+  totalInputCost: number;
+  totalOutputCost: number;
+  totalEstimatedCost: number;
+} {
   const totalInputTokens = chapters * 1500;
   const totalOutputTokens = chapters * 1000;
 

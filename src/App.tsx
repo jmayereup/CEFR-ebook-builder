@@ -10,10 +10,12 @@ import ChapterGenerationToast from './components/app/ChapterGenerationToast';
 import CookieConsent from './components/app/CookieConsent';
 import FloatingFooter from './components/app/FloatingFooter';
 import GlossaryGenerationToast from './components/app/GlossaryGenerationToast';
+import InstructionFloatingBox from './components/app/InstructionFloatingBox';
 import PwaUpdateNotification from './components/app/PwaUpdateNotification';
 import SettingsModal from './components/app/SettingsModal';
 import StreakCelebrationModal from './components/app/StreakCelebrationModal';
 import UnsavedChangesModal from './components/app/UnsavedChangesModal';
+import FlagStoryModal from './components/library/FlagStoryModal';
 import { useActiveStory } from './hooks/useActiveStory';
 import { useAdSense } from './hooks/useAdSense';
 import { useDarkMode } from './hooks/useDarkMode';
@@ -39,7 +41,6 @@ import {
   logout,
   syncUserProfile,
 } from './services/auth';
-import FlagStoryModal from './components/library/FlagStoryModal';
 import {
   createStory,
   decrementStoryCompletion,
@@ -79,6 +80,12 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
+
+  const handleOpenAuth = (mode: 'signin' | 'signup' = 'signin') => {
+    setAuthModalMode(mode);
+    setShowAuthModal(true);
+  };
 
   // Custom AlertModal State
   const [alertConfig, setAlertConfig] = useState<{
@@ -878,7 +885,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
           setShowSettingsModal={setShowSettingsModal}
           authChecking={authChecking}
           isPaid={isPaid}
-          handleLogin={() => setShowAuthModal(true)}
+          handleLogin={() => handleOpenAuth('signin')}
           handleLogout={handleLogout}
           setSelectedStory={handleRequestClearStory}
           setActiveTab={handleRequestTabChange}
@@ -1283,6 +1290,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onLogin={handleLogin}
+        initialMode={authModalMode}
       />
       <FlagStoryModal
         isOpen={isFlagModalOpen}
@@ -1292,6 +1300,9 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         onSuccess={(msg) => showAlert('Story Flagged', msg, 'info')}
       />
       <CookieConsent />
+      <InstructionFloatingBox
+        onOpenAuth={(mode = 'signup') => handleOpenAuth(mode)}
+      />
       <PwaUpdateNotification />
     </div>
   );

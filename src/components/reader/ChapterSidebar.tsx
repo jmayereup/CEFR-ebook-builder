@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { FREE_MODEL_IDS, AI_MODELS } from '../../constants/models';
+import { AI_MODELS, FREE_MODEL_IDS } from '../../constants/models';
 import { updateStoryModel } from '../../services/db';
 import { useUIStore } from '../../store/uiStore';
 import {
@@ -328,7 +328,9 @@ export default function ChapterSidebar({
                 {isLoaded && (
                   <CheckCircle2
                     className={`w-3.5 h-3.5 ${isCurrent ? 'text-tj-success' : 'text-emerald-500'} ${
-                      currentUser?.isAdmin === true && onDeleteChapter ? 'group-hover:hidden' : ''
+                      currentUser?.isAdmin === true && onDeleteChapter
+                        ? 'group-hover:hidden'
+                        : ''
                     }`}
                   />
                 )}

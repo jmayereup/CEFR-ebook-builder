@@ -1,5 +1,3 @@
-import { debounce } from '../../utils/debounce';
-import { pb } from '../pocketbase';
 import type {
   Chapter,
   ConsistencyAudit,
@@ -13,6 +11,8 @@ import type {
   UserStreakData,
   VocabularyTerm,
 } from '../../types';
+import { debounce } from '../../utils/debounce';
+import { pb } from '../pocketbase';
 import type {
   IDatabaseService,
   MetadataOptions,

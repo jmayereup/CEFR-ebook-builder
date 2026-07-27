@@ -15,7 +15,6 @@ interface GlossaryGenerationToastProps {
 
 const FALLBACK_MODELS = [
   { id: 'deepseek/deepseek-v4-flash', name: 'DeepSeek V4 Flash' },
-  { id: 'google/gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash-Lite' },
   { id: 'deepseek/deepseek-v4-pro', name: 'DeepSeek V4 Pro' },
 ];
 

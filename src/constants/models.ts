@@ -31,26 +31,15 @@ export const AI_MODELS: AIModelOption[] = [
     maxOutputTokens: 8192,
   },
   {
-    id: 'google/gemini-3.5-flash-lite',
-    name: 'Gemini 3.5 Flash-Lite',
-    inputCost1M: 0.3,
-    outputCost1M: 2.5,
-    category: 'flash',
-    supportsThinkingLevel: true,
-    supportsThinkingBudget: false,
-    supportsTemperature: true,
-    maxOutputTokens: 8192,
-  },
-  {
-    id: 'mistralai/mistral-large-2512',
-    name: 'Mistral Large 2512',
-    inputCost1M: 0.5,
-    outputCost1M: 1.5,
+    id: 'nousresearch/hermes-3-llama-3.1-405b',
+    name: 'Hermes 3 405B',
+    inputCost1M: 1.0,
+    outputCost1M: 1.0,
     category: 'pro',
     supportsThinkingLevel: false,
     supportsThinkingBudget: false,
     supportsTemperature: true,
-    maxOutputTokens: 8192,
+    maxOutputTokens: 16384,
   },
 ];
 
@@ -59,19 +48,52 @@ export const FREE_MODEL_IDS = new Set<string>();
 
 /** Curated frontier & latest models for BYOK story generation selection */
 export const FRONTIER_LATEST_MODELS = [
-  { id: 'deepseek/deepseek-v4-pro', name: 'DeepSeek V4 Pro (Default)', category: 'pro' as const },
-  { id: 'google/gemini-3.6-flash', name: 'Google: Gemini 3.6 Flash', category: 'flash' as const },
-  { id: 'google/gemini-3.5-flash-lite', name: 'Google: Gemini 3.5 Flash Lite', category: 'flash' as const },
-  { id: 'anthropic/claude-sonnet-5', name: 'Anthropic: Claude Sonnet 5', category: 'pro' as const },
-  { id: 'openai/gpt-chat-latest', name: 'OpenAI: GPT Chat Latest', category: 'pro' as const },
-  { id: '~openai/gpt-mini-latest', name: 'OpenAI: GPT Mini Latest', category: 'flash' as const },
-  { id: '~google/gemini-pro-latest', name: 'Google: Gemini Pro Latest', category: 'pro' as const },
-  { id: '~x-ai/grok-latest', name: 'xAI: Grok Latest', category: 'pro' as const },
-  { id: '~moonshotai/kimi-latest', name: 'MoonshotAI: Kimi Latest', category: 'pro' as const },
-  { id: 'mistralai/mistral-large-2512', name: 'Mistral: Large 2512', category: 'pro' as const },
+  {
+    id: 'deepseek/deepseek-v4-pro',
+    name: 'DeepSeek V4 Pro (Default)',
+    category: 'pro' as const,
+  },
+  {
+    id: 'google/gemini-3.6-flash',
+    name: 'Google: Gemini 3.6 Flash',
+    category: 'flash' as const,
+  },
+  {
+    id: 'anthropic/claude-sonnet-5',
+    name: 'Anthropic: Claude Sonnet 5',
+    category: 'pro' as const,
+  },
+  {
+    id: 'openai/gpt-chat-latest',
+    name: 'OpenAI: GPT Chat Latest',
+    category: 'pro' as const,
+  },
+  {
+    id: '~openai/gpt-mini-latest',
+    name: 'OpenAI: GPT Mini Latest',
+    category: 'flash' as const,
+  },
+  {
+    id: '~google/gemini-pro-latest',
+    name: 'Google: Gemini Pro Latest',
+    category: 'pro' as const,
+  },
+  {
+    id: '~x-ai/grok-latest',
+    name: 'xAI: Grok Latest',
+    category: 'pro' as const,
+  },
+  {
+    id: '~moonshotai/kimi-latest',
+    name: 'MoonshotAI: Kimi Latest',
+    category: 'pro' as const,
+  },
+  {
+    id: 'nousresearch/hermes-3-llama-3.1-405b',
+    name: 'Nous: Hermes 3 405B',
+    category: 'pro' as const,
+  },
 ];
 
 /** Legacy alias for backward compatibility */
 export const GEMINI_MODELS = AI_MODELS;
-
-

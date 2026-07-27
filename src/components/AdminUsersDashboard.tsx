@@ -16,10 +16,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  fetchPendingDeletionFlags,
-  resolveDeletionFlag,
-} from '../services/db';
+import { fetchPendingDeletionFlags, resolveDeletionFlag } from '../services/db';
 import { pb } from '../services/pocketbase';
 import type { DeletionFlag } from '../types';
 

@@ -108,7 +108,7 @@ interface StoryConfigFormProps {
   freeModelCount?: number;
   monthlyCreditsUsed?: number;
   dailyCreditsUsed?: number;
-  onLogin?: () => void;
+  onLogin?: (mode?: 'signin' | 'signup') => void;
 }
 
 export default function StoryConfigForm({
@@ -130,6 +130,7 @@ export default function StoryConfigForm({
     (state) => state.setTranslationTargetLanguage,
   );
   const currentUser = useAuthStore((state) => state.currentUser);
+  const isByokActive = !!currentUser && !!customOpenRouterKey;
   // Config state
   const [language, setLanguage] = useState('es');
   const [cefrLevel, setCefrLevel] = useState('B1');
@@ -729,7 +730,7 @@ export default function StoryConfigForm({
                   </div>
                   <select
                     value={selectedModel}
-                    disabled={!!customOpenRouterKey}
+                    disabled={!currentUser || isByokActive}
                     onChange={(e) => {
                       setSelectedModel(e.target.value);
                       const model = AI_MODELS.find(
@@ -746,24 +747,23 @@ export default function StoryConfigForm({
                     }}
                     className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-tj-bg-recessed"
                   >
-                    {customOpenRouterKey && !AI_MODELS.some((m) => m.id === selectedModel) && (
-                      <option value={selectedModel}>
-                        {selectedModel} (BYOK Default Model)
-                      </option>
-                    )}
+                    {isByokActive &&
+                      !AI_MODELS.some((m) => m.id === selectedModel) && (
+                        <option value={selectedModel}>
+                          {selectedModel} (BYOK Default Model)
+                        </option>
+                      )}
                     {(() => {
                       const isFreeModelLocal = (id: string) =>
                         FREE_MODEL_IDS.has(id) || id.endsWith(':free');
                       const sortedModels = [...AI_MODELS].sort(
                         (a, b) => a.outputCost1M - b.outputCost1M,
                       );
-                      const renderOption = (
-                        model: (typeof AI_MODELS)[0],
-                      ) => {
+                      const renderOption = (model: (typeof AI_MODELS)[0]) => {
                         let isModelRestricted = false;
                         let restrictionLabel = '';
 
-                        if (!isAdmin && !customOpenRouterKey) {
+                        if (!isAdmin && !isByokActive) {
                           if (currentUser?.emailVerified === false) {
                             isModelRestricted = true;
                             restrictionLabel =
@@ -836,11 +836,48 @@ export default function StoryConfigForm({
                       );
                     })()}
                   </select>
-                  {customOpenRouterKey && (
+                  {!currentUser ? (
+                    <div className="p-3 mt-2 rounded-xl bg-tj-primary-light/60 dark:bg-slate-800/60 border border-tj-primary-border/60 text-tj-text-main flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+                      <div className="flex items-start gap-2.5 text-xs">
+                        <div className="p-1.5 bg-tj-primary/10 text-tj-primary rounded-lg shrink-0 mt-0.5">
+                          <Lock className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-800 dark:text-slate-200">
+                            Sign up or Sign in to generate books
+                          </p>
+                          <p className="text-[11px] text-tj-text-muted mt-0.5 leading-relaxed">
+                            Create an account to choose AI models, generate custom stories, or use custom API keys.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                        <button
+                          type="button"
+                          onClick={() => onLogin && onLogin('signup')}
+                          className="flex-1 sm:flex-none py-1.5 px-3.5 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl transition-colors cursor-pointer text-center"
+                        >
+                          Sign Up Free
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onLogin && onLogin('signin')}
+                          className="flex-1 sm:flex-none py-1.5 px-3.5 bg-transparent border border-tj-border-main hover:bg-slate-100 dark:hover:bg-slate-800 text-tj-text-main font-bold text-xs rounded-xl transition-colors cursor-pointer text-center"
+                        >
+                          Sign In
+                        </button>
+                      </div>
+                    </div>
+                  ) : isByokActive ? (
                     <p className="text-[11px] text-tj-text-muted mt-1.5 leading-normal bg-tj-primary/5 p-2 rounded-lg border border-tj-primary/20 font-medium">
-                      🔒 AI Model selection is locked for BYOK accounts. Using custom model <strong className="text-tj-primary font-mono">{selectedModel}</strong> set in Settings.
+                      🔒 AI Model selection is locked for BYOK accounts. Using
+                      custom model{' '}
+                      <strong className="text-tj-primary font-mono">
+                        {selectedModel}
+                      </strong>{' '}
+                      set in Settings.
                     </p>
-                  )}
+                  ) : null}
                   <p className="text-[10px] text-slate-400 mt-1">
                     Choose the AI model. Flash is fast and economical, Pro
                     offers deep narrative quality.
@@ -874,7 +911,7 @@ export default function StoryConfigForm({
                       className="md:col-span-2 overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-200/50 dark:border-slate-800/80 pt-4"
                     >
                       {/* Reasoning / Thinking Level */}
-                      {isAdmin || customOpenRouterKey ? (
+                      {isAdmin || isByokActive ? (
                         <div className="col-span-1">
                           <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-355 mb-2">
                             <Brain className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />
@@ -982,7 +1019,7 @@ export default function StoryConfigForm({
 
                         if (!supportsTemp) return null;
 
-                        const showReasoning = isAdmin || !!customOpenRouterKey;
+                        const showReasoning = isAdmin || isByokActive;
 
                         return (
                           <div
@@ -1159,7 +1196,7 @@ export default function StoryConfigForm({
               </div>
 
               {/* Daily Quota Remaining card */}
-              {!customOpenRouterKey && !isAdmin && (
+              {!isByokActive && !isAdmin && (
                 <div className="p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl space-y-3">
                   <div className="flex items-center justify-between text-slate-700 dark:text-slate-350 font-semibold text-xs uppercase tracking-wider">
                     <div className="flex items-center gap-2">
@@ -1172,7 +1209,12 @@ export default function StoryConfigForm({
                   </div>
                   {currentUser?.emailVerified === false && (
                     <div className="p-3 bg-amber-50 dark:bg-amber-955/20 text-amber-800 dark:text-amber-300 text-xs rounded-xl border border-amber-200 dark:border-amber-900/40 font-medium">
-                      ⚠️ <span className="font-bold">Email Verification Required:</span> Please verify your email address to use free daily credits or configure your own OpenRouter API Key in Settings.
+                      ⚠️{' '}
+                      <span className="font-bold">
+                        Email Verification Required:
+                      </span>{' '}
+                      Please verify your email address to use free daily credits
+                      or configure your own OpenRouter API Key in Settings.
                     </div>
                   )}
                   <div className="grid grid-cols-2 gap-3 text-center">
@@ -1200,7 +1242,8 @@ export default function StoryConfigForm({
                     </div>
                   </div>
                   <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center italic">
-                    Note: Chapter regenerations cost 0.5 credits. BYOK users get unlimited access using their own API key.
+                    Note: Chapter regenerations cost 0.5 credits. BYOK users get
+                    unlimited access using their own API key.
                   </p>
                 </div>
               )}
@@ -1221,22 +1264,31 @@ export default function StoryConfigForm({
                     </div>
                     <div>
                       <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">
-                        Sign in to Create Stories
+                        Sign Up or Sign In to Create Stories
                       </h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                        Create custom graded stories, export to eBook formats,
-                        and practice vocabulary. Signing up is free!
+                        Create custom graded stories, export to DRM-free eBook formats,
+                        and practice vocabulary. Free daily generations during our limited-time launch!
                       </p>
                     </div>
                   </div>
                   {onLogin && (
-                    <button
-                      type="button"
-                      onClick={onLogin}
-                      className="w-full md:w-auto py-2.5 px-5 bg-tj-primary hover:bg-tj-primary-hover active:bg-tj-primary text-tj-bg-main font-semibold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 shrink-0"
-                    >
-                      Sign In for Free
-                    </button>
+                    <div className="flex items-center gap-2 w-full md:w-auto shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => onLogin('signup')}
+                        className="flex-1 md:flex-none py-2.5 px-4 bg-tj-primary hover:bg-tj-primary-hover active:bg-tj-primary text-tj-bg-main font-semibold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 text-center"
+                      >
+                        Sign Up Free
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onLogin('signin')}
+                        className="flex-1 md:flex-none py-2.5 px-4 bg-transparent border border-tj-border-main hover:bg-slate-100 dark:hover:bg-slate-800 text-tj-text-main font-semibold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap text-center"
+                      >
+                        Sign In
+                      </button>
+                    </div>
                   )}
                 </div>
               )}

@@ -50,16 +50,18 @@ export default function SettingsModal({
   } | null>(null);
 
   // Default Story Model selection state
-  const isPreset = FRONTIER_LATEST_MODELS.some((m) => m.id === defaultStoryModel);
+  const isPreset = FRONTIER_LATEST_MODELS.some(
+    (m) => m.id === defaultStoryModel,
+  );
   const [selectedModelOption, setSelectedModelOption] = useState<string>(
     isPreset ? defaultStoryModel : 'custom',
   );
   const [customModelIdInput, setCustomModelIdInput] = useState<string>(
     isPreset ? '' : defaultStoryModel,
   );
-  const [pricingMap, setPricingMap] = useState<Map<string, OpenRouterModelInfo>>(
-    new Map(),
-  );
+  const [pricingMap, setPricingMap] = useState<
+    Map<string, OpenRouterModelInfo>
+  >(new Map());
 
   useEffect(() => {
     fetchOpenRouterModels().then((map) => setPricingMap(map));
@@ -145,9 +147,7 @@ export default function SettingsModal({
         <div className="flex items-center justify-between border-b border-tj-border-main pb-3">
           <div className="flex items-center gap-2">
             <Settings className="w-5 h-5 text-tj-primary" />
-            <h3 className="text-base font-bold text-tj-text-main">
-              Settings
-            </h3>
+            <h3 className="text-base font-bold text-tj-text-main">Settings</h3>
           </div>
           <button
             onClick={() => {
@@ -163,8 +163,10 @@ export default function SettingsModal({
         <div className="space-y-4">
           <div className="bg-tj-bg-recessed p-4 rounded border border-tj-border-main text-xs text-tj-text-muted leading-normal space-y-3">
             <p>
-              <strong>CEFR Stories</strong> provides free story creation credits for a limited time while our shared library catalog is being built!
-              If you wish to create additional stories or bypass shared generation limits, you can connect your own{' '}
+              <strong>CEFR Stories</strong> provides free story creation credits
+              for a limited time while our shared library catalog is being
+              built! If you wish to create additional stories or bypass shared
+              generation limits, you can connect your own{' '}
               <strong>OpenRouter API Key</strong>.
             </p>
             <p className="text-[11px] text-amber-600 dark:text-amber-450 font-medium leading-normal bg-amber-500/5 dark:bg-amber-500/10 p-2.5 rounded border border-amber-500/20">
@@ -296,7 +298,8 @@ export default function SettingsModal({
               </label>
               {customOpenRouterKey && currentPricing && (
                 <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded">
-                  ${currentPricing.promptPrice1M.toFixed(2)} in / ${currentPricing.completionPrice1M.toFixed(2)} out (1M)
+                  ${currentPricing.promptPrice1M.toFixed(2)} in / $
+                  {currentPricing.completionPrice1M.toFixed(2)} out (1M)
                 </span>
               )}
             </div>
@@ -305,7 +308,8 @@ export default function SettingsModal({
               <div className="p-3 bg-tj-bg-recessed border border-tj-border-main rounded-lg text-xs text-tj-text-muted flex items-center gap-2">
                 <Lock className="w-4 h-4 text-tj-primary shrink-0" />
                 <span>
-                  Connect a custom OpenRouter API Key above to configure a custom default story generation model for your account.
+                  Connect a custom OpenRouter API Key above to configure a
+                  custom default story generation model for your account.
                 </span>
               </div>
             ) : (
@@ -321,7 +325,9 @@ export default function SettingsModal({
                         {m.name} ({m.id})
                       </option>
                     ))}
-                    <option value="custom">⚙️ Enter Custom OpenRouter Model ID...</option>
+                    <option value="custom">
+                      ⚙️ Enter Custom OpenRouter Model ID...
+                    </option>
                   </select>
                   <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-tj-text-muted pointer-events-none" />
                 </div>
@@ -348,7 +354,12 @@ export default function SettingsModal({
                     <span>JSON Format & Credit Loss Liability Notice</span>
                   </div>
                   <p className="opacity-90 leading-normal text-[10px]">
-                    CEFR Stories uses structured JSON prompts for story creation, chapter outlines, and vocabulary glossaries. Custom or user-selected models must reliably adhere to JSON output formatting. CEFR Stories is not responsible for OpenRouter API credit consumption or financial loss incurred from malformed, unparseable, or rejected model responses.
+                    CEFR Stories uses structured JSON prompts for story
+                    creation, chapter outlines, and vocabulary glossaries.
+                    Custom or user-selected models must reliably adhere to JSON
+                    output formatting. CEFR Stories is not responsible for
+                    OpenRouter API credit consumption or financial loss incurred
+                    from malformed, unparseable, or rejected model responses.
                   </p>
                 </div>
 
@@ -360,7 +371,18 @@ export default function SettingsModal({
                       <span>Estimated OpenRouter Usage Cost</span>
                     </div>
                     <p className="text-[10px] text-tj-text-muted leading-normal">
-                      A standard 10-chapter story (~25,000 total tokens) using <strong>{activeModelId}</strong> will cost approximately <strong className="text-tj-text-main">${baselineEst.totalEstimatedCost < 0.01 ? '<$0.01' : baselineEst.totalEstimatedCost.toFixed(3)} USD</strong> directly on your OpenRouter account (~${(baselineEst.totalEstimatedCost / 10).toFixed(4)}/chapter).
+                      A standard 10-chapter story (~25,000 total tokens) using{' '}
+                      <strong>{activeModelId}</strong> will cost approximately{' '}
+                      <strong className="text-tj-text-main">
+                        $
+                        {baselineEst.totalEstimatedCost < 0.01
+                          ? '<$0.01'
+                          : baselineEst.totalEstimatedCost.toFixed(3)}{' '}
+                        USD
+                      </strong>{' '}
+                      directly on your OpenRouter account (~$
+                      {(baselineEst.totalEstimatedCost / 10).toFixed(4)}
+                      /chapter).
                     </p>
                   </div>
                 )}
@@ -423,9 +445,23 @@ export default function SettingsModal({
           </div>
 
           {/* Legal & Support Links */}
-          <div className="pt-3 mt-2 border-t border-tj-border-main flex flex-wrap items-center justify-between text-xs text-tj-text-muted">
+          <div className="pt-3 mt-2 border-t border-tj-border-main flex flex-wrap items-center justify-between text-xs text-tj-text-muted gap-2">
             <span>CEFR Graded Short Story Builder</span>
             <div className="flex items-center gap-3 font-medium text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof localStorage !== 'undefined') {
+                    localStorage.removeItem('cefr_hide_instruction_box');
+                    window.location.reload();
+                  }
+                }}
+                className="hover:text-tj-primary transition-colors cursor-pointer"
+                title="Reset hidden onboarding instruction banner"
+              >
+                Reset Guide Banner
+              </button>
+              <span className="text-tj-border-main">•</span>
               <a
                 href="/privacy.html"
                 target="_blank"

@@ -146,7 +146,7 @@ export async function callOpenRouter(options: {
       order: ['Alibaba', 'Together', 'Fireworks'],
       allow_fallbacks: true, // Allow fallback to Together/Fireworks if Alibaba is down
     };
-  } else if (lowerModel.includes('llama')) {
+  } else if (lowerModel.includes('llama') || lowerModel.includes('hermes')) {
     chatRequest.provider = {
       order: ['Together', 'Fireworks', 'DeepInfra'],
       allow_fallbacks: true,
@@ -453,6 +453,9 @@ export function cleanJSONString(str: string): string {
   }
 
   // Fallback: strip any remaining backticks
-  cleaned = cleaned.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+  cleaned = cleaned
+    .replace(/^```(?:json)?/i, '')
+    .replace(/```$/, '')
+    .trim();
   return sanitizeJSONControlChars(cleaned);
 }
