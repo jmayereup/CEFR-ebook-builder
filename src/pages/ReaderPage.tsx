@@ -80,6 +80,7 @@ interface ReaderPageProps {
   dirty?: boolean;
   isSyncing?: boolean;
   syncChangesToDatabase?: () => Promise<void>;
+  isGeneratingCover?: boolean;
 }
 
 export default function ReaderPage({
@@ -88,6 +89,7 @@ export default function ReaderPage({
   setSelectedStory,
   activeChapterIdx,
   onSelectChapter,
+  isGeneratingCover,
   handleToggleStoryPrivacy,
   handleToggleBookshelf,
   handleShareStoryLink,
@@ -313,6 +315,7 @@ export default function ReaderPage({
         dirty={dirty}
         isSyncing={isSyncing}
         syncChangesToDatabase={syncChangesToDatabase}
+        isGeneratingCover={isGeneratingCover}
         onExit={() => setSelectedStory(null)}
       />
     </div>

@@ -108,6 +108,10 @@ export default function StoryCard({
   const coverStyle = getCefrCoverStyles(story.cefrLevel);
   const [imgError, setImgError] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
+  const [loadedDescription, setLoadedDescription] = useState<string | null>(
+    story.description || null,
+  );
+  const [loadingDescription, setLoadingDescription] = useState(false);
   const hasCoverImage = !imgError && !isGeneratingCover;
   const cardThemeClass = hasCoverImage
     ? 'text-[#F9F6F0] dark:text-[#EBE4D5] border-black/15 dark:border-white/10'
@@ -115,6 +119,13 @@ export default function StoryCard({
   const textMutedClass = hasCoverImage
     ? 'text-[#F9F6F0]/70 dark:text-[#EBE4D5]/70'
     : coverStyle.textMuted;
+
+  // Sync loadedDescription if story object gets updated
+  React.useEffect(() => {
+    if (story.description) {
+      setLoadedDescription(story.description);
+    }
+  }, [story.description]);
 
   // Reset image error state when story is updated or cover finishes generating
   React.useEffect(() => {
@@ -143,6 +154,30 @@ export default function StoryCard({
     };
   }, [showDescription]);
 
+  const handleToggleIntro = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!showDescription && !loadedDescription && !loadingDescription) {
+      setLoadingDescription(true);
+      try {
+        const res = await fetch(`/api/stories/metadata?storyId=${story.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          const found = Array.isArray(data)
+            ? data.find((s: any) => s.id === story.id)
+            : data;
+          if (found?.description) {
+            setLoadedDescription(found.description);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch story description on-demand:', err);
+      } finally {
+        setLoadingDescription(false);
+      }
+    }
+    setShowDescription(!showDescription);
+  };
+
   const handleCardClick = (_e: React.MouseEvent) => {
     onSelect();
   };
@@ -163,10 +198,13 @@ export default function StoryCard({
   const isRead = userReadCount > 0;
 
   // 2. Global completion count
-  const globalReadCount = Object.values(completedByObj).reduce(
-    (sum: number, count: number) => sum + count,
-    0,
-  );
+  const globalReadCount =
+    story.totalReads !== undefined
+      ? story.totalReads
+      : Object.values(completedByObj).reduce(
+          (sum: number, count: number) => sum + count,
+          0,
+        );
 
   const mainLangCode = getLanguageCodeFromName(story.language).toUpperCase();
   const transLangCode = story.translationLanguage
@@ -247,11 +285,11 @@ export default function StoryCard({
                 >
                   Theme: {resolvedGenreLabel}
                 </p>
-                {story.description && (
+                {loadedDescription && (
                   <p
                     className={`text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left line-clamp-8 mt-2.5`}
                   >
-                    "{story.description}"
+                    "{loadedDescription}"
                   </p>
                 )}
               </div>
@@ -259,7 +297,7 @@ export default function StoryCard({
           </div>
 
           {/* Large Description Overlay (toggled via Info button) */}
-          {showDescription && story.description && (
+          {showDescription && (
             // biome-ignore lint/a11y/useKeyWithClickEvents: Stop propagation click
             // biome-ignore lint/a11y/noStaticElementInteractions: Stop propagation click
             <div
@@ -305,9 +343,19 @@ export default function StoryCard({
 
               {/* Description text */}
               <div className="flex-1 flex items-center justify-center overflow-y-auto pr-1">
-                <p className="text-sm md:text-base font-sans text-center leading-relaxed opacity-95">
-                  "{story.description}"
-                </p>
+                {loadingDescription ? (
+                  <span className="text-xs font-mono opacity-60 animate-pulse">
+                    Loading Intro...
+                  </span>
+                ) : loadedDescription ? (
+                  <p className="text-sm md:text-base font-sans text-center leading-relaxed opacity-95">
+                    "{loadedDescription}"
+                  </p>
+                ) : (
+                  <p className="text-xs font-sans text-center opacity-60 italic">
+                    No narrative description provided.
+                  </p>
+                )}
               </div>
 
               {/* Small Down Arrow Close Button in Lower-Right */}
@@ -364,28 +412,21 @@ export default function StoryCard({
               </span>
             )}
 
-            {story.description && (
-              <>
-                <span className="text-tj-border-main dark:text-tj-border-main/50 text-[10px]">
-                  |
-                </span>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowDescription(!showDescription);
-                  }}
-                  className={`cursor-pointer text-[10px] font-bold uppercase tracking-wider transition-colors underline underline-offset-2 ${
-                    showDescription
-                      ? 'text-tj-primary decoration-tj-primary'
-                      : 'text-tj-text-muted hover:text-tj-text-main decoration-tj-text-muted/50 hover:decoration-tj-text-main'
-                  }`}
-                  title="View Description"
-                >
-                  Intro
-                </button>
-              </>
-            )}
+            <span className="text-tj-border-main dark:text-tj-border-main/50 text-[10px]">
+              |
+            </span>
+            <button
+              type="button"
+              onClick={handleToggleIntro}
+              className={`cursor-pointer text-[10px] font-bold uppercase tracking-wider transition-colors underline underline-offset-2 ${
+                showDescription
+                  ? 'text-tj-primary decoration-tj-primary'
+                  : 'text-tj-text-muted hover:text-tj-text-main decoration-tj-text-muted/50 hover:decoration-tj-text-main'
+              }`}
+              title="View Description"
+            >
+              Intro
+            </button>
           </div>
 
           {/* Right Block: Action Icons */}

@@ -72,6 +72,7 @@ export interface Story {
   consistencyAudits?: ConsistencyAudit[] | null;
   toneRefreshGuidance?: string;
   isUnsaved?: boolean;
+  totalReads?: number;
   completedBy?: Record<string, number>;
   updated?: string;
 }

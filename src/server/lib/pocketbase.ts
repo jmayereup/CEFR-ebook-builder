@@ -118,17 +118,12 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
       console.warn('[Server PB] Failed to fetch story completions:', compError);
     }
 
-    const completionsMap: Record<string, Record<string, number>> = {};
+    const completionsMap: Record<string, number> = {};
     for (const comp of completions) {
       const storyId = comp.story;
-      const userId = comp.user;
       const timesRead = comp.timesRead ?? 0;
-      if (storyId && userId) {
-        if (!completionsMap[storyId]) {
-          completionsMap[storyId] = {};
-        }
-        completionsMap[storyId][userId] =
-          (completionsMap[storyId][userId] ?? 0) + timesRead;
+      if (storyId) {
+        completionsMap[storyId] = (completionsMap[storyId] ?? 0) + timesRead;
       }
     }
 
@@ -152,12 +147,10 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
         createdAt:
           record.createdAt || record.created || new Date().toISOString(),
         isCompleted: record.isCompleted || false,
-        description: record.description,
         creatorId: record.creatorId || '',
-        creatorEmail: record.creatorEmail,
         model: record.model,
         ratings: record.ratings,
-        completedBy: completionsMap[record.id] || {},
+        totalReads: completionsMap[record.id] || 0,
         isPublic: record.isPublic !== false,
         chaptersCount: chapters.length,
         wordCount,
@@ -218,12 +211,14 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
         }
 
         const completedBy: Record<string, number> = {};
+        let totalReads = 0;
         try {
           const comps = await pb.collection('story_completions').getFullList({
             filter: `story = "${storyId}"`,
             fields: 'user,timesRead',
           });
           for (const c of comps) {
+            totalReads += c.timesRead ?? 0;
             if (c.user) {
               completedBy[c.user] =
                 (completedBy[c.user] ?? 0) + (c.timesRead ?? 0);
@@ -246,11 +241,10 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
           createdAt:
             record.createdAt || record.created || new Date().toISOString(),
           isCompleted: record.isCompleted || false,
-          description: record.description,
           creatorId: record.creatorId || '',
-          creatorEmail: record.creatorEmail,
           model: record.model,
           ratings: record.ratings,
+          totalReads,
           completedBy,
           isPublic: record.isPublic !== false,
           chaptersCount: chapters.length,

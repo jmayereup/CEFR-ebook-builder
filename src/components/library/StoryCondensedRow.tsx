@@ -97,10 +97,13 @@ export default function StoryCondensedRow({
   const isRead = userReadCount > 0;
 
   // Global reads count
-  const globalReadCount = Object.values(completedByObj).reduce(
-    (sum: number, count: number) => sum + count,
-    0,
-  );
+  const globalReadCount =
+    story.totalReads !== undefined
+      ? story.totalReads
+      : Object.values(completedByObj).reduce(
+          (sum: number, count: number) => sum + count,
+          0,
+        );
   const totalReads = Math.max(globalReadCount, userReadCount);
 
   const mainLangCode = getLanguageCodeFromName(story.language).toUpperCase();
@@ -174,20 +177,16 @@ export default function StoryCondensedRow({
         </button>
       </div>
 
-      {/* Description Line - Clickable to open reader */}
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: Click triggers reading story */}
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: Click triggers reading story */}
-      <div onClick={onSelect} className="cursor-pointer pr-14 group/desc">
-        {story.description ? (
+      {/* Description Line (if loaded) - Clickable to open reader */}
+      {story.description && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: Click triggers reading story
+        // biome-ignore lint/a11y/noStaticElementInteractions: Click triggers reading story
+        <div onClick={onSelect} className="cursor-pointer pr-14 group/desc">
           <p className="text-xs text-tj-text-muted line-clamp-1 italic leading-relaxed group-hover/desc:text-tj-text-main transition-colors">
             "{story.description}"
           </p>
-        ) : (
-          <p className="text-xs text-tj-text-muted/40 line-clamp-1 italic leading-relaxed">
-            No narrative description provided.
-          </p>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Expanded Panel for Details & Action Buttons */}
       {isExpanded && (

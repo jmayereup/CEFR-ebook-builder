@@ -111,7 +111,7 @@ export default defineConfig(() => {
     ],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(process.cwd()),
       },
     },
     esbuild: {
@@ -141,6 +141,18 @@ export default defineConfig(() => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
+              // Group React core libraries
+              if (
+                id.includes('react/') ||
+                id.includes('react-dom/') ||
+                id.includes('scheduler/')
+              ) {
+                return 'vendor-react';
+              }
+              // Group PocketBase SDK
+              if (id.includes('pocketbase')) {
+                return 'vendor-pocketbase';
+              }
               // Group Framer Motion / Motion
               if (id.includes('motion') || id.includes('framer-motion')) {
                 return 'vendor-motion';

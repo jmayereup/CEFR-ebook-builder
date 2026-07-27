@@ -180,7 +180,15 @@ async function bootstrap() {
 
   app.use(
     '/covers',
-    express.static(path.join(process.cwd(), 'public', 'covers')),
+    express.static(path.join(process.cwd(), 'public', 'covers'), {
+      maxAge: '1d',
+      setHeaders: (res) => {
+        res.setHeader(
+          'Cache-Control',
+          'public, max-age=86400, stale-while-revalidate=604800',
+        );
+      },
+    }),
   );
 
   // Start the Firestore real-time listener on server startup

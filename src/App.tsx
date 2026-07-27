@@ -1,6 +1,13 @@
 import { AlertCircle, WifiOff } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import AlertModal from './components/AlertModal';
 import AppHeader from './components/app/AppHeader';
 import AppNav from './components/app/AppNav';
@@ -28,13 +35,14 @@ import { useStreak } from './hooks/useStreak';
 import { useUrlRouting } from './hooks/useUrlRouting';
 import { useUserData } from './hooks/useUserData';
 import { useWebViewWarning } from './hooks/useWebViewWarning';
-import AdminPage from './pages/AdminPage';
-import BookshelfPage from './pages/BookshelfPage';
 // Pages
 import BrowsePage from './pages/BrowsePage';
-import CreatePage from './pages/CreatePage';
-import PracticePage from './pages/PracticePage';
-import ReaderPage from './pages/ReaderPage';
+
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+const BookshelfPage = lazy(() => import('./pages/BookshelfPage'));
+const CreatePage = lazy(() => import('./pages/CreatePage'));
+const PracticePage = lazy(() => import('./pages/PracticePage'));
+const ReaderPage = lazy(() => import('./pages/ReaderPage'));
 import {
   googleSignIn,
   initAuth,
@@ -1061,220 +1069,228 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         />
 
         <AnimatePresence mode="wait">
-          {selectedStory ? (
-            <motion.div
-              key={`reader-${selectedStory.id}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <ReaderPage
-                currentUser={currentUser}
-                selectedStory={selectedStory}
-                setSelectedStory={handleRequestClearStory}
-                activeChapterIdx={activeChapterIdx}
-                onSelectChapter={(idx) => {
-                  setActiveChapterIdx(idx);
-                  localStorage.setItem(
-                    `last_read_chapter_${selectedStory.id}`,
-                    idx.toString(),
-                  );
-                }}
-                handleToggleStoryPrivacy={handleToggleStoryPrivacy}
-                handleToggleBookshelf={handleToggleBookshelfWithAuth}
-                handleShareStoryLink={handleShareStoryLink}
-                bookshelf={bookshelf}
-                showShareToast={showShareToast}
-                showExportMenu={showExportMenu}
-                setShowExportMenu={setShowExportMenu}
-                showDocOptions={showDocOptions}
-                setShowDocOptions={setShowDocOptions}
-                showEpubLinks={showEpubLinks}
-                setShowEpubLinks={setShowEpubLinks}
-                copyStatus={copyStatus}
-                isExportingEpub={isExportingEpub}
-                triggerCopyPlaintext={triggerCopyPlaintext}
-                triggerCopyRichText={triggerCopyRichText}
-                handleDownloadEpub={handleDownloadEpub}
-                isGenerating={isGenerating}
-                isAutoGenerating={isAutoGenerating}
-                isAutoGenerationPaused={isAutoGenerationPaused}
-                handleGenerateNextChapter={handleGenerateNextChapter}
-                handleRegenerateChapter={handleRegenerateChapter}
-                handleAutoGenerateRemaining={handleAutoGenerateRemaining}
-                handleSaveWord={handleSaveWord}
-                onRemoveWord={handleRemoveSavedWord}
-                isPaid={isPaid}
-                onOpenSettings={() => setShowSettingsModal(true)}
-                showAlert={showAlert}
-                generationStatus={generationStatus}
-                handleCancelGeneration={handleCancelGeneration}
-                handleRateStory={handleRateStory}
-                lookupLimitData={lookupLimitData}
-                handleIncrementLookupCount={handleIncrementLookupCount}
-                savedVocab={savedVocab}
-                onStoryUpdated={(updatedStory) => {
-                  const cleaned = cleanCompletedStory(updatedStory);
-                  setSelectedStory(cleaned);
-                  localStorage.setItem(
-                    `cefr_story_cache_${cleaned.id}`,
-                    JSON.stringify(cleaned),
-                  );
-                  // Only refresh metadata if the story is already saved in database.
-                  // Unsaved drafts have no server record yet, so fetching would be
-                  // a no-op and incorrectly sets storiesLoading=true, freezing the UI.
-                  if (!cleaned.isUnsaved) {
-                    loadStoriesMetadata({
-                      refresh: true,
-                      storyId: cleaned.id,
-                    });
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center min-h-[50vh]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
+              </div>
+            }
+          >
+            {selectedStory ? (
+              <motion.div
+                key={`reader-${selectedStory.id}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <ReaderPage
+                  currentUser={currentUser}
+                  selectedStory={selectedStory}
+                  setSelectedStory={handleRequestClearStory}
+                  activeChapterIdx={activeChapterIdx}
+                  onSelectChapter={(idx) => {
+                    setActiveChapterIdx(idx);
+                    localStorage.setItem(
+                      `last_read_chapter_${selectedStory.id}`,
+                      idx.toString(),
+                    );
+                  }}
+                  handleToggleStoryPrivacy={handleToggleStoryPrivacy}
+                  handleToggleBookshelf={handleToggleBookshelfWithAuth}
+                  handleShareStoryLink={handleShareStoryLink}
+                  bookshelf={bookshelf}
+                  showShareToast={showShareToast}
+                  showExportMenu={showExportMenu}
+                  setShowExportMenu={setShowExportMenu}
+                  showDocOptions={showDocOptions}
+                  setShowDocOptions={setShowDocOptions}
+                  showEpubLinks={showEpubLinks}
+                  setShowEpubLinks={setShowEpubLinks}
+                  copyStatus={copyStatus}
+                  isExportingEpub={isExportingEpub}
+                  triggerCopyPlaintext={triggerCopyPlaintext}
+                  triggerCopyRichText={triggerCopyRichText}
+                  handleDownloadEpub={handleDownloadEpub}
+                  isGenerating={isGenerating}
+                  isAutoGenerating={isAutoGenerating}
+                  isAutoGenerationPaused={isAutoGenerationPaused}
+                  handleGenerateNextChapter={handleGenerateNextChapter}
+                  handleRegenerateChapter={handleRegenerateChapter}
+                  handleAutoGenerateRemaining={handleAutoGenerateRemaining}
+                  handleSaveWord={handleSaveWord}
+                  onRemoveWord={handleRemoveSavedWord}
+                  isPaid={isPaid}
+                  onOpenSettings={() => setShowSettingsModal(true)}
+                  showAlert={showAlert}
+                  generationStatus={generationStatus}
+                  handleCancelGeneration={handleCancelGeneration}
+                  handleRateStory={handleRateStory}
+                  lookupLimitData={lookupLimitData}
+                  handleIncrementLookupCount={handleIncrementLookupCount}
+                  savedVocab={savedVocab}
+                  onStoryUpdated={(updatedStory) => {
+                    const cleaned = cleanCompletedStory(updatedStory);
+                    setSelectedStory(cleaned);
+                    localStorage.setItem(
+                      `cefr_story_cache_${cleaned.id}`,
+                      JSON.stringify(cleaned),
+                    );
+                    // Only refresh metadata if the story is already saved in database.
+                    // Unsaved drafts have no server record yet, so fetching would be
+                    // a no-op and incorrectly sets storiesLoading=true, freezing the UI.
+                    if (!cleaned.isUnsaved) {
+                      loadStoriesMetadata({
+                        refresh: true,
+                        storyId: cleaned.id,
+                      });
+                    }
+                  }}
+                  handleDeleteChapter={handleDeleteChapter}
+                  handleSaveNewChapter={handleSaveNewChapter}
+                  handleDeleteStory={(bypass) =>
+                    handleDeleteStory(selectedStory.id, null, bypass)
                   }
-                }}
-                handleDeleteChapter={handleDeleteChapter}
-                handleSaveNewChapter={handleSaveNewChapter}
-                handleDeleteStory={(bypass) =>
-                  handleDeleteStory(selectedStory.id, null, bypass)
-                }
-                onFlagStory={handleOpenFlagModal}
-                isZenMode={isZenMode}
-                setIsZenMode={setIsZenMode}
-                handleGenerateGlossary={handleGenerateGlossary}
-                onGenerateCover={handleGenerateCover}
-                onSaveStory={handleSaveUnsavedStory}
-                onChapterFinished={handleChapterFinished}
-                onStoryFinished={handleStoryFinished}
-                onStoryUnfinished={handleStoryUnfinished}
-                dirty={dirty}
-                isSyncing={isSyncing}
-                syncChangesToDatabase={syncChangesToDatabase}
-                isGeneratingCover={
-                  selectedStory ? generatingCoverIds.has(selectedStory.id) : false
-                }
-              />
-            </motion.div>
-          ) : activeTab === 'browse' ? (
-            <motion.div
-              key="browse"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <BrowsePage
-                cachedStoryIds={cachedStoryIds}
-                visibleStories={visibleStories}
-                filteredStories={filteredStories}
-                bookshelf={bookshelf}
-                recentlyReadStories={recentlyReadStories}
-                recentlyRead={recentlyRead}
-                generatingCoverIds={generatingCoverIds}
-                handleToggleBookshelf={handleToggleBookshelfWithAuth}
-                handleSelectStory={handleSelectStory}
-                onDownloadStory={handleDownloadStory}
-                handleDeleteStory={handleDeleteStory}
-                onFlagStory={handleOpenFlagModal}
-                setActiveTab={setActiveTab}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                filterLanguage={filterLanguage}
-                setFilterLanguage={setFilterLanguage}
-                filterCefrLevel={filterCefrLevel}
-                setFilterCefrLevel={setFilterCefrLevel}
-                filterGenre={filterGenre}
-                setFilterGenre={setFilterGenre}
-                filterReadingStatus={filterReadingStatus}
-                setFilterReadingStatus={setFilterReadingStatus}
-              />
-            </motion.div>
-          ) : activeTab === 'bookshelf' && currentUser ? (
-            <motion.div
-              key="bookshelf"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <BookshelfPage
-                streakData={streakData}
-                isPaid={isPaid}
-                generationLimitData={generationLimitData}
-                currentUser={currentUser}
-                handleSelectStory={handleSelectStory}
-                onDownloadStory={handleDownloadStory}
-                cachedStoryIds={cachedStoryIds}
-                bookshelfStories={bookshelfStories}
-                filteredBookshelfStories={filteredBookshelfStories}
-                bookshelf={bookshelf}
-                recentlyRead={recentlyRead}
-                generatingCoverIds={generatingCoverIds}
-                handleToggleBookshelf={handleToggleBookshelfWithAuth}
-                handleDeleteStory={handleDeleteStory}
-                onFlagStory={handleOpenFlagModal}
-                setActiveTab={setActiveTab}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                filterLanguage={filterLanguage}
-                setFilterLanguage={setFilterLanguage}
-                filterCefrLevel={filterCefrLevel}
-                setFilterCefrLevel={setFilterCefrLevel}
-                filterGenre={filterGenre}
-                setFilterGenre={setFilterGenre}
-                filterReadingStatus={filterReadingStatus}
-                setFilterReadingStatus={setFilterReadingStatus}
-                onRefreshPrivateStories={loadPrivateStories}
-                privateStoriesLoading={privateStoriesLoading}
-              />
-            </motion.div>
-          ) : activeTab === 'create' ? (
-            <motion.div
-              key="create"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <CreatePage
-                isOnline={isOnline}
-                handleInitiateStory={handleInitiateStory}
-                isGenerating={isGenerating}
-                currentUser={currentUser}
-                isPaid={isPaid}
-                generationLimitData={generationLimitData}
-                onLogin={handleLogin}
-              />
-            </motion.div>
-          ) : activeTab === 'practice' ? (
-            <motion.div
-              key="practice"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <PracticePage
-                selectedStory={selectedStory}
-                savedVocab={savedVocab}
-                handleRemoveSavedWord={handleRemoveSavedWord}
-                handleRecordDailyActivity={handleRecordDailyActivity}
-                onUpdateWordSRS={handleUpdateWordSRS}
-              />
-            </motion.div>
-          ) : activeTab === 'admin' && currentUser?.isAdmin === true ? (
-            <motion.div
-              key="admin"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <AdminPage
-                isAdmin={currentUser?.isAdmin === true}
-                showAlert={showAlert}
-                onRefreshCache={() =>
-                  loadStoriesMetadata({ refresh: true, forceAll: true })
-                }
-              />
-            </motion.div>
-          ) : null}
+                  onFlagStory={handleOpenFlagModal}
+                  isZenMode={isZenMode}
+                  setIsZenMode={setIsZenMode}
+                  handleGenerateGlossary={handleGenerateGlossary}
+                  onGenerateCover={handleGenerateCover}
+                  onSaveStory={handleSaveUnsavedStory}
+                  onChapterFinished={handleChapterFinished}
+                  onStoryFinished={handleStoryFinished}
+                  onStoryUnfinished={handleStoryUnfinished}
+                  dirty={dirty}
+                  isSyncing={isSyncing}
+                  syncChangesToDatabase={syncChangesToDatabase}
+                  isGeneratingCover={
+                    selectedStory ? generatingCoverIds.has(selectedStory.id) : false
+                  }
+                />
+              </motion.div>
+            ) : activeTab === 'browse' ? (
+              <motion.div
+                key="browse"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <BrowsePage
+                  cachedStoryIds={cachedStoryIds}
+                  visibleStories={visibleStories}
+                  filteredStories={filteredStories}
+                  bookshelf={bookshelf}
+                  recentlyReadStories={recentlyReadStories}
+                  recentlyRead={recentlyRead}
+                  generatingCoverIds={generatingCoverIds}
+                  handleToggleBookshelf={handleToggleBookshelfWithAuth}
+                  handleSelectStory={handleSelectStory}
+                  onDownloadStory={handleDownloadStory}
+                  handleDeleteStory={handleDeleteStory}
+                  onFlagStory={handleOpenFlagModal}
+                  setActiveTab={setActiveTab}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                  filterLanguage={filterLanguage}
+                  setFilterLanguage={setFilterLanguage}
+                  filterCefrLevel={filterCefrLevel}
+                  setFilterCefrLevel={setFilterCefrLevel}
+                  filterGenre={filterGenre}
+                  setFilterGenre={setFilterGenre}
+                  filterReadingStatus={filterReadingStatus}
+                  setFilterReadingStatus={setFilterReadingStatus}
+                />
+              </motion.div>
+            ) : activeTab === 'bookshelf' && currentUser ? (
+              <motion.div
+                key="bookshelf"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <BookshelfPage
+                  streakData={streakData}
+                  isPaid={isPaid}
+                  generationLimitData={generationLimitData}
+                  currentUser={currentUser}
+                  handleSelectStory={handleSelectStory}
+                  onDownloadStory={handleDownloadStory}
+                  cachedStoryIds={cachedStoryIds}
+                  bookshelfStories={bookshelfStories}
+                  filteredBookshelfStories={filteredBookshelfStories}
+                  bookshelf={bookshelf}
+                  recentlyRead={recentlyRead}
+                  generatingCoverIds={generatingCoverIds}
+                  handleToggleBookshelf={handleToggleBookshelfWithAuth}
+                  handleDeleteStory={handleDeleteStory}
+                  onFlagStory={handleOpenFlagModal}
+                  setActiveTab={setActiveTab}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                  filterLanguage={filterLanguage}
+                  setFilterLanguage={setFilterLanguage}
+                  filterCefrLevel={filterCefrLevel}
+                  setFilterCefrLevel={setFilterCefrLevel}
+                  filterGenre={filterGenre}
+                  setFilterGenre={setFilterGenre}
+                  filterReadingStatus={filterReadingStatus}
+                  setFilterReadingStatus={setFilterReadingStatus}
+                  onRefreshPrivateStories={loadPrivateStories}
+                  privateStoriesLoading={privateStoriesLoading}
+                />
+              </motion.div>
+            ) : activeTab === 'create' ? (
+              <motion.div
+                key="create"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <CreatePage
+                  isOnline={isOnline}
+                  handleInitiateStory={handleInitiateStory}
+                  isGenerating={isGenerating}
+                  currentUser={currentUser}
+                  isPaid={isPaid}
+                  generationLimitData={generationLimitData}
+                  onLogin={handleLogin}
+                />
+              </motion.div>
+            ) : activeTab === 'practice' ? (
+              <motion.div
+                key="practice"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <PracticePage
+                  selectedStory={selectedStory}
+                  savedVocab={savedVocab}
+                  handleRemoveSavedWord={handleRemoveSavedWord}
+                  handleRecordDailyActivity={handleRecordDailyActivity}
+                  onUpdateWordSRS={handleUpdateWordSRS}
+                />
+              </motion.div>
+            ) : activeTab === 'admin' && currentUser?.isAdmin === true ? (
+              <motion.div
+                key="admin"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <AdminPage
+                  isAdmin={currentUser?.isAdmin === true}
+                  showAlert={showAlert}
+                  onRefreshCache={() =>
+                    loadStoriesMetadata({ refresh: true, forceAll: true })
+                  }
+                />
+              </motion.div>
+            ) : null}
+          </Suspense>
         </AnimatePresence>
       </main>
       {!isZenMode && (
