@@ -25,6 +25,7 @@ interface ChapterEditFormProps {
   fontSize: number;
   customOpenRouterKey?: string;
   onStoryUpdated?: (story: Story) => void;
+  onSaveStory?: (story?: Story) => Promise<any>;
   onShowAlert?: (
     title: string,
     message: string,
@@ -40,6 +41,7 @@ export default function ChapterEditForm({
   fontSize,
   customOpenRouterKey,
   onStoryUpdated,
+  onSaveStory,
   onShowAlert,
   onClose,
 }: ChapterEditFormProps) {
@@ -180,14 +182,20 @@ export default function ChapterEditForm({
       const updatedChapters = story.chapters ? [...story.chapters] : [];
       updatedChapters[activeChapterIndex] = updatedChapter;
 
+      const updatedStory: Story = {
+        ...story,
+        title: editStoryTitle.trim(),
+        description: editStoryDescription.trim(),
+        chapters: updatedChapters,
+        isUnsaved: false,
+      };
+
       if (onStoryUpdated) {
-        onStoryUpdated({
-          ...story,
-          title: editStoryTitle.trim(),
-          description: editStoryDescription.trim(),
-          chapters: updatedChapters,
-          isUnsaved: true,
-        });
+        onStoryUpdated(updatedStory);
+      }
+
+      if (onSaveStory) {
+        await onSaveStory(updatedStory);
       }
 
       onClose();

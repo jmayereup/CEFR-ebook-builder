@@ -4,7 +4,7 @@ import {
   type SetStateAction,
   useState,
 } from 'react';
-import type { RecentlyReadItem } from '../services/db';
+import { createStory, type RecentlyReadItem } from '../services/db';
 import type { IUser } from '../services/types';
 import type { Chapter, Story, VocabularyTerm } from '../types';
 import { cleanCompletedStory } from '../utils/storyCleanup';
@@ -194,18 +194,23 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       const newTotal = Math.max(1, selectedStory.totalChapters - 1);
       const isCompleted = reindexedChapters.length >= newTotal;
 
+      const wasUnsaved = !!selectedStory.isUnsaved;
       const updatedStory = cleanCompletedStory({
         ...selectedStory,
         chapters: reindexedChapters,
         totalChapters: newTotal,
         isCompleted,
-        isUnsaved: true,
+        isUnsaved: wasUnsaved,
       });
       setSelectedStory(updatedStory);
       localStorage.setItem(
         `cefr_story_cache_${updatedStory.id}`,
         JSON.stringify(updatedStory),
       );
+
+      if (!wasUnsaved) {
+        await createStory(updatedStory);
+      }
 
       if (activeChapterIdx >= reindexedChapters.length) {
         const newIdx = Math.max(0, reindexedChapters.length - 1);
@@ -260,18 +265,23 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       );
       const isCompleted = updatedChapters.length >= newTotal;
 
+      const wasUnsaved = !!selectedStory.isUnsaved;
       const updatedStory = cleanCompletedStory({
         ...selectedStory,
         chapters: updatedChapters,
         totalChapters: newTotal,
         isCompleted,
-        isUnsaved: true,
+        isUnsaved: wasUnsaved,
       });
       setSelectedStory(updatedStory);
       localStorage.setItem(
         `cefr_story_cache_${updatedStory.id}`,
         JSON.stringify(updatedStory),
       );
+
+      if (!wasUnsaved) {
+        await createStory(updatedStory);
+      }
 
       const newIdx = updatedChapters.length - 1;
       setActiveChapterIdx(newIdx);

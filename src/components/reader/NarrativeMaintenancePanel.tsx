@@ -25,6 +25,7 @@ import { buildApiHeaders } from '../../utils/modelUtils';
 interface NarrativeMaintenancePanelProps {
   story: Story;
   onStoryUpdated: (story: Story) => void;
+  onSaveStory?: (story?: Story) => Promise<any>;
   customOpenRouterKey?: string;
   onShowAlert?: (
     title: string,
@@ -39,6 +40,7 @@ interface NarrativeMaintenancePanelProps {
 export default function NarrativeMaintenancePanel({
   story,
   onStoryUpdated,
+  onSaveStory,
   customOpenRouterKey = '',
   onShowAlert,
   isOnline = true,
@@ -113,21 +115,21 @@ export default function NarrativeMaintenancePanel({
         lastUpdatedChapter: story.storyBible?.lastUpdatedChapter ?? 0,
       };
 
-      onStoryUpdated({
+      const updatedStory: Story = {
         ...story,
         storyBible: updatedBible,
-        isUnsaved: true,
-      });
+        isUnsaved: false,
+      };
 
-      if (onShowAlert) {
+      onStoryUpdated(updatedStory);
+
+      if (onSaveStory) {
+        await onSaveStory(updatedStory);
+      } else if (onShowAlert) {
         onShowAlert(
-          'Draft Updated',
-          'Story Bible updated in local memory. Make sure to click "Save Draft" or "Save Changes" to save to the database.',
+          'Story Bible Saved',
+          'Story Bible updated and saved to database.',
           'info',
-        );
-      } else {
-        alert(
-          'Story Bible updated in local memory. Make sure to click "Save Draft" or "Save Changes" to save to the database.',
         );
       }
     } catch (err: any) {
@@ -184,16 +186,20 @@ export default function NarrativeMaintenancePanel({
       const updatedBible = await response.json();
       updatedBible.lastUpdatedChapter = story.chapters?.length || 0;
 
-      onStoryUpdated({
+      const updatedStory: Story = {
         ...story,
         storyBible: updatedBible,
-        isUnsaved: true,
-      });
+        isUnsaved: false,
+      };
 
-      if (onShowAlert) {
+      onStoryUpdated(updatedStory);
+
+      if (onSaveStory) {
+        await onSaveStory(updatedStory);
+      } else if (onShowAlert) {
         onShowAlert(
-          'AI Update Drafted',
-          'The Story Bible has been compiled and updated in local memory. Click "Save Draft" or "Save Changes" to save to the database.',
+          'AI Update Saved',
+          'The Story Bible has been compiled and saved to database.',
           'info',
         );
       }
@@ -251,16 +257,20 @@ export default function NarrativeMaintenancePanel({
         createdAt: new Date().toISOString(),
       };
 
-      onStoryUpdated({
+      const updatedStory: Story = {
         ...story,
         consistencyAudits: [...(story.consistencyAudits || []), auditObj],
-        isUnsaved: true,
-      });
+        isUnsaved: false,
+      };
 
-      if (onShowAlert) {
+      onStoryUpdated(updatedStory);
+
+      if (onSaveStory) {
+        await onSaveStory(updatedStory);
+      } else if (onShowAlert) {
         onShowAlert(
-          'Audit Compiled',
-          'Continuity report compiled in local memory. Click "Save Draft" or "Save Changes" to save to the database.',
+          'Audit Saved',
+          'Continuity report compiled and saved to database.',
           'info',
         );
       }
@@ -335,21 +345,21 @@ export default function NarrativeMaintenancePanel({
   const handleSaveToneGuidance = async () => {
     setIsSavingTone(true);
     try {
-      onStoryUpdated({
+      const updatedStory: Story = {
         ...story,
         toneRefreshGuidance: toneGuidance,
-        isUnsaved: true,
-      });
+        isUnsaved: false,
+      };
 
-      if (onShowAlert) {
+      onStoryUpdated(updatedStory);
+
+      if (onSaveStory) {
+        await onSaveStory(updatedStory);
+      } else if (onShowAlert) {
         onShowAlert(
-          'Draft Updated',
-          'Tone & Style guidance updated in local memory. Click "Save Draft" or "Save Changes" to save to the database.',
+          'Tone Guidance Saved',
+          'Tone & Style guidance saved to database.',
           'info',
-        );
-      } else {
-        alert(
-          'Tone & Style guidance updated in local memory. Click "Save Draft" or "Save Changes" to save to the database.',
         );
       }
     } catch (err: any) {
@@ -370,21 +380,21 @@ export default function NarrativeMaintenancePanel({
   const handleSaveOutline = async () => {
     setIsSavingOutline(true);
     try {
-      onStoryUpdated({
+      const updatedStory: Story = {
         ...story,
         outline,
-        isUnsaved: true,
-      });
+        isUnsaved: false,
+      };
 
-      if (onShowAlert) {
+      onStoryUpdated(updatedStory);
+
+      if (onSaveStory) {
+        await onSaveStory(updatedStory);
+      } else if (onShowAlert) {
         onShowAlert(
-          'Draft Updated',
-          'Story Outline updated in local memory. Click "Save Draft" or "Save Changes" to save to the database.',
+          'Outline Saved',
+          'Story Outline saved to database.',
           'info',
-        );
-      } else {
-        alert(
-          'Story Outline updated in local memory. Click "Save Draft" or "Save Changes" to save to the database.',
         );
       }
     } catch (err: any) {

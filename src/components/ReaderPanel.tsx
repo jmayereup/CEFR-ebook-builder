@@ -1160,6 +1160,7 @@ export default function ReaderPanel({
               <NarrativeMaintenancePanel
                 story={story}
                 onStoryUpdated={onStoryUpdated}
+                onSaveStory={onSaveStory}
                 customOpenRouterKey={customOpenRouterKey}
                 onShowAlert={onShowAlert}
                 isOnline={isOnline}
@@ -1303,6 +1304,7 @@ export default function ReaderPanel({
                     fontSize={fontSize}
                     customOpenRouterKey={customOpenRouterKey}
                     onStoryUpdated={onStoryUpdated}
+                    onSaveStory={onSaveStory}
                     onShowAlert={onShowAlert}
                     onClose={() => setIsEditing(false)}
                   />
