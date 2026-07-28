@@ -251,7 +251,7 @@ export default function StoryCondensedRow({
               </span>
             ) : inRecentlyRead ? (
               <span
-                title="Recently Read (In Progress)"
+                title="Currently Reading"
                 className="p-1 text-amber-500 flex items-center gap-1 font-sans text-[9px] font-bold"
               >
                 <BookOpenText className="w-4 h-4 animate-pulse" /> Reading

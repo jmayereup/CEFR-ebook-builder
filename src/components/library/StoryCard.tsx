@@ -453,10 +453,7 @@ export default function StoryCard({
                   <BookCheck className="w-3.5 h-3.5" />
                 </span>
               ) : inRecentlyRead ? (
-                <span
-                  title="Recently Read (In Progress)"
-                  className="text-tj-text-muted"
-                >
+                <span title="Currently Reading" className="text-tj-text-muted">
                   <BookOpenText className="w-3.5 h-3.5" />
                 </span>
               ) : null}

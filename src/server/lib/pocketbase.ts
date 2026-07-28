@@ -249,6 +249,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
           isPublic: record.isPublic !== false,
           chaptersCount: chapters.length,
           wordCount,
+          description: record.description || '',
           updated: record.updated || record.updatedAt || '',
         };
         updateStoriesMetadataCache(

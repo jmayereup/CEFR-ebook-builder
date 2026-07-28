@@ -165,12 +165,19 @@ export function useFilters(options: UseFiltersOptions) {
     ],
   );
 
-  // Filter/order the 9 most recently read stories with chapter progress details
+  // Filter/order the 9 most recently read stories with chapter progress details.
+  // Exclude stories the current user has marked as finished, so the "Reading"
+  // section only surfaces books they are still working through.
   const recentlyReadStories = useMemo(() => {
     return recentlyRead
       .map((item) => {
         const story = stories.find((s) => s.id === item.storyId);
         if (!story) return null;
+        const isCompletedByUser = currentUser
+          ? (story.completedBy?.[currentUser.uid] || 0) > 0
+          : typeof window !== 'undefined' &&
+            localStorage.getItem(`completed_story_${story.id}`) === 'true';
+        if (isCompletedByUser) return null;
         return {
           story,
           chapterIdx: item.chapterIdx,
@@ -178,7 +185,7 @@ export function useFilters(options: UseFiltersOptions) {
       })
       .filter((item): item is { story: Story; chapterIdx: number } => !!item)
       .slice(0, 9);
-  }, [recentlyRead, stories]);
+  }, [recentlyRead, stories, currentUser]);
 
   return {
     searchQuery,

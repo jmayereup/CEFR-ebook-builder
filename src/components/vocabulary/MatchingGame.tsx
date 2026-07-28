@@ -142,9 +142,12 @@ export default function MatchingGame({
     [gameTerms],
   );
 
+  const initializeRoundRef = useRef(initializeRound);
+  initializeRoundRef.current = initializeRound;
+
   useEffect(() => {
-    initializeRound(true);
-  }, [initializeRound]);
+    initializeRoundRef.current(true);
+  }, []);
 
   // Click handler for Word Selection
   const handleWordSelect = (id: string) => {
@@ -214,23 +217,21 @@ export default function MatchingGame({
           onUpdateWordSRS?.(originalTerm, true);
         }
 
-        // If all matched in this round
+        // If all matched in this round, update session progress for both modes
         if (newMatchedIds.size === subset.length) {
+          const nextSessionMatched = new Set(sessionMatchedWords);
+          subset.forEach((t) => {
+            nextSessionMatched.add(t.word.toLowerCase().trim());
+          });
+          setSessionMatchedWords(nextSessionMatched);
+          onVocabActivity?.(subset.length);
+
           if (gameMode === 'boost') {
-            // Transition to Phase 3 (Production)
+            // Transition to Phase 3 (Production) for additional recall practice
             setBoostPhase('produce');
-            // Auto-select the first definition to start production
             if (shuffledDefs.length > 0) {
               setSelectedProductionId(shuffledDefs[0].id);
             }
-          } else {
-            // Classic behavior: Update session matched words and trigger activity
-            const nextSessionMatched = new Set(sessionMatchedWords);
-            subset.forEach((t) => {
-              nextSessionMatched.add(t.word.toLowerCase().trim());
-            });
-            setSessionMatchedWords(nextSessionMatched);
-            onVocabActivity?.(subset.length);
           }
         }
       } else {
@@ -277,16 +278,6 @@ export default function MatchingGame({
         setProductionInput('');
         setProductionFeedback(null);
         setProductionHintCount(0);
-
-        // If all 5 produced
-        if (nextProduced.size === subset.length) {
-          const nextSessionMatched = new Set(sessionMatchedWords);
-          subset.forEach((t) => {
-            nextSessionMatched.add(t.word.toLowerCase().trim());
-          });
-          setSessionMatchedWords(nextSessionMatched);
-          onVocabActivity?.(subset.length);
-        }
       }, 1000);
     } else {
       setProductionFeedback('incorrect');
@@ -317,15 +308,6 @@ export default function MatchingGame({
       setProductionInput('');
       setProductionFeedback(null);
       setProductionHintCount(0);
-
-      if (nextProduced.size === subset.length) {
-        const nextSessionMatched = new Set(sessionMatchedWords);
-        subset.forEach((t) => {
-          nextSessionMatched.add(t.word.toLowerCase().trim());
-        });
-        setSessionMatchedWords(nextSessionMatched);
-        onVocabActivity?.(subset.length);
-      }
     }, 1500);
   };
 
