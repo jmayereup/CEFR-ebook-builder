@@ -83,3 +83,18 @@ The project includes CLI commands to generate book covers in batch:
   ```bash
   npm run generate-covers:test
   ```
+
+### Copyright Guard Scripts
+
+* **Schema migration** (adds `copyrightFlag*` fields and hardening API rules to the stories collection):
+  ```bash
+  npm run migrate:copyright-schema
+  ```
+* **Backfill dry run** (scans existing public stories for copyrighted/fan-fiction content and prints a report without writing anything):
+  ```bash
+  npm run flag-copyright:dry
+  ```
+* **Backfill live run** (flags and privatizes suspected stories; reset the metadata cache afterwards):
+  ```bash
+  npm run flag-copyright
+  ```

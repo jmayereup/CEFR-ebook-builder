@@ -1,4 +1,4 @@
-import { BookMarked, Globe, Lock, Share2 } from 'lucide-react';
+import { BookMarked, Globe, Lock, Share2, ShieldAlert } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import ExportPanel from '../components/app/ExportPanel';
 import ReaderPanel from '../components/ReaderPanel';
@@ -165,7 +165,20 @@ export default function ReaderPage({
               {/* Public/Private visibility badge toggle */}
               {currentUser &&
                 (selectedStory.creatorId === currentUser.uid ||
-                  currentUser.isAdmin === true) && (
+                  currentUser.isAdmin === true) &&
+                (selectedStory.copyrightFlag === true ? (
+                  <span
+                    className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/50 cursor-help"
+                    title={
+                      selectedStory.copyrightFlagReason
+                        ? `Copyright-restricted: ${selectedStory.copyrightFlagReason}. Contact admin@teacherjake.com to appeal.`
+                        : 'This story was flagged as containing copyrighted material and cannot be made public. Contact admin@teacherjake.com to appeal.'
+                    }
+                  >
+                    <ShieldAlert className="w-3 h-3" />
+                    <span>Restricted</span>
+                  </span>
+                ) : (
                   <button
                     type="button"
                     onClick={() => handleToggleStoryPrivacy(selectedStory.id)}
@@ -188,7 +201,7 @@ export default function ReaderPage({
                       </>
                     )}
                   </button>
-                )}
+                ))}
             </div>
 
             <div className="flex items-center gap-2.5">
@@ -223,8 +236,13 @@ export default function ReaderPage({
               <button
                 type="button"
                 onClick={handleShareStoryLink}
-                className="p-1.5 rounded-xl border bg-tj-bg-card hover:bg-tj-bg-recessed border-tj-border-main text-tj-text-muted hover:text-tj-primary dark:hover:text-tj-primary-hover transition-all cursor-pointer relative"
-                title="Copy Link to Clipboard"
+                disabled={selectedStory.copyrightFlag === true}
+                className="p-1.5 rounded-xl border bg-tj-bg-card hover:bg-tj-bg-recessed border-tj-border-main text-tj-text-muted hover:text-tj-primary dark:hover:text-tj-primary-hover transition-all cursor-pointer relative disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-tj-text-muted"
+                title={
+                  selectedStory.copyrightFlag === true
+                    ? 'Sharing is disabled for copyright-restricted stories'
+                    : 'Copy Link to Clipboard'
+                }
               >
                 <Share2 className="w-4 h-4" />
                 <AnimatePresence>

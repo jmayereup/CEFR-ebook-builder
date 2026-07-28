@@ -127,6 +127,17 @@ export interface IDatabaseService {
     storyId?: string,
   ): Promise<void>;
 
+  /** Admin: list all stories that have been flagged for copyright. */
+  fetchCopyrightFlaggedStories(): Promise<Story[]>;
+
+  /** Admin: set or clear a story's copyright flag. */
+  setStoryCopyrightFlag(
+    storyId: string,
+    flagged: boolean,
+    reason?: string,
+    source?: 'admin' | 'backfill' | 'user',
+  ): Promise<void>;
+
   // ── User profile ──────────────────────────────────────────────────────────
 
   /** Fetch a user's full profile. */

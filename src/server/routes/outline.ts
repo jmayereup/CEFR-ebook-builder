@@ -136,8 +136,18 @@ LANGUAGE HANDLING: Write the story title and the outline itself in ${language} (
           type: Type.STRING,
           description: `A brief 2-3 sentence synopsis/description of the story in English, suitable for a book back cover or listing card.`,
         },
+        ipRisk: {
+          type: Type.BOOLEAN,
+          description:
+            'Set to true ONLY if the story concept clearly references copyrighted material that would normally require permission: established copyrighted fictional characters, copyrighted fictional universes/franchises, close imitations of a living or recently-deceased author\'s distinctive style, or near-verbatim retellings of a copyrighted work. Set to false for everything else, including generic genre tropes (wizards, space travel, vampires), public-domain works (fairy tales, Greek myths, Sherlock Holmes, Dracula, Pride and Prejudice, fairy tales from the public domain), and original characters in genre settings. When in doubt, set to false.',
+        },
+        ipRiskReason: {
+          type: Type.STRING,
+          description:
+            'If ipRisk is true, give a short English explanation naming the specific copyrighted source (e.g. "Harry Potter fan fiction", "Star Wars fan fiction", "Marvel Cinematic Universe fan fiction"). If ipRisk is false, return an empty string.',
+        },
       },
-      required: ['storyTitle', 'outline', 'description'],
+      required: ['storyTitle', 'outline', 'description', 'ipRisk', 'ipRiskReason'],
     };
 
     const prompt = `Genre: ${resolvedGenre}
@@ -149,7 +159,24 @@ ${cleanedPromptNotes ? `Incorporating user concept ideas: "${cleanedPromptNotes}
 
 Draft an overarching narrative outline. For each of the ${totalChapters} chapters, provide a detailed breakdown covering the setting, the key plot beats, the characters involved, and the theme.
 IMPORTANT: If the user concept ideas above already contain a detailed plan (a chapter-by-chapter outline, character maps, settings, themes, or style notes), preserve ALL of those specific details in your outline — including character names, locations, and specific plot events — rendered in ${language} with consistent name transliterations. Expand and organize the user's vision chapter by chapter; do NOT summarize it down into generic 1-2 sentence blurbs. Only invent new material to fill gaps the user left unspecified.
-Return a beautiful title, the detailed outline, and a brief 2-3 sentence English synopsis/description of the story.`;
+
+COPYRIGHT / IP CLASSIFICATION:
+Also assess whether the story concept references established copyrighted material that would normally require the copyright holder's permission. Set "ipRisk" to true ONLY when the concept clearly references:
+- Established copyrighted fictional characters (e.g. Harry Potter, Spider-Man, Pikachu, Darth Vader, Elsa from Frozen, Mario)
+- Established copyrighted fictional universes or franchises (e.g. Star Wars, Marvel Cinematic Universe, DC Universe, Pokémon, Middle-earth settings beyond public-domain elements, Hogwarts, the Wizarding World)
+- A living or recently-deceased author's distinctive style requested by name (e.g. "written in the style of [current bestselling author]")
+- A close retelling of a specific copyrighted novel, film, or TV series
+
+Set "ipRisk" to FALSE for:
+- Generic genre tropes (wizards, vampires, space travel, dragons, detectives, school settings) without naming a specific copyrighted work
+- Public-domain works and characters (Sherlock Holmes, Dracula, Frankenstein, Pride and Prejudice characters, fairy tales from the Brothers Grimm / Hans Christian Andersen / Charles Perrault / public-domain folk tales, Greek/Roman/Norse mythology, King Arthur, Robin Hood, Jane Eyre, A Christmas Carol, Alice in Wonderland's underlying folk-tale motifs are NOT this; Lewis Carroll's specific text is public domain too)
+- Original characters in any genre setting
+- Real historical events and figures (no copyright on facts)
+- Style emulation of long-dead authors whose works are public domain
+
+When in doubt, set ipRisk to false. In "ipRiskReason" briefly name the specific copyrighted source if ipRisk is true, otherwise return an empty string.
+
+Return a beautiful title, the detailed outline, a brief 2-3 sentence English synopsis/description, the ipRisk boolean, and ipRiskReason.`;
 
     const sendHeartbeat = () => {
       if (!headersSent) {

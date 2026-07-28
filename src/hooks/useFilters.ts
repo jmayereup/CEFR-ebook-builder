@@ -94,10 +94,14 @@ export function useFilters(options: UseFiltersOptions) {
   // Filter public stories or user owned private stories for Browse tab
   const visibleStories = useMemo(() => {
     return stories.filter((story) => {
+      const isOwner = currentUser && story.creatorId === currentUser.uid;
+      const isAdmin = currentUser?.isAdmin === true;
+      if (story.copyrightFlag === true) {
+        return isOwner || isAdmin;
+      }
       return (
         story.isPublic !== false ||
-        (currentUser &&
-          (story.creatorId === currentUser.uid || currentUser.isAdmin === true))
+        (currentUser && (isOwner || isAdmin))
       );
     });
   }, [stories, currentUser]);
@@ -133,8 +137,12 @@ export function useFilters(options: UseFiltersOptions) {
     return stories.filter((story) => {
       const isOwner = currentUser && story.creatorId === currentUser.uid;
       const isSaved = bookshelf.includes(story.id);
+      const isAdmin = currentUser?.isAdmin === true;
+      if (story.copyrightFlag === true && !isOwner && !isAdmin) {
+        return false;
+      }
       const canRead =
-        story.isPublic !== false || isOwner || currentUser?.isAdmin === true;
+        story.isPublic !== false || isOwner || isAdmin;
       return (isOwner || isSaved) && canRead;
     });
   }, [stories, bookshelf, currentUser]);

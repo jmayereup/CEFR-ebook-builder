@@ -14,6 +14,7 @@ import {
 } from './src/server/lib/database';
 import batchChapterRouter from './src/server/routes/batch-chapter';
 import chapterRouter from './src/server/routes/chapter';
+import classifyRouter from './src/server/routes/classify';
 import coverRouter from './src/server/routes/cover';
 import glossaryRouter from './src/server/routes/glossary';
 import maintenanceRouter from './src/server/routes/maintenance';
@@ -92,6 +93,7 @@ app.use('/api/stories/generate-batch', generationLimiter, batchChapterRouter);
 app.use('/api/stories/generate-glossary', generationLimiter, glossaryRouter);
 app.use('/api/stories/generate-cover', generationLimiter, coverRouter);
 app.use('/api/stories/maintenance', generationLimiter, maintenanceRouter);
+app.use('/api/stories/classify-ip', generationLimiter, classifyRouter);
 app.use('/api/translate', translationLimiter, translateRouter);
 
 app.post('/api/users/sync', async (req, res) => {

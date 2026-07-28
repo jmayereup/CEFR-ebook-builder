@@ -69,6 +69,14 @@ export const buildStory = (params: StoryCreationParams): Story => {
   if (config.temperature != null) newStory.temperature = config.temperature;
   if (config.translationLanguage != null)
     newStory.translationLanguage = config.translationLanguage;
+  if (config.copyrightFlag === true) {
+    newStory.copyrightFlag = true;
+    newStory.copyrightFlagSource = 'ai';
+    newStory.copyrightFlaggedAt = new Date().toISOString();
+    if (config.copyrightFlagReason)
+      newStory.copyrightFlagReason = config.copyrightFlagReason;
+    newStory.isPublic = false;
+  }
 
   return cleanCompletedStory(newStory);
 };

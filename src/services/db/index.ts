@@ -105,6 +105,14 @@ export const resolveDeletionFlag = (
   action: 'approved' | 'dismissed',
   storyId?: string,
 ) => dbService.resolveDeletionFlag(flagId, action, storyId);
+export const fetchCopyrightFlaggedStories = () =>
+  dbService.fetchCopyrightFlaggedStories();
+export const setStoryCopyrightFlag = (
+  storyId: string,
+  flagged: boolean,
+  reason?: string,
+  source?: 'admin' | 'backfill' | 'user',
+) => dbService.setStoryCopyrightFlag(storyId, flagged, reason, source);
 
 // User profile
 export const fetchUserProfile = (userId: string) =>

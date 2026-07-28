@@ -390,6 +390,32 @@ export class PocketBaseService implements IDatabaseService {
     }
   }
 
+  async fetchCopyrightFlaggedStories(): Promise<Story[]> {
+    const records = await pb
+      .collection('stories')
+      .getFullList<AppStoriesResponse>({
+        filter: 'copyrightFlag = true',
+        sort: '-updated',
+      });
+    return (records as unknown as Story[]) || [];
+  }
+
+  async setStoryCopyrightFlag(
+    storyId: string,
+    flagged: boolean,
+    reason?: string,
+    source: 'admin' | 'backfill' | 'user' = 'admin',
+  ): Promise<void> {
+    const payload: Record<string, unknown> = {
+      copyrightFlag: flagged,
+      copyrightFlagSource: flagged ? source : null,
+      copyrightFlagReason: flagged ? reason || null : null,
+      copyrightFlaggedAt: flagged ? new Date().toISOString() : null,
+    };
+    if (flagged) payload.isPublic = false;
+    await pb.collection('stories').update(storyId, payload);
+  }
+
   // ── User profile ───────────────────────────────────────────────────────────
 
   async fetchUserProfile(userId: string): Promise<UserProfileData | null> {

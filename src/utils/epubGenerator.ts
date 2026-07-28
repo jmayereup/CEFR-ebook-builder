@@ -92,6 +92,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
   const isBilingual =
     !!story.translationLanguage ||
     story.chapters.some((ch) => ch.content.includes('Translation:'));
+  const stripBranding = story.isPublic === false;
 
   // Attempt to load the cover image
   let coverBlob: Blob | null = null;
@@ -208,7 +209,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
     <dc:title>${escapeXml(story.title)}</dc:title>
     <dc:language>${languageCode}</dc:language>
     <dc:identifier id="BookId">urn:uuid:${uuid}</dc:identifier>
-    <dc:creator>CEFR Short Story Graded Reader</dc:creator>
+    <dc:creator>${stripBranding ? escapeXml(story.title || 'Anonymous') : 'CEFR Short Story Graded Reader'}</dc:creator>
     <dc:description>${escapeXml(story.description || `Bilingual CEFR Graded reader for learning ${story.language} at ${story.cefrLevel} proficiency level.`)}</dc:description>${metadataCover}
   </metadata>
   <manifest>
@@ -416,9 +417,13 @@ a.glossary-backlink {
     </div>
     <div class="book-divider"></div>
     ${story.description ? `<p class="book-intro">${escapeXml(story.description)}</p>` : ''}
-    <p class="book-intro" style="font-size: 0.9em; margin-top: 15px; color: #000000; font-style: italic;">
+    ${
+      stripBranding
+        ? ''
+        : `<p class="book-intro" style="font-size: 0.9em; margin-top: 15px; color: #000000; font-style: italic;">
       I hope you enjoy this graded reader. You can find more books at <a href="https://books.teacherjake.com">books.teacherjake.com</a>. Members can even use AI to build their own graded readers.
-    </p>
+    </p>`
+    }
   </div>
 </body>
 </html>`,
@@ -531,7 +536,11 @@ ${glossaryHtml}
 <body>
   <div class="title-container">
     <h1 class="book-title">Thank You for Reading!</h1>
-    <p class="book-intro">We hope you enjoyed this story. For more free graded readers, visit <a href="https://books.teacherjake.com">books.teacherjake.com</a>.</p>
+    <p class="book-intro">${
+      stripBranding
+        ? 'We hope you enjoyed this story.'
+        : 'We hope you enjoyed this story. For more free graded readers, visit <a href="https://books.teacherjake.com">books.teacherjake.com</a>.'
+    }</p>
   </div>
 </body>
 </html>`,

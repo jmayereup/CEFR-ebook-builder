@@ -64,6 +64,10 @@ export interface Story {
   ratings?: Record<string, number>;
   translationLanguage?: string;
   isPublic?: boolean;
+  copyrightFlag?: boolean;
+  copyrightFlagReason?: string;
+  copyrightFlagSource?: 'ai' | 'admin' | 'backfill' | 'user';
+  copyrightFlaggedAt?: string;
   initialTotalChapters?: number;
   initialCreditsEstimate?: number;
   creditsCharged?: number;

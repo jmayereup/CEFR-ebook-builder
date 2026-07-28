@@ -8,6 +8,7 @@ import {
   Cloud,
   Flag,
   Lock,
+  ShieldAlert,
   Star,
   Trash2,
 } from 'lucide-react';
@@ -155,6 +156,18 @@ export default function StoryCondensedRow({
               title="Private Story"
             >
               <Lock className="w-2.5 h-2.5 opacity-60" /> Private
+            </span>
+          )}
+          {story.copyrightFlag === true && (
+            <span
+              className="text-[9px] bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded-sm border border-amber-300/60 dark:border-amber-800/60 flex items-center gap-1 font-bold"
+              title={
+                story.copyrightFlagReason
+                  ? `Copyright-restricted: ${story.copyrightFlagReason}`
+                  : 'Copyright-restricted — private only'
+              }
+            >
+              <ShieldAlert className="w-2.5 h-2.5" /> Restricted
             </span>
           )}
         </div>

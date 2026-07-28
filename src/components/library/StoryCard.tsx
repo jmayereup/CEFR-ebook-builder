@@ -7,6 +7,7 @@ import {
   Cloud,
   Flag,
   Lock,
+  ShieldAlert,
   Star,
   Trash2,
 } from 'lucide-react';
@@ -395,6 +396,18 @@ export default function StoryCard({
                 className="text-tj-text-muted opacity-60"
               >
                 <Lock className="w-3.5 h-3.5" />
+              </span>
+            )}
+            {story.copyrightFlag === true && (
+              <span
+                title={
+                  story.copyrightFlagReason
+                    ? `Copyright-restricted: ${story.copyrightFlagReason}`
+                    : 'Copyright-restricted — private only'
+                }
+                className="text-amber-600 dark:text-amber-400"
+              >
+                <ShieldAlert className="w-3.5 h-3.5" />
               </span>
             )}
           </div>

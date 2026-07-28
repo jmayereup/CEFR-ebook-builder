@@ -127,37 +127,40 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
       }
     }
 
-    const updated = records.map((record: any) => {
-      const chapters = record.chapters || [];
-      // Calculate word count
-      let wordCount = 0;
-      for (const ch of chapters) {
-        if (ch.content) {
-          wordCount += countWords(ch.content, record.language);
+    const updated = records
+      .filter((record: any) => record.copyrightFlag !== true)
+      .map((record: any) => {
+        const chapters = record.chapters || [];
+        // Calculate word count
+        let wordCount = 0;
+        for (const ch of chapters) {
+          if (ch.content) {
+            wordCount += countWords(ch.content, record.language);
+          }
         }
-      }
 
-      return {
-        id: record.id,
-        title: record.title || '',
-        language: record.language || '',
-        translationLanguage: record.translationLanguage || '',
-        cefrLevel: record.cefrLevel || '',
-        genre: record.genre || '',
-        totalChapters: record.totalChapters || 1,
-        createdAt:
-          record.createdAt || record.created || new Date().toISOString(),
-        isCompleted: record.isCompleted || false,
-        creatorId: record.creatorId || '',
-        model: record.model,
-        ratings: record.ratings,
-        totalReads: completionsMap[record.id] || 0,
-        isPublic: record.isPublic !== false,
-        chaptersCount: chapters.length,
-        wordCount,
-        updated: record.updated || record.updatedAt || '',
-      };
-    });
+        return {
+          id: record.id,
+          title: record.title || '',
+          language: record.language || '',
+          translationLanguage: record.translationLanguage || '',
+          cefrLevel: record.cefrLevel || '',
+          genre: record.genre || '',
+          totalChapters: record.totalChapters || 1,
+          createdAt:
+            record.createdAt || record.created || new Date().toISOString(),
+          isCompleted: record.isCompleted || false,
+          creatorId: record.creatorId || '',
+          model: record.model,
+          ratings: record.ratings,
+          totalReads: completionsMap[record.id] || 0,
+          isPublic: record.isPublic !== false,
+          copyrightFlag: false,
+          chaptersCount: chapters.length,
+          wordCount,
+          updated: record.updated || record.updatedAt || '',
+        };
+      });
 
     updateStoriesMetadataCache(updated);
     lastFetchTime = Date.now();
@@ -202,7 +205,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
   if (storyId) {
     try {
       const record = await pb.collection('stories').getOne(storyId);
-      if (record && record.isPublic !== false) {
+      if (record && record.isPublic !== false && record.copyrightFlag !== true) {
         const chapters = record.chapters || [];
         let wordCount = 0;
         for (const ch of chapters) {
@@ -249,6 +252,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
           totalReads,
           completedBy,
           isPublic: record.isPublic !== false,
+          copyrightFlag: false,
           chaptersCount: chapters.length,
           wordCount,
           description: record.description || '',

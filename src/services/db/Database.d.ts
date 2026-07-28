@@ -892,6 +892,10 @@ export interface StoriesResponse extends BaseCollectionResponse {
   createdAt: string;
   isCompleted: boolean;
   isPublic: boolean;
+  copyrightFlag: boolean;
+  copyrightFlagReason: string;
+  copyrightFlagSource: string;
+  copyrightFlaggedAt: string;
   creatorId: Array<string>;
   creatorEmail: string;
   promptNotes: string;
@@ -928,6 +932,10 @@ export interface StoriesCreate extends BaseCollectionCreate {
   createdAt?: string;
   isCompleted?: boolean;
   isPublic?: boolean;
+  copyrightFlag?: boolean;
+  copyrightFlagReason?: string;
+  copyrightFlagSource?: string;
+  copyrightFlaggedAt?: string;
   creatorId?: MaybeArray<string>;
   creatorEmail?: string;
   promptNotes?: string;
@@ -970,6 +978,10 @@ export interface StoriesUpdate extends BaseCollectionUpdate {
   createdAt?: string;
   isCompleted?: boolean;
   isPublic?: boolean;
+  copyrightFlag?: boolean;
+  copyrightFlagReason?: string;
+  copyrightFlagSource?: string;
+  copyrightFlaggedAt?: string;
   creatorId?: MaybeArray<string>;
   'creatorId+'?: MaybeArray<string>;
   'creatorId-'?: MaybeArray<string>;

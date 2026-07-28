@@ -50,6 +50,7 @@ export function useExport(options: UseExportOptions) {
 
   const handleShareStoryLink = () => {
     if (!selectedStory) return;
+    if (selectedStory.copyrightFlag === true) return;
     const slug = slugify(selectedStory.title);
     const slugSegment = slug ? `${slug}-${selectedStory.id}` : selectedStory.id;
     const url = `${window.location.origin}/book/${slugSegment}/chapter/${activeChapterIdx + 1}`;
@@ -62,9 +63,15 @@ export function useExport(options: UseExportOptions) {
   const triggerCopyPlaintext = () => {
     if (!selectedStory) return;
 
+    const stripBranding = selectedStory.isPublic === false;
+
     let textString = `TITLE: ${selectedStory.title}\n`;
     textString += `Language: ${selectedStory.language} | CEFR Level: ${selectedStory.cefrLevel}\n`;
-    textString += `Generated on CEFR Language Story Builder\n\n`;
+    if (!stripBranding) {
+      textString += `Generated on CEFR Language Story Builder\n\n`;
+    } else {
+      textString += `\n`;
+    }
 
     selectedStory.chapters.forEach((ch) => {
       textString += `\n=========================================\n`;
@@ -89,7 +96,9 @@ export function useExport(options: UseExportOptions) {
 
     textString += `=========================================\n`;
     textString += `Thank you for reading!\n`;
-    textString += `For more free graded readers, visit books.teacherjake.com\n`;
+    if (!stripBranding) {
+      textString += `For more free graded readers, visit books.teacherjake.com\n`;
+    }
 
     navigator.clipboard.writeText(textString).then(() => {
       setCopyStatus('copy-plain');
@@ -99,6 +108,8 @@ export function useExport(options: UseExportOptions) {
 
   const triggerCopyRichText = () => {
     if (!selectedStory) return;
+
+    const stripBranding = selectedStory.isPublic === false;
 
     const isBilingual =
       !!selectedStory.translationLanguage ||
@@ -192,7 +203,11 @@ export function useExport(options: UseExportOptions) {
       <div style="margin-top: 24px; padding-top: 24px; border-top: 2px solid #cbd5e1;">
         <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #004d2c; margin: 0 0 12px 0; font-size: 20px;">Thank You for Reading!</h2>
         <p style="margin: 0; font-size: 16px; color: #334155; line-height: 1.6;">
-          We hope you enjoyed this story. For more free graded readers, visit <a href="https://books.teacherjake.com" style="color: #0f766e; text-decoration: none;">books.teacherjake.com</a>.
+          ${
+            stripBranding
+              ? 'We hope you enjoyed this story.'
+              : 'We hope you enjoyed this story. For more free graded readers, visit <a href="https://books.teacherjake.com" style="color: #0f766e; text-decoration: none;">books.teacherjake.com</a>.'
+          }
         </p>
       </div>
     `;

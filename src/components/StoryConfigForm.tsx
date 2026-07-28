@@ -11,6 +11,7 @@ import {
   Info,
   Layers,
   Lock,
+  ShieldAlert,
   Sliders,
   Sparkles,
 } from 'lucide-react';
@@ -101,6 +102,8 @@ interface StoryConfigFormProps {
     translationLanguage?: string;
     isPublic?: boolean;
     skipChapterGeneration?: boolean;
+    copyrightFlag?: boolean;
+    copyrightFlagReason?: string;
   }) => void;
   isLoading: boolean;
   isAdmin?: boolean;
@@ -214,6 +217,9 @@ export default function StoryConfigForm({
   const [draftOutline, setDraftOutline] = useState('');
   const [draftDescription, setDraftDescription] = useState('');
   const [draftError, setDraftError] = useState('');
+  const [copyrightFlag, setCopyrightFlag] = useState(false);
+  const [copyrightFlagReason, setCopyrightFlagReason] = useState('');
+  const [isClassifying, setIsClassifying] = useState(false);
   const [isScratchMode, setIsScratchMode] = useState(false);
 
   const handleLevelChange = (lvl: string) => {
@@ -336,6 +342,10 @@ export default function StoryConfigForm({
       setDraftTitle(data.storyTitle || '');
       setDraftOutline(data.outline || '');
       setDraftDescription(data.description || '');
+      setCopyrightFlag(data.ipRisk === true);
+      setCopyrightFlagReason(
+        typeof data.ipRiskReason === 'string' ? data.ipRiskReason : '',
+      );
       setShowOutlineReview(true);
     } catch (err: any) {
       console.error(err);
@@ -348,9 +358,53 @@ export default function StoryConfigForm({
     }
   };
 
-  const handleApproveAndGenerate = () => {
+  const handleApproveAndGenerate = async () => {
     const selectedLanguageName =
       SUPPORTED_LANGUAGES.find((l) => l.code === language)?.name || 'Spanish';
+
+    // Scratch-mode stories bypass the outline API, so they were never
+    // classified. Run the lightweight IP classifier on the manually
+    // written title/outline/description before creating the story.
+    let finalCopyrightFlag = copyrightFlag;
+    let finalCopyrightFlagReason = copyrightFlagReason;
+    if (isScratchMode && !finalCopyrightFlag) {
+      setIsClassifying(true);
+      try {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+        if (customOpenRouterKey) {
+          headers['X-OpenRouter-API-Key'] = customOpenRouterKey;
+        }
+        const response = await fetch('/api/stories/classify-ip', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            title: draftTitle,
+            outline: draftOutline,
+            description: draftDescription,
+            promptNotes,
+            userId: currentUser?.uid,
+            userEmail: currentUser?.email,
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.ipRisk === true) {
+            finalCopyrightFlag = true;
+            finalCopyrightFlagReason =
+              typeof data.ipRiskReason === 'string' ? data.ipRiskReason : '';
+            setCopyrightFlag(true);
+            setCopyrightFlagReason(finalCopyrightFlagReason);
+          }
+        }
+      } catch (err) {
+        // Fail-open: never block story creation on a classifier outage.
+        console.warn('IP classification failed, proceeding unflagged:', err);
+      } finally {
+        setIsClassifying(false);
+      }
+    }
 
     let finalThinkingLevel: string | undefined;
     let finalThinkingBudget: number | undefined;
@@ -394,8 +448,10 @@ export default function StoryConfigForm({
       thinkingBudget: finalThinkingBudget,
       temperature: finalTemperature,
       translationLanguage: translationTargetLanguage,
-      isPublic,
+      isPublic: finalCopyrightFlag ? false : isPublic,
       skipChapterGeneration: isScratchMode,
+      copyrightFlag: finalCopyrightFlag,
+      copyrightFlagReason: finalCopyrightFlagReason,
     });
   };
 
@@ -1074,45 +1130,62 @@ export default function StoryConfigForm({
                   </label>
 
                   {/* Public / Private Story Toggle */}
-                  <label className="relative flex items-center gap-3 select-none cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={!isPublic}
-                      onChange={(e) => setIsPublic(!e.target.checked)}
-                      className="sr-only peer"
-                    />
-                    <div className="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-tj-primary dark:peer-checked:bg-tj-primary shrink-0 relative"></div>
-                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                      Private Story
-                      <Lock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                  {copyrightFlag ? (
+                    <span
+                      className="flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300 select-none cursor-help"
+                      title={
+                        copyrightFlagReason
+                          ? `Copyright-restricted: ${copyrightFlagReason}. This story will be saved as private and cannot be shared publicly.`
+                          : 'Copyright-restricted — this story will be saved as private.'
+                      }
+                    >
+                      <ShieldAlert className="w-3.5 h-3.5" />
+                      <span>Restricted (private only)</span>
                     </span>
-                    <div className="relative inline-flex items-center">
-                      <HelpCircle
-                        className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 hover:text-tj-primary cursor-pointer transition-colors"
-                        onMouseEnter={() => setShowPrivateTooltip(true)}
-                        onMouseLeave={() => setShowPrivateTooltip(false)}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          setShowPrivateTooltip(!showPrivateTooltip);
-                        }}
+                  ) : (
+                    <label className="relative flex items-center gap-3 select-none cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={!isPublic}
+                        onChange={(e) => setIsPublic(!e.target.checked)}
+                        className="sr-only peer"
                       />
-                      <AnimatePresence>
-                        {showPrivateTooltip && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: -5 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                            className="absolute z-50 bottom-full right-0 mb-2 p-3 bg-slate-900 text-white dark:bg-slate-800 dark:text-slate-100 text-[10px] rounded-lg shadow-xl border border-slate-700/50 w-56 leading-normal pointer-events-none text-left"
-                          >
-                            Only you will be able to view and read this story.
-                            Quotas: Free tier allows up to 10 private stories,
-                            Paid/Premium allows up to 100.
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </label>
+                      <div className="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-tj-primary dark:peer-checked:bg-tj-primary shrink-0 relative"></div>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                        Private Story
+                        <Lock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                      </span>
+                      <div className="relative inline-flex items-center">
+                        <HelpCircle
+                          className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 hover:text-tj-primary cursor-pointer transition-colors"
+                          onMouseEnter={() => setShowPrivateTooltip(true)}
+                          onMouseLeave={() => setShowPrivateTooltip(false)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setShowPrivateTooltip(!showPrivateTooltip);
+                          }}
+                        />
+                        <AnimatePresence>
+                          {showPrivateTooltip && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                              className="absolute z-50 bottom-full right-0 mb-2 p-3 bg-slate-900 text-white dark:bg-slate-800 dark:text-slate-100 text-[10px] rounded-lg shadow-xl border border-slate-700/50 w-56 leading-normal pointer-events-none text-left"
+                            >
+                              Only you will be able to view and read this story.
+                              Quotas: Free tier allows up to 10 elective private
+                              stories, Paid/Premium allows up to 100. Stories
+                              flagged as containing copyrighted material are
+                              automatically kept private and don't count toward
+                              this limit.
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </label>
+                  )}
                 </div>
                 <textarea
                   placeholder="e.g., A time traveler named Leo lands in Paris 1889 and meets a mysterious clockmaker. Or: focus on food and dining vocabulary."
@@ -1319,6 +1392,8 @@ export default function StoryConfigForm({
                     setDraftTitle('');
                     setDraftDescription('');
                     setDraftOutline('');
+                    setCopyrightFlag(false);
+                    setCopyrightFlagReason('');
                     setIsScratchMode(true);
                     setShowOutlineReview(true);
                   }}
@@ -1331,21 +1406,53 @@ export default function StoryConfigForm({
             </form>
           </motion.div>
         ) : (
-          <StoryOutlineReview
-            draftTitle={draftTitle}
-            setDraftTitle={setDraftTitle}
-            draftDescription={draftDescription}
-            setDraftDescription={setDraftDescription}
-            draftOutline={draftOutline}
-            setDraftOutline={setDraftOutline}
-            isScratchMode={isScratchMode}
-            isLoading={isLoading}
-            est={est}
-            selectedModel={selectedModel}
-            isPaid={isPaid}
-            onBack={() => setShowOutlineReview(false)}
-            onSubmit={handleApproveAndGenerate}
-          />
+          <>
+            {copyrightFlag && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-300 dark:border-amber-900/60 rounded-2xl flex items-start gap-3"
+              >
+                <ShieldAlert className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div className="flex-1 text-xs text-amber-800 dark:text-amber-200 leading-relaxed">
+                  <p className="font-bold mb-1">
+                    Copyright-restricted story — this will be saved as private.
+                  </p>
+                  <p>
+                    {copyrightFlagReason
+                      ? `Our classifier identified this as: ${copyrightFlagReason}.`
+                      : 'Our classifier identified this as referencing copyrighted material.'}{' '}
+                    Fan fiction for personal use is fine, but it cannot be
+                    shared publicly. This story will not appear in the public
+                    library, exports will not include site branding, and only
+                    you (and admins) will be able to read it. Contact{' '}
+                    <a
+                      href="mailto:admin@teacherjake.com"
+                      className="underline font-semibold"
+                    >
+                      admin@teacherjake.com
+                    </a>{' '}
+                    to appeal.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+            <StoryOutlineReview
+              draftTitle={draftTitle}
+              setDraftTitle={setDraftTitle}
+              draftDescription={draftDescription}
+              setDraftDescription={setDraftDescription}
+              draftOutline={draftOutline}
+              setDraftOutline={setDraftOutline}
+              isScratchMode={isScratchMode}
+              isLoading={isLoading || isClassifying}
+              est={est}
+              selectedModel={selectedModel}
+              isPaid={isPaid}
+              onBack={() => setShowOutlineReview(false)}
+              onSubmit={handleApproveAndGenerate}
+            />
+          </>
         )}
       </AnimatePresence>
 

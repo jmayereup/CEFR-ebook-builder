@@ -244,8 +244,10 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
           const isOwner =
             currentUser && directStory.creatorId === currentUser.uid;
           const isAdmin = currentUser?.isAdmin === true;
+          const isCopyrightBlocked = directStory.copyrightFlag === true;
           const isAllowed =
-            directStory.isPublic !== false || isOwner || isAdmin;
+            !isCopyrightBlocked &&
+            (directStory.isPublic !== false || isOwner || isAdmin);
 
           if (isAllowed) {
             setSelectedStory(directStory);

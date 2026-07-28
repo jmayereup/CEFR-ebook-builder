@@ -245,6 +245,10 @@ export type StoriesRecord<
   initialTotalChapters?: number;
   isCompleted?: boolean;
   isPublic?: boolean;
+  copyrightFlag?: boolean;
+  copyrightFlagReason?: string;
+  copyrightFlagSource?: string;
+  copyrightFlaggedAt?: IsoDateString;
   language?: string;
   model?: string;
   outline?: string;

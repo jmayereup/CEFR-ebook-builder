@@ -273,15 +273,27 @@ export function useLibrary(options: UseLibraryOptions) {
 
     const newIsPublic = story.isPublic === false;
 
+    if (newIsPublic === true && story.copyrightFlag === true) {
+      showAlert(
+        'Copyright-Restricted Story',
+        'This story was flagged as containing copyrighted material and cannot be made public. Please contact admin@teacherjake.com if you believe this is a mistake.',
+        'warning',
+      );
+      return false;
+    }
+
     if (newIsPublic === false) {
       const privateCount = stories.filter(
-        (s) => s.creatorId === currentUser?.uid && s.isPublic === false,
+        (s) =>
+          s.creatorId === currentUser?.uid &&
+          s.isPublic === false &&
+          s.copyrightFlag !== true,
       ).length;
       const limit = isPaid ? 100 : 10;
       if (privateCount >= limit) {
         showAlert(
           'Private Story Limit Reached',
-          `You currently have ${privateCount} private stories. ${isPaid ? 'Paid' : 'Free'} tier users are allowed up to ${limit} private stories at one time. Please delete some private stories or make them public to enable toggling.`,
+          `You currently have ${privateCount} elective private stories. ${isPaid ? 'Paid' : 'Free'} tier users are allowed up to ${limit} private stories at one time. Copyright-flagged stories do not count toward this limit. Please delete some private stories or make them public to enable toggling.`,
           'warning',
         );
         return false;

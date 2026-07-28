@@ -13,3 +13,4 @@ service-account-key.json
 credentials.json
 *.key.json
 .metadata-cache-pb.json
+copyright-backfill-report-*.json

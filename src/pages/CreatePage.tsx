@@ -20,6 +20,8 @@ interface CreateStoryConfig {
   translationLanguage?: string;
   isPublic?: boolean;
   skipChapterGeneration?: boolean;
+  copyrightFlag?: boolean;
+  copyrightFlagReason?: string;
 }
 
 interface CreatePageProps {

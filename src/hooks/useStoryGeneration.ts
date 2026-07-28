@@ -63,6 +63,8 @@ export interface StoryConfig {
   translationLanguage?: string;
   isPublic?: boolean;
   skipChapterGeneration?: boolean;
+  copyrightFlag?: boolean;
+  copyrightFlagReason?: string;
 }
 
 export interface GenerationOptions {
@@ -267,13 +269,16 @@ export const useStoryGeneration = (
 
     if (config.isPublic === false) {
       const privateCount = stories.filter(
-        (s) => s.creatorId === currentUser.uid && s.isPublic === false,
+        (s) =>
+          s.creatorId === currentUser.uid &&
+          s.isPublic === false &&
+          s.copyrightFlag !== true,
       ).length;
       const limit = isPaid ? 100 : 10;
       if (privateCount >= limit) {
         showAlert(
           'Private Story Limit Reached',
-          `You currently have ${privateCount} private stories. ${isPaid ? 'Paid' : 'Free'} tier users are allowed up to ${limit} private stories at one time. Please delete some private stories or make them public to generate a new private story.`,
+          `You currently have ${privateCount} elective private stories. ${isPaid ? 'Paid' : 'Free'} tier users are allowed up to ${limit} private stories at one time. Copyright-flagged stories do not count toward this limit. Please delete some private stories or make them public to generate a new private story.`,
           'warning',
         );
         return;

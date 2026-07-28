@@ -107,6 +107,36 @@ All database writes go directly from the client to the database. Instead of sett
 
 ---
 
+## 3.5 Copyright Guard (IP-Risk Flagging System)
+
+To keep fan fiction and other copyrighted material out of the public library while still allowing private personal use, the system maintains a copyright flag on each story record.
+
+### A. Database Fields (stories collection)
+* `copyrightFlag` (bool) — master flag. When `true`, the story is forced private.
+* `copyrightFlagReason` (text) — short explanation (e.g. `"Harry Potter fan fiction"`).
+* `copyrightFlagSource` (select) — `ai` (outline-time), `admin` (manual), `backfill` (batch scan), or `user`.
+* `copyrightFlaggedAt` (date) — audit timestamp.
+
+### B. Flag Assignment Points
+1. **Outline generation** (`/api/stories/generate-outline`): the structured response schema includes `ipRisk` / `ipRiskReason`. The model classifies the concept at zero extra cost. Flagged concepts are forced `isPublic = false` in `storyFactory.buildStory` and the user is shown a notice in the outline review.
+2. **Scratch-mode stories** (`/api/stories/classify-ip`): manually written outlines bypass the outline pipeline, so a dedicated lightweight classifier route (cheap flash model, `IP_CLASSIFIER_MODEL` env override, fail-open on outage) classifies them at save time.
+3. **Admin manual flag** (Admin Dashboard → Copyright Guard tab).
+4. **Backfill script** (`npm run flag-copyright` / `flag-copyright:dry`): one-time batch scan of existing public stories; writes a JSON report and flags suspects with source `backfill`.
+
+### C. Enforcement Layers (defense in depth)
+* **PocketBase API rules** (primary enforcement, since the client writes directly to PocketBase): the stories `updateRule` blocks non-admins from setting `isPublic = true` when `copyrightFlag = true`; `listRule`/`viewRule` exclude flagged records from non-owner queries. Configured via `npm run migrate:copyright-schema`.
+* **Server metadata cache** (`src/server/lib/pocketbase.ts`): both the full refresh and single-document merge skip `copyrightFlag = true` records, so flagged stories never enter the public browse cache.
+* **Client**: `useFilters` / `useUrlRouting` hide flagged stories from non-owners; `useLibrary.handleToggleStoryPrivacy` blocks publishing flagged stories; the Reader disables the share link; story cards show a "Restricted" badge.
+* **Private-story quotas** (10 free / 100 paid) count only *elective* private stories — flagged stories are exempt since they are mandatory-private.
+
+### D. Export De-branding
+Any story with `isPublic = false` exports without site references: the EPUB generator omits the `books.teacherjake.com` intro/ending paragraphs and uses a neutral `dc:creator`, and the clipboard exporters (plain/rich text) drop the branded header/footer lines.
+
+### E. Admin Review & Appeals
+The **Copyright Guard** tab in the Admin Dashboard lists all flagged stories with reason/source/timestamp. Admins can clear a flag (story stays private until the owner republishes). Users appeal via the admin contact email shown on the badge/notice.
+
+---
+
 ## 4. Guide: Adding or Removing LLM Models
 
 The application uses OpenRouter to communicate with various language models. To add or remove a model, follow the checklist below to update the configurations across the client and server.
