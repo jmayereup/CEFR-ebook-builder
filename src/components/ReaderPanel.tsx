@@ -243,6 +243,7 @@ export default function ReaderPanel({
   const [showBilingual, setShowBilingual] = useState<boolean>(
     story.cefrLevel === 'A1' || story.cefrLevel === 'Pre-A1',
   );
+  const [isSwapped, setIsSwapped] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'read' | 'maintenance'>('read');
   const [maintenanceSubTab, setMaintenanceSubTab] = useState<
     'bible' | 'audits' | 'tone' | 'outline'
@@ -287,6 +288,17 @@ export default function ReaderPanel({
     return displayParas;
   }, [activeChapter]);
 
+  // When the user swaps the primary/translation languages we flip original<->translation
+  // on the displayed paragraphs. Paragraphs without a translation gracefully fall back
+  // to showing the original text in the primary slot (no subtext).
+  const effectiveDisplayParagraphs = useMemo<DisplayParagraph[]>(() => {
+    if (!isSwapped) return displayParagraphs;
+    return displayParagraphs.map((dp) => ({
+      original: dp.translation ?? dp.original,
+      translation: dp.translation ? dp.original : undefined,
+    }));
+  }, [displayParagraphs, isSwapped]);
+
   // Set of words in the glossary of the active chapter for fast lookup
   const glossaryWordsSet = useMemo(() => {
     const vocab = activeChapter?.vocabulary || [];
@@ -310,6 +322,20 @@ export default function ReaderPanel({
     return combined;
   }, [glossaryWordsSet, savedWordsSet]);
 
+  // Reset swap toggle when the story changes (swap only applies to bilingual A1)
+  useEffect(() => {
+    setIsSwapped(false);
+  }, [story.id]);
+
+  // Swap is only supported on A1 bilingual stories (Pre-A1 has inserted scaffolding words
+  // that would desynchronize the bilingual pairing if the primary language were flipped)
+  const canSwapLanguages =
+    story.cefrLevel === 'A1' && !!story.translationLanguage;
+
+  const effectivePrimaryLanguage = isSwapped
+    ? story.translationLanguage || story.language
+    : story.language;
+
   const chapterWords = useMemo(() => {
     const words: {
       word: string;
@@ -318,9 +344,9 @@ export default function ReaderPanel({
       indexInPara: number;
     }[] = [];
     if (!activeChapter) return words;
-    const targetLangCode = getLanguageCodeFromName(story.language);
+    const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
 
-    displayParagraphs.forEach((dp, pIdx) => {
+    effectiveDisplayParagraphs.forEach((dp, pIdx) => {
       let indexInPara = 0;
       const segments = segmentText(
         dp.original,
@@ -340,7 +366,12 @@ export default function ReaderPanel({
     });
 
     return words;
-  }, [displayParagraphs, story.language, activeChapter, segmentMatchingSet]);
+  }, [
+    effectiveDisplayParagraphs,
+    effectivePrimaryLanguage,
+    activeChapter,
+    segmentMatchingSet,
+  ]);
 
   const isFreeModel =
     story.model?.endsWith(':free') || FREE_MODEL_IDS.has(story.model || '');
@@ -401,7 +432,7 @@ export default function ReaderPanel({
     speak,
     stop,
     playWord,
-  } = useSpeechSynthesis(story.language);
+  } = useSpeechSynthesis(effectivePrimaryLanguage);
 
   // Clicked word translation toast state
   const [selectedWord, setSelectedWord] = useState<{
@@ -451,12 +482,10 @@ export default function ReaderPanel({
   // Core TTS executors using custom hook actions
   const handleReadChapter = () => {
     if (!activeChapter) return;
+    // When swapped, the effective primary text is the translation, so read that
+    // from the display paragraphs instead of the raw chapter content.
     const textToSpeak = stripMarkdown(
-      activeChapter.content
-        .split(/\n+/)
-        .map((p) => p.trim())
-        .filter((p) => p.length > 0 && !p.startsWith('Translation:'))
-        .join('\n'),
+      effectiveDisplayParagraphs.map((dp) => dp.original).join('\n'),
     );
     speak(textToSpeak);
   };
@@ -473,10 +502,10 @@ export default function ReaderPanel({
     if (!startWord || !endWord || startWord.pIdx !== endWord.pIdx) return '';
 
     const pIdx = startWord.pIdx;
-    const dp = displayParagraphs[pIdx];
+    const dp = effectiveDisplayParagraphs[pIdx];
     if (!dp) return '';
 
-    const targetLangCode = getLanguageCodeFromName(story.language);
+    const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
     const segments = segmentText(
       dp.original,
       targetLangCode,
@@ -728,7 +757,7 @@ export default function ReaderPanel({
   const playSentenceContainingWord = (word: string, paragraphText: string) => {
     if (!window.speechSynthesis) return;
 
-    const targetLangCode = getLanguageCodeFromName(story.language);
+    const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
     let sentenceToPlay = paragraphText;
 
     if (typeof Intl !== 'undefined' && 'Segmenter' in Intl) {
@@ -885,7 +914,7 @@ export default function ReaderPanel({
         headers,
         body: JSON.stringify({
           word: selectedWord.word,
-          language: story.language,
+          language: effectivePrimaryLanguage,
           context: selectedWord.context,
           targetLanguage: translationTargetLanguage || 'English',
           userId: currentUser?.uid,
@@ -1202,6 +1231,11 @@ export default function ReaderPanel({
                       onEditClick={() => setIsEditing(true)}
                       onDeleteClick={() => setShowDeleteModal(true)}
                       onFlagClick={() => onFlagStory && onFlagStory(story)}
+                      canSwapLanguages={canSwapLanguages}
+                      isSwapped={isSwapped}
+                      onToggleSwap={() => setIsSwapped((s) => !s)}
+                      primaryLanguage={story.language}
+                      translationLanguage={story.translationLanguage}
                     />
                   ) : null
                 ) : (
@@ -1258,7 +1292,9 @@ export default function ReaderPanel({
                     <div className="flex items-center justify-between gap-4 flex-wrap">
                       <div className="flex-1 min-w-0">
                         <h2
-                          lang={getLanguageCodeFromName(story.language)}
+                          lang={getLanguageCodeFromName(
+                            effectivePrimaryLanguage,
+                          )}
                           className="text-2xl sm:text-[28px] font-medium font-serif text-tj-text-main tracking-tight leading-[36px] break-words"
                         >
                           {activeChapter.title}
@@ -1324,11 +1360,11 @@ export default function ReaderPanel({
                   <>
                     <div
                       translate="no"
-                      lang={getLanguageCodeFromName(story.language)}
+                      lang={getLanguageCodeFromName(effectivePrimaryLanguage)}
                       className={`space-y-6 select-text ${useSerif ? 'font-serif' : 'font-sans'}`}
                       style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
                     >
-                      {displayParagraphs.map((dp, idx) => {
+                      {effectiveDisplayParagraphs.map((dp, idx) => {
                         const isActiveParagraph =
                           selectedWordRange !== null &&
                           chapterWords[selectedWordRange[0]]?.pIdx === idx;
@@ -1349,7 +1385,7 @@ export default function ReaderPanel({
                                 <InteractiveParagraph
                                   paragraphText={dp.original}
                                   pIdx={idx}
-                                  language={story.language}
+                                  language={effectivePrimaryLanguage}
                                   handleWordClick={handleWordClick}
                                   isBilingual={showBilingual}
                                   glossaryWordsSet={glossaryWordsSet}
