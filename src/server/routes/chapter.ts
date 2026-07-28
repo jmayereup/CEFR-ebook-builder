@@ -259,10 +259,10 @@ Writing Type: ${resolvedWritingType}
 Expected total number of chapters: ${totalChapters}
 Chapter details: This is Chapter 1 of ${totalChapters}.
 ${outline ? `Approved Overarching Outline/Plan to align with:\n${outline}` : ''}
-${cleanedPromptNotes ? `Initial ideas/characters/settings: "${cleanedPromptNotes}"` : ''}
+${cleanedPromptNotes ? `Original Author Concept (authoritative — you MUST preserve every character name, setting, plot beat, theme, and style note specified here):\n${cleanedPromptNotes}` : ''}
 ${chapterGuidance ? `Custom specific guidance for Chapter 1: "${chapterGuidance}"` : ''}
 
-Based on these guidelines, invent an overarching story title (or use "${storyTitle || ''}" if appropriate), a chapter title, the story chapter content (approx. ${targetWordCount} words), a 1-2 sentence English summary of the chapter events, and extract the key terms (leave vocab empty if A1 or Pre-A1).`;
+Based on these guidelines, invent an overarching story title (or use "${storyTitle || ''}" if appropriate), a chapter title, the story chapter content (approx. ${targetWordCount} words), a 1-2 sentence English summary of the chapter events, and extract the key terms (leave vocab empty if A1 or Pre-A1). Write Chapter 1 by expanding its corresponding section of the outline, honoring every specific detail from the Original Author Concept.`;
     } else {
       responseSchema = {
         type: Type.OBJECT,
@@ -306,13 +306,13 @@ CEFR level: ${cefrLevel}
 Genre: ${resolvedGenre}
 Writing Type: ${resolvedWritingType}
 ${outline ? `Pre-approved Story Outline/Plan to follow:\n${outline}` : ''}
-${cleanedPromptNotes ? `Author Notes / Style Guidance: "${cleanedPromptNotes}"` : ''}
+${cleanedPromptNotes ? `Original Author Concept (authoritative — you MUST preserve every character name, setting, plot beat, theme, and style note specified here):\n${cleanedPromptNotes}` : ''}
 ${chapterGuidance ? `Custom additional guidance for this Chapter ${chapterNumber}: "${chapterGuidance}"` : ''}
 
 Here is the complete narrative history of all previous chapters:
 ${summaryText || '(No previous chapters — this is the beginning.)'}
 
-Please write Chapter ${chapterNumber} of ${totalChapters}, ensuring a seamless continuation of the storyline. Make sure the difficulty is perfectly fitted for CEFR ${cefrLevel} level and that the word length remains around ${targetWordCount} words. Extract 5-10 key vocabulary terms (leave vocab empty if A1 or Pre-A1) and provide a 1-2 sentence English summary of the chapter events.`;
+Please write Chapter ${chapterNumber} of ${totalChapters}, ensuring a seamless continuation of the storyline. Write the chapter by expanding its corresponding section of the outline, honoring every specific detail from the Original Author Concept (character names, settings, plot beats, themes, and style notes). Make sure the difficulty is perfectly fitted for CEFR ${cefrLevel} level and that the word length remains around ${targetWordCount} words. Extract 5-10 key vocabulary terms (leave vocab empty if A1 or Pre-A1) and provide a 1-2 sentence English summary of the chapter events.`;
     }
 
     const isBilingual = cefrLevel === 'A1' || cefrLevel === 'Pre-A1';

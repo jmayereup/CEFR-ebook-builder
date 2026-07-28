@@ -115,7 +115,11 @@ router.post('/', async (req, res) => {
 Write an outline and proposed story title for a learner reading at CEFR ${cefrLevel} level in the language ${language}. 
 The text must be written in the style of a "${resolvedWritingType}" text.
 ${(cefrLevel === 'A1' || cefrLevel === 'Pre-A1') && translationLanguage ? `Since this is a ${cefrLevel} level story, it will be generated in a line-by-line bilingual format (${language} and ${translationLanguage}). Plan the chapters accordingly to be simple, repetitive, and educational.` : ''}
-${accuracyGuidance ? `${accuracyGuidance}\n` : ''}${genreGuidance ? `${genreGuidance}\n` : ''}The story will have ${totalChapters} chapters of around ${targetWordCount} words each.`;
+${accuracyGuidance ? `${accuracyGuidance}\n` : ''}${genreGuidance ? `${genreGuidance}\n` : ''}The story will have ${totalChapters} chapters of around ${targetWordCount} words each.
+
+CRITICAL FIDELITY RULE: When the user's concept notes already contain a detailed plan — such as a chapter-by-chapter outline, character maps, specific settings, plot beats, themes, or style notes — you MUST preserve ALL of those specific details in the outline. Never compress, omit, or replace user-specified details with generic summaries. Your job is to faithfully organize, structure, and enrich the user's vision (filling gaps where the user was vague), not to re-invent or shrink it.
+
+LANGUAGE HANDLING: Write the story title and the outline itself in ${language} (the target language). If the user's concept notes are written in another language (e.g., English), render all details into ${language}, establishing exactly one consistent transliteration for each character and place name and reusing it throughout. Only the description field is written in English.`;
 
     const responseSchema = {
       type: Type.OBJECT,
@@ -126,7 +130,7 @@ ${accuracyGuidance ? `${accuracyGuidance}\n` : ''}${genreGuidance ? `${genreGuid
         },
         outline: {
           type: Type.STRING,
-          description: `A beautiful detailed markdown bulleted outline describing what happens in each of the ${totalChapters} chapters.`,
+          description: `A beautiful, detailed markdown bulleted outline written in ${language}, describing what happens in each of the ${totalChapters} chapters. For each chapter, include the setting, the key plot beats, the characters involved, and the theme. Every specific detail from the user's concept notes (names, places, events, themes, style notes) must appear in the relevant chapter entry — do not compress them away.`,
         },
         description: {
           type: Type.STRING,
@@ -143,7 +147,9 @@ CEFR Level: ${cefrLevel}
 Total Chapters planned: ${totalChapters}
 ${cleanedPromptNotes ? `Incorporating user concept ideas: "${cleanedPromptNotes}"` : ''}
 
-Draft an overarching narrative outline. For each of the ${totalChapters} chapters, provide a brief 1-2 sentence description of the key event and theme. Return a beautiful title, outline, and a brief 2-3 sentence English synopsis/description of the story.`;
+Draft an overarching narrative outline. For each of the ${totalChapters} chapters, provide a detailed breakdown covering the setting, the key plot beats, the characters involved, and the theme.
+IMPORTANT: If the user concept ideas above already contain a detailed plan (a chapter-by-chapter outline, character maps, settings, themes, or style notes), preserve ALL of those specific details in your outline — including character names, locations, and specific plot events — rendered in ${language} with consistent name transliterations. Expand and organize the user's vision chapter by chapter; do NOT summarize it down into generic 1-2 sentence blurbs. Only invent new material to fill gaps the user left unspecified.
+Return a beautiful title, the detailed outline, and a brief 2-3 sentence English synopsis/description of the story.`;
 
     const sendHeartbeat = () => {
       if (!headersSent) {

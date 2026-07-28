@@ -255,7 +255,7 @@ CEFR Level: ${cefrLevel}
 Genre: ${resolvedGenre}
 Writing Type: ${resolvedWritingType}
 ${outline ? `Pre-approved Story Outline/Plan to follow:\n${outline}` : ''}
-${cleanedPromptNotes ? `Author Notes / Style Guidance: "${cleanedPromptNotes}"` : ''}
+${cleanedPromptNotes ? `Original Author Concept (authoritative — you MUST preserve every character name, setting, plot beat, theme, and style note specified here):\n${cleanedPromptNotes}` : ''}
 
 Total story chapters: ${totalChapters}
 You are now writing Chapters ${batchNumbers[0]} through ${batchNumbers[batchNumbers.length - 1]} of ${totalChapters}.
@@ -266,6 +266,7 @@ ${prevChaptersList.length > 0 ? fullContextText : '(This is the beginning of the
 Please write exactly ${batchCount} new consecutive chapters (Chapters ${batchNumbers[0]}–${batchNumbers[batchNumbers.length - 1]}) as a JSON array. Each chapter must:
 - Be approximately ${targetWordCount} words long
 - Continue seamlessly from where the story left off
+- Expand its corresponding section of the outline, honoring every specific detail from the Original Author Concept (character names, settings, plot beats, themes, and style notes)
 - Be written at CEFR ${cefrLevel} level
 - Include a chapter title in ${language} and a 1-2 sentence English summary`;
 
