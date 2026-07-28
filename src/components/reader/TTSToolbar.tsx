@@ -11,7 +11,7 @@ import {
   Languages,
   Pause,
   Play,
-  Settings,
+  Settings2,
   Square,
   Trash2,
   X,
@@ -54,6 +54,8 @@ interface TTSToolbarProps {
   onToggleSwap?: () => void;
   primaryLanguage?: string;
   translationLanguage?: string;
+  isReaderSettingsOpen?: boolean;
+  onReaderSettingsOpenChange?: (open: boolean) => void;
 }
 
 export default function TTSToolbar({
@@ -89,9 +91,22 @@ export default function TTSToolbar({
   onToggleSwap,
   primaryLanguage,
   translationLanguage,
+  isReaderSettingsOpen,
+  onReaderSettingsOpenChange,
 }: TTSToolbarProps) {
-  const [isSettingsModalOpen, setIsSettingsModalOpen] =
+  const [internalSettingsOpen, setInternalSettingsOpen] =
     useState<boolean>(false);
+  const isControlled = onReaderSettingsOpenChange !== undefined;
+  const isSettingsModalOpen = isControlled
+    ? (isReaderSettingsOpen ?? false)
+    : internalSettingsOpen;
+  const setIsSettingsModalOpen = (open: boolean) => {
+    if (isControlled) {
+      onReaderSettingsOpenChange?.(open);
+    } else {
+      setInternalSettingsOpen(open);
+    }
+  };
 
   return (
     <div className="grid grid-cols-3 items-center gap-2 border-b border-slate-200/50 dark:border-slate-800 pb-4 mb-6 w-full">
@@ -149,7 +164,7 @@ export default function TTSToolbar({
           className="h-8 w-8 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:text-tj-primary-hover bg-transparent hover:text-tj-primary hover:border-slate-300 transition-all cursor-pointer flex items-center justify-center animate-none"
           title="Reader Settings"
         >
-          <Settings className="w-4 h-4" />
+          <Settings2 className="w-4 h-4" />
         </button>
       </div>
 
@@ -189,7 +204,7 @@ export default function TTSToolbar({
             >
               <div className="flex items-center justify-between border-b border-tj-border-main pb-2">
                 <div className="flex items-center gap-2">
-                  <Settings className="w-4 h-4 text-tj-primary" />
+                  <Settings2 className="w-4 h-4 text-tj-primary" />
                   <h3 className="text-sm font-bold">Reader Settings</h3>
                 </div>
                 <button
@@ -333,9 +348,7 @@ export default function TTSToolbar({
                       >
                         <span
                           className={`absolute top-0.5 h-4.5 w-4.5 rounded-full bg-white shadow-sm transition-all duration-200 ${
-                            showBilingual
-                              ? 'left-[22px]'
-                              : 'left-0.5'
+                            showBilingual ? 'left-[22px]' : 'left-0.5'
                           }`}
                           style={{ width: '1.125rem', height: '1.125rem' }}
                         />
@@ -372,9 +385,7 @@ export default function TTSToolbar({
                       >
                         <span
                           className={`absolute top-0.5 rounded-full bg-white shadow-sm transition-all duration-200 ${
-                            isSwapped
-                              ? 'left-[22px]'
-                              : 'left-0.5'
+                            isSwapped ? 'left-[22px]' : 'left-0.5'
                           }`}
                           style={{ width: '1.125rem', height: '1.125rem' }}
                         />

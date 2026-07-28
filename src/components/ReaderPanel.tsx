@@ -33,6 +33,7 @@ import {
 } from '../utils/segmenter';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
+import BilingualSwapNotification from './reader/BilingualSwapNotification';
 import ChapterEditForm from './reader/ChapterEditForm';
 import ChapterNavigationBar from './reader/ChapterNavigationBar';
 import ChapterSidebar from './reader/ChapterSidebar';
@@ -256,6 +257,8 @@ export default function ReaderPanel({
   >(null);
 
   const [showLanguageModal, setShowLanguageModal] = useState<boolean>(false);
+  const [isReaderSettingsOpen, setIsReaderSettingsOpen] =
+    useState<boolean>(false);
 
   interface DisplayParagraph {
     original: string;
@@ -1236,6 +1239,8 @@ export default function ReaderPanel({
                       onToggleSwap={() => setIsSwapped((s) => !s)}
                       primaryLanguage={story.language}
                       translationLanguage={story.translationLanguage}
+                      isReaderSettingsOpen={isReaderSettingsOpen}
+                      onReaderSettingsOpenChange={setIsReaderSettingsOpen}
                     />
                   ) : null
                 ) : (
@@ -1253,7 +1258,8 @@ export default function ReaderPanel({
 
                 {/* Chapter Cover Image (for Chapter 1) */}
                 {activeChapterIndex === 0 &&
-                  activeChapter && (isGeneratingCover || !coverImgError) && (
+                  activeChapter &&
+                  (isGeneratingCover || !coverImgError) && (
                     <div className="flex justify-center mb-8 mt-2 select-none">
                       <motion.div
                         initial={{ opacity: 0, y: 15 }}
@@ -1778,6 +1784,12 @@ export default function ReaderPanel({
         isOpen={showLanguageModal}
         onClose={handleLanguageCancel}
         onConfirm={handleLanguageConfirm}
+      />
+
+      {/* BILINGUAL SWAP NOTIFICATION (A1 books with translation language) */}
+      <BilingualSwapNotification
+        story={story}
+        onOpenReaderSettings={() => setIsReaderSettingsOpen(true)}
       />
 
       {/* DELETE BOOK CONFIRMATION MODAL */}

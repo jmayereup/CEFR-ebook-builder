@@ -31,6 +31,39 @@ export const getChaptersCount = (story: Story): number =>
       : 0;
 
 /**
+ * A "swappable bilingual" story is an A1 book that was generated with a paired
+ * translation language, allowing the reader view to flip the primary and TTS
+ * languages. Pre-A1 is excluded because it has inserted scaffolding words that
+ * would desync the bilingual pairing if swapped.
+ */
+export const isSwappableBilingual = (story: Story): boolean =>
+  story.cefrLevel === 'A1' && !!story.translationLanguage;
+
+/**
+ * Returns true if a story matches the user's selected language filter.
+ *
+ * Single-language stories match only by their primary language. Swappable
+ * bilingual stories (A1 + translationLanguage) additionally match when the
+ * filter targets their translation language, so an A1 Spanish→English book
+ * appears in both the Spanish and English listings.
+ */
+export const matchesLanguageFilter = (
+  story: Story,
+  filterLanguage: string[],
+): boolean => {
+  if (filterLanguage.length === 0) return true;
+  if (filterLanguage.includes(story.language)) return true;
+  if (
+    isSwappableBilingual(story) &&
+    story.translationLanguage &&
+    filterLanguage.includes(story.translationLanguage)
+  ) {
+    return true;
+  }
+  return false;
+};
+
+/**
  * Filters and sorts an array of stories according to the given criteria.
  * This is the single source of truth for library / bookshelf filtering.
  */
@@ -51,9 +84,8 @@ export const filterAndSortStories = (
 
   return stories
     .filter((story) => {
-      // 1. Language filter
-      if (filterLanguage.length > 0 && !filterLanguage.includes(story.language))
-        return false;
+      // 1. Language filter — swappable bilingual books also surface under their translation language
+      if (!matchesLanguageFilter(story, filterLanguage)) return false;
 
       // 2. CEFR level filter
       if (
