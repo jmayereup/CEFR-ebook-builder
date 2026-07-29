@@ -320,7 +320,7 @@ Please write Chapter ${chapterNumber} of ${totalChapters}, ensuring a seamless c
     const estOutputTokens =
       Math.ceil(targetWordCount * 1.33 * multiplier) + 1200;
     const selectedModelObj = AI_MODELS.find((m) => m.id === model);
-    const modelMaxOutput = selectedModelObj?.maxOutputTokens ?? 4096;
+    const modelMaxOutput = selectedModelObj?.maxOutputTokens ?? 16384;
     const maxTokens = Math.min(Math.max(estOutputTokens, 4096), modelMaxOutput);
 
     const sendHeartbeat = () => {

@@ -28,7 +28,7 @@ export const AI_MODELS: AIModelOption[] = [
     supportsThinkingLevel: true,
     supportsThinkingBudget: false,
     supportsTemperature: true,
-    maxOutputTokens: 8192,
+    maxOutputTokens: 16384,
   },
   {
     id: 'nousresearch/hermes-3-llama-3.1-405b',

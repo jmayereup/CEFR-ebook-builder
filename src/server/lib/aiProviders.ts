@@ -125,7 +125,7 @@ export async function callOpenRouter(options: {
     );
   }
   const requestMaxTokens = options.maxTokens
-    ? Math.min(options.maxTokens, 8192)
+    ? Math.min(options.maxTokens, 16384)
     : undefined;
   if (requestMaxTokens) {
     console.log(

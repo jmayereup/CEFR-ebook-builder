@@ -201,6 +201,7 @@ Return a beautiful title, the detailed outline, a brief 2-3 sentence English syn
         typeof customOpenRouterKey === 'string'
           ? customOpenRouterKey
           : undefined,
+      maxTokens: 16384,
       userId,
       userEmail,
       action: 'generate-outline',
