@@ -1,6 +1,7 @@
 import { AlertCircle, RotateCcw, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AI_MODELS, FRONTIER_LATEST_MODELS } from '../../constants/models';
 import { useUIStore } from '../../store/uiStore';
 
 interface GlossaryGenerationToastProps {
@@ -31,6 +32,17 @@ export default function GlossaryGenerationToast({
   const [selectedModel, setSelectedModel] = useState(
     defaultStoryModel || 'deepseek/deepseek-v4-flash',
   );
+
+  useEffect(() => {
+    if (customOpenRouterKey && defaultStoryModel) {
+      setSelectedModel(defaultStoryModel);
+    }
+  }, [customOpenRouterKey, defaultStoryModel]);
+
+  const byokModelName =
+    FRONTIER_LATEST_MODELS.find((m) => m.id === selectedModel)?.name ||
+    AI_MODELS.find((m) => m.id === selectedModel)?.name ||
+    selectedModel;
 
   return (
     <AnimatePresence>
@@ -83,7 +95,7 @@ export default function GlossaryGenerationToast({
                 >
                   {customOpenRouterKey && (
                     <option value={selectedModel}>
-                      {selectedModel} (BYOK Default Model)
+                      {byokModelName} (BYOK Default Model)
                     </option>
                   )}
                   {FALLBACK_MODELS.map((m) => (

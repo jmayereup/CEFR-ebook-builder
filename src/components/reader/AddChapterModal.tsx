@@ -1,5 +1,6 @@
 import { AlertCircle, Loader2, Save, Sparkles, Trash2, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AI_MODELS, FRONTIER_LATEST_MODELS } from '../../constants/models';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
 import type { VocabularyTerm } from '../../types';
@@ -26,7 +27,7 @@ export default function AddChapterModal({
   language,
   cefrLevel,
   customOpenRouterKey = '',
-  model = 'deepseek/deepseek-v4-pro',
+  model = '',
   nextChapterNumber,
 }: AddChapterModalProps) {
   const defaultStoryModel = useUIStore((state) => state.defaultStoryModel);
@@ -41,6 +42,12 @@ export default function AddChapterModal({
   const [selectedModel, setSelectedModel] = useState<string>(
     model || defaultStoryModel || 'deepseek/deepseek-v4-pro',
   );
+
+  useEffect(() => {
+    if (customOpenRouterKey && defaultStoryModel) {
+      setSelectedModel(defaultStoryModel);
+    }
+  }, [customOpenRouterKey, defaultStoryModel, isOpen]);
 
   if (!isOpen) return null;
 
@@ -246,7 +253,13 @@ export default function AddChapterModal({
                     >
                       {customOpenRouterKey && (
                         <option value={selectedModel}>
-                          {selectedModel} (BYOK Default Model)
+                          {FRONTIER_LATEST_MODELS.find(
+                            (m) => m.id === selectedModel,
+                          )?.name ||
+                            AI_MODELS.find((m) => m.id === selectedModel)
+                              ?.name ||
+                            selectedModel}{' '}
+                          (BYOK Default Model)
                         </option>
                       )}
                       <option value="deepseek/deepseek-v4-flash">

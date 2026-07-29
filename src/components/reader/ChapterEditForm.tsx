@@ -8,6 +8,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { AI_MODELS, FRONTIER_LATEST_MODELS } from '../../constants/models';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
 // Firestore import removed to operate in-memory
@@ -65,6 +66,12 @@ export default function ChapterEditForm({
   useEffect(() => {
     setSelectedGlossaryLanguage(translationTargetLanguage);
   }, [translationTargetLanguage]);
+
+  useEffect(() => {
+    if (customOpenRouterKey && defaultStoryModel) {
+      setSelectedModel(defaultStoryModel);
+    }
+  }, [customOpenRouterKey, defaultStoryModel]);
 
   // Sync state if activeChapter changes
   useEffect(() => {
@@ -345,7 +352,12 @@ export default function ChapterEditForm({
                 >
                   {customOpenRouterKey && (
                     <option value={selectedModel}>
-                      {selectedModel} (BYOK Default Model)
+                      {FRONTIER_LATEST_MODELS.find(
+                        (m) => m.id === selectedModel,
+                      )?.name ||
+                        AI_MODELS.find((m) => m.id === selectedModel)?.name ||
+                        selectedModel}{' '}
+                      (BYOK Default Model)
                     </option>
                   )}
                   <option value="deepseek/deepseek-v4-flash">

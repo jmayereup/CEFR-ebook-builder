@@ -18,7 +18,11 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { AI_MODELS, FREE_MODEL_IDS } from '../constants/models';
+import {
+  AI_MODELS,
+  FREE_MODEL_IDS,
+  FRONTIER_LATEST_MODELS,
+} from '../constants/models';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import { CEFR_LEVELS, GENRES, SUPPORTED_LANGUAGES } from '../types';
@@ -178,6 +182,27 @@ export default function StoryConfigForm({
     return SUPPORTED_LANGUAGES;
   });
 
+  const byokModelName =
+    FRONTIER_LATEST_MODELS.find((m) => m.id === selectedModel)?.name ||
+    AI_MODELS.find((m) => m.id === selectedModel)?.name ||
+    selectedModel;
+
+  // Sync selectedModel with defaultStoryModel when BYOK is active or when defaultStoryModel changes
+  useEffect(() => {
+    if (isByokActive && defaultStoryModel) {
+      setSelectedModel(defaultStoryModel);
+      const modelObj = AI_MODELS.find((m) => m.id === defaultStoryModel);
+      if (
+        modelObj?.supportsThinkingLevel ||
+        modelObj?.supportsThinkingBudget
+      ) {
+        setThinkingOption('medium');
+      } else {
+        setThinkingOption('disabled');
+      }
+    }
+  }, [isByokActive, defaultStoryModel]);
+
   const handleLanguageChange = (langCode: string) => {
     setLanguage(langCode);
     try {
@@ -188,16 +213,18 @@ export default function StoryConfigForm({
     } catch (e) {
       console.error(e);
     }
-    const newModel =
-      DEFAULT_MODEL_FOR_LANGUAGE[langCode] || 'deepseek/deepseek-v4-pro';
-    setSelectedModel(newModel);
+    if (!isByokActive) {
+      const newModel =
+        DEFAULT_MODEL_FOR_LANGUAGE[langCode] || 'deepseek/deepseek-v4-pro';
+      setSelectedModel(newModel);
 
-    // Auto-update thinkingOption for the new model
-    const modelObj = AI_MODELS.find((m) => m.id === newModel);
-    if (modelObj?.supportsThinkingLevel || modelObj?.supportsThinkingBudget) {
-      setThinkingOption('medium');
-    } else {
-      setThinkingOption('disabled');
+      // Auto-update thinkingOption for the new model
+      const modelObj = AI_MODELS.find((m) => m.id === newModel);
+      if (modelObj?.supportsThinkingLevel || modelObj?.supportsThinkingBudget) {
+        setThinkingOption('medium');
+      } else {
+        setThinkingOption('disabled');
+      }
     }
   };
 
@@ -806,7 +833,7 @@ export default function StoryConfigForm({
                     {isByokActive &&
                       !AI_MODELS.some((m) => m.id === selectedModel) && (
                         <option value={selectedModel}>
-                          {selectedModel} (BYOK Default Model)
+                          {byokModelName} (BYOK Default Model)
                         </option>
                       )}
                     {(() => {
@@ -928,8 +955,8 @@ export default function StoryConfigForm({
                     <p className="text-[11px] text-tj-text-muted mt-1.5 leading-normal bg-tj-primary/5 p-2 rounded-lg border border-tj-primary/20 font-medium">
                       🔒 AI Model selection is locked for BYOK accounts. Using
                       custom model{' '}
-                      <strong className="text-tj-primary font-mono">
-                        {selectedModel}
+                      <strong className="text-tj-primary font-semibold">
+                        {byokModelName}
                       </strong>{' '}
                       set in Settings.
                     </p>
