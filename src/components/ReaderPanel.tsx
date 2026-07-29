@@ -164,6 +164,9 @@ export default function ReaderPanel({
   );
   const isOnline = useUIStore((state) => state.isOnline);
   const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
+  const defaultTranslationModel = useUIStore(
+    (state) => state.defaultTranslationModel,
+  );
   const currentUser = useAuthStore((state) => state.currentUser);
 
   const [selectedGlossaryLanguage, setSelectedGlossaryLanguage] =
@@ -920,6 +923,7 @@ export default function ReaderPanel({
           language: effectivePrimaryLanguage,
           context: selectedWord.context,
           targetLanguage: translationTargetLanguage || 'English',
+          model: defaultTranslationModel || 'deepseek/deepseek-v4-flash',
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
         }),

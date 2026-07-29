@@ -72,9 +72,14 @@ export async function callOpenRouter(options: {
       ? options.customApiKey.trim()
       : process.env.OPENROUTER_API_KEY;
 
-  if (!apiKey) {
+  if (!apiKey || !apiKey.startsWith('sk-or-')) {
+    if (options.customApiKey) {
+      throw new Error(
+        'The custom OpenRouter API Key provided in Settings is invalid. OpenRouter keys must start with "sk-or-".',
+      );
+    }
     throw new Error(
-      'OPENROUTER_API_KEY is not defined. Please add it to your .env file.',
+      `Invalid or placeholder OPENROUTER_API_KEY ("${apiKey || ''}"). Please paste a valid OpenRouter API Key (sk-or-...) under Settings (Gear Icon) or update your .env file.`,
     );
   }
 

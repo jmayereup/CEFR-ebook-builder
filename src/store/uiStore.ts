@@ -5,6 +5,8 @@ interface UIState {
   customOpenRouterKey: string;
   translationTargetLanguage: string | null;
   defaultStoryModel: string;
+  defaultGlossaryModel: string;
+  defaultTranslationModel: string;
   readerFontSize: number;
   readerUseSerif: boolean;
   readerTextAlignment: 'left' | 'center' | 'right' | 'justify';
@@ -13,6 +15,8 @@ interface UIState {
   setCustomOpenRouterKey: (key: string) => void;
   setTranslationTargetLanguage: (lang: string | null) => void;
   setDefaultStoryModel: (model: string) => void;
+  setDefaultGlossaryModel: (model: string) => void;
+  setDefaultTranslationModel: (model: string) => void;
   setReaderFontSize: (size: number) => void;
   setReaderUseSerif: (useSerif: boolean) => void;
   setReaderTextAlignment: (
@@ -29,6 +33,8 @@ export const useUIStore = create<UIState>((set) => ({
   customOpenRouterKey: '',
   translationTargetLanguage: null,
   defaultStoryModel: 'deepseek/deepseek-v4-pro',
+  defaultGlossaryModel: 'deepseek/deepseek-v4-flash',
+  defaultTranslationModel: 'deepseek/deepseek-v4-flash',
   readerFontSize: 18,
   readerUseSerif: true,
   readerTextAlignment: 'justify',
@@ -60,6 +66,26 @@ export const useUIStore = create<UIState>((set) => ({
     }
     set({ defaultStoryModel: model || 'deepseek/deepseek-v4-pro' });
   },
+  setDefaultGlossaryModel: (model) => {
+    if (typeof localStorage !== 'undefined') {
+      if (model) {
+        localStorage.setItem('custom_default_glossary_model', model);
+      } else {
+        localStorage.removeItem('custom_default_glossary_model');
+      }
+    }
+    set({ defaultGlossaryModel: model || 'deepseek/deepseek-v4-flash' });
+  },
+  setDefaultTranslationModel: (model) => {
+    if (typeof localStorage !== 'undefined') {
+      if (model) {
+        localStorage.setItem('custom_default_translation_model', model);
+      } else {
+        localStorage.removeItem('custom_default_translation_model');
+      }
+    }
+    set({ defaultTranslationModel: model || 'deepseek/deepseek-v4-flash' });
+  },
   setReaderFontSize: (size) => {
     const validatedSize =
       typeof size === 'number' && size >= 14 && size <= 26 ? size : 18;
@@ -90,9 +116,15 @@ export const useUIStore = create<UIState>((set) => ({
     if (typeof localStorage !== 'undefined') {
       const key = localStorage.getItem('custom_openrouter_api_key') || '';
       const lang = localStorage.getItem('translation_target_language') || null;
-      const model =
+      const storyModel =
         localStorage.getItem('custom_default_story_model') ||
         'deepseek/deepseek-v4-pro';
+      const glossaryModel =
+        localStorage.getItem('custom_default_glossary_model') ||
+        'deepseek/deepseek-v4-flash';
+      const translationModel =
+        localStorage.getItem('custom_default_translation_model') ||
+        'deepseek/deepseek-v4-flash';
       const sizeVal = localStorage.getItem('reader-font-size');
       let size = sizeVal ? Number.parseInt(sizeVal, 10) : 18;
       if (Number.isNaN(size) || size < 14 || size > 26) {
@@ -119,7 +151,9 @@ export const useUIStore = create<UIState>((set) => ({
       set({
         customOpenRouterKey: key,
         translationTargetLanguage: lang,
-        defaultStoryModel: model,
+        defaultStoryModel: storyModel,
+        defaultGlossaryModel: glossaryModel,
+        defaultTranslationModel: translationModel,
         readerFontSize: size,
         readerUseSerif: serif,
         readerTextAlignment: align,

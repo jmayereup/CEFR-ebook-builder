@@ -1139,7 +1139,10 @@ export const useStoryGeneration = (
           existingWords,
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
-          model: modelId,
+          model:
+            modelId ||
+            useUIStore.getState().defaultGlossaryModel ||
+            'deepseek/deepseek-v4-flash',
           translationLanguage:
             translationLanguage ||
             story.translationLanguage ||

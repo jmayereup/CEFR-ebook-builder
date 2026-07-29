@@ -68,6 +68,7 @@ router.post('/', async (req, res) => {
       language,
       context,
       targetLanguage = 'English',
+      model,
       userId,
       userEmail,
     } = req.body as {
@@ -75,6 +76,7 @@ router.post('/', async (req, res) => {
       language?: string;
       context?: string;
       targetLanguage?: string;
+      model?: string;
       userId?: string;
       userEmail?: string;
     };
@@ -87,9 +89,9 @@ router.post('/', async (req, res) => {
       req.headers['x-openrouter-api-key'] ||
       req.headers['X-OpenRouter-API-Key'];
 
-    // Use DeepSeek V4 Flash for dictionary lookups
-    const primaryModel = 'deepseek/deepseek-v4-flash';
-    const fallbackModel = 'deepseek/deepseek-v4-flash';
+    // Use requested model or fall back to default Flash model
+    const primaryModel = model || 'deepseek/deepseek-v4-flash';
+    const fallbackModel = model || 'deepseek/deepseek-v4-flash';
 
     const systemInstruction = `You are a professional dictionary and language translation assistant. 
 Translate the student's selected word into ${targetLanguage} based on its surrounding context if provided. Make it extremely concise and beginner-friendly.`;

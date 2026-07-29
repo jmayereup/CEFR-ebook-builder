@@ -50,8 +50,13 @@ export const FREE_MODEL_IDS = new Set<string>();
 export const FRONTIER_LATEST_MODELS = [
   {
     id: 'deepseek/deepseek-v4-pro',
-    name: 'DeepSeek V4 Pro (Default)',
+    name: 'DeepSeek V4 Pro',
     category: 'pro' as const,
+  },
+  {
+    id: 'deepseek/deepseek-v4-flash',
+    name: 'DeepSeek V4 Flash',
+    category: 'flash' as const,
   },
   {
     id: 'google/gemini-3.6-flash',
@@ -77,6 +82,16 @@ export const FRONTIER_LATEST_MODELS = [
     id: '~google/gemini-pro-latest',
     name: 'Google: Gemini Pro Latest',
     category: 'pro' as const,
+  },
+  {
+    id: '~google/gemini-flash-latest',
+    name: 'Google: Gemini Flash Latest',
+    category: 'flash' as const,
+  },
+  {
+    id: 'google/gemini-2.5-flash-lite',
+    name: 'Google: Gemini 2.5 Flash Lite',
+    category: 'flash' as const,
   },
   {
     id: '~x-ai/grok-latest',

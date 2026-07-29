@@ -41,6 +41,10 @@ export default function SettingsModal({
     setTranslationTargetLanguage,
     defaultStoryModel,
     setDefaultStoryModel,
+    defaultGlossaryModel,
+    setDefaultGlossaryModel,
+    defaultTranslationModel,
+    setDefaultTranslationModel,
   } = useUIStore();
   const { currentUser } = useAuthStore();
   const [isTestingKey, setIsTestingKey] = useState<boolean>(false);
@@ -49,16 +53,49 @@ export default function SettingsModal({
     message: string;
   } | null>(null);
 
+  const [apiKeyInput, setApiKeyInput] = useState<string>(
+    customOpenRouterKey || '',
+  );
+
+  useEffect(() => {
+    setApiKeyInput(customOpenRouterKey || '');
+  }, [customOpenRouterKey, isOpen]);
+
+  const hasApiKey = Boolean(apiKeyInput.trim());
+
   // Default Story Model selection state
-  const isPreset = FRONTIER_LATEST_MODELS.some(
+  const isStoryPreset = FRONTIER_LATEST_MODELS.some(
     (m) => m.id === defaultStoryModel,
   );
-  const [selectedModelOption, setSelectedModelOption] = useState<string>(
-    isPreset ? defaultStoryModel : 'custom',
+  const [selectedStoryModelOption, setSelectedStoryModelOption] = useState<string>(
+    isStoryPreset ? defaultStoryModel : 'custom',
   );
-  const [customModelIdInput, setCustomModelIdInput] = useState<string>(
-    isPreset ? '' : defaultStoryModel,
+  const [customStoryModelIdInput, setCustomStoryModelIdInput] = useState<string>(
+    isStoryPreset ? '' : defaultStoryModel,
   );
+
+  // Default Glossary Model selection state
+  const isGlossaryPreset = FRONTIER_LATEST_MODELS.some(
+    (m) => m.id === defaultGlossaryModel,
+  );
+  const [selectedGlossaryModelOption, setSelectedGlossaryModelOption] = useState<string>(
+    isGlossaryPreset ? defaultGlossaryModel : 'custom',
+  );
+  const [customGlossaryModelIdInput, setCustomGlossaryModelIdInput] = useState<string>(
+    isGlossaryPreset ? '' : defaultGlossaryModel,
+  );
+
+  // Default Word Translation Model selection state
+  const isTranslationPreset = FRONTIER_LATEST_MODELS.some(
+    (m) => m.id === defaultTranslationModel,
+  );
+  const [selectedTranslationModelOption, setSelectedTranslationModelOption] = useState<string>(
+    isTranslationPreset ? defaultTranslationModel : 'custom',
+  );
+  const [customTranslationModelIdInput, setCustomTranslationModelIdInput] = useState<string>(
+    isTranslationPreset ? '' : defaultTranslationModel,
+  );
+
   const [pricingMap, setPricingMap] = useState<
     Map<string, OpenRouterModelInfo>
   >(new Map());
@@ -67,12 +104,22 @@ export default function SettingsModal({
     fetchOpenRouterModels().then((map) => setPricingMap(map));
   }, []);
 
-  const activeModelId =
-    selectedModelOption === 'custom'
-      ? customModelIdInput.trim()
-      : selectedModelOption;
+  const activeStoryModelId =
+    selectedStoryModelOption === 'custom'
+      ? customStoryModelIdInput.trim()
+      : selectedStoryModelOption;
 
-  const currentPricing = activeModelId ? pricingMap.get(activeModelId) : null;
+  const activeGlossaryModelId =
+    selectedGlossaryModelOption === 'custom'
+      ? customGlossaryModelIdInput.trim()
+      : selectedGlossaryModelOption;
+
+  const activeTranslationModelId =
+    selectedTranslationModelOption === 'custom'
+      ? customTranslationModelIdInput.trim()
+      : selectedTranslationModelOption;
+
+  const currentPricing = activeStoryModelId ? pricingMap.get(activeStoryModelId) : null;
   const baselineEst = currentPricing
     ? calculateBaselineStoryCost(
         10,
@@ -142,7 +189,7 @@ export default function SettingsModal({
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="w-full max-w-lg bg-tj-bg-card rounded-lg border border-tj-border-main p-6 shadow-2xl relative space-y-6 overflow-hidden text-tj-text-main"
+        className="w-full max-w-lg bg-tj-bg-card rounded-lg border border-tj-border-main p-6 shadow-2xl relative space-y-6 overflow-y-auto max-h-[90vh] text-tj-text-main"
       >
         <div className="flex items-center justify-between border-b border-tj-border-main pb-3">
           <div className="flex items-center gap-2">
@@ -224,15 +271,7 @@ export default function SettingsModal({
               </label>
               <button
                 type="button"
-                onClick={() => {
-                  const val =
-                    (
-                      document.getElementById(
-                        'custom-openrouter-key-input',
-                      ) as HTMLInputElement
-                    )?.value || '';
-                  testApiKey(val);
-                }}
+                onClick={() => testApiKey(apiKeyInput)}
                 disabled={isTestingKey}
                 className="text-[10px] font-bold text-tj-primary hover:underline cursor-pointer disabled:opacity-50"
               >
@@ -250,7 +289,8 @@ export default function SettingsModal({
                     ? '••••••••••••••••••••••••••••'
                     : 'Paste your OpenRouter API Key directly (sk-or-...)'
                 }
-                defaultValue={customOpenRouterKey}
+                value={apiKeyInput}
+                onChange={(e) => setApiKeyInput(e.target.value)}
                 id="custom-openrouter-key-input"
                 className="w-full pl-10 pr-4 py-3 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono placeholder:font-sans focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
               />
@@ -289,63 +329,146 @@ export default function SettingsModal({
             </div>
           )}
 
-          {/* BYOK Default Story Generation Model Setting */}
-          <div className="space-y-3 pt-3 border-t border-tj-border-main">
+          {/* BYOK Model Selection Settings */}
+          <div className="space-y-4 pt-3 border-t border-tj-border-main">
             <div className="flex items-center justify-between">
               <label className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold flex items-center gap-1.5">
                 <Cpu className="w-3.5 h-3.5 text-tj-primary" />
-                Default Story Generation Model (BYOK)
+                BYOK AI Model Configurations
               </label>
-              {customOpenRouterKey && currentPricing && (
-                <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded">
-                  ${currentPricing.promptPrice1M.toFixed(2)} in / $
-                  {currentPricing.completionPrice1M.toFixed(2)} out (1M)
-                </span>
-              )}
             </div>
 
-            {!customOpenRouterKey ? (
+            {!hasApiKey ? (
               <div className="p-3 bg-tj-bg-recessed border border-tj-border-main rounded-lg text-xs text-tj-text-muted flex items-center gap-2">
                 <Lock className="w-4 h-4 text-tj-primary shrink-0" />
                 <span>
-                  Connect a custom OpenRouter API Key above to configure a
-                  custom default story generation model for your account.
+                  Connect a custom OpenRouter API Key above to configure custom
+                  models for story generation, glossaries, and word lookups.
                 </span>
               </div>
             ) : (
-              <>
-                <div className="relative">
-                  <select
-                    value={selectedModelOption}
-                    onChange={(e) => setSelectedModelOption(e.target.value)}
-                    className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
-                  >
-                    {FRONTIER_LATEST_MODELS.map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.name} ({m.id})
+              <div className="space-y-4">
+                {/* 1. Default Story Generation Model */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[11px] font-semibold text-tj-text-main">
+                      Story Generation Model
+                    </label>
+                    {currentPricing && (
+                      <span className="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded">
+                        ${currentPricing.promptPrice1M.toFixed(2)} in / $
+                        {currentPricing.completionPrice1M.toFixed(2)} out (1M)
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <select
+                      value={selectedStoryModelOption}
+                      onChange={(e) => setSelectedStoryModelOption(e.target.value)}
+                      className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
+                    >
+                      {FRONTIER_LATEST_MODELS.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name} ({m.id})
+                        </option>
+                      ))}
+                      <option value="custom">
+                        ⚙️ Enter Custom OpenRouter Model ID...
                       </option>
-                    ))}
-                    <option value="custom">
-                      ⚙️ Enter Custom OpenRouter Model ID...
-                    </option>
-                  </select>
-                  <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-tj-text-muted pointer-events-none" />
+                    </select>
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-tj-text-muted pointer-events-none" />
+                  </div>
+                  {selectedStoryModelOption === 'custom' && (
+                    <div className="space-y-1 pt-1">
+                      <input
+                        type="text"
+                        placeholder="e.g. meta-llama/llama-3.3-70b-instruct"
+                        value={customStoryModelIdInput}
+                        onChange={(e) => setCustomStoryModelIdInput(e.target.value)}
+                        className="w-full px-3 py-2 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
+                      />
+                      <p className="text-[10px] text-tj-text-muted">
+                        Specify any valid OpenRouter model ID slug.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
-                {selectedModelOption === 'custom' && (
-                  <div className="space-y-1.5 pt-1">
-                    <input
-                      type="text"
-                      placeholder="e.g. meta-llama/llama-3.3-70b-instruct"
-                      value={customModelIdInput}
-                      onChange={(e) => setCustomModelIdInput(e.target.value)}
-                      className="w-full px-3 py-2 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
-                    />
-                    <p className="text-[10px] text-tj-text-muted">
-                      Specify any valid OpenRouter model ID slug.
-                    </p>
+                {/* 2. Glossary Generation Model */}
+                <div className="space-y-1.5 pt-1 border-t border-tj-border-main/50">
+                  <label className="block text-[11px] font-semibold text-tj-text-main">
+                    Glossary Generation Model
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={selectedGlossaryModelOption}
+                      onChange={(e) => setSelectedGlossaryModelOption(e.target.value)}
+                      className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
+                    >
+                      {FRONTIER_LATEST_MODELS.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name} ({m.id})
+                        </option>
+                      ))}
+                      <option value="custom">
+                        ⚙️ Enter Custom OpenRouter Model ID...
+                      </option>
+                    </select>
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-tj-text-muted pointer-events-none" />
                   </div>
-                )}
+                  {selectedGlossaryModelOption === 'custom' && (
+                    <div className="space-y-1 pt-1">
+                      <input
+                        type="text"
+                        placeholder="e.g. deepseek/deepseek-v4-flash"
+                        value={customGlossaryModelIdInput}
+                        onChange={(e) => setCustomGlossaryModelIdInput(e.target.value)}
+                        className="w-full px-3 py-2 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
+                      />
+                      <p className="text-[10px] text-tj-text-muted">
+                        Specify any valid OpenRouter model ID slug.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* 3. Word Translation Model */}
+                <div className="space-y-1.5 pt-1 border-t border-tj-border-main/50">
+                  <label className="block text-[11px] font-semibold text-tj-text-main">
+                    Word Translation Model
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={selectedTranslationModelOption}
+                      onChange={(e) => setSelectedTranslationModelOption(e.target.value)}
+                      className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
+                    >
+                      {FRONTIER_LATEST_MODELS.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name} ({m.id})
+                        </option>
+                      ))}
+                      <option value="custom">
+                        ⚙️ Enter Custom OpenRouter Model ID...
+                      </option>
+                    </select>
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-tj-text-muted pointer-events-none" />
+                  </div>
+                  {selectedTranslationModelOption === 'custom' && (
+                    <div className="space-y-1 pt-1">
+                      <input
+                        type="text"
+                        placeholder="e.g. deepseek/deepseek-v4-flash"
+                        value={customTranslationModelIdInput}
+                        onChange={(e) => setCustomTranslationModelIdInput(e.target.value)}
+                        className="w-full px-3 py-2 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
+                      />
+                      <p className="text-[10px] text-tj-text-muted">
+                        Specify any valid OpenRouter model ID slug.
+                      </p>
+                    </div>
+                  )}
+                </div>
 
                 {/* JSON Support & Credit Loss Warning */}
                 <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-700 dark:text-amber-300 text-[11px] space-y-1">
@@ -368,11 +491,11 @@ export default function SettingsModal({
                   <div className="p-3 bg-tj-bg-recessed rounded-lg border border-tj-border-main text-[11px] space-y-1">
                     <div className="flex items-center gap-1.5 font-semibold text-tj-text-main">
                       <Info className="w-3.5 h-3.5 text-tj-primary shrink-0" />
-                      <span>Estimated OpenRouter Usage Cost</span>
+                      <span>Estimated Story Generation Cost</span>
                     </div>
                     <p className="text-[10px] text-tj-text-muted leading-normal">
                       A standard 10-chapter story (~25,000 total tokens) using{' '}
-                      <strong>{activeModelId}</strong> will cost approximately{' '}
+                      <strong>{activeStoryModelId}</strong> will cost approximately{' '}
                       <strong className="text-tj-text-main">
                         $
                         {baselineEst.totalEstimatedCost < 0.01
@@ -386,7 +509,7 @@ export default function SettingsModal({
                     </p>
                   </div>
                 )}
-              </>
+              </div>
             )}
           </div>
 
@@ -402,14 +525,11 @@ export default function SettingsModal({
             </div>
 
             <div className="flex items-center gap-2">
-              {customOpenRouterKey && (
+              {hasApiKey && (
                 <button
                   type="button"
                   onClick={() => {
-                    const openrouterInput = document.getElementById(
-                      'custom-openrouter-key-input',
-                    ) as HTMLInputElement;
-                    if (openrouterInput) openrouterInput.value = '';
+                    setApiKeyInput('');
                     handleSaveCustomOpenRouterKey('');
                     setKeyTestResult({
                       success: true,
@@ -425,15 +545,15 @@ export default function SettingsModal({
               <button
                 type="button"
                 onClick={() => {
-                  const openrouterVal =
-                    (
-                      document.getElementById(
-                        'custom-openrouter-key-input',
-                      ) as HTMLInputElement
-                    )?.value || '';
-                  handleSaveCustomOpenRouterKey(openrouterVal);
-                  if (activeModelId) {
-                    setDefaultStoryModel(activeModelId);
+                  handleSaveCustomOpenRouterKey(apiKeyInput.trim());
+                  if (activeStoryModelId) {
+                    setDefaultStoryModel(activeStoryModelId);
+                  }
+                  if (activeGlossaryModelId) {
+                    setDefaultGlossaryModel(activeGlossaryModelId);
+                  }
+                  if (activeTranslationModelId) {
+                    setDefaultTranslationModel(activeTranslationModelId);
                   }
                   onClose();
                 }}
