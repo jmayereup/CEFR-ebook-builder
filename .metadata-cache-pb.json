@@ -1,6 +1,66 @@
 {
-  "lastFetchTime": 1785208467986,
+  "lastFetchTime": 1785298359101,
   "stories": [
+    {
+      "id": "swpnhov9hdwhrqg",
+      "title": "ปริศนาซอยลูกหมาด",
+      "language": "Thai",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "mystery",
+      "totalChapters": 10,
+      "createdAt": "2026-07-28T06:13:21.351Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 3624,
+      "updated": "2026-07-28 09:01:02.984Z"
+    },
+    {
+      "id": "slpt35nsqqmqej4",
+      "title": "The Mystery of Soi Luk Mat",
+      "language": "English",
+      "translationLanguage": "Thai",
+      "cefrLevel": "B1",
+      "genre": "mystery",
+      "totalChapters": 10,
+      "createdAt": "2026-07-28T06:08:33.710Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 3249,
+      "updated": "2026-07-28 07:47:11.908Z"
+    },
+    {
+      "id": "sj9yy205mqo1w8i",
+      "title": "บ้านริมน้ำ: การผจญภัยของต้น",
+      "language": "Thai",
+      "translationLanguage": "Thai",
+      "cefrLevel": "B1",
+      "genre": "adventure",
+      "totalChapters": 10,
+      "createdAt": "2026-07-28T05:20:09.004Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 5082,
+      "updated": "2026-07-28 10:18:55.203Z"
+    },
     {
       "id": "swqshb41rsszif6",
       "title": "Monom the Monkey in Chachoengsao",
@@ -16,6 +76,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5907,
       "updated": "2026-07-27 13:05:00.152Z"
@@ -35,28 +96,10 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 11224,
       "updated": "2026-07-27 12:53:27.083Z"
-    },
-    {
-      "id": "s4k4xe9g0wrlba2",
-      "title": "โปรโตคอลคอนเวอร์เจนซ์",
-      "language": "Thai",
-      "translationLanguage": "English",
-      "cefrLevel": "B1",
-      "genre": "scifi",
-      "totalChapters": 20,
-      "createdAt": "2026-07-27T06:42:31.060Z",
-      "isCompleted": true,
-      "creatorId": "kjksljovpk623jy",
-      "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "totalReads": 0,
-      "isPublic": true,
-      "chaptersCount": 20,
-      "wordCount": 9167,
-      "updated": "2026-07-27 06:54:49.084Z"
     },
     {
       "id": "sjr4w0f5hmgkjn0",
@@ -73,6 +116,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 7758,
       "updated": "2026-07-27 05:07:59.944Z"
@@ -92,6 +136,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 9,
       "wordCount": 3994,
       "updated": "2026-07-27 02:41:17.287Z"
@@ -111,6 +156,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 9,
       "wordCount": 2879,
       "updated": "2026-07-26 23:48:52.947Z"
@@ -130,6 +176,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 12,
       "wordCount": 5008,
       "updated": "2026-07-27 11:46:56.701Z"
@@ -151,6 +198,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6223,
       "updated": "2026-07-27 02:54:22.990Z"
@@ -170,6 +218,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2332,
       "updated": "2026-07-26 08:51:51.068Z"
@@ -189,6 +238,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2437,
       "updated": "2026-07-25 13:44:43.063Z"
@@ -207,11 +257,10 @@
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3235,
-      "description": "A simple, informative book for beginner Spanish learners. Each chapter introduces a famous Spanish speaker—from Pope Francis to artists and athletes—using clear, repetitive language to build vocabulary. Discover their countries, professions, and what makes them special while practicing basic Spanish reading skills.",
       "updated": "2026-07-25 09:06:12.586Z"
     },
     {
@@ -229,6 +278,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 830,
       "updated": "2026-07-25 09:07:14.349Z"
@@ -248,6 +298,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 7293,
       "updated": "2026-07-23 13:14:19.455Z"
@@ -267,6 +318,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6107,
       "updated": "2026-07-24 17:34:40.431Z"
@@ -286,6 +338,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 10398,
       "updated": "2026-07-20 14:15:54.769Z"
@@ -305,6 +358,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 9265,
       "updated": "2026-07-20 13:56:46.756Z"
@@ -324,6 +378,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3619,
       "updated": "2026-07-19 21:38:05.639Z"
@@ -345,6 +400,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4509,
       "updated": "2026-07-25 00:32:14.817Z"
@@ -364,6 +420,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 9845,
       "updated": "2026-07-19 15:34:42.071Z"
@@ -385,6 +442,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 4011,
       "updated": "2026-07-24 13:47:52.099Z"
@@ -404,6 +462,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6592,
       "updated": "2026-07-18 07:53:43.456Z"
@@ -423,6 +482,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6756,
       "updated": "2026-07-18 07:20:55.003Z"
@@ -442,6 +502,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 8269,
       "updated": "2026-07-17 22:02:32.714Z"
@@ -463,6 +524,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5665,
       "updated": "2026-07-20 23:26:14.114Z"
@@ -482,6 +544,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3534,
       "updated": "2026-07-17 06:07:59.293Z"
@@ -503,6 +566,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4937,
       "updated": "2026-07-22 13:12:12.764Z"
@@ -522,6 +586,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2517,
       "updated": "2026-07-16 12:02:51.899Z"
@@ -543,6 +608,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2151,
       "updated": "2026-07-16 11:23:20.978Z"
@@ -564,6 +630,7 @@
       },
       "totalReads": 2,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4467,
       "updated": "2026-07-28 00:02:51.982Z"
@@ -585,9 +652,10 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1695,
-      "updated": "2026-07-15 14:15:50.845Z"
+      "updated": "2026-07-28 11:58:10.415Z"
     },
     {
       "id": "s36vz9hlo592any",
@@ -604,6 +672,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2510,
       "updated": "2026-07-14 11:45:08.613Z"
@@ -623,6 +692,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1528,
       "updated": "2026-07-14 07:41:16.279Z"
@@ -642,9 +712,10 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4091,
-      "updated": "2026-07-14 05:09:09.278Z"
+      "updated": "2026-07-28 11:56:53.904Z"
     },
     {
       "id": "scbhg68s827mf8d",
@@ -663,6 +734,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1732,
       "updated": "2026-07-14 11:10:03.909Z"
@@ -684,6 +756,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2525,
       "updated": "2026-07-14 10:36:25.499Z"
@@ -703,6 +776,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2500,
       "updated": "2026-07-16 11:04:07.248Z"
@@ -724,6 +798,7 @@
       },
       "totalReads": 2,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1381,
       "updated": "2026-07-13 10:28:03.770Z"
@@ -743,6 +818,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1811,
       "updated": "2026-07-08 07:06:38.066Z"
@@ -764,6 +840,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1696,
       "updated": "2026-07-17 11:04:52.864Z"
@@ -783,6 +860,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2118,
       "updated": "2026-07-08 05:10:45.113Z"
@@ -802,6 +880,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3254,
       "updated": "2026-07-07 23:56:58.373Z"
@@ -821,6 +900,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3434,
       "updated": "2026-07-07 14:22:38.540Z"
@@ -840,6 +920,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5848,
       "updated": "2026-07-07 00:41:22.041Z"
@@ -861,6 +942,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1641,
       "updated": "2026-07-05 22:50:18.231Z"
@@ -882,6 +964,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4827,
       "updated": "2026-07-06 23:43:50.161Z"
@@ -901,6 +984,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 10839,
       "updated": "2026-07-01 12:00:05.408Z"
@@ -920,6 +1004,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2504,
       "updated": "2026-06-29 05:43:29.078Z"
@@ -939,6 +1024,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2036,
       "updated": "2026-07-16 09:55:01.263Z"
@@ -960,6 +1046,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 7633,
       "updated": "2026-07-20 23:25:38.441Z"
@@ -981,6 +1068,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2848,
       "updated": "2026-06-29 10:57:23.308Z"
@@ -1000,6 +1088,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 6172,
       "updated": "2026-07-04 02:08:36.797Z"
@@ -1021,6 +1110,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1333,
       "updated": "2026-07-02 21:13:25.799Z"
@@ -1042,6 +1132,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1721,
       "updated": "2026-06-29 02:14:59.820Z"
@@ -1061,6 +1152,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 780,
       "updated": "2026-06-29 02:14:59.888Z"
@@ -1082,6 +1174,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2019,
       "updated": "2026-06-29 02:14:59.949Z"
@@ -1103,6 +1196,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1908,
       "updated": "2026-06-29 02:15:00.013Z"
@@ -1124,6 +1218,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1998,
       "updated": "2026-07-01 13:08:59.195Z"
@@ -1145,6 +1240,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2471,
       "updated": "2026-06-29 02:15:00.141Z"
@@ -1166,6 +1262,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2356,
       "updated": "2026-06-29 02:15:00.211Z"
@@ -1185,6 +1282,7 @@
       "ratings": null,
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2431,
       "updated": "2026-06-29 02:15:00.277Z"
@@ -1206,6 +1304,7 @@
       },
       "totalReads": 2,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 3178,
       "updated": "2026-06-29 08:31:54.048Z"
@@ -1225,6 +1324,7 @@
       "ratings": null,
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3086,
       "updated": "2026-06-29 02:15:01.726Z"
@@ -1244,6 +1344,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4413,
       "updated": "2026-06-29 02:15:01.947Z"
@@ -1263,6 +1364,7 @@
       "ratings": null,
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4786,
       "updated": "2026-06-29 02:15:02.166Z"
@@ -1284,6 +1386,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4616,
       "updated": "2026-06-29 02:15:02.397Z"
@@ -1305,6 +1408,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1706,
       "updated": "2026-06-29 02:15:02.606Z"
@@ -1326,6 +1430,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 4,
       "wordCount": 1476,
       "updated": "2026-07-11 23:43:52.398Z"
@@ -1347,6 +1452,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2114,
       "updated": "2026-06-29 02:15:02.812Z"
@@ -1368,6 +1474,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4190,
       "updated": "2026-06-30 22:46:25.697Z"
@@ -1387,6 +1494,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5138,
       "updated": "2026-06-29 02:15:03.068Z"
@@ -1406,6 +1514,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 12586,
       "updated": "2026-07-16 09:57:39.481Z"
@@ -1427,6 +1536,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 3255,
       "updated": "2026-06-29 02:15:03.386Z"
@@ -1446,6 +1556,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1717,
       "updated": "2026-06-29 02:15:03.501Z"
@@ -1465,6 +1576,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 4224,
       "updated": "2026-06-29 02:15:03.780Z"
@@ -1486,6 +1598,7 @@
       },
       "totalReads": 1,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1886,
       "updated": "2026-06-29 02:15:04.001Z"
@@ -1507,6 +1620,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2083,
       "updated": "2026-06-29 02:15:03.613Z"
@@ -1528,6 +1642,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2182,
       "updated": "2026-06-29 02:15:07.334Z"
@@ -1547,6 +1662,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2202,
       "updated": "2026-06-29 02:15:04.613Z"
@@ -1568,6 +1684,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1774,
       "updated": "2026-07-16 10:05:38.022Z"
@@ -1587,6 +1704,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2766,
       "updated": "2026-06-29 08:41:18.524Z"
@@ -1608,6 +1726,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1435,
       "updated": "2026-06-29 02:15:05.227Z"
@@ -1629,6 +1748,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2545,
       "updated": "2026-06-29 02:15:05.456Z"
@@ -1648,6 +1768,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 14470,
       "updated": "2026-06-27 04:47:35.299Z"
@@ -1667,6 +1788,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 12666,
       "updated": "2026-06-27 04:47:46.001Z"
@@ -1686,6 +1808,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3731,
       "updated": "2026-06-29 02:15:05.114Z"
@@ -1705,6 +1828,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4483,
       "updated": "2026-06-29 02:15:07.533Z"
@@ -1726,6 +1850,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 11124,
       "updated": "2026-06-29 02:15:06.096Z"
@@ -1745,6 +1870,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 8456,
       "updated": "2026-07-17 23:39:28.528Z"
@@ -1764,6 +1890,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2431,
       "updated": "2026-06-29 02:15:04.540Z"
@@ -1783,6 +1910,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 1729,
       "updated": "2026-06-27 04:47:48.375Z"
@@ -1802,6 +1930,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 4573,
       "updated": "2026-07-17 23:01:47.821Z"
@@ -1821,6 +1950,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 2982,
       "updated": "2026-06-27 04:47:33.231Z"
@@ -1840,9 +1970,10 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 2947,
-      "updated": "2026-06-27 04:47:38.545Z"
+      "updated": "2026-07-28 04:35:50.574Z"
     },
     {
       "id": "story1780967383095",
@@ -1859,6 +1990,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1849,
       "updated": "2026-06-29 08:41:18.527Z"
@@ -1878,6 +2010,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2463,
       "updated": "2026-06-29 02:15:07.689Z"
@@ -1897,6 +2030,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 3982,
       "updated": "2026-06-27 04:47:35.226Z"
@@ -1916,6 +2050,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1985,
       "updated": "2026-06-27 04:47:43.867Z"
@@ -1935,6 +2070,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1672,
       "updated": "2026-06-27 04:47:49.603Z"
@@ -1954,6 +2090,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2424,
       "updated": "2026-06-27 04:47:43.460Z"
@@ -1973,6 +2110,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3337,
       "updated": "2026-07-17 23:19:56.334Z"
@@ -1992,6 +2130,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2126,
       "updated": "2026-06-27 04:47:45.590Z"
@@ -2011,6 +2150,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4999,
       "updated": "2026-06-29 02:15:05.291Z"
@@ -2030,6 +2170,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1486,
       "updated": "2026-07-17 23:02:45.391Z"
@@ -2049,6 +2190,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4441,
       "updated": "2026-06-29 02:15:05.373Z"
@@ -2068,6 +2210,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4777,
       "updated": "2026-06-29 02:15:08.253Z"
@@ -2087,6 +2230,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5168,
       "updated": "2026-06-29 02:15:09.308Z"
@@ -2106,6 +2250,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 833,
       "updated": "2026-06-29 02:15:06.347Z"
@@ -2125,6 +2270,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1259,
       "updated": "2026-07-17 23:30:53.905Z"
@@ -2144,6 +2290,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 889,
       "updated": "2026-07-17 23:29:30.760Z"
@@ -2163,6 +2310,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1027,
       "updated": "2026-06-27 04:47:45.093Z"
@@ -2182,6 +2330,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 945,
       "updated": "2026-06-27 04:47:34.855Z"
@@ -2201,6 +2350,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1285,
       "updated": "2026-06-27 04:47:34.445Z"
@@ -2220,6 +2370,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1290,
       "updated": "2026-06-27 04:47:46.106Z"
@@ -2239,6 +2390,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 837,
       "updated": "2026-06-27 04:47:39.617Z"
@@ -2258,6 +2410,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1119,
       "updated": "2026-07-17 23:32:37.850Z"
@@ -2277,6 +2430,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3610,
       "updated": "2026-07-17 23:34:20.713Z"
@@ -2298,6 +2452,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5546,
       "updated": "2026-06-29 02:15:06.601Z"
@@ -2317,6 +2472,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1645,
       "updated": "2026-06-29 02:15:06.445Z"
@@ -2336,6 +2492,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2460,
       "updated": "2026-06-27 04:47:35.067Z"
@@ -2355,6 +2512,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1220,
       "updated": "2026-06-29 08:41:18.529Z"
@@ -2374,6 +2532,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 878,
       "updated": "2026-06-29 08:41:18.528Z"
@@ -2393,6 +2552,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4005,
       "updated": "2026-06-29 02:15:05.888Z"
@@ -2412,6 +2572,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6725,
       "updated": "2026-06-29 02:15:07.184Z"
@@ -2433,6 +2594,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5571,
       "updated": "2026-06-29 02:15:04.309Z"
@@ -2452,6 +2614,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5347,
       "updated": "2026-06-29 02:15:08.471Z"
@@ -2471,6 +2634,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3433,
       "updated": "2026-06-27 04:47:32.319Z"
@@ -2490,6 +2654,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4261,
       "updated": "2026-06-27 04:47:42.638Z"
@@ -2511,6 +2676,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3228,
       "updated": "2026-06-29 02:15:04.686Z"
@@ -2530,6 +2696,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 908,
       "updated": "2026-07-17 23:31:36.498Z"
@@ -2551,6 +2718,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 8828,
       "updated": "2026-06-27 04:47:46.742Z"
@@ -2570,6 +2738,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 764,
       "updated": "2026-06-27 04:47:44.685Z"
@@ -2589,6 +2758,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 581,
       "updated": "2026-06-27 04:47:36.087Z"
@@ -2608,6 +2778,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 9900,
       "updated": "2026-06-29 02:15:04.418Z"
@@ -2627,6 +2798,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 575,
       "updated": "2026-07-17 23:33:12.855Z"
@@ -2648,6 +2820,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 25,
       "wordCount": 10771,
       "updated": "2026-06-29 02:15:04.884Z"
@@ -2667,9 +2840,10 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 971,
-      "updated": "2026-06-29 02:15:08.772Z"
+      "updated": "2026-07-28 11:59:48.814Z"
     },
     {
       "id": "story1780394444588",
@@ -2686,6 +2860,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 898,
       "updated": "2026-06-29 02:15:08.979Z"
@@ -2705,6 +2880,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2213,
       "updated": "2026-06-29 02:15:09.136Z"
@@ -2724,6 +2900,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1257,
       "updated": "2026-07-17 23:52:00.777Z"
@@ -2745,30 +2922,10 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3727,
       "updated": "2026-06-29 02:15:07.098Z"
-    },
-    {
-      "id": "story1780376901756",
-      "title": "ความลับที่ซ่อนหลังดวงจันทร์",
-      "language": "Thai",
-      "translationLanguage": "English",
-      "cefrLevel": "B2",
-      "genre": "scifi",
-      "totalChapters": 10,
-      "createdAt": "2026-06-02T05:08:21.756Z",
-      "isCompleted": true,
-      "creatorId": "kjksljovpk623jy",
-      "model": "deepseek-v4-flash",
-      "ratings": {
-        "AjHTbotMo4fgCU0XdHOyzf4R2c83": 3
-      },
-      "totalReads": 0,
-      "isPublic": true,
-      "chaptersCount": 10,
-      "wordCount": 3193,
-      "updated": "2026-06-29 02:15:05.682Z"
     },
     {
       "id": "story1780374705838",
@@ -2785,6 +2942,7 @@
       "ratings": null,
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3981,
       "updated": "2026-06-29 02:15:08.638Z"
@@ -2806,9 +2964,10 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1663,
-      "updated": "2026-06-29 02:15:09.456Z"
+      "updated": "2026-07-28 12:00:33.424Z"
     },
     {
       "id": "story1780321046992",
@@ -2827,6 +2986,7 @@
       },
       "totalReads": 0,
       "isPublic": true,
+      "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4422,
       "updated": "2026-06-29 02:15:05.015Z"

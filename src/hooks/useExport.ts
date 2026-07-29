@@ -53,7 +53,7 @@ export function useExport(options: UseExportOptions) {
     if (selectedStory.copyrightFlag === true) return;
     const slug = slugify(selectedStory.title);
     const slugSegment = slug ? `${slug}-${selectedStory.id}` : selectedStory.id;
-    const url = `${window.location.origin}/book/${slugSegment}/chapter/${activeChapterIdx + 1}`;
+    const url = `${window.location.origin}/book/${slugSegment}/chapter/${activeChapterIdx + 1}?openExternalBrowser=1`;
     navigator.clipboard.writeText(url).then(() => {
       setShowShareToast(true);
       setTimeout(() => setShowShareToast(false), 3000);
