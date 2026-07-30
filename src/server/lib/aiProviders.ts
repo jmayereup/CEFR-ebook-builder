@@ -94,7 +94,7 @@ export async function callOpenRouter(options: {
     }
     let promptText = options.prompt ?? '';
     if (options.responseSchema) {
-      promptText += `\n\nIMPORTANT: You MUST respond with a JSON object that strictly conforms to the following JSON schema:\n${JSON.stringify(options.responseSchema, null, 2)}\nOnly return the raw JSON object. Do NOT wrap it in markdown code blocks or provide any extra explanation outside the JSON.`;
+      promptText += `\n\nIMPORTANT: You MUST respond with a JSON object that strictly conforms to the following JSON schema:\n${JSON.stringify(options.responseSchema, null, 2)}\nOnly return the raw JSON object containing the property keys directly. Do NOT wrap your response in top-level "type" or "properties" schema keys, and do NOT wrap it in markdown code blocks.`;
     }
     messages.push({ role: 'user', content: promptText });
   } else if (options.responseSchema) {
@@ -102,7 +102,7 @@ export async function callOpenRouter(options: {
       (last, m, idx) => (m.role === 'user' ? idx : last),
       -1,
     );
-    const schemaNotice = `\n\nIMPORTANT: You MUST respond with a JSON object that strictly conforms to the following JSON schema:\n${JSON.stringify(options.responseSchema, null, 2)}\nOnly return the raw JSON object. Do NOT wrap it in markdown code blocks or provide any extra explanation outside the JSON.`;
+    const schemaNotice = `\n\nIMPORTANT: You MUST respond with a JSON object that strictly conforms to the following JSON schema:\n${JSON.stringify(options.responseSchema, null, 2)}\nOnly return the raw JSON object containing the property keys directly. Do NOT wrap your response in top-level "type" or "properties" schema keys, and do NOT wrap it in markdown code blocks.`;
     if (lastUserMsgIdx !== -1) {
       messages[lastUserMsgIdx].content += schemaNotice;
     } else {
@@ -368,9 +368,13 @@ function sanitizeJSONControlChars(str: string): string {
   return result;
 }
 
-/** Strips markdown code fences, preambles, postscripts, escapes control chars inside strings, and extracts valid JSON object/array. */
+/** Strips markdown code fences, preambles, postscripts, escapes control chars inside strings, repairs truncated JSON, and extracts valid JSON. */
 export function cleanJSONString(str: string): string {
   if (!str) return '{}';
+  return unwrapSchemaWrapper(extractAndSanitizeJSON(str));
+}
+
+function extractAndSanitizeJSON(str: string): string {
   let cleaned = str.trim();
 
   // 1. Direct JSON parse check
@@ -408,21 +412,23 @@ export function cleanJSONString(str: string): string {
     }
   }
 
-  // 3. Extract JSON object or array by finding balanced braces/brackets
+  // 3. Extract JSON object or array by finding balanced or starting braces/brackets
   const firstBrace = cleaned.indexOf('{');
   const firstBracket = cleaned.indexOf('[');
 
   let candidate: string | null = null;
   if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
     const lastBrace = cleaned.lastIndexOf('}');
-    if (lastBrace > firstBrace) {
-      candidate = cleaned.substring(firstBrace, lastBrace + 1);
-    }
+    candidate =
+      lastBrace > firstBrace
+        ? cleaned.substring(firstBrace, lastBrace + 1)
+        : cleaned.substring(firstBrace);
   } else if (firstBracket !== -1) {
     const lastBracket = cleaned.lastIndexOf(']');
-    if (lastBracket > firstBracket) {
-      candidate = cleaned.substring(firstBracket, lastBracket + 1);
-    }
+    candidate =
+      lastBracket > firstBracket
+        ? cleaned.substring(firstBracket, lastBracket + 1)
+        : cleaned.substring(firstBracket);
   }
 
   if (candidate) {
@@ -435,32 +441,189 @@ export function cleanJSONString(str: string): string {
         JSON.parse(sanitizedCand);
         return sanitizedCand;
       } catch {
-        // If outer bounds failed because of extra braces in preamble/postscript, search for inner JSON
-        const innerMatch = candidate.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
-        if (innerMatch) {
-          const subCandidate = innerMatch[1];
-          try {
-            JSON.parse(subCandidate);
-            return subCandidate;
-          } catch {
-            const sanitizedSub = sanitizeJSONControlChars(subCandidate);
+        // Attempt truncated JSON repair on candidate
+        const repairedCand = repairTruncatedJSON(sanitizedCand);
+        try {
+          JSON.parse(repairedCand);
+          return repairedCand;
+        } catch {
+          // search for inner JSON block
+          const innerMatch = candidate.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+          if (innerMatch) {
+            const subCandidate = innerMatch[1];
             try {
-              JSON.parse(sanitizedSub);
-              return sanitizedSub;
+              JSON.parse(subCandidate);
+              return subCandidate;
             } catch {
-              // ignore
+              const sanitizedSub = sanitizeJSONControlChars(subCandidate);
+              try {
+                JSON.parse(sanitizedSub);
+                return sanitizedSub;
+              } catch {
+                // ignore
+              }
             }
           }
         }
-        return sanitizedCand;
       }
     }
   }
 
-  // Fallback: strip any remaining backticks
+  // Fallback: strip any remaining backticks, sanitize control chars, and attempt repair
   cleaned = cleaned
     .replace(/^```(?:json)?/i, '')
     .replace(/```$/, '')
     .trim();
-  return sanitizeJSONControlChars(cleaned);
+  const finalJson = sanitizeJSONControlChars(cleaned);
+
+  try {
+    JSON.parse(finalJson);
+    return finalJson;
+  } catch {
+    const repairedFallback = repairTruncatedJSON(finalJson);
+    try {
+      JSON.parse(repairedFallback);
+      return repairedFallback;
+    } catch {
+      return finalJson;
+    }
+  }
+}
+
+/** If an LLM returns a meta-schema wrapper or container wrapper, unwrap it. */
+function unwrapSchemaWrapper(jsonStr: string): string {
+  try {
+    let parsed = JSON.parse(jsonStr);
+
+    // 1. Unwrap 1-element array wrappers: [{ ... }] -> { ... }
+    if (
+      Array.isArray(parsed) &&
+      parsed.length === 1 &&
+      typeof parsed[0] === 'object' &&
+      parsed[0] !== null &&
+      !Array.isArray(parsed[0])
+    ) {
+      parsed = parsed[0];
+    }
+
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      // 2. Unwrap schema meta-wrapper: { type: "OBJECT", properties: { ... } }
+      if (
+        (parsed.type === 'OBJECT' || parsed.type === 'object') &&
+        parsed.properties &&
+        typeof parsed.properties === 'object' &&
+        parsed.properties !== null &&
+        !Array.isArray(parsed.properties)
+      ) {
+        return JSON.stringify(parsed.properties);
+      }
+
+      // 3. Unwrap single container keys: { data: { ... } } or { result: { ... } }
+      const keys = Object.keys(parsed);
+      if (
+        keys.length === 1 &&
+        ['data', 'result', 'response', 'output', 'json'].includes(
+          keys[0].toLowerCase(),
+        )
+      ) {
+        const inner = parsed[keys[0]];
+        if (inner && typeof inner === 'object' && inner !== null) {
+          return JSON.stringify(normalizeObjectKeys(inner));
+        }
+      }
+
+      return JSON.stringify(normalizeObjectKeys(parsed));
+    }
+    if (Array.isArray(parsed)) {
+      return JSON.stringify(normalizeObjectKeys(parsed));
+    }
+  } catch {
+    // ignore
+  }
+  return jsonStr;
+}
+
+function toCamelCase(str: string): string {
+  return str.replace(/([-_][a-z])/gi, (group) =>
+    group.toUpperCase().replace('-', '').replace('_', ''),
+  );
+}
+
+/** Recursively normalizes keys (snake_case, PascalCase) to also provide camelCase fallbacks. */
+function normalizeObjectKeys(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(normalizeObjectKeys);
+  } else if (obj !== null && typeof obj === 'object') {
+    const newObj: Record<string, any> = {};
+    for (const key of Object.keys(obj)) {
+      const val = normalizeObjectKeys(obj[key]);
+      newObj[key] = val;
+
+      // Convert snake_case or PascalCase key to camelCase fallback
+      const camel = toCamelCase(key);
+      const lowerCamel = camel.charAt(0).toLowerCase() + camel.slice(1);
+      if (!(lowerCamel in newObj)) {
+        newObj[lowerCamel] = val;
+      }
+    }
+    return newObj;
+  }
+  return obj;
+}
+
+/** Auto-closes open string literals, arrays, and objects when JSON is truncated. */
+function repairTruncatedJSON(jsonStr: string): string {
+  let str = jsonStr.trim();
+  if (!str) return '{}';
+
+  let inString = false;
+  let isEscaped = false;
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (inString) {
+      if (isEscaped) {
+        isEscaped = false;
+      } else if (char === '\\') {
+        isEscaped = true;
+      } else if (char === '"') {
+        inString = false;
+      }
+    } else if (char === '"') {
+      inString = true;
+    }
+  }
+
+  if (inString) {
+    str += '"';
+  }
+
+  const stack: string[] = [];
+  inString = false;
+  isEscaped = false;
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (inString) {
+      if (isEscaped) isEscaped = false;
+      else if (char === '\\') isEscaped = true;
+      else if (char === '"') inString = false;
+    } else {
+      if (char === '"') inString = true;
+      else if (char === '{' || char === '[') stack.push(char);
+      else if (char === '}' || char === ']') {
+        const top = stack[stack.length - 1];
+        if ((char === '}' && top === '{') || (char === ']' && top === '[')) {
+          stack.pop();
+        }
+      }
+    }
+  }
+
+  while (stack.length > 0) {
+    const opening = stack.pop();
+    if (opening === '{') str += '}';
+    else if (opening === '[') str += ']';
+  }
+
+  return str;
 }
