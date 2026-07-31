@@ -13,7 +13,10 @@
  */
 
 import { Router } from 'express';
+import PocketBaseClass from 'pocketbase';
 import { cleanJSONString, handleModelCall, Type } from '../lib/aiProviders';
+
+const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
 const router = Router();
 
@@ -60,6 +63,7 @@ router.post('/', async (req, res) => {
   let headersSent = false;
   try {
     const {
+      storyId,
       // Single-chapter mode
       content,
       // Batch mode
@@ -73,6 +77,7 @@ router.post('/', async (req, res) => {
       model,
       translationLanguage,
     } = req.body as {
+      storyId?: string;
       content?: string;
       chapters?: Array<{ chapterNumber: number; content: string }>;
       language?: string;
@@ -258,15 +263,63 @@ Extract 5 to 10 vocabulary terms/phrases that are relevant, interesting, or chal
 
     const parsedData = JSON.parse(cleanJSONString(responseText || '{}'));
 
-    if (!headersSent) {
-      res.writeHead(200, {
-        'Content-Type': 'application/json',
-        'Transfer-Encoding': 'chunked',
-      });
-      headersSent = true;
+    if (storyId) {
+      const pbUrl = process.env.VITE_POCKETBASE_URL;
+      const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
+      const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
+      if (pbUrl && adminEmail && adminPassword) {
+        try {
+          const pb = new PocketBase(pbUrl);
+          if (typeof (pb as any).admins !== 'undefined') {
+            await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
+          } else {
+            await pb
+              .collection('_superusers')
+              .authWithPassword(adminEmail, adminPassword);
+          }
+          const existing = await pb
+            .collection('stories')
+            .getOne(storyId)
+            .catch(() => null);
+          if (existing && Array.isArray(existing.chapters)) {
+            const chapterVocabulary = parsedData.chapterVocabulary || {};
+            const updatedChapters = existing.chapters.map((ch: any) => {
+              const vocab =
+                chapterVocabulary[ch.chapterNumber] ||
+                (!isBatchMode ? parsedData.vocabulary : undefined);
+              if (vocab) {
+                return { ...ch, vocabulary: vocab };
+              }
+              return ch;
+            });
+            await pb.collection('stories').update(storyId, {
+              chapters: updatedChapters,
+            });
+          }
+        } catch (pbErr) {
+          console.warn(
+            '[Server Autosave Glossary] PocketBase update failed:',
+            pbErr,
+          );
+        }
+      }
     }
-    res.write(JSON.stringify(parsedData));
-    res.end();
+
+    try {
+      if (!headersSent) {
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+          'Transfer-Encoding': 'chunked',
+        });
+        headersSent = true;
+      }
+      res.write(JSON.stringify(parsedData));
+      res.end();
+    } catch (writeErr) {
+      console.log(
+        '[Server Autosave Glossary] Client disconnected before response write, but PocketBase save completed successfully.',
+      );
+    }
   } catch (error: unknown) {
     const e = error as { message?: string };
     console.error('Error generating glossary:', error);

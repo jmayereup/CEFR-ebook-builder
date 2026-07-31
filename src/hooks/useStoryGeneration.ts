@@ -341,6 +341,7 @@ export const useStoryGeneration = (
     const signal = abortControllerRef.current.signal;
 
     try {
+      const newStoryId = generatePocketBaseId();
       const headers = buildApiHeaders(customOpenRouterKey);
 
       const response = await fetchWithRetry(
@@ -349,6 +350,7 @@ export const useStoryGeneration = (
           method: 'POST',
           headers,
           body: JSON.stringify({
+            storyId: newStoryId,
             language: config.language,
             cefrLevel: config.cefrLevel,
             genre: config.genre,
@@ -417,7 +419,6 @@ export const useStoryGeneration = (
         'Saving drafted story to database...',
       ]);
 
-      const newStoryId = generatePocketBaseId();
       const initialChapters: Chapter[] = (data.chapters ?? [])
         .map((ch: any) =>
           sanitizeChapter({
@@ -553,6 +554,7 @@ export const useStoryGeneration = (
           method: 'POST',
           headers,
           body: JSON.stringify({
+            storyId: maintenanceStory.id,
             language: maintenanceStory.language,
             cefrLevel: maintenanceStory.cefrLevel,
             genre: maintenanceStory.genre,
@@ -719,6 +721,7 @@ export const useStoryGeneration = (
           method: 'POST',
           headers,
           body: JSON.stringify({
+            storyId: selectedStory.id,
             language: selectedStory.language,
             cefrLevel: selectedStory.cefrLevel,
             genre: selectedStory.genre,
@@ -938,6 +941,7 @@ export const useStoryGeneration = (
             method: 'POST',
             headers,
             body: JSON.stringify({
+              storyId: activeStory.id,
               language: activeStory.language,
               cefrLevel: activeStory.cefrLevel,
               genre: activeStory.genre,
@@ -1130,6 +1134,7 @@ export const useStoryGeneration = (
         headers: { ...headers, 'Content-Type': 'application/json' },
         signal,
         body: JSON.stringify({
+          storyId: story.id,
           chapters: chaptersNeedingGlossary.map((ch) => ({
             chapterNumber: ch.chapterNumber,
             content: ch.content,

@@ -322,6 +322,125 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     }
   }, [currentUser]);
 
+  const handleAutoSaveGeneratedStory = async (
+    story: Story,
+    isNewStory: boolean = false,
+  ) => {
+    const cleaned = cleanCompletedStory(story);
+    let sanitizedId = cleaned.id;
+    const isValidPocketBaseId = /^[a-z0-9]{15,50}$/.test(sanitizedId);
+    if (!isValidPocketBaseId) {
+      const alphanumeric = sanitizedId.toLowerCase().replace(/[^a-z0-9]/g, '');
+      sanitizedId = alphanumeric;
+      if (alphanumeric.length > 50) {
+        sanitizedId = alphanumeric.substring(0, 50);
+      } else if (alphanumeric.length < 15) {
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        while (sanitizedId.length < 15) {
+          sanitizedId += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+      }
+    }
+
+    const { isUnsaved, ...cleanedStory } = cleaned;
+    const storyToSave = {
+      ...cleanedStory,
+      id: sanitizedId,
+      creatorId: currentUser?.uid || cleanedStory.creatorId,
+      creatorEmail: currentUser?.email || cleanedStory.creatorEmail,
+    } as Story;
+
+    // Immediately reflect changes in UI and local storage cache
+    const localStory = {
+      ...storyToSave,
+      isUnsaved: false,
+    };
+    setSelectedStory(localStory);
+    if (isNewStory) {
+      setActiveChapterIdx(0);
+      localStorage.setItem(`last_read_chapter_${sanitizedId}`, '0');
+      setActiveTab('browse');
+    }
+    localStorage.setItem(
+      `cefr_story_cache_${sanitizedId}`,
+      JSON.stringify(localStory),
+    );
+    setCachedStoryIds((prev) => {
+      if (prev.includes(sanitizedId)) return prev;
+      const updated = [...prev, sanitizedId];
+      localStorage.setItem('cefr_cached_story_ids', JSON.stringify(updated));
+      return updated;
+    });
+
+    try {
+      await createStory(storyToSave);
+      loadStoriesMetadata({ refresh: true, storyId: sanitizedId });
+
+      if (storyToSave.isCompleted) {
+        setGeneratingCoverIds((prev) => new Set(prev).add(sanitizedId));
+        fetch('/api/stories/generate-cover/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ storyId: sanitizedId, force: false }),
+        })
+          .then(async (res) => {
+            if (res.ok) {
+              const data = await res.json();
+              const updatedTime = data.updated || new Date().toISOString();
+              setSelectedStory((prev) =>
+                prev && prev.id === sanitizedId
+                  ? { ...prev, updated: updatedTime }
+                  : prev,
+              );
+              const cachedStr = localStorage.getItem(
+                `cefr_story_cache_${sanitizedId}`,
+              );
+              if (cachedStr) {
+                try {
+                  const cachedObj = JSON.parse(cachedStr);
+                  cachedObj.updated = updatedTime;
+                  localStorage.setItem(
+                    `cefr_story_cache_${sanitizedId}`,
+                    JSON.stringify(cachedObj),
+                  );
+                } catch (e) {
+                  // ignore
+                }
+              }
+              await loadStoriesMetadata({
+                refresh: true,
+                storyId: sanitizedId,
+              });
+            }
+          })
+          .catch((err) => {
+            console.error(
+              'Failed to trigger cover generation on autosave:',
+              err,
+            );
+          })
+          .finally(() => {
+            setGeneratingCoverIds((prev) => {
+              const next = new Set(prev);
+              next.delete(sanitizedId);
+              return next;
+            });
+          });
+      }
+    } catch (err) {
+      console.warn(
+        '[Autosave] PocketBase autosave failed, preserving unsaved local draft:',
+        err,
+      );
+      const fallbackStory = { ...cleaned, isUnsaved: true };
+      setSelectedStory(fallbackStory);
+      localStorage.setItem(
+        `cefr_story_cache_${sanitizedId}`,
+        JSON.stringify(fallbackStory),
+      );
+    }
+  };
+
   // Story generation — all state and handlers live in the hook
   const {
     isGenerating,
@@ -351,31 +470,10 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     stories,
     showAlert,
     onStoryCreated: (story) => {
-      const cleaned = cleanCompletedStory(story);
-      setSelectedStory(cleaned);
-      setActiveChapterIdx(0);
-      localStorage.setItem(`last_read_chapter_${cleaned.id}`, '0');
-      localStorage.setItem(
-        `cefr_story_cache_${cleaned.id}`,
-        JSON.stringify(cleaned),
-      );
-      setCachedStoryIds((prev) => {
-        if (prev.includes(cleaned.id)) return prev;
-        const updated = [...prev, cleaned.id];
-        localStorage.setItem('cefr_cached_story_ids', JSON.stringify(updated));
-        return updated;
-      });
-      loadStoriesMetadata({ refresh: true, storyId: cleaned.id });
-      setActiveTab('browse');
+      handleAutoSaveGeneratedStory(story, true);
     },
     onStoryUpdated: (story) => {
-      const cleaned = cleanCompletedStory(story);
-      setSelectedStory(cleaned);
-      localStorage.setItem(
-        `cefr_story_cache_${cleaned.id}`,
-        JSON.stringify(cleaned),
-      );
-      loadStoriesMetadata({ refresh: true, storyId: cleaned.id });
+      handleAutoSaveGeneratedStory(story, false);
     },
     onLoginRequired: () => setShowLoginPrompt(true),
   });
@@ -1129,21 +1227,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   handleIncrementLookupCount={handleIncrementLookupCount}
                   savedVocab={savedVocab}
                   onStoryUpdated={(updatedStory) => {
-                    const cleaned = cleanCompletedStory(updatedStory);
-                    setSelectedStory(cleaned);
-                    localStorage.setItem(
-                      `cefr_story_cache_${cleaned.id}`,
-                      JSON.stringify(cleaned),
-                    );
-                    // Only refresh metadata if the story is already saved in database.
-                    // Unsaved drafts have no server record yet, so fetching would be
-                    // a no-op and incorrectly sets storiesLoading=true, freezing the UI.
-                    if (!cleaned.isUnsaved) {
-                      loadStoriesMetadata({
-                        refresh: true,
-                        storyId: cleaned.id,
-                      });
-                    }
+                    handleAutoSaveGeneratedStory(updatedStory, false);
                   }}
                   handleDeleteChapter={handleDeleteChapter}
                   handleSaveNewChapter={handleSaveNewChapter}

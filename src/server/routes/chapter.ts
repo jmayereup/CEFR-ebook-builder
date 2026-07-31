@@ -4,8 +4,11 @@
  */
 
 import { Router } from 'express';
+import PocketBaseClass from 'pocketbase';
 import { AI_MODELS } from '../../constants/models';
 import { cleanJSONString, handleModelCall, Type } from '../lib/aiProviders';
+
+const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
 const router = Router();
 
@@ -13,6 +16,7 @@ router.post('/', async (req, res) => {
   let headersSent = false;
   try {
     const {
+      storyId,
       language,
       cefrLevel,
       genre,
@@ -35,9 +39,13 @@ router.post('/', async (req, res) => {
       userId,
       userEmail,
     } = req.body as {
+      storyId?: string;
       language?: string;
       cefrLevel?: string;
       genre?: string;
+      totalChapters?: number;
+      chapterNumber?: number;
+      storyTitle?: string;
       totalChapters?: number;
       chapterNumber?: number;
       storyTitle?: string;
@@ -355,15 +363,101 @@ Please write Chapter ${chapterNumber} of ${totalChapters}, ensuring a seamless c
 
     const parsedData = JSON.parse(cleanJSONString(responseText || '{}'));
 
-    if (!headersSent) {
-      res.writeHead(200, {
-        'Content-Type': 'application/json',
-        'Transfer-Encoding': 'chunked',
-      });
-      headersSent = true;
+    if (storyId && chapterNumber) {
+      const pbUrl = process.env.VITE_POCKETBASE_URL;
+      const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
+      const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
+      if (pbUrl && adminEmail && adminPassword) {
+        try {
+          const pb = new PocketBase(pbUrl);
+          if (typeof (pb as any).admins !== 'undefined') {
+            await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
+          } else {
+            await pb
+              .collection('_superusers')
+              .authWithPassword(adminEmail, adminPassword);
+          }
+          const existing = await pb
+            .collection('stories')
+            .getOne(storyId)
+            .catch(() => null);
+          if (existing) {
+            const newChapter = {
+              chapterNumber,
+              title: parsedData.chapterTitle || `Chapter ${chapterNumber}`,
+              content: parsedData.content || '',
+              vocabulary: parsedData.vocabulary || [],
+              summary: parsedData.summary || '',
+            };
+            const existingChapters = Array.isArray(existing.chapters)
+              ? existing.chapters
+              : [];
+            const updatedChapters = [
+              ...existingChapters.filter(
+                (c: any) => c.chapterNumber !== chapterNumber,
+              ),
+              newChapter,
+            ].sort((a: any, b: any) => a.chapterNumber - b.chapterNumber);
+            await pb.collection('stories').update(storyId, {
+              chapters: updatedChapters,
+              isCompleted:
+                updatedChapters.length >= (totalChapters || existing.totalChapters),
+            });
+          } else {
+            const newChapter = {
+              chapterNumber,
+              title: parsedData.chapterTitle || `Chapter ${chapterNumber}`,
+              content: parsedData.content || '',
+              vocabulary: parsedData.vocabulary || [],
+              summary: parsedData.summary || '',
+            };
+            const newStoryPayload = {
+              id: storyId,
+              title: storyTitle || 'Unnamed Graded Narrative',
+              language: language || 'Spanish',
+              cefrLevel: cefrLevel || 'A1',
+              genre: genre || 'general',
+              totalChapters: totalChapters || 1,
+              chapters: [newChapter],
+              createdAt: new Date().toISOString(),
+              isCompleted: 1 >= (totalChapters || 1),
+              creatorId: userId || '',
+              creatorEmail: userEmail || '',
+              isPublic: true,
+              initialTotalChapters: totalChapters || 1,
+              chapterLength: chapterLength || 300,
+              outline: outline || '',
+              promptNotes: promptNotes || '',
+              model: model || '',
+              thinkingLevel: thinkingLevel || '',
+              thinkingBudget: thinkingBudget || 0,
+              temperature: temperature || 0.8,
+              translationLanguage: translationLanguage || 'English',
+              regenerationsCount: 0,
+            };
+            await pb.collection('stories').create(newStoryPayload);
+          }
+        } catch (pbErr) {
+          console.warn('[Server Autosave Chapter] PocketBase update failed:', pbErr);
+        }
+      }
     }
-    res.write(JSON.stringify(parsedData));
-    res.end();
+
+    try {
+      if (!headersSent) {
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+          'Transfer-Encoding': 'chunked',
+        });
+        headersSent = true;
+      }
+      res.write(JSON.stringify(parsedData));
+      res.end();
+    } catch (writeErr) {
+      console.log(
+        '[Server Autosave Chapter] Client disconnected before response write, but PocketBase save completed successfully.',
+      );
+    }
   } catch (error: unknown) {
     const e = error as { message?: string };
     console.error('Error generating story chapter:', error);
