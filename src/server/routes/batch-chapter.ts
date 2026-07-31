@@ -13,6 +13,7 @@
 import { Router } from 'express';
 import PocketBaseClass from 'pocketbase';
 import { AI_MODELS } from '../../constants/models';
+import { getStoriesMetadata } from '../lib/database';
 import { cleanJSONString, handleModelCall, Type } from '../lib/aiProviders';
 
 const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
@@ -409,6 +410,12 @@ Please write exactly ${batchCount} new consecutive chapters (Chapters ${batchNum
             };
             await pb.collection('stories').create(newStoryPayload);
           }
+          await getStoriesMetadata({ refresh: true, storyId }).catch((err) =>
+            console.warn(
+              '[Server Autosave Batch] Metadata cache update failed:',
+              err,
+            ),
+          );
         } catch (pbErr) {
           console.warn(
             '[Server Autosave Batch] PocketBase update failed:',

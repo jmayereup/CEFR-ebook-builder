@@ -14,6 +14,7 @@
 
 import { Router } from 'express';
 import PocketBaseClass from 'pocketbase';
+import { getStoriesMetadata } from '../lib/database';
 import { cleanJSONString, handleModelCall, Type } from '../lib/aiProviders';
 
 const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
@@ -296,6 +297,12 @@ Extract 5 to 10 vocabulary terms/phrases that are relevant, interesting, or chal
               chapters: updatedChapters,
             });
           }
+          await getStoriesMetadata({ refresh: true, storyId }).catch((err) =>
+            console.warn(
+              '[Server Autosave Glossary] Metadata cache update failed:',
+              err,
+            ),
+          );
         } catch (pbErr) {
           console.warn(
             '[Server Autosave Glossary] PocketBase update failed:',

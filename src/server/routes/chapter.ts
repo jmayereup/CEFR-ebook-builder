@@ -6,6 +6,7 @@
 import { Router } from 'express';
 import PocketBaseClass from 'pocketbase';
 import { AI_MODELS } from '../../constants/models';
+import { getStoriesMetadata } from '../lib/database';
 import { cleanJSONString, handleModelCall, Type } from '../lib/aiProviders';
 
 const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
@@ -437,6 +438,12 @@ Please write Chapter ${chapterNumber} of ${totalChapters}, ensuring a seamless c
             };
             await pb.collection('stories').create(newStoryPayload);
           }
+          await getStoriesMetadata({ refresh: true, storyId }).catch((err) =>
+            console.warn(
+              '[Server Autosave Chapter] Metadata cache update failed:',
+              err,
+            ),
+          );
         } catch (pbErr) {
           console.warn('[Server Autosave Chapter] PocketBase update failed:', pbErr);
         }
