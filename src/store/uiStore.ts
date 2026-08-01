@@ -33,8 +33,8 @@ export const useUIStore = create<UIState>((set) => ({
   customOpenRouterKey: '',
   translationTargetLanguage: null,
   defaultStoryModel: 'deepseek/deepseek-v4-pro',
-  defaultGlossaryModel: 'deepseek/deepseek-v4-flash',
-  defaultTranslationModel: 'deepseek/deepseek-v4-flash',
+  defaultGlossaryModel: 'google/gemini-2.5-flash-lite',
+  defaultTranslationModel: 'google/gemini-2.5-flash-lite',
   readerFontSize: 18,
   readerUseSerif: true,
   readerTextAlignment: 'justify',
@@ -74,7 +74,7 @@ export const useUIStore = create<UIState>((set) => ({
         localStorage.removeItem('custom_default_glossary_model');
       }
     }
-    set({ defaultGlossaryModel: model || 'deepseek/deepseek-v4-flash' });
+    set({ defaultGlossaryModel: model || 'google/gemini-2.5-flash-lite' });
   },
   setDefaultTranslationModel: (model) => {
     if (typeof localStorage !== 'undefined') {
@@ -84,7 +84,7 @@ export const useUIStore = create<UIState>((set) => ({
         localStorage.removeItem('custom_default_translation_model');
       }
     }
-    set({ defaultTranslationModel: model || 'deepseek/deepseek-v4-flash' });
+    set({ defaultTranslationModel: model || 'google/gemini-2.5-flash-lite' });
   },
   setReaderFontSize: (size) => {
     const validatedSize =
@@ -121,10 +121,10 @@ export const useUIStore = create<UIState>((set) => ({
         'deepseek/deepseek-v4-pro';
       const glossaryModel =
         localStorage.getItem('custom_default_glossary_model') ||
-        'deepseek/deepseek-v4-flash';
+        'google/gemini-2.5-flash-lite';
       const translationModel =
         localStorage.getItem('custom_default_translation_model') ||
-        'deepseek/deepseek-v4-flash';
+        'google/gemini-2.5-flash-lite';
       const sizeVal = localStorage.getItem('reader-font-size');
       let size = sizeVal ? Number.parseInt(sizeVal, 10) : 18;
       if (Number.isNaN(size) || size < 14 || size > 26) {

@@ -923,7 +923,7 @@ export default function ReaderPanel({
           language: effectivePrimaryLanguage,
           context: selectedWord.context,
           targetLanguage: translationTargetLanguage || 'English',
-          model: defaultTranslationModel || 'deepseek/deepseek-v4-flash',
+          model: defaultTranslationModel || 'google/gemini-2.5-flash-lite',
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
         }),

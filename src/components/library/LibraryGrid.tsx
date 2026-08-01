@@ -332,7 +332,7 @@ export default function LibraryGrid({
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-x-6 gap-y-8 justify-items-center">
+                <div className="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-3.5 gap-y-6 sm:gap-x-6 sm:gap-y-8 justify-items-center">
                   {paginatedStories.map((story, index) => (
                     <motion.div
                       key={story.id}

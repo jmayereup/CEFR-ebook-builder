@@ -383,13 +383,6 @@ export default function ChapterSidebar({
                 const isFreeModelLocal = (id: string) =>
                   FREE_MODEL_IDS.has(id) || id.endsWith(':free');
 
-                const freeModels = AI_MODELS.filter((m) =>
-                  isFreeModelLocal(m.id),
-                );
-                const paidModels = AI_MODELS.filter(
-                  (m) => !isFreeModelLocal(m.id),
-                );
-
                 const renderOption = (model: (typeof AI_MODELS)[0]) => {
                   let isModelRestricted = false;
                   let restrictionLabel = '';
@@ -412,16 +405,7 @@ export default function ChapterSidebar({
                   );
                 };
 
-                return (
-                  <>
-                    <optgroup label="Free Tier Models">
-                      {freeModels.map(renderOption)}
-                    </optgroup>
-                    <optgroup label="Paid Tier Models">
-                      {paidModels.map(renderOption)}
-                    </optgroup>
-                  </>
-                );
+                return AI_MODELS.map(renderOption);
               })()}
             </select>
           </div>

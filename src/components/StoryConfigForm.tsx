@@ -889,34 +889,11 @@ export default function StoryConfigForm({
                         );
                       };
 
-                      const freeModels: typeof AI_MODELS = [];
-                      const paidModels: typeof AI_MODELS = [];
-
-                      sortedModels.forEach((model) => {
-                        if (isFreeModelLocal(model.id)) {
-                          freeModels.push(model);
-                        } else {
-                          paidModels.push(model);
-                        }
-                      });
-
-                      freeModels.sort((a, b) => a.name.localeCompare(b.name));
-                      paidModels.sort((a, b) => a.name.localeCompare(b.name));
-
-                      return (
-                        <>
-                          {freeModels.length > 0 && (
-                            <optgroup label="Free Tier Models">
-                              {freeModels.map(renderOption)}
-                            </optgroup>
-                          )}
-                          {paidModels.length > 0 && (
-                            <optgroup label="Pro Tier Models">
-                              {paidModels.map(renderOption)}
-                            </optgroup>
-                          )}
-                        </>
+                      const allSortedModels = [...AI_MODELS].sort((a, b) =>
+                        a.name.localeCompare(b.name),
                       );
+
+                      return allSortedModels.map(renderOption);
                     })()}
                   </select>
                   {!currentUser ? (

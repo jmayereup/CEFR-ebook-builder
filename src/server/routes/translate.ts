@@ -90,8 +90,8 @@ router.post('/', async (req, res) => {
       req.headers['X-OpenRouter-API-Key'];
 
     // Use requested model or fall back to default Flash model
-    const primaryModel = model || 'deepseek/deepseek-v4-flash';
-    const fallbackModel = model || 'deepseek/deepseek-v4-flash';
+    const primaryModel = model || 'google/gemini-2.5-flash-lite';
+    const fallbackModel = model || 'google/gemini-2.5-flash-lite';
 
     const systemInstruction = `You are a professional dictionary and language translation assistant. 
 Translate the student's selected word into ${targetLanguage} based on its surrounding context if provided. Make it extremely concise and beginner-friendly.`;

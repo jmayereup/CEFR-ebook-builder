@@ -15,6 +15,7 @@ interface GlossaryGenerationToastProps {
 }
 
 const FALLBACK_MODELS = [
+  { id: 'google/gemini-2.5-flash-lite', name: 'Google: Gemini 2.5 Flash Lite' },
   { id: 'deepseek/deepseek-v4-flash', name: 'DeepSeek V4 Flash' },
   { id: 'deepseek/deepseek-v4-pro', name: 'DeepSeek V4 Pro' },
 ];
@@ -28,16 +29,16 @@ export default function GlossaryGenerationToast({
   onRetry,
   onDismiss,
 }: GlossaryGenerationToastProps) {
-  const { customOpenRouterKey, defaultStoryModel } = useUIStore();
+  const { customOpenRouterKey, defaultGlossaryModel } = useUIStore();
   const [selectedModel, setSelectedModel] = useState(
-    defaultStoryModel || 'deepseek/deepseek-v4-flash',
+    defaultGlossaryModel || 'google/gemini-2.5-flash-lite',
   );
 
   useEffect(() => {
-    if (customOpenRouterKey && defaultStoryModel) {
-      setSelectedModel(defaultStoryModel);
+    if (customOpenRouterKey && defaultGlossaryModel) {
+      setSelectedModel(defaultGlossaryModel);
     }
-  }, [customOpenRouterKey, defaultStoryModel]);
+  }, [customOpenRouterKey, defaultGlossaryModel]);
 
   const byokModelName =
     FRONTIER_LATEST_MODELS.find((m) => m.id === selectedModel)?.name ||

@@ -22,7 +22,7 @@ const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 const router = Router();
 
 // Default model for glossary generation
-const GLOSSARY_MODEL = 'deepseek/deepseek-v4-flash';
+const GLOSSARY_MODEL = 'google/gemini-2.5-flash-lite';
 
 // Vocabulary schema item generator (reused for both modes)
 const getVocabItemSchema = (targetTranslationLanguage: string) => ({
@@ -67,6 +67,7 @@ router.post('/', async (req, res) => {
       storyId,
       // Single-chapter mode
       content,
+      chapterNumber,
       // Batch mode
       chapters,
       // Common
@@ -80,6 +81,7 @@ router.post('/', async (req, res) => {
     } = req.body as {
       storyId?: string;
       content?: string;
+      chapterNumber?: number;
       chapters?: Array<{ chapterNumber: number; content: string }>;
       language?: string;
       cefrLevel?: string;
@@ -285,9 +287,16 @@ Extract 5 to 10 vocabulary terms/phrases that are relevant, interesting, or chal
           if (existing && Array.isArray(existing.chapters)) {
             const chapterVocabulary = parsedData.chapterVocabulary || {};
             const updatedChapters = existing.chapters.map((ch: any) => {
-              const vocab =
-                chapterVocabulary[ch.chapterNumber] ||
-                (!isBatchMode ? parsedData.vocabulary : undefined);
+              let vocab = chapterVocabulary[ch.chapterNumber];
+              if (!vocab && !isBatchMode) {
+                if (typeof chapterNumber === 'number') {
+                  if (ch.chapterNumber === chapterNumber) {
+                    vocab = parsedData.vocabulary;
+                  }
+                } else {
+                  vocab = parsedData.vocabulary;
+                }
+              }
               if (vocab) {
                 return { ...ch, vocabulary: vocab };
               }

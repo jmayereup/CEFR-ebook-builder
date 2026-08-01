@@ -10,9 +10,11 @@ import {
   ShieldAlert,
   Star,
   Trash2,
+  X,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   GENRES,
   getAverageRating,
@@ -222,11 +224,11 @@ export default function StoryCard({
     // biome-ignore lint/a11y/noStaticElementInteractions: Click triggers reading story
     <div
       ref={cardRef}
-      className={`flex flex-col group w-full max-w-[360px] min-w-[340px] mx-auto cursor-pointer ${className}`}
+      className={`flex flex-col group w-full max-w-[240px] sm:max-w-[260px] mx-auto cursor-pointer ${className}`}
       onClick={handleCardClick}
     >
       {/* 3D Book Cover Wrapper */}
-      <div className="relative w-full aspect-[3/4.2] min-h-[476px] flex-shrink-0">
+      <div className="relative w-full aspect-[3/4.2] flex-shrink-0">
         {/* 3D Pages Stack Effects (behind card, moves slightly less on hover to look like book cover lifting) */}
         <div className="absolute right-[-3px] top-1.5 bottom-1.5 w-1.5 bg-[#faf9f6] dark:bg-[#323330] border-y border-r border-[#e3dfd3] dark:border-[#424546] rounded-r-md z-0 shadow-xs transition-all duration-300 group-hover:translate-x-[0.5px]" />
         <div className="absolute right-[-6px] top-3 bottom-3 w-1.5 bg-[#f4ebd9] dark:bg-[#282927] border-y border-r border-[#dacfae]/70 dark:border-[#383a3b] rounded-r-md z-[-1] shadow-xs transition-all duration-300 group-hover:translate-x-[1px]" />
@@ -239,15 +241,14 @@ export default function StoryCard({
               '4px 12px 24px -5px rgba(0,0,0,0.18), 1px 4px 8px -1px rgba(0,0,0,0.06)',
           }}
           transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-          onMouseLeave={() => setShowDescription(false)}
           className={`relative ${cardThemeClass} border rounded-l-md rounded-r-lg flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 ${
-            hasCoverImage ? 'p-3.5' : 'p-5'
+            hasCoverImage ? 'p-2 sm:p-3' : 'p-3 sm:p-4'
           }`}
         >
           {isGeneratingCover && (
-            <div className="absolute inset-0 z-20 bg-black/45 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center text-white">
-              <div className="w-8 h-8 border-2 border-white/80 border-t-transparent rounded-full animate-spin mb-2" />
-              <span className="text-xs font-bold tracking-wide font-sans drop-shadow-xs">
+            <div className="absolute inset-0 z-20 bg-black/45 backdrop-blur-xs flex flex-col items-center justify-center p-3 text-center text-white">
+              <div className="w-6 h-6 border-2 border-white/80 border-t-transparent rounded-full animate-spin mb-1.5" />
+              <span className="text-[10px] font-bold tracking-wide font-sans drop-shadow-xs">
                 Generating Cover...
               </span>
             </div>
@@ -269,26 +270,26 @@ export default function StoryCard({
           {/* Centerpiece Cover Art / Title Block */}
           <div
             className={`flex-1 flex flex-col text-center z-10 relative rounded-xl transition-all duration-300 ${
-              hasCoverImage ? 'justify-end mt-2 mb-0.5' : 'justify-start my-1'
+              hasCoverImage ? 'justify-end mt-2 mb-0.5' : 'justify-start my-0.5'
             }`}
           >
             {hasCoverImage ? null : (
               // Original behavior for gradient cards
-              <div className="transition-all duration-500 ease-out rounded-xl px-3 py-3">
+              <div className="transition-all duration-500 ease-out rounded-xl px-1.5 py-1.5 sm:px-2.5 sm:py-2.5">
                 <h3
                   lang={getLanguageCodeFromName(story.language)}
-                  className="text-base md:text-lg font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-0.5 hyphens-auto"
+                  className="text-xs sm:text-sm md:text-base font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-0.5 hyphens-auto"
                 >
                   {story.title}
                 </h3>
                 <p
-                  className={`text-[9px] uppercase tracking-wider font-mono font-bold ${textMutedClass}`}
+                  className={`text-[8px] sm:text-[9px] uppercase tracking-wider font-mono font-bold ${textMutedClass}`}
                 >
                   Theme: {resolvedGenreLabel}
                 </p>
                 {loadedDescription && (
                   <p
-                    className={`text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left line-clamp-8 mt-2.5`}
+                    className={`text-[9px] sm:text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left line-clamp-4 sm:line-clamp-6 mt-1.5 sm:mt-2.5`}
                   >
                     "{loadedDescription}"
                   </p>
@@ -296,223 +297,264 @@ export default function StoryCard({
               </div>
             )}
           </div>
+        </motion.div>
+      </div>
 
-          {/* Large Description Overlay (toggled via Info button) */}
-          {showDescription && (
-            // biome-ignore lint/a11y/useKeyWithClickEvents: Stop propagation click
-            // biome-ignore lint/a11y/noStaticElementInteractions: Stop propagation click
-            <div
-              className="absolute inset-2.5 z-30 flex flex-col justify-between bg-white/75 dark:bg-black/75 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-lg p-4 text-tj-text-main dark:text-white transition-all duration-300 shadow-xl"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
+      {/* Intro Modal (Rendered via Portal for easy viewing without clipping) */}
+      {showDescription &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDescription(false);
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="bg-tj-bg-card border border-tj-border-main rounded-2xl p-5 sm:p-6 max-w-md w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative text-tj-text-main"
+              onClick={(e) => e.stopPropagation()}
             >
-              {/* Header stats inside overlay */}
-              <div className="flex items-center justify-between w-full border-b border-tj-border-main/50 dark:border-white/10 pb-2 mb-2 text-[10px] font-mono tracking-wider text-tj-text-muted dark:text-white/80">
+              {/* Header with Title and Close Button */}
+              <div className="flex items-start justify-between gap-3 border-b border-tj-border-main pb-3 mb-3">
                 <div>
-                  {totalReads > 0 ? (
-                    <span>READS: {totalReads}</span>
+                  <h3
+                    lang={getLanguageCodeFromName(story.language)}
+                    className="text-base sm:text-lg font-serif font-extrabold text-tj-text-main leading-snug"
+                  >
+                    {story.title}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap font-mono text-[10px] font-bold">
+                    <span className="px-1.5 py-0.5 bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-text-main rounded border border-tj-border-main/60 uppercase">
+                      {story.cefrLevel}
+                    </span>
+                    <span className="text-tj-text-muted uppercase">
+                      {mainLangCode}
+                      {showBilingualTag && `-${transLangCode}`}
+                    </span>
+                    <span className="text-tj-text-muted/60">•</span>
+                    <span className="text-tj-text-muted uppercase">
+                      Theme: {resolvedGenreLabel}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowDescription(false)}
+                  className="p-1.5 hover:bg-tj-primary-light dark:hover:bg-white/10 rounded-full transition-colors cursor-pointer text-tj-text-muted hover:text-tj-text-main shrink-0"
+                  title="Close Modal"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Stats Bar */}
+              <div className="flex items-center justify-between py-2 px-3 bg-tj-bg-recessed border border-tj-border-main/60 rounded-xl mb-3 text-xs font-mono">
+                <div>
+                  {story.isCompleted || chaptersCount === story.totalChapters ? (
+                    <span className="font-bold text-tj-text-main">
+                      {(Math.round(wordCount / 50) * 50).toLocaleString()} WORDS
+                    </span>
                   ) : (
-                    <span className="opacity-50">NOT READ YET</span>
+                    <span className="flex items-center gap-1.5 font-sans uppercase text-xs font-bold text-amber-600 dark:text-amber-400">
+                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                      IN PROGRESS ({chaptersCount}/{story.totalChapters} CH)
+                    </span>
                   )}
                 </div>
 
-                {story.ratings && Object.keys(story.ratings).length > 0 ? (
-                  <div
-                    className="flex items-center gap-0.5"
-                    title={`Avg: ${getAverageRating(story.ratings).toFixed(1)}`}
-                  >
-                    {[1, 2, 3, 4, 5].map((starValue) => {
-                      const ratingVal = getAverageRating(story.ratings);
-                      const isFilled = starValue <= Math.round(ratingVal);
-                      return (
-                        <Star
-                          key={starValue}
-                          className={`w-3 h-3 ${
-                            isFilled
-                              ? 'fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400'
-                              : 'opacity-25'
-                          }`}
-                        />
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <span className="opacity-50 text-[9px]">NO RATINGS</span>
-                )}
+                <div className="flex items-center gap-3 text-tj-text-muted text-[11px]">
+                  {totalReads > 0 && <span>READS: {totalReads}</span>}
+
+                  {story.ratings && Object.keys(story.ratings).length > 0 ? (
+                    <div
+                      className="flex items-center gap-0.5"
+                      title={`Avg: ${getAverageRating(story.ratings).toFixed(1)}`}
+                    >
+                      {[1, 2, 3, 4, 5].map((starValue) => {
+                        const ratingVal = getAverageRating(story.ratings);
+                        const isFilled = starValue <= Math.round(ratingVal);
+                        return (
+                          <Star
+                            key={starValue}
+                            className={`w-3 h-3 ${
+                              isFilled
+                                ? 'fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400'
+                                : 'opacity-25'
+                            }`}
+                          />
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <span className="opacity-50 text-[10px]">NO RATINGS</span>
+                  )}
+                </div>
               </div>
 
-              {/* Description text */}
-              <div className="flex-1 flex items-center justify-center overflow-y-auto pr-1">
+              {/* Description Body */}
+              <div className="flex-1 overflow-y-auto pr-1 my-1">
                 {loadingDescription ? (
-                  <span className="text-xs font-mono opacity-60 animate-pulse">
-                    Loading Intro...
-                  </span>
+                  <div className="py-12 text-center text-xs font-mono text-tj-text-muted opacity-60 animate-pulse">
+                    Loading Intro narrative...
+                  </div>
                 ) : loadedDescription ? (
-                  <p className="text-sm md:text-base font-sans text-center leading-relaxed opacity-95">
-                    "{loadedDescription}"
+                  <p className="text-xs sm:text-sm font-sans text-tj-text-main leading-relaxed opacity-90 whitespace-pre-line">
+                    {loadedDescription}
                   </p>
                 ) : (
-                  <p className="text-xs font-sans text-center opacity-60 italic">
-                    No narrative description provided.
+                  <p className="py-8 text-xs font-sans text-center text-tj-text-muted opacity-60 italic">
+                    No narrative description provided for this story.
                   </p>
                 )}
               </div>
 
-              {/* Small Down Arrow Close Button in Lower-Right */}
-              <div className="flex justify-end w-full mt-2">
+              {/* Modal Footer */}
+              <div className="flex items-center justify-end gap-2 pt-3 mt-2 border-t border-tj-border-main">
+                <button
+                  type="button"
+                  onClick={() => setShowDescription(false)}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-tj-text-muted hover:text-tj-text-main rounded-xl border border-tj-border-main hover:bg-tj-primary-light transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowDescription(false);
+                    onSelect();
                   }}
-                  className="p-1.5 hover:bg-tj-primary-light/50 dark:hover:bg-white/10 rounded-full transition-all cursor-pointer text-tj-text-muted dark:text-white/70 hover:text-tj-text-main dark:hover:text-white flex items-center justify-center"
-                  title="Close Details"
+                  className="px-4 py-1.5 text-xs font-semibold text-tj-bg-main bg-tj-primary hover:bg-tj-primary-hover rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
                 >
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <span>Start Reading</span>
+                  <BookOpenText className="w-3.5 h-3.5" />
                 </button>
               </div>
-            </div>
-          )}
-        </motion.div>
-      </div>
+            </motion.div>
+          </div>,
+          document.body,
+        )}
 
       {/* Metadata Row Outside Book Cover */}
-      <div className="mt-2.5 px-1.5 flex flex-col gap-1 select-none">
-        <div className="flex items-center justify-between text-xs font-mono w-full">
-          {/* Left Block: CEFR, Language, and Lock Icon */}
-          <div className="flex items-center gap-1.5 flex-1 justify-start">
-            <span className="px-1.5 py-0.5 bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-text-main rounded text-[10px] font-bold border border-tj-border-main/60 uppercase">
-              {story.cefrLevel}
+      <div className="mt-2 px-1 flex items-center justify-between text-xs font-mono w-full min-w-0 select-none">
+        {/* Left Block: CEFR, Language, and Lock Icon */}
+        <div className="flex items-center gap-1 flex-wrap min-w-0">
+          <span className="px-1 py-0.5 bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-text-main rounded text-[9px] sm:text-[10px] font-bold border border-tj-border-main/60 uppercase">
+            {story.cefrLevel}
+          </span>
+          <span className="text-[9px] sm:text-[10px] text-tj-text-muted font-bold uppercase">
+            {mainLangCode}
+            {showBilingualTag && `-${transLangCode}`}
+          </span>
+          {story.isPublic === false && (
+            <span
+              title="Private Story"
+              className="text-tj-text-muted opacity-60"
+            >
+              <Lock className="w-3 h-3" />
             </span>
-            <span className="text-[10px] text-tj-text-muted font-bold uppercase">
-              {mainLangCode}
-              {showBilingualTag && `-${transLangCode}`}
+          )}
+          {story.copyrightFlag === true && (
+            <span
+              title={
+                story.copyrightFlagReason
+                  ? `Copyright-restricted: ${story.copyrightFlagReason}`
+                  : 'Copyright-restricted — private only'
+              }
+              className="text-amber-600 dark:text-amber-400"
+            >
+              <ShieldAlert className="w-3 h-3" />
             </span>
-            {story.isPublic === false && (
-              <span
-                title="Private Story"
-                className="text-tj-text-muted opacity-60"
-              >
-                <Lock className="w-3.5 h-3.5" />
-              </span>
-            )}
-            {story.copyrightFlag === true && (
-              <span
-                title={
-                  story.copyrightFlagReason
-                    ? `Copyright-restricted: ${story.copyrightFlagReason}`
-                    : 'Copyright-restricted — private only'
-                }
-                className="text-amber-600 dark:text-amber-400"
-              >
-                <ShieldAlert className="w-3.5 h-3.5" />
-              </span>
-            )}
-          </div>
+          )}
+        </div>
 
-          {/* Middle Block (Centered): Word Count & Intro (Description) Toggle */}
-          <div className="flex items-center gap-2 flex-initial justify-center px-2">
-            {story.isCompleted || chaptersCount === story.totalChapters ? (
-              <span className="text-[10px] text-tj-text-muted font-bold whitespace-nowrap">
-                {(Math.round(wordCount / 50) * 50).toLocaleString()} WORDS
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 font-sans uppercase text-[9px] font-bold text-amber-600 dark:text-amber-400 tracking-wide whitespace-nowrap">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse" />
-                In Progress
-              </span>
-            )}
+        {/* Center Block: Intro Button */}
+        <button
+          type="button"
+          onClick={handleToggleIntro}
+          className={`cursor-pointer text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors underline underline-offset-2 px-1 ${
+            showDescription
+              ? 'text-tj-primary decoration-tj-primary'
+              : 'text-tj-text-muted hover:text-tj-text-main decoration-tj-text-muted/50 hover:decoration-tj-text-main'
+          }`}
+          title="View Description"
+        >
+          Intro
+        </button>
 
-            <span className="text-tj-border-main dark:text-tj-border-main/50 text-[10px]">
-              |
-            </span>
+        {/* Right Block: Action Icons */}
+        <div className="flex items-center gap-1 shrink-0">
+          {!isCachedOffline && (
             <button
               type="button"
-              onClick={handleToggleIntro}
-              className={`cursor-pointer text-[10px] font-bold uppercase tracking-wider transition-colors underline underline-offset-2 ${
-                showDescription
-                  ? 'text-tj-primary decoration-tj-primary'
-                  : 'text-tj-text-muted hover:text-tj-text-main decoration-tj-text-muted/50 hover:decoration-tj-text-main'
-              }`}
-              title="View Description"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onDownload) {
+                  onDownload(e);
+                }
+              }}
+              className="p-0.5 hover:bg-tj-primary-light dark:hover:bg-tj-primary-light/10 rounded cursor-pointer transition-all flex items-center justify-center border-0 bg-transparent text-tj-text-muted hover:text-tj-text-main"
+              title="Download for offline reading"
             >
-              Intro
+              <Cloud className="w-3.5 h-3.5" />
             </button>
-          </div>
-
-          {/* Right Block: Action Icons */}
-          <div className="flex items-center gap-2 flex-1 justify-end">
-            {/* Actions / Status Icons Group (Separated by border) */}
-            <div className="flex items-center gap-1.5 ml-1 pl-1.5 border-l border-tj-border-main dark:border-tj-border-main/50">
-              {!isCachedOffline && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (onDownload) {
-                      onDownload(e);
-                    }
-                  }}
-                  className="p-0.5 hover:bg-tj-primary-light dark:hover:bg-tj-primary-light/10 rounded cursor-pointer transition-all flex items-center justify-center border-0 bg-transparent text-tj-text-muted hover:text-tj-text-main"
-                  title="Download for offline reading"
-                >
-                  <Cloud className="w-3.5 h-3.5" />
-                </button>
+          )}
+          {isRead ? (
+            <span title="Completed reading" className="text-tj-text-muted">
+              <BookCheck className="w-3.5 h-3.5" />
+            </span>
+          ) : inRecentlyRead ? (
+            <span title="Currently Reading" className="text-tj-text-muted">
+              <BookOpenText className="w-3.5 h-3.5" />
+            </span>
+          ) : null}
+          {onToggleSaved && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleSaved(story.id, e);
+              }}
+              className="p-0.5 rounded transition-all cursor-pointer text-tj-text-muted hover:text-tj-text-main hover:bg-tj-primary-light dark:hover:bg-tj-primary-light/10"
+              title={
+                isSaved ? 'Remove from Bookshelf' : 'Save to Bookshelf'
+              }
+            >
+              {isSaved ? (
+                <BookmarkCheck className="w-3.5 h-3.5 fill-current" />
+              ) : (
+                <Bookmark className="w-3.5 h-3.5" />
               )}
-              {isRead ? (
-                <span title="Completed reading" className="text-tj-text-muted">
-                  <BookCheck className="w-3.5 h-3.5" />
-                </span>
-              ) : inRecentlyRead ? (
-                <span title="Currently Reading" className="text-tj-text-muted">
-                  <BookOpenText className="w-3.5 h-3.5" />
-                </span>
-              ) : null}
-              {onToggleSaved && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleSaved(story.id, e);
-                  }}
-                  className="p-0.5 rounded transition-all cursor-pointer text-tj-text-muted hover:text-tj-text-main hover:bg-tj-primary-light dark:hover:bg-tj-primary-light/10"
-                  title={
-                    isSaved ? 'Remove from Bookshelf' : 'Save to Bookshelf'
-                  }
-                >
-                  {isSaved ? (
-                    <BookmarkCheck className="w-3.5 h-3.5 fill-current" />
-                  ) : (
-                    <Bookmark className="w-3.5 h-3.5" />
-                  )}
-                </button>
-              )}
-              {currentUser?.isAdmin === true ? (
-                <button
-                  type="button"
-                  onClick={(e) => onDelete(story.id, e)}
-                  className="p-0.5 rounded transition-all cursor-pointer text-rose-500 hover:text-rose-600 hover:bg-rose-500/10"
-                  title="Delete Story (Admin)"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              ) : currentUser && onFlagStory ? (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onFlagStory(story);
-                  }}
-                  className="p-0.5 rounded transition-all cursor-pointer text-tj-text-muted hover:text-rose-500 hover:bg-rose-500/10"
-                  title="Flag Story for Deletion"
-                >
-                  <Flag className="w-3.5 h-3.5" />
-                </button>
-              ) : null}
-            </div>
-          </div>
+            </button>
+          )}
+          {currentUser?.isAdmin === true ? (
+            <button
+              type="button"
+              onClick={(e) => onDelete(story.id, e)}
+              className="p-0.5 rounded transition-all cursor-pointer text-rose-500 hover:text-rose-600 hover:bg-rose-500/10"
+              title="Delete Story (Admin)"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          ) : currentUser && onFlagStory ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onFlagStory(story);
+              }}
+              className="p-0.5 rounded transition-all cursor-pointer text-tj-text-muted hover:text-rose-500 hover:bg-rose-500/10"
+              title="Flag Story for Deletion"
+            >
+              <Flag className="w-3.5 h-3.5" />
+            </button>
+          ) : null}
         </div>
       </div>
     </div>

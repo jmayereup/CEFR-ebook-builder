@@ -34,9 +34,6 @@ router.post('/', async (req, res) => {
       thinkingBudget,
       translationLanguage,
       temperature,
-      consistencyAudits,
-      storyBible,
-      toneRefreshGuidance,
       userId,
       userEmail,
     } = req.body as {
@@ -44,9 +41,6 @@ router.post('/', async (req, res) => {
       language?: string;
       cefrLevel?: string;
       genre?: string;
-      totalChapters?: number;
-      chapterNumber?: number;
-      storyTitle?: string;
       totalChapters?: number;
       chapterNumber?: number;
       storyTitle?: string;

@@ -1116,106 +1116,117 @@ export const useStoryGeneration = (
     try {
       const updatedChapters = [...chapters];
 
-      setGlossaryStatus(
-        `Generating vocabulary for ${chaptersNeedingGlossary.length} chapter(s) in one call...`,
-      );
-
-      // Collect all existing words to avoid duplicates across chapters
-      const existingWords = forceRegenerate
+      // Collect initial existing words to avoid duplicates across chapters
+      const accumulatedWords = forceRegenerate
         ? []
         : updatedChapters
             .flatMap((c) => c.vocabulary ?? [])
             .map((v) => v.word.toLowerCase().trim())
             .filter(Boolean);
 
-      // Single batch call for all chapters needing glossary.
-      const res = await fetch('/api/stories/generate-glossary', {
-        method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        signal,
-        body: JSON.stringify({
-          storyId: story.id,
-          chapters: chaptersNeedingGlossary.map((ch) => ({
+      const targetModel =
+        modelId ||
+        useUIStore.getState().defaultGlossaryModel ||
+        'google/gemini-2.5-flash-lite';
+      const targetTransLang =
+        translationLanguage ||
+        story.translationLanguage ||
+        useUIStore.getState().translationTargetLanguage ||
+        'English';
+
+      let completedCount = 0;
+
+      for (let i = 0; i < chaptersNeedingGlossary.length; i++) {
+        const ch = chaptersNeedingGlossary[i];
+        setGlossaryStatus(
+          `Generating vocabulary for Chapter ${ch.chapterNumber} (${i + 1}/${chaptersNeedingGlossary.length})...`,
+        );
+
+        const res = await fetch('/api/stories/generate-glossary', {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          signal,
+          body: JSON.stringify({
+            storyId: story.id,
             chapterNumber: ch.chapterNumber,
             content: ch.content,
-          })),
-          language: story.language,
-          cefrLevel: story.cefrLevel,
-          existingWords,
-          userId: currentUser?.uid,
-          userEmail: currentUser?.email,
-          model:
-            modelId ||
-            useUIStore.getState().defaultGlossaryModel ||
-            'deepseek/deepseek-v4-flash',
-          translationLanguage:
-            translationLanguage ||
-            story.translationLanguage ||
-            useUIStore.getState().translationTargetLanguage ||
-            'English',
-        }),
-      });
+            language: story.language,
+            cefrLevel: story.cefrLevel,
+            existingWords: accumulatedWords,
+            userId: currentUser?.uid,
+            userEmail: currentUser?.email,
+            model: targetModel,
+            translationLanguage: targetTransLang,
+          }),
+        });
 
-      if (res.ok) {
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(
+            errorData.error ||
+              `Glossary request for Chapter ${ch.chapterNumber} failed with status ${res.status}`,
+          );
+        }
+
         const data = await res.json();
         if (data.error) {
           throw new Error(data.error);
         }
-        const chapterVocabulary: Record<number, unknown[]> =
-          data.chapterVocabulary ?? {};
 
-        for (const ch of chaptersNeedingGlossary) {
-          const vocab = chapterVocabulary[ch.chapterNumber];
-          if (vocab) {
-            const chIdx = updatedChapters.findIndex(
-              (c) => c.chapterNumber === ch.chapterNumber,
-            );
-            if (chIdx !== -1) {
-              updatedChapters[chIdx] = {
-                ...updatedChapters[chIdx],
-                vocabulary: vocab as Chapter['vocabulary'],
-              };
-            }
-            setGlossaryLogs((prev) => [
-              ...prev,
-              `Glossary generated for Chapter ${ch.chapterNumber}.`,
-            ]);
-          } else {
-            setGlossaryLogs((prev) => [
-              ...prev,
-              `[Warning] No glossary returned for Chapter ${ch.chapterNumber}.`,
-            ]);
+        const vocab =
+          data.vocabulary ||
+          (data.chapterVocabulary
+            ? data.chapterVocabulary[ch.chapterNumber]
+            : undefined);
+
+        if (vocab && Array.isArray(vocab)) {
+          const chIdx = updatedChapters.findIndex(
+            (c) => c.chapterNumber === ch.chapterNumber,
+          );
+          if (chIdx !== -1) {
+            updatedChapters[chIdx] = {
+              ...updatedChapters[chIdx],
+              vocabulary: vocab as Chapter['vocabulary'],
+            };
           }
+
+          // Accumulate words for deduplication in subsequent chapters
+          const newWords = vocab
+            .map((v: any) => v.word?.toLowerCase().trim())
+            .filter(Boolean);
+          accumulatedWords.push(...newWords);
+
+          completedCount++;
+          setGlossaryLogs((prev) => [
+            ...prev,
+            `Glossary generated for Chapter ${ch.chapterNumber} (${vocab.length} terms).`,
+          ]);
+
+          // Update UI state progressively per chapter
+          onStoryUpdated({
+            ...story,
+            chapters: [...updatedChapters],
+            translationLanguage: targetTransLang,
+            isUnsaved: true,
+          });
+        } else {
+          setGlossaryLogs((prev) => [
+            ...prev,
+            `[Warning] No glossary returned for Chapter ${ch.chapterNumber}.`,
+          ]);
         }
-
-        setIsGeneratingGlossary(false);
-        setGlossaryStatus('');
-        setGlossaryLogs([]);
-        setGlossaryError(null);
-
-        onStoryUpdated({
-          ...story,
-          chapters: updatedChapters,
-          translationLanguage:
-            translationLanguage ||
-            story.translationLanguage ||
-            useUIStore.getState().translationTargetLanguage ||
-            'English',
-          isUnsaved: true,
-        });
-
-        showAlert(
-          'Glossary Complete',
-          `Vocabulary terms have been generated for all ${chaptersNeedingGlossary.length} chapter(s).`,
-          'info',
-        );
-      } else {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-          errorData.error ||
-            `Glossary request failed with status ${res.status}`,
-        );
       }
+
+      setIsGeneratingGlossary(false);
+      setGlossaryStatus('');
+      setGlossaryLogs([]);
+      setGlossaryError(null);
+
+      showAlert(
+        'Glossary Complete',
+        `Vocabulary terms have been generated for all ${completedCount} chapter(s).`,
+        'info',
+      );
     } catch (err: unknown) {
       const e = err as { name?: string; message?: string };
       if (e.name === 'AbortError') {
