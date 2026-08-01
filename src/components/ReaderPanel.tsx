@@ -1671,6 +1671,22 @@ export default function ReaderPanel({
                   </>
                 )}
 
+                {/* Chapter Navigation Buttons (above glossary) */}
+                {!isZenMode && !isEditing && activeChapter && activeChapter.vocabulary && activeChapter.vocabulary.length > 0 && (
+                  <div className="mt-8">
+                    <ChapterNavigationBar
+                      story={story}
+                      activeChapterIndex={activeChapterIndex}
+                      onSelectChapter={onSelectChapter}
+                      onGenerateNextChapter={onGenerateNextChapter}
+                      isLoadingNext={isLoadingNext}
+                      isAutoGeneratingRemaining={isAutoGeneratingRemaining}
+                      isPaid={isPaid}
+                      nextChapterCreditCost={nextChapterCreditCost}
+                    />
+                  </div>
+                )}
+
                 {/* Dynamic glossary extracted terms */}
                 {activeChapter && !isEditing && (
                   <VocabGlossary
