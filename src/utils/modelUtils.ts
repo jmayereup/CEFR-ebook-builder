@@ -3,7 +3,7 @@
  * Extracted from App.tsx to eliminate duplicate logic.
  */
 
-import { AI_MODELS } from '../constants/models';
+import { AI_MODELS, FRONTIER_LATEST_MODELS } from '../constants/models';
 
 /** Returns the human-readable provider name for a given model ID. */
 export const getModelBaseName = (modelId?: string): string => {
@@ -12,13 +12,16 @@ export const getModelBaseName = (modelId?: string): string => {
   if (modelId.includes('gemini') || modelId.includes('gemma')) return 'Gemini';
   if (modelId.includes('hermes')) return 'Hermes';
   if (modelId.includes('mistral')) return 'Mistral';
+  if (modelId.includes('kimi') || modelId.includes('moonshot')) return 'Kimi';
   return 'DeepSeek';
 };
 
 /** Returns the short, user-facing display name for a given model ID. */
 export const getModelDisplayName = (modelId?: string): string => {
   if (!modelId) return 'DeepSeek V4 Pro';
-  const found = AI_MODELS.find((m) => m.id === modelId);
+  const found =
+    AI_MODELS.find((m) => m.id === modelId) ||
+    FRONTIER_LATEST_MODELS.find((m) => m.id === modelId);
   if (found) return found.name;
   return modelId;
 };

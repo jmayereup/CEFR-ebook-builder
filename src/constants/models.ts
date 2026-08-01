@@ -99,6 +99,11 @@ export const FRONTIER_LATEST_MODELS = [
     category: 'pro' as const,
   },
   {
+    id: 'moonshotai/kimi-k2.5',
+    name: 'MoonshotAI: Kimi K2.5',
+    category: 'pro' as const,
+  },
+  {
     id: '~moonshotai/kimi-latest',
     name: 'MoonshotAI: Kimi Latest',
     category: 'pro' as const,
