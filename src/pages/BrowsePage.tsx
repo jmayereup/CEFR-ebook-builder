@@ -21,7 +21,7 @@ interface BrowsePageProps {
   ) => Promise<void>;
   onFlagStory?: (story: Story) => void;
   setActiveTab: (
-    tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin',
+    tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about',
   ) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;

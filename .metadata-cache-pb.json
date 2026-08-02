@@ -1,6 +1,46 @@
 {
-  "lastFetchTime": 1785573613103,
+  "lastFetchTime": 1785662261922,
   "stories": [
+    {
+      "id": "srf5x2eqaratknv",
+      "title": "Lagom: The Swedish Art of Living Just Right",
+      "language": "English",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 10,
+      "createdAt": "2026-08-02T02:42:23.404Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 4225,
+      "updated": "2026-08-02 02:53:45.573Z"
+    },
+    {
+      "id": "sgfldpwdkcp9k8a",
+      "title": "ลากอม: ศิลปะการใช้ชีวิตแบบพอดีของชาวสวีเดน",
+      "language": "Thai",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 10,
+      "createdAt": "2026-08-02T02:23:43.396Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 4988,
+      "updated": "2026-08-02 02:37:29.141Z"
+    },
     {
       "id": "sj53neyz28qp3hb",
       "title": "Out of Rhythm",
@@ -15,12 +55,10 @@
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 7167,
-      "description": "In 1970s Thailand, spirited Dao refuses to follow the traditional path expected of her—preferring English books, animal rescue, and environmental activism to quiet obedience. From her childhood in Prachinburi to university in Bangkok and back again, she carves out a life of independence and compassion, eventually finding peace surrounded by her pack of rescued dogs and an unspoken truce with her family.",
       "updated": "2026-08-01 03:22:43.173Z"
     },
     {
@@ -37,12 +75,10 @@
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 10645,
-      "description": "In 1970s Prachinburi, a headstrong girl named Dao refuses the quiet obedience expected of her, pursuing her passion for English and animal welfare. As she journeys from provincial life to Bangkok and back, she carves out a life of independence, compassion, and peace on her own terms — a quiet rebellion against convention that leads to a deeply fulfilling life surrounded by rescued dogs and the gentle rhythms of home.",
       "updated": "2026-08-01 03:33:01.946Z"
     },
     {
@@ -57,15 +93,15 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "totalReads": 0,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 3
+      },
+      "totalReads": 1,
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 8830,
-      "description": "",
-      "updated": "2026-07-31 06:33:46.395Z"
+      "updated": "2026-08-02 05:49:49.451Z"
     },
     {
       "id": "s05fmf9n37md0st",
@@ -79,15 +115,15 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "totalReads": 0,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 3
+      },
+      "totalReads": 1,
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 7859,
-      "description": "This non-fiction book challenges the cultural pressure to travel, arguing that a rich, meaningful life can be built right where you are. Through 20 bite-sized essays, it debunks travel myths, validates the homebody temperament, and offers practical tools to resist FOMO, set boundaries, and rediscover the joy of staying put.",
-      "updated": "2026-07-31 04:21:25.898Z"
+      "updated": "2026-08-02 04:08:06.251Z"
     },
     {
       "id": "sh0rcf7cwx15jgl",
@@ -103,12 +139,10 @@
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5626,
-      "description": "In a Bangkok torn by political outrage, a young activist named Manop meets a Franciscan friar and a Buddhist monk who guide him on a transformative journey from reactive anger to profound grief and compassion. Through ten encounters blending Christian mysticism and Buddhist wisdom, Manop learns to dismantle his ego, embrace suffering, and discover the universal tears that connect all beings.",
       "updated": "2026-07-30 14:24:43.158Z"
     },
     {
@@ -125,12 +159,10 @@
       "model": "~google/gemini-flash-latest",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3794,
-      "description": "This analytical text explores the intersection between Franciscan friar Richard Rohr's contemplative insights and core Buddhist philosophy. Through ten structured chapters, it examines how transforming reactive anger into transformative grief opens the door to non-dual wisdom, universal compassion, and inner peace in a polarized world.",
       "updated": "2026-07-30 13:41:07.595Z"
     },
     {
@@ -167,12 +199,10 @@
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3057,
-      "description": "Ben, a third-generation farmer, has always cared for his land with deep respect, but he feels attacked by the angry climate debates he sees on the news. When unpredictable seasons and corporate pressure threaten his farm, a different kind of conversation helps him see that true stewardship can bridge the divide between rural tradition and environmental health.",
       "updated": "2026-07-30 02:33:54.539Z"
     },
     {
@@ -189,12 +219,10 @@
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3374,
-      "description": "This book explores the debate between personal lifestyle choices and corporate responsibility for climate change. Through the story of Maria, a city dweller feeling climate guilt, and an analysis of the history of the carbon footprint, it reveals how the focus on individual actions distracts from the need for systemic change. Readers will learn about the power of collective action and how to shift from a personal 'footprint' to a positive 'handprint'.",
       "updated": "2026-07-30 02:20:06.618Z"
     },
     {
@@ -371,12 +399,10 @@
       "model": "deepseek/deepseek-v4-pro",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5907,
-      "description": "Monom is a little monkey who wants an adventure. He puts on his red backpack and visits places like a train station, a pink elephant statue, a river market, and a golden temple in Chachoengsao. Along the way, he tastes sweet mangoes, rides a boat, makes a duck friend, and finally returns to his tree home after a day full of simple, joyful discoveries.",
       "updated": "2026-07-27 13:05:00.152Z"
     },
     {
@@ -2331,7 +2357,7 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 3982,
-      "updated": "2026-06-27 04:47:35.226Z"
+      "updated": "2026-08-02 01:23:18.326Z"
     },
     {
       "id": "story1780907254400",

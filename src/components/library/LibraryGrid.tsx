@@ -18,7 +18,9 @@ interface LibraryGridProps {
     e: React.MouseEvent | React.KeyboardEvent | null,
   ) => void;
   onFlagStory?: (story: Story) => void;
-  setActiveTab: (tab: 'browse' | 'create' | 'practice' | 'admin') => void;
+  setActiveTab: (
+    tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about',
+  ) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   sortBy: SortBy;

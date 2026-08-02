@@ -36,6 +36,7 @@ import { useUrlRouting } from './hooks/useUrlRouting';
 import { useUserData } from './hooks/useUserData';
 import { useWebViewWarning } from './hooks/useWebViewWarning';
 // Pages
+import AboutPage from './pages/AboutPage';
 import BrowsePage from './pages/BrowsePage';
 
 const AdminPage = lazy(() => import('./pages/AdminPage'));
@@ -115,16 +116,16 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   // App States
   const { darkMode, toggleDarkMode } = useDarkMode();
   const [activeTab, setActiveTab] = useState<
-    'browse' | 'bookshelf' | 'create' | 'practice' | 'admin'
+    'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about'
   >(() => {
     if (ssrPath) {
       const tabMatch = ssrPath.match(
-        /^\/(browse|bookshelf|create|practice|admin)/,
+        /^\/(browse|bookshelf|create|practice|admin|about)/,
       );
       if (tabMatch) return tabMatch[1] as any;
     } else if (typeof window !== 'undefined') {
       const tabMatch = window.location.pathname.match(
-        /^\/(browse|bookshelf|create|practice|admin)/,
+        /^\/(browse|bookshelf|create|practice|admin|about)/,
       );
       if (tabMatch) return tabMatch[1] as any;
     }
@@ -480,7 +481,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   // Pending navigation guard states
   const [pendingNavigation, setPendingNavigation] = useState<{
-    tab?: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin';
+    tab?: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about';
     clearStory?: boolean;
     scrollDashboard?: boolean;
   } | null>(null);
@@ -1373,6 +1374,15 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   }
                 />
               </motion.div>
+            ) : activeTab === 'about' ? (
+              <motion.div
+                key="about"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <AboutPage setActiveTab={handleRequestTabChange} />
+              </motion.div>
             ) : null}
           </Suspense>
         </AnimatePresence>
@@ -1386,12 +1396,13 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 CEFR Graded Short Story Builder.
               </p>
               <div className="flex items-center gap-4 text-xs font-medium">
-                <a
-                  href="mailto:admin@teacherjake.com"
-                  className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors"
+                <button
+                  type="button"
+                  onClick={() => handleRequestTabChange('about')}
+                  className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors border-0 bg-transparent cursor-pointer p-0 font-medium"
                 >
-                  Contact Support
-                </a>
+                  About & Support
+                </button>
                 <span className="text-slate-300 dark:text-slate-700">|</span>
                 <a
                   href="/privacy.html"

@@ -5,6 +5,7 @@ import {
   Flag,
   Flame,
   HelpCircle,
+  Info,
   LogOut,
   Mail,
   Moon,
@@ -31,7 +32,7 @@ interface AppHeaderProps {
   handleLogout: () => void;
   setSelectedStory: (story: Story | null) => void;
   setActiveTab: (
-    tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin',
+    tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about',
   ) => void;
   streakData: UserStreakData | null;
   onOpenStreakDashboard: () => void;
@@ -418,12 +419,17 @@ export default function AppHeader({
                       Terms
                     </a>
                     <span className="text-tj-border-main">•</span>
-                    <a
-                      href="mailto:admin@teacherjake.com"
-                      className="hover:text-tj-primary transition-colors"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        setSelectedStory(null);
+                        setActiveTab('about');
+                      }}
+                      className="hover:text-tj-primary transition-colors border-0 bg-transparent cursor-pointer p-0 font-medium text-tj-text-muted text-[11px]"
                     >
-                      Support
-                    </a>
+                      About & Support
+                    </button>
                   </div>
                 </div>
               )}
@@ -451,6 +457,19 @@ export default function AppHeader({
 
                 {isHelpMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 py-2 bg-tj-bg-card dark:bg-[#181916] border border-tj-border-main rounded-2xl shadow-xl z-50 flex flex-col gap-1 px-1 select-none">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsHelpMenuOpen(false);
+                        setSelectedStory(null);
+                        setActiveTab('about');
+                      }}
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-tj-text-main hover:bg-tj-primary-light rounded-xl transition-all cursor-pointer text-left w-full border-0 bg-transparent"
+                    >
+                      <Info className="w-4 h-4 text-tj-primary shrink-0" />
+                      <span>About & Support</span>
+                    </button>
+
                     <a
                       href="/privacy.html"
                       target="_blank"
@@ -458,7 +477,7 @@ export default function AppHeader({
                       onClick={() => setIsHelpMenuOpen(false)}
                       className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-tj-text-main hover:bg-tj-primary-light rounded-xl transition-all"
                     >
-                      <Shield className="w-4 h-4 text-tj-primary shrink-0" />
+                      <Shield className="w-4 h-4 text-tj-text-muted shrink-0" />
                       <span>Privacy Policy</span>
                     </a>
                     <a
@@ -470,14 +489,6 @@ export default function AppHeader({
                     >
                       <FileText className="w-4 h-4 text-tj-text-muted shrink-0" />
                       <span>Terms of Service</span>
-                    </a>
-                    <a
-                      href="mailto:admin@teacherjake.com"
-                      onClick={() => setIsHelpMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-tj-text-main hover:bg-tj-primary-light rounded-xl transition-all"
-                    >
-                      <Mail className="w-4 h-4 text-tj-text-muted shrink-0" />
-                      <span>Contact Support</span>
                     </a>
 
                     <div className="my-1 border-t border-tj-border-main/60" />

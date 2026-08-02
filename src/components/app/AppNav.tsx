@@ -1,6 +1,7 @@
 import {
   BookMarked,
   Grid,
+  Info,
   Layers,
   Menu,
   PlusCircle,
@@ -13,9 +14,9 @@ import { useAuthStore } from '../../store/authStore';
 import type { Story } from '../../types';
 
 interface AppNavProps {
-  activeTab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin';
+  activeTab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about';
   setActiveTab: (
-    tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin',
+    tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about',
   ) => void;
   setSelectedStory: (story: Story | null) => void;
   storiesCount: number;
@@ -143,6 +144,22 @@ export default function AppNav({
               <span>Admin Dashboard</span>
             </button>
           )}
+
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedStory(null);
+              setActiveTab('about');
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold rounded transition-all cursor-pointer shrink-0 ${
+              activeTab === 'about'
+                ? 'bg-tj-mint text-tj-text-main border border-tj-success/50 shadow-none font-sans font-bold'
+                : 'text-tj-text-muted hover:bg-tj-bg-recessed hover:text-tj-text-main border border-transparent font-sans bg-transparent'
+            }`}
+          >
+            <Info className="w-3.5 h-3.5" />
+            <span>About</span>
+          </button>
         </div>
 
         {/* MOBILE VIEW NAV BAR (hamburger triggers menu) */}
@@ -364,6 +381,23 @@ export default function AppNav({
                   <span>Admin Dashboard</span>
                 </button>
               )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedStory(null);
+                  setActiveTab('about');
+                  setIsMenuOpen(false);
+                }}
+                className={`flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded transition-all cursor-pointer w-full text-left border ${
+                  activeTab === 'about'
+                    ? 'bg-tj-mint text-tj-text-main border-tj-success/50 font-bold'
+                    : 'text-tj-text-muted hover:bg-tj-bg-recessed hover:text-tj-text-main border-transparent bg-transparent'
+                }`}
+              >
+                <Info className="w-4 h-4" />
+                <span>About</span>
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
