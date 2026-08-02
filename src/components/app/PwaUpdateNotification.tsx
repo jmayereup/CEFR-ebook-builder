@@ -1,5 +1,5 @@
 import { useRegisterSW } from 'virtual:pwa-register/react';
-import { Sparkles, X } from 'lucide-react';
+import { Loader2, Sparkles, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 
@@ -10,6 +10,7 @@ export default function PwaUpdateNotification() {
   } = useRegisterSW();
 
   const [show, setShow] = useState<boolean>(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   useEffect(() => {
     if (needRefresh) {
@@ -18,7 +19,12 @@ export default function PwaUpdateNotification() {
   }, [needRefresh]);
 
   const handleUpdate = async () => {
-    await updateServiceWorker(true);
+    setIsUpdating(true);
+    try {
+      await updateServiceWorker(true);
+    } catch {
+      setIsUpdating(false);
+    }
   };
 
   const handleClose = () => {
@@ -40,16 +46,21 @@ export default function PwaUpdateNotification() {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2.5">
               <div className="p-2 bg-tj-primary/10 text-tj-primary rounded-xl">
-                <Sparkles className="w-4 h-4 text-tj-primary animate-pulse" />
+                {isUpdating ? (
+                  <Loader2 className="w-4 h-4 text-tj-primary animate-spin" />
+                ) : (
+                  <Sparkles className="w-4 h-4 text-tj-primary animate-pulse" />
+                )}
               </div>
               <h4 className="text-sm font-bold tracking-tight">
-                Update Available
+                {isUpdating ? 'Updating Application...' : 'Update Available'}
               </h4>
             </div>
             <button
               type="button"
               onClick={handleClose}
-              className="p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full cursor-pointer transition-colors"
+              disabled={isUpdating}
+              className="p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Dismiss"
             >
               <X className="w-4 h-4" />
@@ -59,8 +70,9 @@ export default function PwaUpdateNotification() {
           {/* Body */}
           <div className="flex flex-col gap-3">
             <p className="text-xs text-tj-text-muted leading-relaxed">
-              A new version of CEFR Stories is ready. Update now to get the
-              latest features and improvements.
+              {isUpdating
+                ? 'Applying latest updates and refreshing...'
+                : 'A new version of CEFR Stories is ready. Update now to get the latest features and improvements.'}
             </p>
 
             {/* Actions */}
@@ -68,14 +80,23 @@ export default function PwaUpdateNotification() {
               <button
                 type="button"
                 onClick={handleUpdate}
-                className="flex-1 py-2 px-4 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer transition-colors select-none text-center"
+                disabled={isUpdating}
+                className="flex-1 py-2 px-4 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer transition-colors select-none text-center flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Update Now
+                {isUpdating ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
+                    <span>Updating...</span>
+                  </>
+                ) : (
+                  <span>Update Now</span>
+                )}
               </button>
               <button
                 type="button"
                 onClick={handleClose}
-                className="py-2 px-4 bg-transparent border border-tj-border-main hover:bg-slate-50 dark:hover:bg-slate-800 text-tj-text-main font-bold text-xs rounded-xl cursor-pointer transition-colors select-none text-center"
+                disabled={isUpdating}
+                className="py-2 px-4 bg-transparent border border-tj-border-main hover:bg-slate-50 dark:hover:bg-slate-800 text-tj-text-main font-bold text-xs rounded-xl cursor-pointer transition-colors select-none text-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Later
               </button>
