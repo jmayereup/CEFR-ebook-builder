@@ -11,6 +11,12 @@ const router = Router();
 
 const COVERS_DIR = path.resolve(process.cwd(), 'public', 'covers');
 
+// In-flight mutex map to deduplicate concurrent requests for the same story
+const inFlightCovers = new Map<
+  string,
+  Promise<{ status: number; body: any }>
+>();
+
 // Ensure public/covers directory exists
 if (!fs.existsSync(COVERS_DIR)) {
   fs.mkdirSync(COVERS_DIR, { recursive: true });
@@ -34,19 +40,39 @@ router.post('/generate', async (req, res) => {
       });
     }
 
-    // Authenticate with PocketBase to fetch story details
-    const pbUrl = process.env.VITE_POCKETBASE_URL;
-    const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
-    const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
-    const openrouterApiKey = process.env.OPENROUTER_API_KEY;
-    const modelId =
-      process.env.COVER_IMAGE_MODEL || 'google/gemini-3.1-flash-lite-image';
-
-    if (!pbUrl || !adminEmail || !adminPassword || !openrouterApiKey) {
-      return res.status(500).json({
-        error: 'Server is missing configuration for cover generation.',
-      });
+    // Deduplicate concurrent in-flight requests for the same story
+    if (!force && inFlightCovers.has(storyId)) {
+      console.log(
+        `[Cover Generator] Deduplicating cover request for story ${storyId} (waiting for in-flight request)...`,
+      );
+      try {
+        const result = await inFlightCovers.get(storyId)!;
+        return res.status(result.status).json(result.body);
+      } catch (err: any) {
+        return res
+          .status(500)
+          .json({ error: err.message || 'Failed to generate cover.' });
+      }
     }
+
+    const generateTask = (async (): Promise<{ status: number; body: any }> => {
+      try {
+        // Authenticate with PocketBase to fetch story details
+      const pbUrl = process.env.VITE_POCKETBASE_URL;
+      const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
+      const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
+      const openrouterApiKey = process.env.OPENROUTER_API_KEY;
+      const modelId =
+        process.env.COVER_IMAGE_MODEL || 'google/gemini-3.1-flash-lite-image';
+
+      if (!pbUrl || !adminEmail || !adminPassword || !openrouterApiKey) {
+        return {
+          status: 500,
+          body: {
+            error: 'Server is missing configuration for cover generation.',
+          },
+        };
+      }
 
     const pb = new PocketBase(pbUrl);
     if (typeof (pb as any).admins !== 'undefined') {
@@ -60,7 +86,7 @@ router.post('/generate', async (req, res) => {
     // Fetch completed story
     const story = await pb.collection('stories').getOne(storyId);
     if (!story) {
-      return res.status(404).json({ error: 'Story not found.' });
+      return { status: 404, body: { error: 'Story not found.' } };
     }
 
     let sceneDescription = '';
@@ -288,18 +314,20 @@ Subject: ${sceneDescription}. The image must be a soft hand-drawn illustration w
 
     if (!response.ok) {
       const errText = await response.text();
-      return res
-        .status(502)
-        .json({ error: `OpenRouter API error: ${errText}` });
+      return {
+        status: 502,
+        body: { error: `OpenRouter API error: ${errText}` },
+      };
     }
 
     const data = (await response.json()) as any;
     const imageObj = data.data?.[0];
 
     if (!imageObj) {
-      return res
-        .status(502)
-        .json({ error: 'Invalid response from OpenRouter (no image data).' });
+      return {
+        status: 502,
+        body: { error: 'Invalid response from OpenRouter (no image data).' },
+      };
     }
 
     let buffer: Buffer;
@@ -308,16 +336,18 @@ Subject: ${sceneDescription}. The image must be a soft hand-drawn illustration w
     } else if (imageObj.url) {
       const imageRes = await fetch(imageObj.url);
       if (!imageRes.ok) {
-        return res
-          .status(502)
-          .json({ error: 'Failed to download cover image from URL.' });
+        return {
+          status: 502,
+          body: { error: 'Failed to download cover image from URL.' },
+        };
       }
       const arrayBuffer = await imageRes.arrayBuffer();
       buffer = Buffer.from(arrayBuffer);
     } else {
-      return res
-        .status(502)
-        .json({ error: 'Image data missing from OpenRouter response.' });
+      return {
+        status: 502,
+        body: { error: 'Image data missing from OpenRouter response.' },
+      };
     }
 
     // Process image: crop & resize to 480x672 (aspect-ratio matched)
@@ -347,14 +377,40 @@ Subject: ${sceneDescription}. The image must be a soft hand-drawn illustration w
       );
     }
 
-    return res.status(200).json({
-      success: true,
-      message: 'Cover generated successfully.',
-      url: `/covers/${storyId}.webp`,
-      updated: updatedRecord ? updatedRecord.updated : new Date().toISOString(),
-    });
+    return {
+      status: 200,
+      body: {
+        success: true,
+        message: 'Cover generated successfully.',
+        url: `/covers/${storyId}.webp`,
+        updated: updatedRecord
+          ? updatedRecord.updated
+          : new Date().toISOString(),
+      },
+    };
   } catch (err: any) {
     console.error('[Cover Generation Error]:', err);
+    return {
+      status: 500,
+      body: { error: err.message || 'Internal server error.' },
+    };
+  }
+})();
+
+    if (!force) {
+      inFlightCovers.set(storyId, generateTask);
+    }
+
+    try {
+      const result = await generateTask;
+      return res.status(result.status).json(result.body);
+    } finally {
+      if (!force) {
+        inFlightCovers.delete(storyId);
+      }
+    }
+  } catch (err: any) {
+    console.error('[Cover Generation Top Error]:', err);
     return res
       .status(500)
       .json({ error: err.message || 'Internal server error.' });

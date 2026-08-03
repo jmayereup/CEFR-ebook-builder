@@ -116,6 +116,7 @@ export interface UseStoryGenerationReturn {
     modelId?: string,
     translationLanguage?: string,
     forceRegenerate?: boolean,
+    targetChapterNumber?: number,
   ) => Promise<void>;
   handleCancelGeneration: () => void;
 }
@@ -1077,6 +1078,7 @@ export const useStoryGeneration = (
     modelId?: string,
     translationLanguage?: string,
     forceRegenerate: boolean = false,
+    targetChapterNumber?: number,
   ): Promise<void> => {
     if (!currentUser) {
       showAlert('Authentication Required', 'Please log in first.', 'warning');
@@ -1086,17 +1088,25 @@ export const useStoryGeneration = (
     const chapters = story.chapters ?? [];
     const isBilingualStory =
       story.cefrLevel === 'A1' || story.cefrLevel === 'Pre-A1';
-    const chaptersNeedingGlossary = forceRegenerate
-      ? chapters.filter((ch) => !isBilingualStory)
-      : chapters.filter(
-          (ch) =>
-            !isBilingualStory && (!ch.vocabulary || ch.vocabulary.length === 0),
-        );
+
+    let chaptersNeedingGlossary: Chapter[] = [];
+    if (typeof targetChapterNumber === 'number') {
+      chaptersNeedingGlossary = chapters.filter(
+        (ch) => !isBilingualStory && ch.chapterNumber === targetChapterNumber,
+      );
+    } else if (forceRegenerate) {
+      chaptersNeedingGlossary = chapters.filter((ch) => !isBilingualStory);
+    } else {
+      chaptersNeedingGlossary = chapters.filter(
+        (ch) =>
+          !isBilingualStory && (!ch.vocabulary || ch.vocabulary.length === 0),
+      );
+    }
 
     if (chaptersNeedingGlossary.length === 0) {
       showAlert(
         'Glossary Up To Date',
-        'All chapters already have vocabulary terms.',
+        'All selected chapters already have vocabulary terms.',
         'info',
       );
       return;
@@ -1115,15 +1125,6 @@ export const useStoryGeneration = (
 
     try {
       const updatedChapters = [...chapters];
-
-      // Collect initial existing words to avoid duplicates across chapters
-      const accumulatedWords = forceRegenerate
-        ? []
-        : updatedChapters
-            .flatMap((c) => c.vocabulary ?? [])
-            .map((v) => v.word.toLowerCase().trim())
-            .filter(Boolean);
-
       const targetModel =
         modelId ||
         useUIStore.getState().defaultGlossaryModel ||
@@ -1136,11 +1137,20 @@ export const useStoryGeneration = (
 
       let completedCount = 0;
 
-      for (let i = 0; i < chaptersNeedingGlossary.length; i++) {
-        const ch = chaptersNeedingGlossary[i];
+      if (chaptersNeedingGlossary.length === 1) {
+        // Single chapter mode
+        const ch = chaptersNeedingGlossary[0];
         setGlossaryStatus(
-          `Generating vocabulary for Chapter ${ch.chapterNumber} (${i + 1}/${chaptersNeedingGlossary.length})...`,
+          `Generating vocabulary for Chapter ${ch.chapterNumber}...`,
         );
+
+        const accumulatedWords = forceRegenerate
+          ? []
+          : updatedChapters
+              .filter((c) => c.chapterNumber !== ch.chapterNumber)
+              .flatMap((c) => c.vocabulary ?? [])
+              .map((v) => v.word.toLowerCase().trim())
+              .filter(Boolean);
 
         const res = await fetch('/api/stories/generate-glossary', {
           method: 'POST',
@@ -1169,16 +1179,9 @@ export const useStoryGeneration = (
         }
 
         const data = await res.json();
-        if (data.error) {
-          throw new Error(data.error);
-        }
+        if (data.error) throw new Error(data.error);
 
-        const vocab =
-          data.vocabulary ||
-          (data.chapterVocabulary
-            ? data.chapterVocabulary[ch.chapterNumber]
-            : undefined);
-
+        const vocab = data.vocabulary;
         if (vocab && Array.isArray(vocab)) {
           const chIdx = updatedChapters.findIndex(
             (c) => c.chapterNumber === ch.chapterNumber,
@@ -1189,33 +1192,93 @@ export const useStoryGeneration = (
               vocabulary: vocab as Chapter['vocabulary'],
             };
           }
-
-          // Accumulate words for deduplication in subsequent chapters
-          const newWords = vocab
-            .map((v: any) => v.word?.toLowerCase().trim())
-            .filter(Boolean);
-          accumulatedWords.push(...newWords);
-
-          completedCount++;
+          completedCount = 1;
           setGlossaryLogs((prev) => [
             ...prev,
             `Glossary generated for Chapter ${ch.chapterNumber} (${vocab.length} terms).`,
           ]);
+        }
+      } else {
+        // Multi-chapter BATCH mode (1 LLM request for all chapters)
+        setGlossaryStatus(
+          `Generating batch vocabulary for ${chaptersNeedingGlossary.length} chapters at once...`,
+        );
 
-          // Update UI state progressively per chapter
-          onStoryUpdated({
-            ...story,
-            chapters: [...updatedChapters],
+        const targetNums = new Set(
+          chaptersNeedingGlossary.map((c) => c.chapterNumber),
+        );
+        const accumulatedWords = forceRegenerate
+          ? []
+          : updatedChapters
+              .filter((c) => !targetNums.has(c.chapterNumber))
+              .flatMap((c) => c.vocabulary ?? [])
+              .map((v) => v.word.toLowerCase().trim())
+              .filter(Boolean);
+
+        const res = await fetch('/api/stories/generate-glossary', {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          signal,
+          body: JSON.stringify({
+            storyId: story.id,
+            chapters: chaptersNeedingGlossary.map((ch) => ({
+              chapterNumber: ch.chapterNumber,
+              content: ch.content,
+            })),
+            language: story.language,
+            cefrLevel: story.cefrLevel,
+            existingWords: accumulatedWords,
+            userId: currentUser?.uid,
+            userEmail: currentUser?.email,
+            model: targetModel,
             translationLanguage: targetTransLang,
-            isUnsaved: true,
-          });
-        } else {
-          setGlossaryLogs((prev) => [
-            ...prev,
-            `[Warning] No glossary returned for Chapter ${ch.chapterNumber}.`,
-          ]);
+          }),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(
+            errorData.error ||
+              `Batch glossary request failed with status ${res.status}`,
+          );
+        }
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        const chapterVocabMap = data.chapterVocabulary || {};
+        for (const ch of chaptersNeedingGlossary) {
+          const vocab = chapterVocabMap[ch.chapterNumber];
+          if (vocab && Array.isArray(vocab)) {
+            const chIdx = updatedChapters.findIndex(
+              (c) => c.chapterNumber === ch.chapterNumber,
+            );
+            if (chIdx !== -1) {
+              updatedChapters[chIdx] = {
+                ...updatedChapters[chIdx],
+                vocabulary: vocab as Chapter['vocabulary'],
+              };
+            }
+            completedCount++;
+            setGlossaryLogs((prev) => [
+              ...prev,
+              `Glossary generated for Chapter ${ch.chapterNumber} (${vocab.length} terms).`,
+            ]);
+          } else {
+            setGlossaryLogs((prev) => [
+              ...prev,
+              `[Warning] No glossary returned for Chapter ${ch.chapterNumber}.`,
+            ]);
+          }
         }
       }
+
+      onStoryUpdated({
+        ...story,
+        chapters: [...updatedChapters],
+        translationLanguage: targetTransLang,
+        isUnsaved: true,
+      });
 
       setIsGeneratingGlossary(false);
       setGlossaryStatus('');
@@ -1224,7 +1287,7 @@ export const useStoryGeneration = (
 
       showAlert(
         'Glossary Complete',
-        `Vocabulary terms have been generated for all ${completedCount} chapter(s).`,
+        `Vocabulary terms have been generated for ${completedCount} chapter(s).`,
         'info',
       );
     } catch (err: unknown) {

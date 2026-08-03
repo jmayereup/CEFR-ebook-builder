@@ -377,7 +377,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       await createStory(storyToSave);
       loadStoriesMetadata({ refresh: true, storyId: sanitizedId });
 
-      if (storyToSave.isCompleted) {
+      if (storyToSave.isCompleted && !generatingCoverIds.has(sanitizedId)) {
         setGeneratingCoverIds((prev) => new Set(prev).add(sanitizedId));
         fetch('/api/stories/generate-cover/generate', {
           method: 'POST',
@@ -550,7 +550,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
       await createStory(savedStory);
 
-      if (savedStory.isCompleted) {
+      if (savedStory.isCompleted && !generatingCoverIds.has(sanitizedId)) {
         // Trigger cover generation in the background
         setGeneratingCoverIds((prev) => new Set(prev).add(sanitizedId));
         fetch('/api/stories/generate-cover/generate', {

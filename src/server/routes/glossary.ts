@@ -138,6 +138,8 @@ For each term, you must provide:
       res.write(' ');
     };
 
+    let parsedData: any = {};
+
     // -------------------------------------------------------------------------
     // BATCH MODE: one LLM call for all chapters
     // -------------------------------------------------------------------------
@@ -200,47 +202,36 @@ Return your response as a JSON array of chapter vocabulary objects.`;
         onHeartbeat: sendHeartbeat,
       });
 
-      const parsedData = JSON.parse(cleanJSONString(responseText || '{}'));
+      const rawData = JSON.parse(cleanJSONString(responseText || '{}'));
 
       // Convert array to map: { [chapterNumber]: vocabulary[] }
       const chapterVocabulary: Record<number, unknown[]> = {};
-      if (Array.isArray(parsedData.chapters)) {
-        for (const ch of parsedData.chapters) {
+      if (Array.isArray(rawData.chapters)) {
+        for (const ch of rawData.chapters) {
           if (typeof ch.chapterNumber === 'number') {
             chapterVocabulary[ch.chapterNumber] = ch.vocabulary ?? [];
           }
         }
       }
-
-      if (!headersSent) {
-        res.writeHead(200, {
-          'Content-Type': 'application/json',
-          'Transfer-Encoding': 'chunked',
-        });
-        headersSent = true;
-      }
-      res.write(JSON.stringify({ chapterVocabulary }));
-      res.end();
-      return;
-    }
-
-    // -------------------------------------------------------------------------
-    // SINGLE-CHAPTER MODE (legacy / backward compat)
-    // -------------------------------------------------------------------------
-    const responseSchema = {
-      type: Type.OBJECT,
-      properties: {
-        vocabulary: {
-          type: Type.ARRAY,
-          items: vocabItem,
-          description:
-            'A list of 5 to 10 vocabulary terms extracted from the text.',
+      parsedData = { chapterVocabulary };
+    } else {
+      // -------------------------------------------------------------------------
+      // SINGLE-CHAPTER MODE (legacy / backward compat)
+      // -------------------------------------------------------------------------
+      const responseSchema = {
+        type: Type.OBJECT,
+        properties: {
+          vocabulary: {
+            type: Type.ARRAY,
+            items: vocabItem,
+            description:
+              'A list of 5 to 10 vocabulary terms extracted from the text.',
+          },
         },
-      },
-      required: ['vocabulary'],
-    };
+        required: ['vocabulary'],
+      };
 
-    const prompt = `Text to analyze:
+      const prompt = `Text to analyze:
 "${content}"
 
 Language: ${language}
@@ -248,23 +239,24 @@ CEFR Difficulty Level: ${cefrLevel}
 
 Extract 5 to 10 vocabulary terms/phrases that are relevant, interesting, or challenging for a student at the ${cefrLevel} level from the text above. Return them in the requested JSON structure.`;
 
-    const responseText = await handleModelCall({
-      model: model || GLOSSARY_MODEL,
-      systemInstruction,
-      prompt,
-      responseSchema,
-      temperature: 0.3,
-      customOpenRouterKey:
-        typeof customOpenRouterKey === 'string'
-          ? customOpenRouterKey
-          : undefined,
-      userId,
-      userEmail,
-      action: 'generate-glossary',
-      onHeartbeat: sendHeartbeat,
-    });
+      const responseText = await handleModelCall({
+        model: model || GLOSSARY_MODEL,
+        systemInstruction,
+        prompt,
+        responseSchema,
+        temperature: 0.3,
+        customOpenRouterKey:
+          typeof customOpenRouterKey === 'string'
+            ? customOpenRouterKey
+            : undefined,
+        userId,
+        userEmail,
+        action: 'generate-glossary',
+        onHeartbeat: sendHeartbeat,
+      });
 
-    const parsedData = JSON.parse(cleanJSONString(responseText || '{}'));
+      parsedData = JSON.parse(cleanJSONString(responseText || '{}'));
+    }
 
     if (storyId) {
       const pbUrl = process.env.VITE_POCKETBASE_URL;
