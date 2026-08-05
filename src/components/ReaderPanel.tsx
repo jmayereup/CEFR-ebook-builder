@@ -688,19 +688,30 @@ export default function ReaderPanel({
     }
   };
 
-  // Reset selectedWordRange when toast closes
+  // Reset selectedWordRange when toast closes or when range is out of bounds
   useEffect(() => {
     if (selectedWord === null) {
       setSelectedWordRange(null);
+    } else if (selectedWordRange !== null) {
+      const [start, end] = selectedWordRange;
+      if (
+        start < 0 ||
+        end >= chapterWords.length ||
+        !chapterWords[start] ||
+        !chapterWords[end]
+      ) {
+        setSelectedWordRange(null);
+      }
     }
-  }, [selectedWord]);
+  }, [selectedWord, selectedWordRange, chapterWords]);
 
   // Helper checks for range adjustment
   const canExtendLeft =
     selectedWordRange !== null &&
     selectedWordRange[0] > 0 &&
-    chapterWords[selectedWordRange[0] - 1].pIdx ===
-      chapterWords[selectedWordRange[0]].pIdx &&
+    selectedWordRange[0] < chapterWords.length &&
+    chapterWords[selectedWordRange[0] - 1]?.pIdx ===
+      chapterWords[selectedWordRange[0]]?.pIdx &&
     selectedWordRange[1] - (selectedWordRange[0] - 1) + 1 <= 10;
 
   const canShrinkLeft =
@@ -711,9 +722,10 @@ export default function ReaderPanel({
 
   const canExtendRight =
     selectedWordRange !== null &&
+    selectedWordRange[1] >= 0 &&
     selectedWordRange[1] < chapterWords.length - 1 &&
-    chapterWords[selectedWordRange[1] + 1].pIdx ===
-      chapterWords[selectedWordRange[1]].pIdx &&
+    chapterWords[selectedWordRange[1] + 1]?.pIdx ===
+      chapterWords[selectedWordRange[1]]?.pIdx &&
     selectedWordRange[1] + 1 - selectedWordRange[0] + 1 <= 10;
 
   const handleExtendLeft = () => {
@@ -1375,15 +1387,17 @@ export default function ReaderPanel({
                       style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
                     >
                       {effectiveDisplayParagraphs.map((dp, idx) => {
+                        const startWord = selectedWordRange
+                          ? chapterWords[selectedWordRange[0]]
+                          : undefined;
+                        const endWord = selectedWordRange
+                          ? chapterWords[selectedWordRange[1]]
+                          : undefined;
                         const isActiveParagraph =
-                          selectedWordRange !== null &&
-                          chapterWords[selectedWordRange[0]]?.pIdx === idx;
+                          startWord !== undefined && startWord.pIdx === idx;
                         const activeWordRangeInPara: [number, number] | null =
-                          isActiveParagraph && selectedWordRange
-                            ? [
-                                chapterWords[selectedWordRange[0]].indexInPara,
-                                chapterWords[selectedWordRange[1]].indexInPara,
-                              ]
+                          isActiveParagraph && startWord && endWord
+                            ? [startWord.indexInPara, endWord.indexInPara]
                             : null;
                         return (
                           <div
