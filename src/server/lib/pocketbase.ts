@@ -12,32 +12,45 @@ const pbUrl =
 export const pb = new PocketBase(pbUrl);
 pb.autoCancellation(false);
 
-// Admin authentication on the server if credentials are provided in env
+// Admin/User authentication on the server if credentials are provided in env
 let isAdminAuthenticated = false;
+let authPromise: Promise<void> | null = null;
+
 async function ensureAdminAuth() {
   if (isAdminAuthenticated && pb.authStore.isValid) return;
-  const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
-  const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
-  if (adminEmail && adminPassword) {
+  if (authPromise) return authPromise;
+
+  const userEmail =
+    process.env.POCKETBASE_EMAIL || process.env.POCKETBASE_ADMIN_EMAIL;
+  const userPassword =
+    process.env.POCKETBASE_PASSWORD || process.env.POCKETBASE_ADMIN_PASSWORD;
+
+  if (!userEmail || !userPassword) return;
+
+  authPromise = (async () => {
     try {
-      if (typeof (pb as any).admins !== 'undefined') {
-        await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
+      if (process.env.POCKETBASE_EMAIL) {
+        // Authenticate as app user (with isAdmin=true) to avoid Superuser email alerts
+        await pb.collection('users').authWithPassword(userEmail, userPassword);
+      } else if (typeof (pb as any).admins !== 'undefined') {
+        await (pb as any).admins.authWithPassword(userEmail, userPassword);
       } else {
         await pb
           .collection('_superusers')
-          .authWithPassword(adminEmail, adminPassword);
+          .authWithPassword(userEmail, userPassword);
       }
       isAdminAuthenticated = true;
       console.log(
-        '[Server PocketBase] Authenticated successfully as Admin/Superuser.',
+        `[Server PocketBase] Authenticated successfully as ${process.env.POCKETBASE_EMAIL ? 'User (isAdmin)' : 'Admin/Superuser'}.`,
       );
     } catch (err) {
-      console.error(
-        '[Server PocketBase] Failed to authenticate as Admin:',
-        err,
-      );
+      console.error('[Server PocketBase] Failed to authenticate:', err);
+    } finally {
+      authPromise = null;
     }
-  }
+  })();
+
+  return authPromise;
 }
 
 // In-memory cache for stories metadata to avoid high read operations on the database

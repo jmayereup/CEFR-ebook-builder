@@ -57,15 +57,17 @@ router.post('/generate', async (req, res) => {
 
     const generateTask = (async (): Promise<{ status: number; body: any }> => {
       try {
-        // Authenticate with PocketBase to fetch story details
+      // Authenticate with PocketBase to fetch story details
       const pbUrl = process.env.VITE_POCKETBASE_URL;
-      const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
-      const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
+      const userEmail =
+        process.env.POCKETBASE_EMAIL || process.env.POCKETBASE_ADMIN_EMAIL;
+      const userPassword =
+        process.env.POCKETBASE_PASSWORD || process.env.POCKETBASE_ADMIN_PASSWORD;
       const openrouterApiKey = process.env.OPENROUTER_API_KEY;
       const modelId =
         process.env.COVER_IMAGE_MODEL || 'google/gemini-3.1-flash-lite-image';
 
-      if (!pbUrl || !adminEmail || !adminPassword || !openrouterApiKey) {
+      if (!pbUrl || !userEmail || !userPassword || !openrouterApiKey) {
         return {
           status: 500,
           body: {
@@ -74,14 +76,16 @@ router.post('/generate', async (req, res) => {
         };
       }
 
-    const pb = new PocketBase(pbUrl);
-    if (typeof (pb as any).admins !== 'undefined') {
-      await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
-    } else {
-      await pb
-        .collection('_superusers')
-        .authWithPassword(adminEmail, adminPassword);
-    }
+      const pb = new PocketBase(pbUrl);
+      if (process.env.POCKETBASE_EMAIL) {
+        await pb.collection('users').authWithPassword(userEmail, userPassword);
+      } else if (typeof (pb as any).admins !== 'undefined') {
+        await (pb as any).admins.authWithPassword(userEmail, userPassword);
+      } else {
+        await pb
+          .collection('_superusers')
+          .authWithPassword(userEmail, userPassword);
+      }
 
     // Fetch completed story
     const story = await pb.collection('stories').getOne(storyId);

@@ -260,17 +260,21 @@ Extract 5 to 10 vocabulary terms/phrases that are relevant, interesting, or chal
 
     if (storyId) {
       const pbUrl = process.env.VITE_POCKETBASE_URL;
-      const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
-      const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
-      if (pbUrl && adminEmail && adminPassword) {
+      const userEmail =
+        process.env.POCKETBASE_EMAIL || process.env.POCKETBASE_ADMIN_EMAIL;
+      const userPassword =
+        process.env.POCKETBASE_PASSWORD || process.env.POCKETBASE_ADMIN_PASSWORD;
+      if (pbUrl && userEmail && userPassword) {
         try {
           const pb = new PocketBase(pbUrl);
-          if (typeof (pb as any).admins !== 'undefined') {
-            await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
+          if (process.env.POCKETBASE_EMAIL) {
+            await pb.collection('users').authWithPassword(userEmail, userPassword);
+          } else if (typeof (pb as any).admins !== 'undefined') {
+            await (pb as any).admins.authWithPassword(userEmail, userPassword);
           } else {
             await pb
               .collection('_superusers')
-              .authWithPassword(adminEmail, adminPassword);
+              .authWithPassword(userEmail, userPassword);
           }
           const existing = await pb
             .collection('stories')
