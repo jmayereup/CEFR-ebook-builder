@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import type { Story } from '../types';
+import { getStoryCoverUrl } from '../utils/coverUtils';
 import { slugify } from '../utils/slugify';
 
 export function useDocumentMetadata(
@@ -45,8 +46,7 @@ export function useDocumentMetadata(
     updateMetaTag('property', 'og:title', newTitle);
     updateMetaTag('property', 'og:description', newDesc);
 
-    const t = story.updated ? `?t=${new Date(story.updated).getTime()}` : '';
-    const coverUrl = `${window.location.origin}/covers/${story.id}.jpg${t}`;
+    const coverUrl = getStoryCoverUrl(story, { absolute: true });
     updateMetaTag('property', 'og:image', coverUrl);
     updateMetaTag('name', 'twitter:image', coverUrl);
     updateMetaTag('name', 'twitter:card', 'summary_large_image');

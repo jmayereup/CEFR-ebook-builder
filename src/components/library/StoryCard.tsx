@@ -23,6 +23,7 @@ import {
   type Story,
 } from '../../types';
 import { countWords } from '../../utils/wordCounter';
+import { getStoryCoverUrl } from '../../utils/coverUtils';
 
 const cleanGenreLabel = (label: string) => {
   return label
@@ -256,11 +257,7 @@ export default function StoryCard({
 
           {hasCoverImage && (
             <img
-              src={
-                story.cover
-                  ? `https://pb.teacherjake.com/api/files/stories/${story.id}/${story.cover}`
-                  : `/covers/${story.id}.jpg?t=${story.updated ? new Date(story.updated).getTime() : ''}`
-              }
+              src={getStoryCoverUrl(story)}
               onError={() => setImgError(true)}
               className="absolute inset-0 w-full h-full object-cover z-0"
               alt=""

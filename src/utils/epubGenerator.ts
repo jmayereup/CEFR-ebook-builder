@@ -1,5 +1,6 @@
 import JSZip from 'jszip';
 import type { Story } from '../types';
+import { getStoryCoverUrl } from './coverUtils';
 import { segmentText } from './segmenter';
 
 function escapeXml(unsafe: string): string {
@@ -100,10 +101,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
   let coverExtension = 'jpg';
 
   try {
-    const t = story.updated ? `?t=${new Date(story.updated).getTime()}` : '';
-    const coverUrl = story.cover
-      ? `https://pb.teacherjake.com/api/files/stories/${story.id}/${story.cover}`
-      : `/covers/${story.id}.jpg${t}`;
+    const coverUrl = getStoryCoverUrl(story);
     const response = await fetch(coverUrl);
     if (response.ok) {
       coverBlob = await response.blob();

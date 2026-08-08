@@ -21,8 +21,24 @@ export default function PwaUpdateNotification() {
   const handleUpdate = async () => {
     setIsUpdating(true);
     try {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener(
+          'controllerchange',
+          () => {
+            window.location.reload();
+          },
+          { once: true }
+        );
+      }
+
       await updateServiceWorker(true);
-    } catch {
+
+      // Fallback reload in case controllerchange didn't trigger automatically
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error('Failed to update service worker:', error);
       setIsUpdating(false);
     }
   };

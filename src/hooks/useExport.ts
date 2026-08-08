@@ -3,6 +3,8 @@ import { getLanguageCodeFromName, type Story } from '../types';
 import { segmentText } from '../utils/segmenter';
 import { slugify } from '../utils/slugify';
 
+import { getStoryCoverUrl } from '../utils/coverUtils';
+
 function escapeHtml(unsafe: string): string {
   return unsafe
     .replace(/&/g, '&amp;')
@@ -115,11 +117,16 @@ export function useExport(options: UseExportOptions) {
       !!selectedStory.translationLanguage ||
       selectedStory.chapters.some((ch) => ch.content.includes('Translation:'));
 
+    const coverUrl = getStoryCoverUrl(selectedStory, { absolute: true });
+
     let htmlContent = `
       <div style="font-family: 'Georgia', serif; line-height: 1.5; color: #1e293b; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h1 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-align: center; color: #004d2c; margin-bottom: 4px; margin-top: 0px;">${selectedStory.title}</h1>
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="${coverUrl}" alt="${escapeHtml(selectedStory.title)} Cover" style="max-width: 260px; width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+        </div>
+        <h1 style="font-family: 'Helvetica Neue', Arial, sans-serif; text-align: center; color: #004d2c; margin-bottom: 4px; margin-top: 0px;">${escapeHtml(selectedStory.title)}</h1>
         <p style="text-align: center; color: #64748b; font-size: 14px; margin-bottom: 24px; margin-top: 0px; font-style: italic;">
-          Target Language: <strong>${selectedStory.language}</strong> | CEFR Graded: <strong>${selectedStory.cefrLevel}</strong>
+          Target Language: <strong>${escapeHtml(selectedStory.language)}</strong> | CEFR Graded: <strong>${escapeHtml(selectedStory.cefrLevel)}</strong>
         </p>
     `;
 

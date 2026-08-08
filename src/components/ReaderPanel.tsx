@@ -31,6 +31,7 @@ import {
   segmentText,
   stripMarkdown,
 } from '../utils/segmenter';
+import { getStoryCoverUrl } from '../utils/coverUtils';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
 import BilingualSwapNotification from './reader/BilingualSwapNotification';
@@ -1293,7 +1294,7 @@ export default function ReaderPanel({
                         ) : (
                           <>
                             <img
-                              src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
+                              src={getStoryCoverUrl(story)}
                               onError={() => setCoverImgError(true)}
                               className="w-full h-full object-cover"
                               alt={`${story.title} Cover`}

@@ -10,6 +10,7 @@ import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { GENRES, getLanguageCodeFromName, type Story } from '../../types';
+import { getStoryCoverUrl } from '../../utils/coverUtils';
 
 interface RecentlyReadSectionProps {
   items: {
@@ -149,11 +150,7 @@ export default function RecentlyReadSection({
 
                   {hasCoverImage && (
                     <img
-                      src={
-                        story.cover
-                          ? `https://pb.teacherjake.com/api/files/stories/${story.id}/${story.cover}`
-                          : `/covers/${story.id}.jpg?t=${story.updated ? new Date(story.updated).getTime() : ''}`
-                      }
+                      src={getStoryCoverUrl(story)}
                       onError={() => handleImgError(story.id)}
                       className="absolute inset-0 w-full h-full object-cover z-0"
                       alt=""
