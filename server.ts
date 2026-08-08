@@ -314,9 +314,13 @@ async function bootstrap() {
           fs.existsSync(
             path.join(process.cwd(), 'public', 'covers', `${story.id}.jpg`),
           );
-        const coverUrl = hasCover
-          ? `${req.protocol}://${req.get('host')}/covers/${story.id}.jpg`
-          : `${req.protocol}://${req.get('host')}/tj-logo.svg`;
+        const cdnBase = process.env.VITE_COVER_CDN_URL?.replace(/\/+$/, '');
+        const coverUrl =
+          story.cover && cdnBase && story.collectionId
+            ? `${cdnBase}/${story.collectionId}/${story.id}/${story.cover}`
+            : hasCover
+              ? `${req.protocol}://${req.get('host')}/covers/${story.id}.jpg`
+              : `${req.protocol}://${req.get('host')}/tj-logo.svg`;
 
         template = template.replace(
           /<title>.*?<\/title>/,
