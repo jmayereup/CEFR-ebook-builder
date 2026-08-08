@@ -41,6 +41,7 @@ export interface ConsistencyAudit {
 
 export interface Story {
   id: string;
+  cover?: string;
   title: string;
   language: string;
   cefrLevel: string;

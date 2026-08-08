@@ -189,36 +189,7 @@ app.post('/api/users/sync', async (req, res) => {
 
 async function bootstrap() {
   // Serve dynamic public covers directly from public directory (works in both dev & prod)
-  app.get('/covers/:storyId.jpg', async (req, res, next) => {
-    const { storyId } = req.params;
-    const jpgPath = path.join(
-      process.cwd(),
-      'public',
-      'covers',
-      `${storyId}.jpg`,
-    );
-    const webpPath = path.join(
-      process.cwd(),
-      'public',
-      'covers',
-      `${storyId}.webp`,
-    );
-
-    if (fs.existsSync(jpgPath)) {
-      return next();
-    }
-
-    if (fs.existsSync(webpPath)) {
-      try {
-        await sharp(webpPath).jpeg({ quality: 85 }).toFile(jpgPath);
-        return next();
-      } catch (err) {
-        console.error(
-          `[Server API] Failed to convert ${storyId}.webp to JPEG on-the-fly:`,
-          err,
-        );
-      }
-    }
+  app.get('/covers/:storyId.jpg', (req, res, next) => {
     next();
   });
 

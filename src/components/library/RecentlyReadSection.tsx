@@ -149,7 +149,11 @@ export default function RecentlyReadSection({
 
                   {hasCoverImage && (
                     <img
-                      src={`/covers/${story.id}.webp?t=${story.updated ? new Date(story.updated).getTime() : ''}`}
+                      src={
+                        story.cover
+                          ? `https://pb.teacherjake.com/api/files/stories/${story.id}/${story.cover}`
+                          : `/covers/${story.id}.jpg?t=${story.updated ? new Date(story.updated).getTime() : ''}`
+                      }
                       onError={() => handleImgError(story.id)}
                       className="absolute inset-0 w-full h-full object-cover z-0"
                       alt=""

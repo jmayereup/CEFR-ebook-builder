@@ -101,38 +101,14 @@ export async function generateEpub(story: Story): Promise<Blob> {
 
   try {
     const t = story.updated ? `?t=${new Date(story.updated).getTime()}` : '';
-    const response = await fetch(`/covers/${story.id}.jpg${t}`);
+    const coverUrl = story.cover
+      ? `https://pb.teacherjake.com/api/files/stories/${story.id}/${story.cover}`
+      : `/covers/${story.id}.jpg${t}`;
+    const response = await fetch(coverUrl);
     if (response.ok) {
       coverBlob = await response.blob();
       coverMediaType = 'image/jpeg';
       coverExtension = 'jpg';
-    } else {
-      // Fallback to WebP if JPEG isn't found, and convert it to JPEG in browser
-      const webpResponse = await fetch(`/covers/${story.id}.webp${t}`);
-      if (webpResponse.ok) {
-        const webpBlob = await webpResponse.blob();
-        try {
-          if (
-            typeof window !== 'undefined' &&
-            typeof HTMLCanvasElement !== 'undefined'
-          ) {
-            coverBlob = await convertWebPToJpeg(webpBlob);
-          } else {
-            // Fallback to raw WebP if not in a browser context (e.g., node test runners)
-            coverBlob = webpBlob;
-            coverMediaType = 'image/webp';
-            coverExtension = 'webp';
-          }
-        } catch (convErr) {
-          console.warn(
-            'Cover image conversion failed, embedding raw WebP instead:',
-            convErr,
-          );
-          coverBlob = webpBlob;
-          coverMediaType = 'image/webp';
-          coverExtension = 'webp';
-        }
-      }
     }
   } catch (err) {
     console.warn(

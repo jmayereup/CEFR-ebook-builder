@@ -95,7 +95,7 @@ async function main() {
         break;
       }
 
-      const coverPath = path.join(COVERS_DIR, `${story.id}.webp`);
+      const coverPath = path.join(COVERS_DIR, `${story.id}.jpg`);
 
       if (fs.existsSync(coverPath) && !isForce) {
         console.log(
@@ -107,7 +107,7 @@ async function main() {
       // Check if cover already exists on the remote server
       if (!isForce) {
         const appUrl = (process.env.APP_URL || url).replace(/\/$/, '');
-        const remoteCoverUrl = `${appUrl}/covers/${story.id}.webp`;
+        const remoteCoverUrl = `${appUrl}/covers/${story.id}.jpg`;
         try {
           const checkRes = await fetch(remoteCoverUrl, { method: 'HEAD' });
           if (checkRes.ok) {

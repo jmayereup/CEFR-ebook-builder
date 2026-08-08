@@ -7,9 +7,15 @@ import path from 'node:path';
 import { countWords } from '../../utils/wordCounter';
 import { setStoriesMetadataCache } from './database';
 
-const pbUrl =
-  process.env.VITE_POCKETBASE_URL || 'https://blog.teacherjake.com/api';
-export const pb = new PocketBase(pbUrl);
+function getPocketBaseUrl(): string {
+  const rawUrl =
+    process.env.VITE_POCKETBASE_URL ||
+    process.env.POCKETBASE_URL ||
+    'https://pb.teacherjake.com';
+  return rawUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
+}
+
+export const pb = new PocketBase(getPocketBaseUrl());
 pb.autoCancellation(false);
 
 // Admin/User authentication on the server if credentials are provided in env
@@ -17,6 +23,7 @@ let isAdminAuthenticated = false;
 let authPromise: Promise<void> | null = null;
 
 async function ensureAdminAuth() {
+  pb.baseUrl = getPocketBaseUrl();
   if (isAdminAuthenticated && pb.authStore.isValid) return;
   if (authPromise) return authPromise;
 
@@ -114,6 +121,7 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
   if (isFetching) return;
   isFetching = true;
   try {
+    await ensureAdminAuth();
     console.log(
       '[Server PB] Refreshing public stories metadata from PocketBase...',
     );
@@ -154,6 +162,7 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
 
         return {
           id: record.id,
+          cover: record.cover || '',
           title: record.title || '',
           language: record.language || '',
           translationLanguage: record.translationLanguage || '',

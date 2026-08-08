@@ -78,8 +78,10 @@ fi
 echo "-> Ensuring remote target directory exists ($SERVER_PATH)..."
 ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "mkdir -p $SERVER_PATH"
 
-echo "-> Uploading build artifacts and package configs..."
+echo "-> Uploading build artifacts, public covers/assets, and package configs..."
 rsync -avz --delete -e "ssh -o StrictHostKeyChecking=accept-new" dist/ "$SERVER_USER@$SERVER_IP:$SERVER_PATH/dist/"
+ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "mkdir -p /opt/tj-gen/public/covers $SERVER_PATH/public"
+rsync -avz -e "ssh -o StrictHostKeyChecking=accept-new" public/covers/ "$SERVER_USER@$SERVER_IP:/opt/tj-gen/public/covers/"
 rsync -avz -e "ssh -o StrictHostKeyChecking=accept-new" package.json package-lock.json "$SERVER_USER@$SERVER_IP:$SERVER_PATH/"
 
 # 4. Install production dependencies and restart the service
@@ -87,6 +89,12 @@ echo "-> Installing dependencies and restarting service on server..."
 ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "bash -s" << EOF
   set -e
   echo "Running on server..."
+
+  mkdir -p /opt/tj-gen/public/covers "$SERVER_PATH/public"
+  if [ ! -L "$SERVER_PATH/public/covers" ]; then
+    rm -rf "$SERVER_PATH/public/covers"
+    ln -s /opt/tj-gen/public/covers "$SERVER_PATH/public/covers"
+  fi
 
   # Load NVM if installed
   export NVM_DIR="\$HOME/.nvm"
