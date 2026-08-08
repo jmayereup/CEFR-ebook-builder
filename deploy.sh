@@ -45,7 +45,7 @@ load_env "$SCRIPT_DIR/.env.local"
 SERVER_IP="${DEPLOY_SERVER_IP}"
 SERVER_USER="${DEPLOY_SERVER_USER}"
 SERVER_PATH="${DEPLOY_SERVER_PATH}"
-SERVICE_NAME="${DEPLOY_SERVICE_NAME}"
+SERVICE_NAME="${DEPLOY_SERVICE_NAME:-tj-books.service}"
 
 # Verify required configuration is present
 if [ -z "$SERVER_IP" ] || [ -z "$SERVER_USER" ] || [ -z "$SERVER_PATH" ] || [ -z "$SERVICE_NAME" ]; then
@@ -74,7 +74,10 @@ if ! ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new "$SERVER_USER@$
   exit 1
 fi
 
-# 3. Rsync build files to the server
+# 3. Ensure destination directory exists and rsync build files
+echo "-> Ensuring remote target directory exists ($SERVER_PATH)..."
+ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "mkdir -p $SERVER_PATH"
+
 echo "-> Uploading build artifacts and package configs..."
 rsync -avz --delete -e "ssh -o StrictHostKeyChecking=accept-new" dist/ "$SERVER_USER@$SERVER_IP:$SERVER_PATH/dist/"
 rsync -avz -e "ssh -o StrictHostKeyChecking=accept-new" package.json package-lock.json "$SERVER_USER@$SERVER_IP:$SERVER_PATH/"
@@ -84,28 +87,40 @@ echo "-> Installing dependencies and restarting service on server..."
 ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "bash -s" << EOF
   set -e
   echo "Running on server..."
+
+  # Load NVM if installed
+  export NVM_DIR="\$HOME/.nvm"
+  if [ -s "\$NVM_DIR/nvm.sh" ]; then
+    . "\$NVM_DIR/nvm.sh"
+  fi
+  export PATH="\$HOME/.nvm/versions/node/v24.19.0/bin:\$PATH:/usr/local/bin:\$HOME/.nvm/versions/node/\$(ls "\$NVM_DIR/versions/node" 2>/dev/null | tail -n 1)/bin"
+
   cd "$SERVER_PATH"
   
   # Install production dependencies (fast, only additions/updates if needed)
   npm install --omit=dev --no-audit --no-fund
   
-  # Ensure proper ownership for all files (ghost-mgr owns the application)
-  chown -R ghost-mgr:ghost-mgr "$SERVER_PATH/dist" "$SERVER_PATH/node_modules" "$SERVER_PATH/package.json" "$SERVER_PATH/package-lock.json" "$SERVER_PATH/public"
-  
   # Restart systemd service
   echo "Restarting service: $SERVICE_NAME"
-  systemctl restart "$SERVICE_NAME"
-  
-  # Verify service status
-  echo "Verifying service status..."
-  systemctl is-active "$SERVICE_NAME" || (echo "Service failed to start!" && systemctl status "$SERVICE_NAME" --no-pager && exit 1)
+  if command -v systemctl &>/dev/null; then
+    sudo systemctl restart "$SERVICE_NAME" 2>/dev/null || systemctl restart "$SERVICE_NAME"
+    
+    # Verify service status
+    echo "Verifying service status..."
+    sudo systemctl is-active "$SERVICE_NAME" 2>/dev/null || systemctl is-active "$SERVICE_NAME" || (
+      echo "Service failed to start!"
+      sudo systemctl status "$SERVICE_NAME" --no-pager 2>/dev/null || systemctl status "$SERVICE_NAME" --no-pager
+      exit 1
+    )
+  fi
   
   echo "Server deployment actions completed successfully."
 EOF
 
 # 5. Sync dynamic covers from the server back to local public/covers/ directory for git tracking
 echo "-> Syncing covers from server to local public/covers/..."
-rsync -avz -e "ssh -o StrictHostKeyChecking=accept-new" "$SERVER_USER@$SERVER_IP:$SERVER_PATH/public/covers/" "$SCRIPT_DIR/public/covers/"
+mkdir -p "$SCRIPT_DIR/public/covers"
+rsync -avz -e "ssh -o StrictHostKeyChecking=accept-new" "$SERVER_USER@$SERVER_IP:$SERVER_PATH/public/covers/" "$SCRIPT_DIR/public/covers/" 2>/dev/null || true
 
 echo "========================================="
 echo " Deployment Finished Successfully!"
