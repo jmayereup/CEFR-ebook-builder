@@ -390,7 +390,11 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
               const updatedTime = data.updated || new Date().toISOString();
               setSelectedStory((prev) =>
                 prev && prev.id === sanitizedId
-                  ? { ...prev, updated: updatedTime }
+                  ? {
+                      ...prev,
+                      cover: data.cover || prev.cover,
+                      updated: updatedTime,
+                    }
                   : prev,
               );
               const cachedStr = localStorage.getItem(
@@ -400,6 +404,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 try {
                   const cachedObj = JSON.parse(cachedStr);
                   cachedObj.updated = updatedTime;
+                  if (data.cover) cachedObj.cover = data.cover;
                   localStorage.setItem(
                     `cefr_story_cache_${sanitizedId}`,
                     JSON.stringify(cachedObj),
@@ -564,7 +569,11 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
               const updatedTime = data.updated || new Date().toISOString();
               setSelectedStory((prev) =>
                 prev && prev.id === sanitizedId
-                  ? { ...prev, updated: updatedTime }
+                  ? {
+                      ...prev,
+                      cover: data.cover || prev.cover,
+                      updated: updatedTime,
+                    }
                   : prev,
               );
               const cachedStr = localStorage.getItem(
@@ -574,6 +583,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 try {
                   const cachedObj = JSON.parse(cachedStr);
                   cachedObj.updated = updatedTime;
+                  if (data.cover) cachedObj.cover = data.cover;
                   localStorage.setItem(
                     `cefr_story_cache_${sanitizedId}`,
                     JSON.stringify(cachedObj),
@@ -685,6 +695,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       if (selectedStory && selectedStory.id === storyId) {
         setSelectedStory({
           ...selectedStory,
+          cover: data.cover || selectedStory.cover,
           updated: updatedTime,
         });
       }
@@ -694,6 +705,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         try {
           const cachedObj = JSON.parse(cachedStr);
           cachedObj.updated = updatedTime;
+          if (data.cover) cachedObj.cover = data.cover;
           localStorage.setItem(
             `cefr_story_cache_${storyId}`,
             JSON.stringify(cachedObj),

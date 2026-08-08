@@ -95,6 +95,13 @@ async function main() {
         break;
       }
 
+      if (story.cover && !isForce) {
+        console.log(
+          `[SKIP] "${story.title}" (ID: ${story.id}) - Cover already exists in PocketBase (${story.cover}).`,
+        );
+        continue;
+      }
+
       const coverPath = path.join(COVERS_DIR, `${story.id}.jpg`);
 
       if (fs.existsSync(coverPath) && !isForce) {
