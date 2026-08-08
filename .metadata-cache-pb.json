@@ -1,6 +1,46 @@
 {
-  "lastFetchTime": 1785934157398,
+  "lastFetchTime": 1786164939523,
   "stories": [
+    {
+      "id": "s2ezh4xn1sx7u8w",
+      "title": "When the Pond Became the Sea",
+      "language": "English",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 10,
+      "createdAt": "2026-08-06T11:25:28.711Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 3546,
+      "updated": "2026-08-06 11:34:04.063Z"
+    },
+    {
+      "id": "sy5a34prm4zhlc8",
+      "title": "จากบ่อเล็กสู่ทะเลกว้าง",
+      "language": "Thai",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 10,
+      "createdAt": "2026-08-06T11:15:21.374Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 4876,
+      "updated": "2026-08-06 11:19:17.672Z"
+    },
     {
       "id": "sk5rbvd26dh0wbi",
       "title": "Les Promesses du Marais",
@@ -2431,13 +2471,15 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "openai/gpt-oss-120b",
-      "ratings": null,
-      "totalReads": 0,
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "totalReads": 1,
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 3982,
-      "updated": "2026-08-02 01:23:18.326Z"
+      "updated": "2026-08-07 10:36:36.031Z"
     },
     {
       "id": "story1780907254400",
