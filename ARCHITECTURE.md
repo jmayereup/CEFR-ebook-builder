@@ -54,7 +54,7 @@ graph TD
     IDB -.-> PB_Client
     IDB -.-> Alt_Client
     Server --> PocketBase
-    Routes --> LLM[Gemini / OpenRouter API]
+    Routes --> TJGen[tj-gen microservice (gen.teacherjake.com)]
 ```
 
 ---

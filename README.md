@@ -29,13 +29,10 @@ POCKETBASE_ADMIN_EMAIL=admin@example.com
 POCKETBASE_ADMIN_PASSWORD=your_admin_password
 ```
 
-### AI Model & Cover Image configuration (OpenRouter)
+### AI Generation Microservice Configuration (tj-gen)
 ```env
-# API Key for OpenRouter integration
-OPENROUTER_API_KEY=your_openrouter_api_key
-
-# Optional: Model to use for generating book covers (defaults to google/gemini-3.1-flash-lite-image)
-COVER_IMAGE_MODEL=google/gemini-3.1-flash-lite-image
+# AI Generation Microservice URL (tj-gen handles OpenRouter API keys and generation requests)
+TJ_GEN_URL=https://gen.teacherjake.com
 ```
 
 ---

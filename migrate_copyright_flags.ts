@@ -37,10 +37,10 @@ const openrouterApiKey = process.env.OPENROUTER_API_KEY;
 const classifierModel =
   process.env.IP_CLASSIFIER_MODEL || 'google/gemini-3.6-flash';
 
-if (!url || !adminEmail || !adminPassword || !openrouterApiKey) {
+if (!url || !adminEmail || !adminPassword) {
   console.error('Missing required environment variables in .env file.');
   console.error(
-    'Required: VITE_POCKETBASE_URL, POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD, OPENROUTER_API_KEY',
+    'Required: VITE_POCKETBASE_URL, POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD',
   );
   process.exit(1);
 }
@@ -100,12 +100,16 @@ async function classifyStory(story: any): Promise<ClassificationResult> {
   }
 
   try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (openrouterApiKey) {
+      headers['x-openrouter-api-key'] = openrouterApiKey;
+    }
+
     const res = await fetch(`${TJ_GEN_URL}/api/stories/classify-ip`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-openrouter-api-key': openrouterApiKey || '',
-      },
+      headers,
       body: JSON.stringify({
         title: story.title,
         outline: story.outline,

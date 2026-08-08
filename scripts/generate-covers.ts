@@ -22,10 +22,10 @@ const openrouterApiKey = process.env.OPENROUTER_API_KEY;
 const modelId =
   process.env.COVER_IMAGE_MODEL || 'google/gemini-3.1-flash-lite-image';
 
-if (!url || !adminEmail || !adminPassword || !openrouterApiKey) {
+if (!url || !adminEmail || !adminPassword) {
   console.error('Missing required environment variables in .env file.');
   console.error(
-    'Required: VITE_POCKETBASE_URL, POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD, OPENROUTER_API_KEY',
+    'Required: VITE_POCKETBASE_URL, POCKETBASE_ADMIN_EMAIL, POCKETBASE_ADMIN_PASSWORD',
   );
   process.exit(1);
 }
@@ -132,12 +132,16 @@ async function main() {
       );
 
       try {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+        if (openrouterApiKey) {
+          headers['x-openrouter-api-key'] = openrouterApiKey;
+        }
+
         const response = await fetch(`${TJ_GEN_URL}/api/stories/generate-cover`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-openrouter-api-key': openrouterApiKey || '',
-          },
+          headers,
           body: JSON.stringify({
             storyId: story.id,
             force: isForce,
