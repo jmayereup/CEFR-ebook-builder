@@ -35,7 +35,7 @@ const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
 const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
 const openrouterApiKey = process.env.OPENROUTER_API_KEY;
 const classifierModel =
-  process.env.IP_CLASSIFIER_MODEL || 'google/gemini-3.6-flash';
+  process.env.IP_CLASSIFIER_MODEL || 'google/gemini-2.5-flash';
 
 if (!url || !adminEmail || !adminPassword) {
   console.error('Missing required environment variables in .env file.');

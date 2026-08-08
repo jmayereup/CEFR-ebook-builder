@@ -369,10 +369,37 @@ export default function StoryConfigForm({
       setDraftTitle(data.storyTitle || '');
       setDraftOutline(data.outline || '');
       setDraftDescription(data.description || '');
-      setCopyrightFlag(data.ipRisk === true);
-      setCopyrightFlagReason(
-        typeof data.ipRiskReason === 'string' ? data.ipRiskReason : '',
-      );
+
+      // Separate call for IP risk check so model can focus on story writing
+      try {
+        const classifyRes = await fetch('/api/stories/classify-ip', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            title: data.storyTitle,
+            outline: data.outline,
+            description: data.description,
+            promptNotes: `[Writing Type: ${writingType}]${promptNotes ? `\n\n${promptNotes}` : ''}`,
+            userId: currentUser?.uid,
+            userEmail: currentUser?.email,
+          }),
+        });
+        if (classifyRes.ok) {
+          const ipData = await classifyRes.json();
+          setCopyrightFlag(ipData.ipRisk === true);
+          setCopyrightFlagReason(
+            typeof ipData.ipRiskReason === 'string' ? ipData.ipRiskReason : '',
+          );
+        } else {
+          setCopyrightFlag(false);
+          setCopyrightFlagReason('');
+        }
+      } catch (classifyErr) {
+        console.warn('IP classification call failed:', classifyErr);
+        setCopyrightFlag(false);
+        setCopyrightFlagReason('');
+      }
+
       setShowOutlineReview(true);
     } catch (err: any) {
       console.error(err);
