@@ -16,7 +16,7 @@ import { getStoryIdFromSegment } from './src/utils/slugify';
 
 const app = express();
 app.set('trust proxy', 1);
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.PORT || 5173;
 
 app.use(express.json({ limit: '10mb' }));
 

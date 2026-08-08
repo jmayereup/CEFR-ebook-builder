@@ -390,11 +390,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
               const updatedTime = data.updated || new Date().toISOString();
               setSelectedStory((prev) =>
                 prev && prev.id === sanitizedId
-                  ? {
-                      ...prev,
-                      cover: data.cover || prev.cover,
-                      updated: updatedTime,
-                    }
+                  ? { ...prev, updated: updatedTime }
                   : prev,
               );
               const cachedStr = localStorage.getItem(
@@ -404,7 +400,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 try {
                   const cachedObj = JSON.parse(cachedStr);
                   cachedObj.updated = updatedTime;
-                  if (data.cover) cachedObj.cover = data.cover;
                   localStorage.setItem(
                     `cefr_story_cache_${sanitizedId}`,
                     JSON.stringify(cachedObj),
@@ -569,11 +564,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
               const updatedTime = data.updated || new Date().toISOString();
               setSelectedStory((prev) =>
                 prev && prev.id === sanitizedId
-                  ? {
-                      ...prev,
-                      cover: data.cover || prev.cover,
-                      updated: updatedTime,
-                    }
+                  ? { ...prev, updated: updatedTime }
                   : prev,
               );
               const cachedStr = localStorage.getItem(
@@ -583,7 +574,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                 try {
                   const cachedObj = JSON.parse(cachedStr);
                   cachedObj.updated = updatedTime;
-                  if (data.cover) cachedObj.cover = data.cover;
                   localStorage.setItem(
                     `cefr_story_cache_${sanitizedId}`,
                     JSON.stringify(cachedObj),
@@ -691,11 +681,10 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       const data = await response.json();
       const updatedTime = data.updated || new Date().toISOString();
 
-      // Update local state to reflect the new cover timestamp immediately
+      // Bump updated timestamp to trigger cover URL cache-bust
       if (selectedStory && selectedStory.id === storyId) {
         setSelectedStory({
           ...selectedStory,
-          cover: data.cover || selectedStory.cover,
           updated: updatedTime,
         });
       }
@@ -705,7 +694,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         try {
           const cachedObj = JSON.parse(cachedStr);
           cachedObj.updated = updatedTime;
-          if (data.cover) cachedObj.cover = data.cover;
           localStorage.setItem(
             `cefr_story_cache_${storyId}`,
             JSON.stringify(cachedObj),

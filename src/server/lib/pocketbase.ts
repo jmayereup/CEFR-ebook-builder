@@ -259,6 +259,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
 
         const mapped = {
           id: record.id,
+          cover: record.cover || '',
           title: record.title || '',
           language: record.language || '',
           translationLanguage: record.translationLanguage || '',
