@@ -14,3 +14,8 @@ credentials.json
 *.key.json
 .metadata-cache-pb.json
 copyright-backfill-report-*.json
+
+# Dynamic generated cover images
+public/covers/*
+!public/covers/.gitkeep
+

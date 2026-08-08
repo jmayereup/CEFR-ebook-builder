@@ -78,10 +78,10 @@ fi
 echo "-> Ensuring remote target directory exists ($SERVER_PATH)..."
 ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "mkdir -p $SERVER_PATH"
 
-echo "-> Uploading build artifacts, public covers/assets, and package configs..."
+echo "-> Uploading build artifacts, public covers/assets (newly added only), and package configs..."
 rsync -avz --delete -e "ssh -o StrictHostKeyChecking=accept-new" dist/ "$SERVER_USER@$SERVER_IP:$SERVER_PATH/dist/"
 ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "mkdir -p /opt/tj-gen/public/covers $SERVER_PATH/public"
-rsync -avz -e "ssh -o StrictHostKeyChecking=accept-new" public/covers/ "$SERVER_USER@$SERVER_IP:/opt/tj-gen/public/covers/"
+rsync -avz --ignore-existing -e "ssh -o StrictHostKeyChecking=accept-new" public/covers/ "$SERVER_USER@$SERVER_IP:/opt/tj-gen/public/covers/"
 rsync -avz -e "ssh -o StrictHostKeyChecking=accept-new" package.json package-lock.json "$SERVER_USER@$SERVER_IP:$SERVER_PATH/"
 
 # 4. Install production dependencies and restart the service
@@ -124,11 +124,6 @@ ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "bash -s" << E
   
   echo "Server deployment actions completed successfully."
 EOF
-
-# 5. Sync dynamic covers from the server back to local public/covers/ directory for git tracking
-echo "-> Syncing covers from server to local public/covers/..."
-mkdir -p "$SCRIPT_DIR/public/covers"
-rsync -avz -e "ssh -o StrictHostKeyChecking=accept-new" "$SERVER_USER@$SERVER_IP:$SERVER_PATH/public/covers/" "$SCRIPT_DIR/public/covers/" 2>/dev/null || true
 
 echo "========================================="
 echo " Deployment Finished Successfully!"
