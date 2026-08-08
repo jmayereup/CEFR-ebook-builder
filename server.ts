@@ -12,14 +12,6 @@ import {
   initStoriesMetadataListener,
   syncUserProfileServer,
 } from './src/server/lib/database';
-import batchChapterRouter from './src/server/routes/batch-chapter';
-import chapterRouter from './src/server/routes/chapter';
-import classifyRouter from './src/server/routes/classify';
-import coverRouter from './src/server/routes/cover';
-import glossaryRouter from './src/server/routes/glossary';
-import maintenanceRouter from './src/server/routes/maintenance';
-import outlineRouter from './src/server/routes/outline';
-import translateRouter from './src/server/routes/translate';
 import { getStoryIdFromSegment } from './src/utils/slugify';
 
 const app = express();
@@ -27,6 +19,13 @@ app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3009;
 
 app.use(express.json({ limit: '10mb' }));
+
+// ---------------------------------------------------------------------------
+// Target generation service URL (tj-gen)
+// ---------------------------------------------------------------------------
+const TJ_GEN_URL = (
+  process.env.TJ_GEN_URL || 'https://gen.teacherjake.com'
+).replace(/\/$/, '');
 
 // ---------------------------------------------------------------------------
 // Rate Limiters
@@ -44,7 +43,7 @@ const metadataLimiter = rateLimit({
 // AI Generation Rate Limiter (expensive operations)
 const generationLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 15, // Limit each IP to 15 generation requests per 10 minutes
+  max: 30,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -56,11 +55,66 @@ const generationLimiter = rateLimit({
 // Translation Rate Limiter (frequent translations during reading)
 const translationLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 60, // Limit each IP to 60 translations per minute (average 1 per second)
+  max: 120,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Translation limit reached. Please pause for a moment.' },
 });
+
+// ---------------------------------------------------------------------------
+// Generation Proxy Handler
+// Forward generation requests from tj-books to tj-gen microservice
+// ---------------------------------------------------------------------------
+async function proxyToTJGen(req: express.Request, res: express.Response) {
+  try {
+    const targetUrl = `${TJ_GEN_URL}${req.originalUrl}`;
+    const headers: Record<string, string> = {
+      'content-type': req.headers['content-type'] || 'application/json',
+    };
+
+    const customKey =
+      req.headers['x-openrouter-api-key'] ||
+      req.headers['X-OpenRouter-API-Key'];
+    if (customKey && typeof customKey === 'string') {
+      headers['x-openrouter-api-key'] = customKey;
+    }
+
+    const response = await fetch(targetUrl, {
+      method: req.method,
+      headers,
+      body: req.body ? JSON.stringify(req.body) : undefined,
+    });
+
+    res.status(response.status);
+    response.headers.forEach((val, key) => {
+      if (key.toLowerCase() !== 'content-length') {
+        res.setHeader(key, val);
+      }
+    });
+
+    if (response.body) {
+      // @ts-ignore Node fetch ReadableStream reader to Express response
+      const reader = response.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        res.write(value);
+      }
+      res.end();
+    } else {
+      const text = await response.text();
+      res.send(text);
+    }
+  } catch (err: any) {
+    console.error(
+      `[Server Proxy] Failed to proxy ${req.originalUrl} to tj-gen (${TJ_GEN_URL}):`,
+      err,
+    );
+    return res.status(502).json({
+      error: `Failed to connect to generation service (${TJ_GEN_URL}): ${err.message}`,
+    });
+  }
+}
 
 // ---------------------------------------------------------------------------
 // API Routes
@@ -87,14 +141,15 @@ app.get('/api/stories/metadata', metadataLimiter, async (req, res) => {
   }
 });
 
-app.use('/api/stories/generate-outline', generationLimiter, outlineRouter);
-app.use('/api/stories/generate-chapter', generationLimiter, chapterRouter);
-app.use('/api/stories/generate-batch', generationLimiter, batchChapterRouter);
-app.use('/api/stories/generate-glossary', generationLimiter, glossaryRouter);
-app.use('/api/stories/generate-cover', generationLimiter, coverRouter);
-app.use('/api/stories/maintenance', generationLimiter, maintenanceRouter);
-app.use('/api/stories/classify-ip', generationLimiter, classifyRouter);
-app.use('/api/translate', translationLimiter, translateRouter);
+// Proxied generation routes to tj-gen (gen.teacherjake.com)
+app.use('/api/stories/generate-outline', generationLimiter, proxyToTJGen);
+app.use('/api/stories/generate-chapter', generationLimiter, proxyToTJGen);
+app.use('/api/stories/generate-batch', generationLimiter, proxyToTJGen);
+app.use('/api/stories/generate-glossary', generationLimiter, proxyToTJGen);
+app.use('/api/stories/generate-cover', generationLimiter, proxyToTJGen);
+app.use('/api/stories/maintenance', generationLimiter, proxyToTJGen);
+app.use('/api/stories/classify-ip', generationLimiter, proxyToTJGen);
+app.use('/api/translate', translationLimiter, proxyToTJGen);
 
 app.post('/api/users/sync', async (req, res) => {
   try {
@@ -167,7 +222,7 @@ async function bootstrap() {
     next();
   });
 
-  // Handle missing cover images cleanly with no-cache headers (prevents browser 404 caching & SSR fallthrough)
+  // Handle missing cover images cleanly with no-cache headers
   app.use('/covers', (req, res, next) => {
     const filename = req.path.replace(/^\//, '');
     if (filename && filename.includes('.')) {
@@ -193,7 +248,7 @@ async function bootstrap() {
     }),
   );
 
-  // Start the Firestore real-time listener on server startup
+  // Start the PocketBase real-time listener on server startup
   initStoriesMetadataListener();
 
   let vite: any;
@@ -209,7 +264,7 @@ async function bootstrap() {
     // Serve client static assets
     app.use(
       express.static(path.join(distPath, 'client'), {
-        index: false, // Don't serve index.html directly; let the catch-all SSR route render it
+        index: false,
         maxAge: '1d',
         setHeaders: (res, filePath) => {
           if (
@@ -235,7 +290,6 @@ async function bootstrap() {
   app.get('*', async (req, res, next) => {
     const url = req.originalUrl;
 
-    // Skip API, static assets, and other background URLs
     if (url.startsWith('/api/') || url.includes('.')) {
       return next();
     }
@@ -265,7 +319,6 @@ async function bootstrap() {
         render = parts.render;
       }
 
-      // Fetch preloaded data for hydration
       const preloadedData: any = { stories: getStoriesMetadataSync() };
 
       const bookMatch = url.match(/^\/book\/([^/]+)/);
@@ -278,7 +331,6 @@ async function bootstrap() {
         }
       }
 
-      // Dynamic social meta tag injection
       if (preloadedData.story) {
         const story = preloadedData.story;
         const title = `${story.title} - Graded ${story.language} Reader (${story.cefrLevel})`;
@@ -300,7 +352,6 @@ async function bootstrap() {
           `<title>${title}</title>`,
         );
 
-        // Strip existing tags to prevent duplicates
         template = template
           .replace(/<meta name="description" content=".*?"\s*\/?>/gi, '')
           .replace(/<meta property="og:title" content=".*?"\s*\/?>/gi, '')
@@ -328,10 +379,8 @@ async function bootstrap() {
         template = template.replace('</head>', `${dynamicMeta}</head>`);
       }
 
-      // Render React components to HTML
       const { html } = render(url, preloadedData);
 
-      // Inject the hydration script and ssr output
       const dataScript = `<script>window.__PRELOADED_DATA__ = ${JSON.stringify(preloadedData).replace(/</g, '\\u003c')};</script>`;
       const appHtml = template
         .replace('<!--ssr-outlet-->', html)
@@ -343,7 +392,6 @@ async function bootstrap() {
         vite?.ssrFixStacktrace(err);
       }
       console.error('[Server SSR] Render error:', err);
-      // Fallback to sending the index.html template as-is (SPA fallback)
       const distPath = path.join(process.cwd(), 'dist');
       const fallbackPath =
         process.env.NODE_ENV !== 'production'
@@ -358,6 +406,7 @@ async function bootstrap() {
 
   app.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`Delegating AI generations to tj-gen at ${TJ_GEN_URL}`);
   });
 }
 

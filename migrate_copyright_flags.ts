@@ -20,11 +20,10 @@ import fs from 'node:fs';
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import PocketBaseClass from 'pocketbase';
-import {
-  cleanJSONString,
-  handleModelCall,
-  Type,
-} from './src/server/lib/aiProviders';
+const TJ_GEN_URL = (
+  process.env.TJ_GEN_URL || 'https://gen.teacherjake.com'
+).replace(/\/$/, '');
+
 
 const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
@@ -59,38 +58,7 @@ const concurrency = concurrencyArg
 const storyArg = args.find((a) => a.startsWith('--story='));
 const targetStoryId = storyArg ? storyArg.split('=')[1] : undefined;
 
-const CLASSIFY_SYSTEM_INSTRUCTION = `You are a copyright compliance classifier for a language-learning story library.
-Decide whether a story references established copyrighted material that would require the copyright holder's permission to publish.
 
-Set "ipRisk" to true ONLY when the content clearly references:
-- Established copyrighted fictional characters (e.g. Harry Potter, Spider-Man, Pikachu, Darth Vader, Elsa from Frozen, Mario)
-- Established copyrighted fictional universes or franchises (e.g. Star Wars, Marvel Cinematic Universe, DC Universe, Pokémon, Hogwarts / the Wizarding World)
-- A close retelling of a specific copyrighted novel, film, or TV series
-
-Set "ipRisk" to FALSE for:
-- Generic genre tropes (wizards, vampires, space travel, dragons, detectives, school settings) without naming a specific copyrighted work
-- Public-domain works and characters (Sherlock Holmes, Dracula, Frankenstein, Brothers Grimm / Hans Christian Andersen / Charles Perrault fairy tales, Greek/Roman/Norse mythology, King Arthur, Robin Hood, Jane Eyre, Alice in Wonderland, A Christmas Carol)
-- Original characters in any genre setting
-- Real historical events and figures (no copyright on facts)
-
-When in doubt, set ipRisk to false. In "ipRiskReason", briefly name the specific copyrighted source if ipRisk is true, otherwise return an empty string.`;
-
-const CLASSIFY_SCHEMA = {
-  type: Type.OBJECT,
-  properties: {
-    ipRisk: {
-      type: Type.BOOLEAN,
-      description:
-        'true ONLY if the story clearly references copyrighted material that would normally require permission. When in doubt, false.',
-    },
-    ipRiskReason: {
-      type: Type.STRING,
-      description:
-        'If ipRisk is true, briefly name the specific copyrighted source. Otherwise an empty string.',
-    },
-  },
-  required: ['ipRisk', 'ipRiskReason'],
-};
 
 interface ClassificationResult {
   storyId: string;
@@ -132,16 +100,21 @@ async function classifyStory(story: any): Promise<ClassificationResult> {
   }
 
   try {
-    const responseText = await handleModelCall({
-      model: classifierModel,
-      systemInstruction: CLASSIFY_SYSTEM_INSTRUCTION,
-      prompt: `Classify the following story:\n\n${contentToClassify}`,
-      responseSchema: CLASSIFY_SCHEMA,
-      temperature: 0,
-      action: 'classify-ip-backfill',
+    const res = await fetch(`${TJ_GEN_URL}/api/stories/classify-ip`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-openrouter-api-key': openrouterApiKey || '',
+      },
+      body: JSON.stringify({
+        title: story.title,
+        outline: story.outline,
+        description: story.description,
+        promptNotes: story.promptNotes,
+        model: classifierModel,
+      }),
     });
-
-    const parsed = JSON.parse(cleanJSONString(responseText || '{}'));
+    const parsed = await res.json();
     return {
       ...base,
       ipRisk: parsed.ipRisk === true,
