@@ -13,10 +13,13 @@
     "lint": "tsc --noEmit",
     "typegen": "node -e \"require('dotenv').config(); const { spawnSync } = require('child_process'); spawnSync('npx', ['pocketbase-typegen', '--url', process.env.VITE_POCKETBASE_URL, '--email', process.env.POCKETBASE_ADMIN_EMAIL, '--password', process.env.POCKETBASE_ADMIN_PASSWORD, '--out', 'src/services/db/pocketbase-types.ts'], { stdio: 'inherit', shell: true });\"",
     "migrate:copyright-schema": "tsx migrate_copyright_schema.ts",
+    "migrate:story-indexes": "tsx migrate_story_indexes.ts",
     "flag-copyright:dry": "tsx migrate_copyright_flags.ts --dry",
     "flag-copyright": "tsx migrate_copyright_flags.ts",
     "generate-covers": "tsx scripts/generate-covers.ts",
     "generate-covers:test": "tsx scripts/generate-covers.ts --test",
+    "check-covers": "tsx scripts/check-and-reupload-covers.ts",
+    "reupload-covers": "tsx scripts/check-and-reupload-covers.ts --reupload",
     "biome:format": "biome format --write .",
     "biome:lint": "biome lint .",
     "biome:check": "biome check --write ."
