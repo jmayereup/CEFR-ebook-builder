@@ -286,7 +286,7 @@ export default function TTSToolbar({
                           0.75x
                         </option>
                         <option
-                          value="1.0"
+                          value="1"
                           className="dark:bg-slate-900 text-tj-text-main"
                         >
                           1.0x (Normal)
@@ -304,7 +304,7 @@ export default function TTSToolbar({
                           1.5x
                         </option>
                         <option
-                          value="2.0"
+                          value="2"
                           className="dark:bg-slate-900 text-tj-text-main"
                         >
                           2.0x

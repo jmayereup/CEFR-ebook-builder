@@ -21,7 +21,26 @@ function cleanSpeechText(text: string): string {
 export function useSpeechSynthesis(language: string) {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceName, setSelectedVoiceName] = useState<string>('');
-  const [speechRate, setSpeechRate] = useState<number>(0.75);
+  const [speechRate, setSpeechRateState] = useState<number>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('reader-speech-rate');
+      if (saved) {
+        const parsed = parseFloat(saved);
+        if (!isNaN(parsed) && parsed >= 0.5 && parsed <= 2.0) {
+          return parsed;
+        }
+      }
+    }
+    return 0.75;
+  });
+
+  const setSpeechRate = useCallback((rate: number) => {
+    setSpeechRateState(rate);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('reader-speech-rate', rate.toString());
+    }
+  }, []);
+
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
 
