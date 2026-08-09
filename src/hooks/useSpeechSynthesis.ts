@@ -18,6 +18,65 @@ function cleanSpeechText(text: string): string {
   return clean;
 }
 
+export function getVoiceQualityScore(
+  voice: SpeechSynthesisVoice,
+  targetLangCode: string,
+): number {
+  let score = 0;
+  const name = voice.name.toLowerCase();
+  const lang = voice.lang.toLowerCase().replace('_', '-');
+  const target = targetLangCode.toLowerCase().replace('_', '-');
+  const targetPrimary = target.split('-')[0];
+
+  // 1. Language matching precision
+  if (lang === target) {
+    score += 10;
+  } else if (
+    lang.startsWith(targetPrimary) ||
+    targetPrimary.startsWith(lang.split('-')[0])
+  ) {
+    score += 5;
+  } else if (name.includes('multilingual') || name.includes('multi-lingual')) {
+    score += 5;
+  } else {
+    // Heavy penalty for non-matching language
+    score -= 100;
+  }
+
+  // 2. High-Quality / Neural / Multilingual Tier
+  if (name.includes('multilingual') || name.includes('multi-lingual'))
+    score += 25;
+  if (name.includes('enhanced')) score += 25;
+  if (name.includes('premium')) score += 25;
+  if (name.includes('natural')) score += 20;
+  if (name.includes('neural')) score += 20;
+  if (name.includes('wavenet')) score += 20;
+
+  // 3. Siri & Alex Apple Voices
+  if (name.includes('siri')) score += 15;
+  if (name.includes('alex')) score += 15;
+
+  // 4. Android / Google / Online Voices
+  if (name.includes('google')) score += 12;
+  if (name.includes('online')) score += 10;
+
+  // 5. System Defaults & Local Service
+  if (voice.default) score += 5;
+  if (voice.localService) score += 2;
+
+  // 6. Low-Quality Penalties
+  if (name.includes('compact')) score -= 20;
+  if (
+    /novelty|boing|whisper|deranged|cellos|zarvox|pipe|bad news|albert|fred|trinoids/i.test(
+      name,
+    )
+  ) {
+    score -= 30;
+  }
+
+  return score;
+}
+
 export function useSpeechSynthesis(language: string) {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceName, setSelectedVoiceName] = useState<string>('');
@@ -41,6 +100,17 @@ export function useSpeechSynthesis(language: string) {
     }
   }, []);
 
+  const setSelectedVoice = useCallback(
+    (voiceName: string) => {
+      setSelectedVoiceName(voiceName);
+      if (typeof localStorage !== 'undefined') {
+        const targetLangCode = getLanguageCodeFromName(language).toLowerCase();
+        localStorage.setItem(`reader-voice-${targetLangCode}`, voiceName);
+      }
+    },
+    [language],
+  );
+
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
 
@@ -48,35 +118,28 @@ export function useSpeechSynthesis(language: string) {
     const loadVoices = () => {
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         const allVoices = window.speechSynthesis.getVoices();
-        setVoices(allVoices);
-
-        // Find default vocal match for active story target language, prioritizing high quality voices
         const targetLangCode = getLanguageCodeFromName(language).toLowerCase();
-        const langVoices = allVoices.filter(
-          (v) =>
-            v.lang.toLowerCase().startsWith(targetLangCode) ||
-            v.lang.toLowerCase().includes(targetLangCode),
+
+        // Sort all voices by quality score for target language so TTSToolbar lists highest quality first
+        const sortedAllVoices = [...allVoices].sort(
+          (a, b) =>
+            getVoiceQualityScore(b, targetLangCode) -
+            getVoiceQualityScore(a, targetLangCode),
         );
+        setVoices(sortedAllVoices);
 
-        if (langVoices.length > 0) {
-          // Sort them by priority: Natural -> Google -> Premium/Siri -> Standard
-          const sortedVoices = [...langVoices].sort((a, b) => {
-            const nameA = a.name.toLowerCase();
-            const nameB = b.name.toLowerCase();
+        const savedVoiceName =
+          typeof localStorage !== 'undefined'
+            ? localStorage.getItem(`reader-voice-${targetLangCode}`)
+            : null;
 
-            const getPriority = (name: string) => {
-              if (name.includes('natural')) return 4;
-              if (name.includes('google')) return 3;
-              if (name.includes('premium') || name.includes('siri')) return 2;
-              return 1;
-            };
-
-            return getPriority(nameB) - getPriority(nameA);
-          });
-
-          setSelectedVoiceName(sortedVoices[0].name);
-        } else if (allVoices.length > 0) {
-          setSelectedVoiceName(allVoices[0].name);
+        if (
+          savedVoiceName &&
+          allVoices.some((v) => v.name === savedVoiceName)
+        ) {
+          setSelectedVoiceName(savedVoiceName);
+        } else if (sortedAllVoices.length > 0) {
+          setSelectedVoiceName(sortedAllVoices[0].name);
         }
       }
     };
@@ -115,27 +178,13 @@ export function useSpeechSynthesis(language: string) {
 
       if (customLanguage) {
         const lowerLang = targetLangCode.toLowerCase();
-        const langVoices = voices.filter(
-          (v) =>
-            v.lang.toLowerCase().startsWith(lowerLang) ||
-            v.lang.toLowerCase().includes(lowerLang),
+        const sortedCustomVoices = [...voices].sort(
+          (a, b) =>
+            getVoiceQualityScore(b, lowerLang) -
+            getVoiceQualityScore(a, lowerLang),
         );
-
-        if (langVoices.length > 0) {
-          const sortedVoices = [...langVoices].sort((a, b) => {
-            const nameA = a.name.toLowerCase();
-            const nameB = b.name.toLowerCase();
-
-            const getPriority = (name: string) => {
-              if (name.includes('natural')) return 4;
-              if (name.includes('google')) return 3;
-              if (name.includes('premium') || name.includes('siri')) return 2;
-              return 1;
-            };
-
-            return getPriority(nameB) - getPriority(nameA);
-          });
-          selectedVoice = sortedVoices[0];
+        if (sortedCustomVoices.length > 0) {
+          selectedVoice = sortedCustomVoices[0];
         }
       }
 
@@ -200,7 +249,7 @@ export function useSpeechSynthesis(language: string) {
   return {
     voices,
     selectedVoiceName,
-    setSelectedVoiceName,
+    setSelectedVoiceName: setSelectedVoice,
     speechRate,
     setSpeechRate,
     isSpeaking,
