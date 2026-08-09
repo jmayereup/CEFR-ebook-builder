@@ -21,14 +21,30 @@ function readEnv(key: string): string | undefined {
 export function getStoryCoverUrl(
   story: {
     id: string;
+    collectionId?: string;
+    cover?: string;
     updated?: string | Date;
   },
   options: { absolute?: boolean } = {},
 ): string {
+  const t = story.updated ? `?t=${new Date(story.updated).getTime()}` : '';
+
+  if (story.cover) {
+    const cdnUrl = (
+      readEnv('VITE_COVER_CDN_URL') ||
+      readEnv('COVER_CDN_URL') ||
+      'https://files.teacherjake.com'
+    ).replace(/\/+$/, '');
+    const collection = story.collectionId || 'pbc_232317621';
+    return `${cdnUrl}/${collection}/${story.id}/${story.cover}${t}`;
+  }
+
   const genBaseUrl = (
-    readEnv('VITE_GEN_URL') || 'https://gen.teacherjake.com'
+    readEnv('VITE_GEN_URL') ||
+    readEnv('TJ_GEN_URL') ||
+    'https://gen.teacherjake.com'
   ).replace(/\/+$/, '');
 
-  const t = story.updated ? `?t=${new Date(story.updated).getTime()}` : '';
   return `${genBaseUrl}/covers/${story.id}.jpg${t}`;
 }
+

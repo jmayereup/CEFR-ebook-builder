@@ -13,6 +13,7 @@ import {
   syncUserProfileServer,
 } from './src/server/lib/database';
 import { getStoryIdFromSegment } from './src/utils/slugify';
+import { getStoryCoverUrl } from './src/utils/coverUtils';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -307,20 +308,7 @@ async function bootstrap() {
         const title = `${story.title} - Graded ${story.language} Reader (${story.cefrLevel})`;
         const description = `Read "${story.title}" graded for ${story.language} at CEFR ${story.cefrLevel} difficulty. Includes interactive dictionary lookups and custom eBook downloads.`;
 
-        const hasCover =
-          fs.existsSync(
-            path.join(process.cwd(), 'public', 'covers', `${story.id}.webp`),
-          ) ||
-          fs.existsSync(
-            path.join(process.cwd(), 'public', 'covers', `${story.id}.jpg`),
-          );
-        const cdnBase = process.env.VITE_COVER_CDN_URL?.replace(/\/+$/, '');
-        const coverUrl =
-          story.cover && cdnBase && story.collectionId
-            ? `${cdnBase}/${story.collectionId}/${story.id}/${story.cover}`
-            : hasCover
-              ? `${req.protocol}://${req.get('host')}/covers/${story.id}.jpg`
-              : `${req.protocol}://${req.get('host')}/tj-logo.svg`;
+        const coverUrl = getStoryCoverUrl(story);
 
         template = template.replace(
           /<title>.*?<\/title>/,

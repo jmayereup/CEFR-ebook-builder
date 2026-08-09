@@ -181,16 +181,17 @@ The application uses OpenRouter to communicate with various language models. To 
 
 ## 5. Book Cover Image Generation System
 
-The application features an automated book cover generation system that utilizes OpenRouter's Image API and processes the output images.
+The application features an automated book cover generation system that utilizes OpenRouter's Image API, processes output images with Sharp, and uploads them to PocketBase backed by Cloudflare R2 storage.
 
 ### A. Routing and Endpoints
-* **API Endpoint**: `/api/stories/generate-cover/generate` (mapped via `coverRouter` in [src/server/routes/cover.ts](file:///var/home/jmayer/Dev/CEFR-ebook-builder/src/server/routes/cover.ts)).
-* **Static Serving Path**: `/covers/:storyId.webp` (mapped statically on the Express server to serve from the local directory `public/covers/`).
+* **API Endpoint**: `/api/stories/generate-cover/generate` (proxied from `tj-books` server to `tj-gen` microservice).
+* **Cloudflare R2 CDN Path**: `https://files.teacherjake.com/${collectionId}/${storyId}/${coverFilename}` (where `collectionId` is `pbc_232317621`).
 
-### B. Generation Pipeline
-1. **Trigger**: Cover generation is triggered either in-app via the Reader sidebar (by clicking "Regenerate Cover") or from the command line using the batch CLI script.
-2. **Metadata Fetch**: The server fetches the story's title, genre, and description from the database.
-3. **OpenRouter Image Request**: An image request is dispatched to `https://openrouter.ai/api/v1/images` using the model specified by `COVER_IMAGE_MODEL` (defaults to `google/gemini-3.1-flash-lite-image`).
-4. **Image Processing via Sharp**: The generated image is downloaded, cropped/resized to exactly `480x672` (using a `'cover'` fit centered to fit standard book aspect ratio `3:4.2`), converted to `.webp` format with `80%` quality, and saved to `public/covers/[storyId].webp`.
-5. **Static Serving**: The client renders the cover dynamically at Chapter 1.
+### B. Generation & Storage Pipeline
+1. **Trigger**: Cover generation is triggered in-app via the Reader sidebar ("Regenerate Cover" / automatic background trigger) or via the CLI script (`npm run generate-covers`).
+2. **Prompt Generation & OpenRouter Request**: `tj-gen` fetches story metadata from PocketBase, generates a visual concept prompt using an LLM, and sends an image generation request to OpenRouter (`google/gemini-3.1-flash-lite-image`).
+3. **Image Processing via Sharp**: The generated image buffer is downloaded, resized to `480x672` JPEG (`85%` quality) to fit standard book aspect ratio (`3:4.2`).
+4. **PocketBase & Cloudflare R2 Upload**: `tj-gen` uploads the JPEG buffer to PocketBase record field `cover` (`pb.collection('stories').update(storyId, formData)`). PocketBase automatically streams the upload to the Cloudflare R2 storage bucket (`files.teacherjake.com`) and updates the `cover` field on the story record.
+5. **CDN & Client Rendering**: Client components ([getStoryCoverUrl](file:///home/jmayer/Dev/teacherjake.com/tj-books/src/utils/coverUtils.ts), `ReaderPanel` Chapter 1, `StoryCard`, `RecentlyReadSection`, EPUB export) build the Cloudflare R2 CDN URL (`https://files.teacherjake.com/pbc_232317621/${story.id}/${story.cover}?t=...`) with cache-busting timestamp `story.updated`.
+
 

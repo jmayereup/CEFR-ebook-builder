@@ -12,24 +12,33 @@ config({ path: resolve(process.cwd(), '.env.local') });
 const url = process.env.VITE_POCKETBASE_URL || 'https://pb.teacherjake.com';
 const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL || 'jake@teacherjake.com';
 const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD || 'FHgo-uqVSSntM0WPbR_C';
+const userEmail = process.env.POCKETBASE_EMAIL || adminEmail;
+const userPassword = process.env.POCKETBASE_PASSWORD || adminPassword;
 
 const pb = new PocketBase(url);
 
-const COVERS_DIR = path.resolve(process.cwd(), 'public', 'covers');
+const tempCoversDir = path.resolve(process.cwd(), 'temp', 'covers');
+const publicCoversDir = path.resolve(process.cwd(), 'public', 'covers');
+const COVERS_DIR = fs.existsSync(tempCoversDir) ? tempCoversDir : publicCoversDir;
 
 async function main() {
   console.log(`==================================================`);
   console.log(`Uploading Local JPEG Covers to PocketBase Record Fields`);
   console.log(`==================================================`);
 
-  if (typeof (pb as any).admins !== 'undefined') {
-    await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
-  } else {
-    await pb
-      .collection('_superusers')
-      .authWithPassword(adminEmail, adminPassword);
+  try {
+    if (typeof (pb as any).admins !== 'undefined') {
+      await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
+    } else {
+      await pb
+        .collection('_superusers')
+        .authWithPassword(adminEmail, adminPassword);
+    }
+  } catch (err) {
+    console.log('Superuser login failed, trying users collection...');
+    await pb.collection('users').authWithPassword(userEmail, userPassword);
   }
-  console.log('Authenticated with PocketBase as Admin.');
+  console.log('Authenticated with PocketBase.');
 
   const files = fs.readdirSync(COVERS_DIR).filter((f) => f.endsWith('.jpg'));
   console.log(`Found ${files.length} JPEG cover files in ${COVERS_DIR}`);
@@ -45,8 +54,17 @@ async function main() {
     try {
       const record = await pb.collection('stories').getOne(storyId);
       if (record.cover) {
-        skippedCount++;
-        continue;
+        const coll = record.collectionId || 'pbc_232317621';
+        const testUrl = `https://files.teacherjake.com/${coll}/${record.id}/${record.cover}`;
+        try {
+          const checkRes = await fetch(testUrl, { method: 'HEAD' });
+          if (checkRes.ok) {
+            skippedCount++;
+            continue;
+          }
+        } catch (e) {
+          // Fall through to upload
+        }
       }
 
       console.log(`[UPLOAD] Uploading cover for story: ${storyId} (${record.title})`);

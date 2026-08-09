@@ -19,6 +19,7 @@ interface UseUrlRoutingOptions {
   cachedStoryIds: string[];
   currentUser: IUser | null;
   recentlyRead: RecentlyReadItem[];
+  stories?: any[];
   showAlert: (
     title: string,
     message: string,
@@ -47,6 +48,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     cachedStoryIds,
     currentUser,
     recentlyRead,
+    stories = [],
     showAlert,
     searchQuery,
     setSearchQuery,
@@ -237,6 +239,14 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         if (!directStory) {
           directStory = await fetchStory(storyId);
           if (directStory) {
+            localStorage.setItem(cacheKey, JSON.stringify(directStory));
+          }
+        }
+
+        if (directStory && !directStory.cover) {
+          const meta = stories.find((s) => s.id === storyId);
+          if (meta?.cover) {
+            directStory = { ...directStory, cover: meta.cover };
             localStorage.setItem(cacheKey, JSON.stringify(directStory));
           }
         }

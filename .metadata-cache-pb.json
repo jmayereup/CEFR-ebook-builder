@@ -1,8 +1,72 @@
 {
-  "lastFetchTime": 1786164939523,
+  "lastFetchTime": 1786236248458,
   "stories": [
     {
+      "id": "sk04ktp6cfmmf1o",
+      "cover": "",
+      "title": "Paco y la Casa de los Recuerdos",
+      "language": "Spanish",
+      "translationLanguage": "English",
+      "cefrLevel": "A1",
+      "genre": "mystery",
+      "totalChapters": 5,
+      "createdAt": "2026-08-08T12:39:14.382Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 5,
+      "wordCount": 1499,
+      "updated": "2026-08-08 12:39:17.607Z"
+    },
+    {
+      "id": "sizjjopx7e2cmt6",
+      "cover": "sizjjopx7e2cmt6_bwd4mdnz2s.jpg",
+      "title": "El loro parlante del mercado",
+      "language": "Spanish",
+      "translationLanguage": "English",
+      "cefrLevel": "A2",
+      "genre": "mystery",
+      "totalChapters": 5,
+      "createdAt": "2026-08-08T11:09:02.871Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 5,
+      "wordCount": 708,
+      "updated": "2026-08-09 00:43:17.575Z"
+    },
+    {
+      "id": "stfj8z56r38276v",
+      "cover": "stfj8z56r38276v_ypcdv8mt9a.jpg",
+      "title": "Deutschland entdecken: Kulturen im Vergleich",
+      "language": "German",
+      "translationLanguage": "English",
+      "cefrLevel": "A1",
+      "genre": "nonfiction",
+      "totalChapters": 5,
+      "createdAt": "2026-08-08T10:57:51.035Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 5,
+      "wordCount": 732,
+      "updated": "2026-08-09 00:43:27.374Z"
+    },
+    {
       "id": "s2ezh4xn1sx7u8w",
+      "cover": "s2ezh4xn1sx7u8w_a15gizrdce.jpg",
       "title": "When the Pond Became the Sea",
       "language": "English",
       "translationLanguage": "English",
@@ -19,10 +83,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3546,
-      "updated": "2026-08-06 11:34:04.063Z"
+      "updated": "2026-08-09 00:43:06.042Z"
     },
     {
       "id": "sy5a34prm4zhlc8",
+      "cover": "sy5a34prm4zhlc8_z0wq51t2oe.jpg",
       "title": "จากบ่อเล็กสู่ทะเลกว้าง",
       "language": "Thai",
       "translationLanguage": "English",
@@ -39,10 +104,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4876,
-      "updated": "2026-08-06 11:19:17.672Z"
+      "updated": "2026-08-08 09:18:40.578Z"
     },
     {
       "id": "sk5rbvd26dh0wbi",
+      "cover": "sk5rbvd26dh0wbi_wb51vksb7h.jpg",
       "title": "Les Promesses du Marais",
       "language": "French",
       "translationLanguage": "English",
@@ -59,10 +125,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5603,
-      "updated": "2026-08-05 12:37:08.542Z"
+      "updated": "2026-08-08 06:33:51.122Z"
     },
     {
       "id": "s1g69qgc7k5tc7p",
+      "cover": "s1g69qgc7k5tc7p_4frf8c4xb3.jpg",
       "title": "The Shores of Light",
       "language": "English",
       "translationLanguage": "English",
@@ -79,10 +146,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2097,
-      "updated": "2026-08-05 11:53:21.477Z"
+      "updated": "2026-08-08 06:33:15.174Z"
     },
     {
       "id": "shknfnywqqc532o",
+      "cover": "shknfnywqqc532o_1u6r4q01fb.jpg",
       "title": "เมื่อโลกนี้คือเรา: บันทึกการตื่นรู้ของดาว",
       "language": "Thai",
       "translationLanguage": "English",
@@ -99,10 +167,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6079,
-      "updated": "2026-08-05 02:44:55.096Z"
+      "updated": "2026-08-08 06:33:44.659Z"
     },
     {
       "id": "s9q9ajaylhhxa66",
+      "cover": "s9q9ajaylhhxa66_ivbchbg1pg.jpg",
       "title": "เส้นขอบฟ้าที่คลี่ออก",
       "language": "Thai",
       "translationLanguage": "English",
@@ -119,10 +188,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 8613,
-      "updated": "2026-08-03 13:53:30.084Z"
+      "updated": "2026-08-08 06:33:30.443Z"
     },
     {
       "id": "srf5x2eqaratknv",
+      "cover": "srf5x2eqaratknv_eegs3n11ok.jpg",
       "title": "Lagom: The Swedish Art of Living Just Right",
       "language": "English",
       "translationLanguage": "English",
@@ -139,10 +209,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4225,
-      "updated": "2026-08-02 02:53:45.573Z"
+      "updated": "2026-08-08 06:34:06.202Z"
     },
     {
       "id": "sgfldpwdkcp9k8a",
+      "cover": "sgfldpwdkcp9k8a_92ogzki54f.jpg",
       "title": "ลากอม: ศิลปะการใช้ชีวิตแบบพอดีของชาวสวีเดน",
       "language": "Thai",
       "translationLanguage": "English",
@@ -159,10 +230,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4988,
-      "updated": "2026-08-02 02:37:29.141Z"
+      "updated": "2026-08-08 06:33:42.477Z"
     },
     {
       "id": "sj53neyz28qp3hb",
+      "cover": "sj53neyz28qp3hb_lwnb65yhen.jpg",
       "title": "Out of Rhythm",
       "language": "English",
       "translationLanguage": "English",
@@ -179,10 +251,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 7167,
-      "updated": "2026-08-01 03:22:43.173Z"
+      "updated": "2026-08-08 06:33:45.702Z"
     },
     {
       "id": "socndhqk95exldl",
+      "cover": "socndhqk95exldl_12ind7cft1.jpg",
       "title": "นอกจังหวะ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -199,10 +272,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 10645,
-      "updated": "2026-08-01 03:33:01.946Z"
+      "updated": "2026-08-08 06:34:01.442Z"
     },
     {
       "id": "smoxa4xvgbi94io",
+      "cover": "smoxa4xvgbi94io_6sec1wnaia.jpg",
       "title": "ศิลปะแห่งการอยู่กับที่",
       "language": "Thai",
       "translationLanguage": "Thai",
@@ -221,10 +295,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 8830,
-      "updated": "2026-08-02 05:49:49.451Z"
+      "updated": "2026-08-08 06:33:56.794Z"
     },
     {
       "id": "s05fmf9n37md0st",
+      "cover": "s05fmf9n37md0st_4cuv2rqc6l.jpg",
       "title": "The Art of Staying Put",
       "language": "English",
       "translationLanguage": "English",
@@ -243,10 +318,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 7859,
-      "updated": "2026-08-02 04:08:06.251Z"
+      "updated": "2026-08-08 06:33:13.321Z"
     },
     {
       "id": "sh0rcf7cwx15jgl",
+      "cover": "sh0rcf7cwx15jgl_wmcucne4de.jpg",
       "title": "น้ำตาแห่งสรรพสิ่ง: จากความโกรธสู่ปัญญา",
       "language": "Thai",
       "translationLanguage": "English",
@@ -263,10 +339,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5626,
-      "updated": "2026-07-30 14:24:43.158Z"
+      "updated": "2026-08-08 06:33:43.886Z"
     },
     {
       "id": "sppbmklbu53vf41",
+      "cover": "sppbmklbu53vf41_3iv522g0tt.jpg",
       "title": "น้ำตาของสรรพสิ่ง: การแสวงหาปัญญาในยุคแห่งความโกรธแค้น",
       "language": "Thai",
       "translationLanguage": "Thai",
@@ -283,10 +360,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3794,
-      "updated": "2026-07-30 13:41:07.595Z"
+      "updated": "2026-08-08 06:34:03.398Z"
     },
     {
       "id": "s7gc7y6kuzj3c33",
+      "cover": "s7gc7y6kuzj3c33_ei9otyt7vw.jpg",
       "title": "หยั่งรากในผืนดิน: เรื่องราวของชาวนา",
       "language": "Thai",
       "translationLanguage": "English",
@@ -303,10 +381,11 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3334,
-      "updated": "2026-07-30 02:47:06.554Z"
+      "updated": "2026-08-08 06:33:25.878Z"
     },
     {
       "id": "s50r7fbdmdftqoo",
+      "cover": "s50r7fbdmdftqoo_jj63qprgsd.jpg",
       "title": "Rooted in the Soil: A Farmer’s Story",
       "language": "English",
       "translationLanguage": "English",
@@ -323,10 +402,11 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3057,
-      "updated": "2026-07-30 02:33:54.539Z"
+      "updated": "2026-08-08 06:33:23.501Z"
     },
     {
       "id": "san7jy6arvsf43x",
+      "cover": "san7jy6arvsf43x_524tskzoz0.jpg",
       "title": "The Footprint Trap: Who Is Really Responsible for Climate Change?",
       "language": "English",
       "translationLanguage": "English",
@@ -343,10 +423,11 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3374,
-      "updated": "2026-07-30 02:20:06.618Z"
+      "updated": "2026-08-08 06:33:32.337Z"
     },
     {
       "id": "s8szk4jxs3f1bfe",
+      "cover": "s8szk4jxs3f1bfe_304gs4m83m.jpg",
       "title": "Wasabi and the Matcha Cafe",
       "language": "English",
       "translationLanguage": "Thai",
@@ -363,10 +444,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2391,
-      "updated": "2026-07-29 13:15:43.435Z"
+      "updated": "2026-08-08 06:33:29.653Z"
     },
     {
       "id": "sxmnon4at15do0b",
+      "cover": "sxmnon4at15do0b_ysolnlyhm0.jpg",
       "title": "Wasabi the Matcha Cat",
       "language": "English",
       "translationLanguage": "Thai",
@@ -383,10 +465,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 1778,
-      "updated": "2026-07-29 13:00:57.127Z"
+      "updated": "2026-08-08 06:35:04.454Z"
     },
     {
       "id": "st4robga09zzax1",
+      "cover": "st4robga09zzax1_1pypq4xrou.jpg",
       "title": "จากหิมะสู่เถ้า จากเถ้าสู่ต้นโอ๊ก",
       "language": "Thai",
       "translationLanguage": "Thai",
@@ -403,10 +486,11 @@
       "copyrightFlag": false,
       "chaptersCount": 16,
       "wordCount": 6243,
-      "updated": "2026-07-29 12:05:58.306Z"
+      "updated": "2026-08-08 06:34:08.655Z"
     },
     {
       "id": "svamyuylyfh6hce",
+      "cover": "svamyuylyfh6hce_pkzgakfb4h.jpg",
       "title": "ปริศนาพลายทอง",
       "language": "Thai",
       "translationLanguage": "English",
@@ -423,10 +507,11 @@
       "copyrightFlag": false,
       "chaptersCount": 6,
       "wordCount": 2425,
-      "updated": "2026-07-29 05:39:04.559Z"
+      "updated": "2026-08-08 06:34:59.132Z"
     },
     {
       "id": "swc0bt1ysi49shx",
+      "cover": "swc0bt1ysi49shx_3uap0rcj2q.jpg",
       "title": "Das gefleckte Band",
       "language": "German",
       "translationLanguage": "English",
@@ -443,10 +528,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4460,
-      "updated": "2026-07-29 04:44:22.200Z"
+      "updated": "2026-08-08 06:35:01.241Z"
     },
     {
       "id": "swpnhov9hdwhrqg",
+      "cover": "swpnhov9hdwhrqg_2rbz3gefa2.jpg",
       "title": "ปริศนาซอยลูกหมาด",
       "language": "Thai",
       "translationLanguage": "English",
@@ -463,10 +549,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3624,
-      "updated": "2026-07-28 09:01:02.984Z"
+      "updated": "2026-08-08 06:35:03.122Z"
     },
     {
       "id": "slpt35nsqqmqej4",
+      "cover": "slpt35nsqqmqej4_omhtx7ma7n.jpg",
       "title": "The Mystery of Soi Luk Mat",
       "language": "English",
       "translationLanguage": "Thai",
@@ -483,10 +570,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3249,
-      "updated": "2026-07-28 07:47:11.908Z"
+      "updated": "2026-08-08 06:33:54.455Z"
     },
     {
       "id": "sj9yy205mqo1w8i",
+      "cover": "sj9yy205mqo1w8i_w5gfl8bdgg.jpg",
       "title": "บ้านริมน้ำ: การผจญภัยของต้น",
       "language": "Thai",
       "translationLanguage": "Thai",
@@ -503,10 +591,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5082,
-      "updated": "2026-07-29 07:21:29.776Z"
+      "updated": "2026-08-08 06:33:46.820Z"
     },
     {
       "id": "swqshb41rsszif6",
+      "cover": "swqshb41rsszif6_kwfk0a9d4u.jpg",
       "title": "Monom the Monkey in Chachoengsao",
       "language": "English",
       "translationLanguage": "Thai",
@@ -523,10 +612,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5907,
-      "updated": "2026-07-27 13:05:00.152Z"
+      "updated": "2026-08-08 06:35:03.887Z"
     },
     {
       "id": "so53m14stf7thci",
+      "cover": "so53m14stf7thci_cbo5du288t.jpg",
       "title": "Som’s Wonderful Year",
       "language": "English",
       "translationLanguage": "Thai",
@@ -543,10 +633,11 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 11224,
-      "updated": "2026-07-27 12:53:27.083Z"
+      "updated": "2026-08-08 06:33:59.121Z"
     },
     {
       "id": "sjr4w0f5hmgkjn0",
+      "cover": "sjr4w0f5hmgkjn0_l1afk6rye7.jpg",
       "title": "Humanity's Next Chapter: From Sapiens to Deus",
       "language": "English",
       "translationLanguage": "English",
@@ -563,10 +654,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 7758,
-      "updated": "2026-07-27 05:07:59.944Z"
+      "updated": "2026-08-08 06:33:48.299Z"
     },
     {
       "id": "s2migc723cj68o0",
+      "cover": "s2migc723cj68o0_awry02pq0h.jpg",
       "title": "วงล้อธรรมกับฤดูแห่งความสงบ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -583,10 +675,11 @@
       "copyrightFlag": false,
       "chaptersCount": 9,
       "wordCount": 3994,
-      "updated": "2026-07-27 02:41:17.287Z"
+      "updated": "2026-08-08 06:33:16.559Z"
     },
     {
       "id": "soaghb1jsy6c1lv",
+      "cover": "soaghb1jsy6c1lv_3zeo62tnul.jpg",
       "title": "The Turning Wheel and the Quiet Season",
       "language": "English",
       "translationLanguage": "English",
@@ -603,10 +696,11 @@
       "copyrightFlag": false,
       "chaptersCount": 9,
       "wordCount": 2879,
-      "updated": "2026-07-26 23:48:52.947Z"
+      "updated": "2026-08-08 06:33:59.887Z"
     },
     {
       "id": "sl9tcl7slt0m0zh",
+      "cover": "sl9tcl7slt0m0zh_94vda35yj9.jpg",
       "title": "Whispers in the Dark: A Tale of Legends and Fear",
       "language": "English",
       "translationLanguage": "English",
@@ -623,10 +717,11 @@
       "copyrightFlag": false,
       "chaptersCount": 12,
       "wordCount": 5008,
-      "updated": "2026-07-27 11:46:56.701Z"
+      "updated": "2026-08-08 06:33:53.173Z"
     },
     {
       "id": "sjbtvj6et348bm8",
+      "cover": "sjbtvj6et348bm8_bjifh2kze0.jpg",
       "title": "The Franciscan Footpath: Walking Through the Modern World with a Medieval Saint",
       "language": "English",
       "translationLanguage": "English",
@@ -645,10 +740,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6223,
-      "updated": "2026-07-27 02:54:22.990Z"
+      "updated": "2026-08-08 06:33:47.532Z"
     },
     {
       "id": "sd9m3enfennnogq",
+      "cover": "sd9m3enfennnogq_qzlomcciwa.jpg",
       "title": "เงละรักแม่นาค (เงาแห่งความกลัว)",
       "language": "Thai",
       "translationLanguage": "English",
@@ -665,10 +761,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2332,
-      "updated": "2026-07-26 08:51:51.068Z"
+      "updated": "2026-08-08 06:33:38.258Z"
     },
     {
       "id": "scmkcheqm2r0mrj",
+      "cover": "scmkcheqm2r0mrj_xpuzo2xd5b.jpg",
       "title": "El Susurro de la Sombra: La Leyenda de Mae Nak",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -685,10 +782,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2437,
-      "updated": "2026-07-25 13:44:43.063Z"
+      "updated": "2026-08-08 06:33:36.921Z"
     },
     {
       "id": "slux618jv07gpgx",
+      "cover": "slux618jv07gpgx_tthk4mhabq.jpg",
       "title": "Personas Famosas que Hablan Español",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -705,10 +803,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3235,
-      "updated": "2026-07-25 09:06:12.586Z"
+      "updated": "2026-08-08 06:33:55.203Z"
     },
     {
       "id": "s6h5xw4fe9923jd",
+      "cover": "s6h5xw4fe9923jd_x5lphvsz3x.jpg",
       "title": "Johnny Appleseed: The Tree Man",
       "language": "English",
       "translationLanguage": "Thai",
@@ -725,10 +824,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 830,
-      "updated": "2026-07-25 09:07:14.349Z"
+      "updated": "2026-08-08 06:33:24.318Z"
     },
     {
       "id": "stc99bymavpd220",
+      "cover": "stc99bymavpd220_wtnvlxvfcz.jpg",
       "title": "กลิ่นลำดวนในสวนเก่า",
       "language": "Thai",
       "translationLanguage": "English",
@@ -745,10 +845,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 7293,
-      "updated": "2026-07-23 13:14:19.455Z"
+      "updated": "2026-08-08 06:34:10.207Z"
     },
     {
       "id": "sz5izf29wa01sch",
+      "cover": "sz5izf29wa01sch_kkaof9d887.jpg",
       "title": "ทางเดินแห่งความยินดี: ตามรอยนักบุญฟรานซิสในโลกสมัยใหม่",
       "language": "Thai",
       "translationLanguage": "English",
@@ -765,10 +866,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6107,
-      "updated": "2026-07-24 17:34:40.431Z"
+      "updated": "2026-08-08 06:35:05.189Z"
     },
     {
       "id": "s7415w1i96rn1qz",
+      "cover": "s7415w1i96rn1qz_c0fb5cxgs8.jpg",
       "title": "โอดิสซีอุส: การเดินทางกลับบ้าน",
       "language": "Thai",
       "translationLanguage": "English",
@@ -785,10 +887,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 10398,
-      "updated": "2026-07-20 14:15:54.769Z"
+      "updated": "2026-08-08 06:33:25.069Z"
     },
     {
       "id": "sf56bzwx1l0h4g6",
+      "cover": "sf56bzwx1l0h4g6_9zgnf7ktf9.jpg",
       "title": "The Odyssey Retold: A Hero's Return",
       "language": "English",
       "translationLanguage": "English",
@@ -805,10 +908,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 9265,
-      "updated": "2026-07-20 13:56:46.756Z"
+      "updated": "2026-08-08 06:33:40.364Z"
     },
     {
       "id": "scn4h34x97dpsx6",
+      "cover": "scn4h34x97dpsx6_qeeqpnbwmn.jpg",
       "title": "Beyond the App: The True Journey of Mindfulness",
       "language": "English",
       "translationLanguage": "English",
@@ -825,10 +929,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3619,
-      "updated": "2026-07-19 21:38:05.639Z"
+      "updated": "2026-08-08 06:33:37.662Z"
     },
     {
       "id": "sjrtaxz9ntn0w4c",
+      "cover": "sjrtaxz9ntn0w4c_uaarbuhafs.jpg",
       "title": "เหนือกว่าแอป: ความจริงที่ลึกซึ้งของสติ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -847,10 +952,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4509,
-      "updated": "2026-07-25 00:32:14.817Z"
+      "updated": "2026-08-08 06:33:49.053Z"
     },
     {
       "id": "sec355jd9yxk0g0",
+      "cover": "sec355jd9yxk0g0_9zaa3cqrg9.jpg",
       "title": "มนุษย์เทพ: อนาคตของมนุษยชาติในยุคข้อมูล – คู่มือศึกษาแนวคิดของ ยูวัล โนอาห์ แฮรารี",
       "language": "Thai",
       "translationLanguage": "English",
@@ -867,10 +973,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 9845,
-      "updated": "2026-07-19 15:34:42.071Z"
+      "updated": "2026-08-08 06:33:39.601Z"
     },
     {
       "id": "snobt6kzpcwgd8a",
+      "cover": "snobt6kzpcwgd8a_6co863km54.jpg",
       "title": "จิตใจที่ตั้งมั่น: คู่มือพัฒนาตนเองอย่างแท้จริงและวิธีจับผิดกูรูขายปาฏิหาริย์",
       "language": "Thai",
       "translationLanguage": "English",
@@ -889,10 +996,11 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 4011,
-      "updated": "2026-07-24 13:47:52.099Z"
+      "updated": "2026-08-08 06:33:58.357Z"
     },
     {
       "id": "st68poevxui19jo",
+      "cover": "st68poevxui19jo_n03ta20v97.jpg",
       "title": "ถอดรหัสครูฝรั่ง: คู่มือวัฒนธรรมสำหรับนักการศึกษาไทย",
       "language": "Thai",
       "translationLanguage": "English",
@@ -909,10 +1017,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6592,
-      "updated": "2026-07-18 07:53:43.456Z"
+      "updated": "2026-08-08 06:34:09.425Z"
     },
     {
       "id": "sfvf7sqti1ldlia",
+      "cover": "sfvf7sqti1ldlia_xfyprnvzop.jpg",
       "title": "The Culturally Responsive Classroom: A Guide for ESL Teachers in Thailand",
       "language": "English",
       "translationLanguage": "English",
@@ -929,10 +1038,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6756,
-      "updated": "2026-07-18 07:20:55.003Z"
+      "updated": "2026-08-08 06:33:41.711Z"
     },
     {
       "id": "s10a8o5up4ngxo9",
+      "cover": "s10a8o5up4ngxo9_7684cdk255.jpg",
       "title": "30 deutsche Traditionen: Eine Reise durch das Jahr",
       "language": "German",
       "translationLanguage": "English",
@@ -949,10 +1059,11 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 8269,
-      "updated": "2026-07-17 22:02:32.714Z"
+      "updated": "2026-08-08 06:33:14.466Z"
     },
     {
       "id": "sov16mdwfor7a06",
+      "cover": "sov16mdwfor7a06_8caezw9bsa.jpg",
       "title": "จังหวะในสายเลือด: ทำไมมนุษย์ถึงร้องเพลงและเต้นรำ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -971,10 +1082,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5665,
-      "updated": "2026-07-20 23:26:14.114Z"
+      "updated": "2026-08-08 06:34:02.013Z"
     },
     {
       "id": "s8pvg6vc0t79h14",
+      "cover": "s8pvg6vc0t79h14_2xa653qiya.jpg",
       "title": "Smart Study: Skills for Success in School and College",
       "language": "English",
       "translationLanguage": "English",
@@ -991,10 +1103,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3534,
-      "updated": "2026-07-17 06:07:59.293Z"
+      "updated": "2026-08-08 06:33:27.691Z"
     },
     {
       "id": "ssmgriyroecucpv",
+      "cover": "ssmgriyroecucpv_7lic9df27t.jpg",
       "title": "ศูนย์กลางอันสงบ: เรียนรู้การภาวนาจากยักษ์ใหญ่แห่งความเชื่อ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1013,10 +1126,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4937,
-      "updated": "2026-07-22 13:12:12.764Z"
+      "updated": "2026-08-08 06:34:07.348Z"
     },
     {
       "id": "svovgdlb6j7x19j",
+      "cover": "svovgdlb6j7x19j_bj5nxc5bzs.jpg",
       "title": "กลุ่มนอก: ทำไมถึงถูกโจมตีด้วยโฆษณาชวนเชื่อ?",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1033,10 +1147,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2517,
-      "updated": "2026-07-16 12:02:51.899Z"
+      "updated": "2026-08-08 06:34:59.671Z"
     },
     {
       "id": "sazm8upukcqbd8r",
+      "cover": "sazm8upukcqbd8r_i7zdvcerq2.jpg",
       "title": "Easy Targets: Why Propaganda Blames the Outsider",
       "language": "English",
       "translationLanguage": "English",
@@ -1055,10 +1170,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2151,
-      "updated": "2026-07-16 11:23:20.978Z"
+      "updated": "2026-08-08 06:33:32.921Z"
     },
     {
       "id": "s8qzcoxku6jrjg3",
+      "cover": "s8qzcoxku6jrjg3_43ppkk31s8.jpg",
       "title": "ชีวิตที่เบาลง",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1077,10 +1193,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4467,
-      "updated": "2026-07-28 00:02:51.982Z"
+      "updated": "2026-08-08 06:33:28.877Z"
     },
     {
       "id": "spuejvujlc31371",
+      "cover": "spuejvujlc31371_rovpi4oo9l.jpg",
       "title": "The Words I Found",
       "language": "English",
       "translationLanguage": "English",
@@ -1099,10 +1216,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1695,
-      "updated": "2026-07-28 11:58:10.415Z"
+      "updated": "2026-08-08 09:27:30.387Z"
     },
     {
       "id": "s36vz9hlo592any",
+      "cover": "s36vz9hlo592any_3rpdyl0ql4.jpg",
       "title": "หัวใจแห่งเขาใหญ่: เสียงกระซิบจากผืนป่า",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1119,10 +1237,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2510,
-      "updated": "2026-07-14 11:45:08.613Z"
+      "updated": "2026-08-08 06:33:18.122Z"
     },
     {
       "id": "s491ovairl9wpke",
+      "cover": "s491ovairl9wpke_zra04thzn4.jpg",
       "title": "La Aventura del Bosque Mágico",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -1139,10 +1258,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1528,
-      "updated": "2026-07-14 07:41:16.279Z"
+      "updated": "2026-08-08 06:33:20.037Z"
     },
     {
       "id": "spjwrlutde6pjua",
+      "cover": "spjwrlutde6pjua_wygmt4zfxa.jpg",
       "title": "Vivre Simplement : Les Leçons de Thoreau",
       "language": "French",
       "translationLanguage": "English",
@@ -1159,10 +1279,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4091,
-      "updated": "2026-07-28 11:56:53.904Z"
+      "updated": "2026-08-08 06:34:02.777Z"
     },
     {
       "id": "scbhg68s827mf8d",
+      "cover": "scbhg68s827mf8d_krhz0tw4s7.jpg",
       "title": "ชีวิตที่เรียบง่ายในป่าใหญ่: ปรัชญาและข้อคิดของธอโร",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1181,10 +1302,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1732,
-      "updated": "2026-07-14 11:10:03.909Z"
+      "updated": "2026-08-08 06:33:36.226Z"
     },
     {
       "id": "ssniffmnblimt2y",
+      "cover": "ssniffmnblimt2y_txh8ad0821.jpg",
       "title": "ความคิดถึงในหมู่ดาว",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1203,10 +1325,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2525,
-      "updated": "2026-07-14 10:36:25.499Z"
+      "updated": "2026-08-08 06:34:07.898Z"
     },
     {
       "id": "se3neqs13rzh1gc",
+      "cover": "se3neqs13rzh1gc_8ya0qt3q0o.jpg",
       "title": "ทางแห่งความสงบ: 5 ข้อคิดจากพุทธศาสนาเพื่อเอาชนะความคิดลบและการบ่น",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1223,10 +1346,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2500,
-      "updated": "2026-07-16 11:04:07.248Z"
+      "updated": "2026-08-08 06:33:38.803Z"
     },
     {
       "id": "s1kvrzbh1g1jya4",
+      "cover": "s1kvrzbh1g1jya4_of4emlgiyk.jpg",
       "title": "เสียงในหัวและสมอง: ทำความเข้าใจเสียงวิจารณ์ภายใน",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1245,10 +1369,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1381,
-      "updated": "2026-07-13 10:28:03.770Z"
+      "updated": "2026-08-08 06:33:15.747Z"
     },
     {
       "id": "saigo07ou08v73v",
+      "cover": "saigo07ou08v73v_r5tndmkkuv.jpg",
       "title": "Between the Screen and the Future",
       "language": "English",
       "translationLanguage": "English",
@@ -1265,10 +1390,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1811,
-      "updated": "2026-07-08 07:06:38.066Z"
+      "updated": "2026-08-08 06:33:31.598Z"
     },
     {
       "id": "s8qakwze7zxm1z5",
+      "cover": "s8qakwze7zxm1z5_v6npjajzc4.jpg",
       "title": "เสียงกระซิบจากโรงเรียนบ้านป่าลึก",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1287,10 +1413,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1696,
-      "updated": "2026-07-17 11:04:52.864Z"
+      "updated": "2026-08-08 06:33:28.277Z"
     },
     {
       "id": "swolfaj2xrhatiu",
+      "cover": "swolfaj2xrhatiu_1fy60l3bps.jpg",
       "title": "El Fantasma de la Escuela de Issan",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -1307,10 +1434,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2118,
-      "updated": "2026-07-08 05:10:45.113Z"
+      "updated": "2026-08-08 06:35:02.373Z"
     },
     {
       "id": "s4cyifj4oxli4in",
+      "cover": "s4cyifj4oxli4in_m4w78wt481.jpg",
       "title": "ชาร้อนกับโลกใบใหม่",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1327,10 +1455,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3254,
-      "updated": "2026-07-07 23:56:58.373Z"
+      "updated": "2026-08-08 06:33:20.629Z"
     },
     {
       "id": "szv5zv0jw2cr969",
+      "cover": "szv5zv0jw2cr969_zqqvjvt65d.jpg",
       "title": "การวิเคราะห์ระบบเวทมนตร์: ความลับของสมองและจักรวาล",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1347,10 +1476,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3434,
-      "updated": "2026-07-07 14:22:38.540Z"
+      "updated": "2026-08-08 06:35:06.494Z"
     },
     {
       "id": "sqqd3rgauvbn6rg",
+      "cover": "sqqd3rgauvbn6rg_038zdw8j1s.jpg",
       "title": "Between the Rice Fields and the Stars",
       "language": "English",
       "translationLanguage": "English",
@@ -1367,10 +1497,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5848,
-      "updated": "2026-07-07 00:41:22.041Z"
+      "updated": "2026-08-08 06:34:05.460Z"
     },
     {
       "id": "sjvncvm66gtvhe8",
+      "cover": "sjvncvm66gtvhe8_kzx8km6p2u.jpg",
       "title": "นางเสม็ด ผู้พิทักษ์เกาะ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1389,10 +1520,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1641,
-      "updated": "2026-07-05 22:50:18.231Z"
+      "updated": "2026-08-08 06:33:49.815Z"
     },
     {
       "id": "s4q6erpoo9wrgbz",
+      "cover": "s4q6erpoo9wrgbz_vqsqpg4pi6.jpg",
       "title": "ดอยเชียงใหม่กับหัวใจที่เป็นตัวเอง",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1411,10 +1543,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4827,
-      "updated": "2026-07-06 23:43:50.161Z"
+      "updated": "2026-08-08 06:33:22.140Z"
     },
     {
       "id": "s4xcb8zpv9wefkv",
+      "cover": "s4xcb8zpv9wefkv_12niyijdpo.jpg",
       "title": "เสียงสะท้อนจากดินแดนรอยยิ้ม",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1431,10 +1564,11 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 10839,
-      "updated": "2026-07-01 12:00:05.408Z"
+      "updated": "2026-08-08 06:33:22.763Z"
     },
     {
       "id": "sf59lxv51pcthce",
+      "cover": "sf59lxv51pcthce_p6jyfzc1eg.jpg",
       "title": "เป็นเหมือนน้ำ: ห้าบทเรียนชีวิตจากเต๋าเต๋อจิง",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1451,10 +1585,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2504,
-      "updated": "2026-06-29 05:43:29.078Z"
+      "updated": "2026-08-08 06:33:40.920Z"
     },
     {
       "id": "sacp6xhsczdsj7f",
+      "cover": "sacp6xhsczdsj7f_hpkgdtxyjf.jpg",
       "title": "Between the Lines: Understanding Western and Thai Communication",
       "language": "English",
       "translationLanguage": "English",
@@ -1471,10 +1606,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2036,
-      "updated": "2026-07-16 09:55:01.263Z"
+      "updated": "2026-08-08 06:33:31.041Z"
     },
     {
       "id": "s3ll6n31ozoxvdi",
+      "cover": "s3ll6n31ozoxvdi_hqgrtrc1up.jpg",
       "title": "ธรรมะในชีวิตประจำวัน: เส้นทางสู่ความสงบใจแบบไทย",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1493,10 +1629,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 7633,
-      "updated": "2026-07-20 23:25:38.441Z"
+      "updated": "2026-08-08 06:33:18.710Z"
     },
     {
       "id": "s7i3p58ou01ekmk",
+      "cover": "s7i3p58ou01ekmk_tiwwvgcppz.jpg",
       "title": "สองโลก สองมุมมอง: เปรียบเทียบโลกทัศน์ไทยกับอเมริกัน",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1515,10 +1652,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2848,
-      "updated": "2026-06-29 10:57:23.308Z"
+      "updated": "2026-08-08 06:33:26.434Z"
     },
     {
       "id": "skkg6vcz9l0uuim",
+      "cover": "skkg6vcz9l0uuim_zksef4fg0y.jpg",
       "title": "พระคัมภีร์เดิม: เรื่องราวสำคัญและความหมาย",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1535,10 +1673,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 6172,
-      "updated": "2026-07-04 02:08:36.797Z"
+      "updated": "2026-08-08 06:33:51.842Z"
     },
     {
       "id": "sznvgqbqsujjzrj",
+      "cover": "sznvgqbqsujjzrj_3tq5p1vnbn.jpg",
       "title": "หน้ากากสีเลือดแห่งคฤหาสน์ลึกลับ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1557,10 +1696,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1333,
-      "updated": "2026-07-02 21:13:25.799Z"
+      "updated": "2026-08-08 06:35:05.748Z"
     },
     {
       "id": "su97g3lq64t2rwu",
+      "cover": "su97g3lq64t2rwu_swqmm906br.jpg",
       "title": "คฤหาสน์อัชเชอร์แห่งสายน้ำ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1579,10 +1719,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1721,
-      "updated": "2026-06-29 02:14:59.820Z"
+      "updated": "2026-08-08 06:34:58.401Z"
     },
     {
       "id": "srupbmtwst3npt6",
+      "cover": "srupbmtwst3npt6_e83budoqyr.jpg",
       "title": "อุ้งมือลิงวิเศษ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1599,10 +1740,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 780,
-      "updated": "2026-06-29 02:14:59.888Z"
+      "updated": "2026-08-08 06:34:06.798Z"
     },
     {
       "id": "swgvqbwpibl2by4",
+      "cover": "swgvqbwpibl2by4_6q3azhfajp.jpg",
       "title": "อุ้งเท้าลิงอาถรรพ์แห่งหมู่บ้านดอนหมอก",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1621,10 +1763,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2019,
-      "updated": "2026-06-29 02:14:59.949Z"
+      "updated": "2026-08-08 06:35:01.818Z"
     },
     {
       "id": "sbxx8hfwnsr4gqi",
+      "cover": "sbxx8hfwnsr4gqi_y0wguw190h.jpg",
       "title": "ตำนานกบกระโดดของลุงสมหมาย",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1643,10 +1786,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1908,
-      "updated": "2026-06-29 02:15:00.013Z"
+      "updated": "2026-08-08 06:33:35.668Z"
     },
     {
       "id": "sjyo4vqxzf1g2k5",
+      "cover": "sjyo4vqxzf1g2k5_1hd7k7olj8.jpg",
       "title": "สลากปริศนา",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1665,10 +1809,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1998,
-      "updated": "2026-07-01 13:08:59.195Z"
+      "updated": "2026-08-08 06:33:50.363Z"
     },
     {
       "id": "sqlsnzercgzhetd",
+      "cover": "sqlsnzercgzhetd_nx3q8tfwp6.jpg",
       "title": "หัวใจที่ไม่มีวันเงียบ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1687,10 +1832,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2471,
-      "updated": "2026-06-29 02:15:00.141Z"
+      "updated": "2026-08-08 06:34:04.707Z"
     },
     {
       "id": "sbk2394qgj9fkrq",
+      "cover": "sbk2394qgj9fkrq_d8hjcy3ujf.jpg",
       "title": "แมวดำกับความลับในคฤหาสน์ร้าง",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1709,10 +1855,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2356,
-      "updated": "2026-06-29 02:15:00.211Z"
+      "updated": "2026-08-08 06:33:34.741Z"
     },
     {
       "id": "sobjgxna0k2ftxg",
+      "cover": "sobjgxna0k2ftxg_t1pnv6p6rs.jpg",
       "title": "หนึ่งเทอมในอังกฤษ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1729,10 +1876,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2431,
-      "updated": "2026-06-29 02:15:00.277Z"
+      "updated": "2026-08-08 06:34:00.627Z"
     },
     {
       "id": "swbr67vy2hk7cqr",
+      "cover": "swbr67vy2hk7cqr_q3jm59buz2.jpg",
       "title": "Through Her Lens",
       "language": "English",
       "translationLanguage": "English",
@@ -1751,10 +1899,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 3178,
-      "updated": "2026-06-29 08:31:54.048Z"
+      "updated": "2026-08-08 06:35:00.638Z"
     },
     {
       "id": "slnohfarkbb7l8x",
+      "cover": "slnohfarkbb7l8x_82yezkkjca.jpg",
       "title": "มนุษยชาติที่งดงาม: โลกยุค AI กับศักดิ์ศรีที่ไม่มีใครพรากได้",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1771,10 +1920,11 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3086,
-      "updated": "2026-06-29 02:15:01.726Z"
+      "updated": "2026-08-08 06:33:53.714Z"
     },
     {
       "id": "skrh1zndj5eukgw",
+      "cover": "skrh1zndj5eukgw_9x54twjc17.jpg",
       "title": "Pensée Rapide, Pensée Lente : Décrypter les Secrets de Notre Esprit",
       "language": "French",
       "translationLanguage": "English",
@@ -1791,10 +1941,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4413,
-      "updated": "2026-06-29 02:15:01.947Z"
+      "updated": "2026-08-08 06:33:52.447Z"
     },
     {
       "id": "sazqfihltx2pe1e",
+      "cover": "sazqfihltx2pe1e_86m4gllxyz.jpg",
       "title": "สมองสองระบบ: ทำไมเราถึงคิดและตัดสินใจแบบนั้น?",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1811,10 +1962,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4786,
-      "updated": "2026-06-29 02:15:02.166Z"
+      "updated": "2026-08-08 06:33:33.520Z"
     },
     {
       "id": "s3xhdpny0rjqnqx",
+      "cover": "s3xhdpny0rjqnqx_yy68fxpp09.jpg",
       "title": "การเดินทางของมนุษย์: จากทุ่งหญ้าสู่ดวงดาว",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1833,10 +1985,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4616,
-      "updated": "2026-06-29 02:15:02.397Z"
+      "updated": "2026-08-08 06:33:19.455Z"
     },
     {
       "id": "s7lvffdkp9papze",
+      "cover": "s7lvffdkp9papze_1l8dtm4pvn.jpg",
       "title": "Entre Deux Mondes",
       "language": "French",
       "translationLanguage": "English",
@@ -1855,10 +2008,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1706,
-      "updated": "2026-06-29 02:15:02.606Z"
+      "updated": "2026-08-08 06:33:27.160Z"
     },
     {
       "id": "s0ox47k9v97rhd6",
+      "cover": "s0ox47k9v97rhd6_wez3luqj7h.jpg",
       "title": "ลมหายใจของแม่ในใจ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1877,10 +2031,11 @@
       "copyrightFlag": false,
       "chaptersCount": 4,
       "wordCount": 1476,
-      "updated": "2026-07-11 23:43:52.398Z"
+      "updated": "2026-08-08 06:33:13.877Z"
     },
     {
       "id": "sbg0fknyborygj4",
+      "cover": "sbg0fknyborygj4_82tl705fhk.jpg",
       "title": "สมดุลแห่งความสุข: คู่มือจัดการโดปามีน",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1899,10 +2054,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2114,
-      "updated": "2026-06-29 02:15:02.812Z"
+      "updated": "2026-08-08 06:33:34.127Z"
     },
     {
       "id": "sj6xjhn7mt36iak",
+      "cover": "sj6xjhn7mt36iak_uzwl57kdm7.jpg",
       "title": "เปิดใจสู่ความสงบ: 10 บทเรียนเพื่อการตื่นรู้",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1921,10 +2077,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4190,
-      "updated": "2026-06-30 22:46:25.697Z"
+      "updated": "2026-08-08 06:33:46.261Z"
     },
     {
       "id": "smap5fn4oz06r80",
+      "cover": "smap5fn4oz06r80_39ss9plqsf.jpg",
       "title": "มนต์เสน่ห์เมืองไทย: 15 บทความท่องเที่ยวและวัฒนธรรม",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1941,10 +2098,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5138,
-      "updated": "2026-06-29 02:15:03.068Z"
+      "updated": "2026-08-08 06:33:55.794Z"
     },
     {
       "id": "sgr94tn4wuwk4m3",
+      "cover": "sgr94tn4wuwk4m3_ivywl4wait.jpg",
       "title": "Ein Amerikaner in Deutschland",
       "language": "German",
       "translationLanguage": "English",
@@ -1961,10 +2119,11 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 12586,
-      "updated": "2026-07-16 09:57:39.481Z"
+      "updated": "2026-08-08 06:33:43.173Z"
     },
     {
       "id": "stv7kuqd1ffq74x",
+      "cover": "stv7kuqd1ffq74x_21oa9xaz1a.jpg",
       "title": "เสียงกระซิบจากแผ่นดิน: ศิลปะแห่งการฟังอย่างลึกซึ้ง",
       "language": "Thai",
       "translationLanguage": "English",
@@ -1983,10 +2142,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 3255,
-      "updated": "2026-06-29 02:15:03.386Z"
+      "updated": "2026-08-08 06:34:57.854Z"
     },
     {
       "id": "sndn1nd2j8ax9za",
+      "cover": "sndn1nd2j8ax9za_ky13xfrm1x.jpg",
       "title": "El susurro de la tierra",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -2003,10 +2163,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1717,
-      "updated": "2026-06-29 02:15:03.501Z"
+      "updated": "2026-08-08 06:33:57.619Z"
     },
     {
       "id": "story1781916972497",
+      "cover": "story1781916972497_mwxca94436.jpg",
       "title": "Las aventuras de Mateo y Tito",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -2023,10 +2184,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 4224,
-      "updated": "2026-06-29 02:15:03.780Z"
+      "updated": "2026-08-08 06:34:57.282Z"
     },
     {
       "id": "story1781912075342",
+      "cover": "story1781912075342_zqfuntcjtm.jpg",
       "title": "ความทรงจำในหมู่บ้านเก่า",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2045,10 +2207,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1886,
-      "updated": "2026-06-29 02:15:04.001Z"
+      "updated": "2026-08-08 06:34:56.311Z"
     },
     {
       "id": "qkci03ebhtv8t3u",
+      "cover": "qkci03ebhtv8t3u_568i078nvx.jpg",
       "title": "ทางแห่งความสงบ: สโตอิกและพุทธ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2067,10 +2230,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2083,
-      "updated": "2026-06-29 02:15:03.613Z"
+      "updated": "2026-08-08 06:32:44.958Z"
     },
     {
       "id": "story1781837709632",
+      "cover": "story1781837709632_gljeqik2hn.jpg",
       "title": "แสงแห่งความเข้าใจ: การเดินทางของหัวใจตะวันตก (The Light of Understanding: A Western Heart's Journey)",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2089,10 +2253,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2182,
-      "updated": "2026-06-29 02:15:07.334Z"
+      "updated": "2026-08-08 06:34:55.759Z"
     },
     {
       "id": "story1781778262598",
+      "cover": "story1781778262598_zj9e7r0pzn.jpg",
       "title": "The Useful Mind: Walking with William James",
       "language": "English",
       "translationLanguage": "English",
@@ -2109,10 +2274,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2202,
-      "updated": "2026-06-29 02:15:04.613Z"
+      "updated": "2026-08-08 06:34:55.027Z"
     },
     {
       "id": "story1781775791813",
+      "cover": "story1781775791813_6rw1xw6ws1.jpg",
       "title": "The Road from the Mountains",
       "language": "English",
       "translationLanguage": "English",
@@ -2131,10 +2297,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1774,
-      "updated": "2026-07-16 10:05:38.022Z"
+      "updated": "2026-08-08 06:34:54.483Z"
     },
     {
       "id": "story1781732083793",
+      "cover": "story1781732083793_jskixxgb38.jpg",
       "title": "ปรัชญาชีวิตของวิลเลียม เจมส์: หนทางสู่การปฏิบัติและความหวัง",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2151,10 +2318,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2766,
-      "updated": "2026-06-29 08:41:18.524Z"
+      "updated": "2026-08-08 06:34:53.748Z"
     },
     {
       "id": "story1781700218748",
+      "cover": "story1781700218748_22tp6m1f4x.jpg",
       "title": "ความทรงจำที่ร้านกาแฟริมแม่น้ำ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2173,10 +2341,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1435,
-      "updated": "2026-06-29 02:15:05.227Z"
+      "updated": "2026-08-08 06:34:53.201Z"
     },
     {
       "id": "story1781653435387",
+      "cover": "story1781653435387_y9x8d9ldon.jpg",
       "title": "แสงอ่อนของนักบุญฟรานซิส: ห้าบทภาวนาเพื่อชีวิตเรียบง่าย 1",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2195,10 +2364,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2545,
-      "updated": "2026-06-29 02:15:05.456Z"
+      "updated": "2026-08-08 06:34:52.501Z"
     },
     {
       "id": "story1781446030889",
+      "cover": "story1781446030889_9w4d3oi1w4.jpg",
       "title": "Tawan the Tour Guide: A 30-Day Adventure",
       "language": "English",
       "translationLanguage": "Thai",
@@ -2215,10 +2385,11 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 14470,
-      "updated": "2026-06-27 04:47:35.299Z"
+      "updated": "2026-08-08 06:34:51.938Z"
     },
     {
       "id": "story1781438326213",
+      "cover": "story1781438326213_36nstp72td.jpg",
       "title": "30 Days at the Hotel (EN-ES)",
       "language": "English",
       "translationLanguage": "Thai",
@@ -2235,10 +2406,11 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 12666,
-      "updated": "2026-06-27 04:47:46.001Z"
+      "updated": "2026-08-08 06:34:51.303Z"
     },
     {
       "id": "story1781350382933",
+      "cover": "story1781350382933_vrxo6rtbcj.jpg",
       "title": "Les Visiteurs de la Planète Bleue",
       "language": "French",
       "translationLanguage": "English",
@@ -2255,10 +2427,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3731,
-      "updated": "2026-06-29 02:15:05.114Z"
+      "updated": "2026-08-08 06:34:50.708Z"
     },
     {
       "id": "story1781345403334",
+      "cover": "story1781345403334_h5yvb023cu.jpg",
       "title": "การพบกันครั้งแรกของพวกเรา",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2275,10 +2448,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4483,
-      "updated": "2026-06-29 02:15:07.533Z"
+      "updated": "2026-08-08 06:34:50.103Z"
     },
     {
       "id": "story1781265585752",
+      "cover": "story1781265585752_4pmbqnwqee.jpg",
       "title": "คำสาปแห่งเรือนไม้เก่า",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2297,10 +2471,11 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 11124,
-      "updated": "2026-06-29 02:15:06.096Z"
+      "updated": "2026-08-08 06:34:49.070Z"
     },
     {
       "id": "story1781059639378",
+      "cover": "story1781059639378_bj8jfi2u0o.jpg",
       "title": "The World in My Classroom: Thirty New Beginnings",
       "language": "English",
       "translationLanguage": "English",
@@ -2317,10 +2492,11 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 8456,
-      "updated": "2026-07-17 23:39:28.528Z"
+      "updated": "2026-08-08 06:34:48.035Z"
     },
     {
       "id": "story1781024645364",
+      "cover": "story1781024645364_w00l4e2o9x.jpg",
       "title": "Le Musicien de la Nouvelle-Orléans",
       "language": "French",
       "translationLanguage": "English",
@@ -2337,10 +2513,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2431,
-      "updated": "2026-06-29 02:15:04.540Z"
+      "updated": "2026-08-08 06:34:47.258Z"
     },
     {
       "id": "story1780991062030",
+      "cover": "story1780991062030_85b5t2e5ey.jpg",
       "title": "토끼의 모험: 어디로 갈까?",
       "language": "Korean",
       "translationLanguage": "English",
@@ -2357,10 +2534,11 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 1729,
-      "updated": "2026-06-27 04:47:48.375Z"
+      "updated": "2026-08-08 06:34:46.527Z"
     },
     {
       "id": "story1780990283785",
+      "cover": "story1780990283785_h7msgdcagm.jpg",
       "title": "La plaza de los buenos días",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -2377,10 +2555,11 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 4573,
-      "updated": "2026-07-17 23:01:47.821Z"
+      "updated": "2026-08-08 06:34:45.981Z"
     },
     {
       "id": "story1780981737222",
+      "cover": "story1780981737222_pcquf3mcwq.jpg",
       "title": "My Day in the City",
       "language": "English",
       "translationLanguage": "Thai",
@@ -2397,10 +2576,11 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 2982,
-      "updated": "2026-06-27 04:47:33.231Z"
+      "updated": "2026-08-08 06:34:45.438Z"
     },
     {
       "id": "story1780978783310",
+      "cover": "story1780978783310_pfexsz001i.jpg",
       "title": "การเดินทางของครอบครัว: เราไปที่ไหนดี?",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2417,10 +2597,11 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 2947,
-      "updated": "2026-07-28 04:35:50.574Z"
+      "updated": "2026-08-08 06:34:44.693Z"
     },
     {
       "id": "story1780967383095",
+      "cover": "story1780967383095_kesuk4irj3.jpg",
       "title": "เสียงกระซิบจากไม้สัก: ตำนานล้านนา",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2437,10 +2618,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1849,
-      "updated": "2026-06-29 08:41:18.527Z"
+      "updated": "2026-08-08 06:34:43.958Z"
     },
     {
       "id": "story1780962009669",
+      "cover": "story1780962009669_xgd4z37fvj.jpg",
       "title": "Comprendre l'Input : Voyage au cœur de la théorie de l'apprentissage",
       "language": "French",
       "translationLanguage": "English",
@@ -2457,10 +2639,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2463,
-      "updated": "2026-06-29 02:15:07.689Z"
+      "updated": "2026-08-08 06:34:43.270Z"
     },
     {
       "id": "story1780912090764",
+      "cover": "story1780912090764_85rqvq9z9o.jpg",
       "title": "Mein Tag mit Anna",
       "language": "German",
       "translationLanguage": "English",
@@ -2479,10 +2662,11 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 3982,
-      "updated": "2026-08-07 10:36:36.031Z"
+      "updated": "2026-08-08 06:34:42.542Z"
     },
     {
       "id": "story1780907254400",
+      "cover": "story1780907254400_edxuorr5t7.jpg",
       "title": "さとうさんのいちにち",
       "language": "Japanese",
       "translationLanguage": "English",
@@ -2499,10 +2683,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1985,
-      "updated": "2026-06-27 04:47:43.867Z"
+      "updated": "2026-08-08 06:34:41.814Z"
     },
     {
       "id": "story1780900053911",
+      "cover": "story1780900053911_2r459vcndr.jpg",
       "title": "小美的饺子",
       "language": "Chinese",
       "translationLanguage": "Thai",
@@ -2519,10 +2704,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1672,
-      "updated": "2026-06-27 04:47:49.603Z"
+      "updated": "2026-08-08 06:34:41.267Z"
     },
     {
       "id": "story1780881731029",
+      "cover": "story1780881731029_jocu44azv4.jpg",
       "title": "민수의 행복한 하루",
       "language": "Korean",
       "translationLanguage": "English",
@@ -2539,10 +2725,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2424,
-      "updated": "2026-06-27 04:47:43.460Z"
+      "updated": "2026-08-08 06:34:40.672Z"
     },
     {
       "id": "story1780881266359",
+      "cover": "story1780881266359_2anv1uoq1a.jpg",
       "title": "Un día con Elena en Madrid",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -2559,10 +2746,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3337,
-      "updated": "2026-07-17 23:19:56.334Z"
+      "updated": "2026-08-08 06:34:40.121Z"
     },
     {
       "id": "story1780880791703",
+      "cover": "story1780880791703_1yoc8dj0om.jpg",
       "title": "วันดีดีของมะลิ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2579,10 +2767,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2126,
-      "updated": "2026-06-27 04:47:45.590Z"
+      "updated": "2026-08-08 06:34:39.348Z"
     },
     {
       "id": "story1780841899387",
+      "cover": "story1780841899387_g0euph5vyg.jpg",
       "title": "Les Échos du Haut-Péninsule",
       "language": "French",
       "translationLanguage": "English",
@@ -2599,10 +2788,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4999,
-      "updated": "2026-06-29 02:15:05.291Z"
+      "updated": "2026-08-08 06:34:38.783Z"
     },
     {
       "id": "story1780824418223",
+      "cover": "story1780824418223_43a2yr4ysx.jpg",
       "title": "La Luz del Corazón",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -2619,10 +2809,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1486,
-      "updated": "2026-07-17 23:02:45.391Z"
+      "updated": "2026-08-08 06:34:38.190Z"
     },
     {
       "id": "story1780755245223",
+      "cover": "story1780755245223_xs3qs1c2py.jpg",
       "title": "L'Ombre de la Liberté",
       "language": "French",
       "translationLanguage": "English",
@@ -2639,10 +2830,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4441,
-      "updated": "2026-06-29 02:15:05.373Z"
+      "updated": "2026-08-08 06:34:37.461Z"
     },
     {
       "id": "story1780752027746",
+      "cover": "story1780752027746_2ympvhpnt2.jpg",
       "title": "The Silicon Myth: Echoes of the Old World",
       "language": "English",
       "translationLanguage": "English",
@@ -2659,10 +2851,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4777,
-      "updated": "2026-06-29 02:15:08.253Z"
+      "updated": "2026-08-08 06:34:36.895Z"
     },
     {
       "id": "story1780750245321",
+      "cover": "story1780750245321_4u68o2ilnq.jpg",
       "title": "พิทักษ์ป่าแห่งพงไพร: มรดกของก้องเกียรติ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2679,10 +2872,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5168,
-      "updated": "2026-06-29 02:15:09.308Z"
+      "updated": "2026-08-08 06:34:36.184Z"
     },
     {
       "id": "story1780750101963",
+      "cover": "story1780750101963_neky7dne36.jpg",
       "title": "El Sueño de Elena en California",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -2699,10 +2893,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 833,
-      "updated": "2026-06-29 02:15:06.347Z"
+      "updated": "2026-08-08 06:34:35.485Z"
     },
     {
       "id": "story1780749831622",
+      "cover": "story1780749831622_7id8mvxopl.jpg",
       "title": "El mapa secreto de la montaña",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -2719,10 +2914,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1259,
-      "updated": "2026-07-17 23:30:53.905Z"
+      "updated": "2026-08-08 06:34:34.934Z"
     },
     {
       "id": "story1780749298825",
+      "cover": "story1780749298825_4lx0l4mref.jpg",
       "title": "El perrito y yo",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -2739,10 +2935,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 889,
-      "updated": "2026-07-17 23:29:30.760Z"
+      "updated": "2026-08-08 06:34:34.193Z"
     },
     {
       "id": "story1780749084242",
+      "cover": "story1780749084242_afx2zwanm6.jpg",
       "title": "Un Día en Costa Rica",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -2759,10 +2956,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1027,
-      "updated": "2026-06-27 04:47:45.093Z"
+      "updated": "2026-08-08 06:34:33.493Z"
     },
     {
       "id": "story1780748848977",
+      "cover": "story1780748848977_10khuyd7bi.jpg",
       "title": "Lunch at Auntie's Restaurant",
       "language": "English",
       "translationLanguage": "Thai",
@@ -2779,10 +2977,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 945,
-      "updated": "2026-06-27 04:47:34.855Z"
+      "updated": "2026-08-08 06:34:32.802Z"
     },
     {
       "id": "story1780748746267",
+      "cover": "story1780748746267_ygohe6gky3.jpg",
       "title": "A Day with Maya in Bangkok",
       "language": "English",
       "translationLanguage": "Thai",
@@ -2799,10 +2998,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1285,
-      "updated": "2026-06-27 04:47:34.445Z"
+      "updated": "2026-08-08 06:34:32.249Z"
     },
     {
       "id": "story1780748591848",
+      "cover": "story1780748591848_wb84chpglk.jpg",
       "title": "Leo's Big Map Adventure",
       "language": "English",
       "translationLanguage": "Thai",
@@ -2819,10 +3019,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1290,
-      "updated": "2026-06-27 04:47:46.106Z"
+      "updated": "2026-08-08 06:34:31.507Z"
     },
     {
       "id": "story1780748248086",
+      "cover": "story1780748248086_2ic6rmlu3m.jpg",
       "title": "Lukas und der erste Schultag",
       "language": "German",
       "translationLanguage": "English",
@@ -2839,10 +3040,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 837,
-      "updated": "2026-06-27 04:47:39.617Z"
+      "updated": "2026-08-08 06:34:30.965Z"
     },
     {
       "id": "story1780745842432",
+      "cover": "story1780745842432_pzvtcbuila.jpg",
       "title": "Lina und das Geheimnis der Burg",
       "language": "German",
       "translationLanguage": "English",
@@ -2859,10 +3061,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1119,
-      "updated": "2026-07-17 23:32:37.850Z"
+      "updated": "2026-08-08 06:34:30.413Z"
     },
     {
       "id": "story1780733359838",
+      "cover": "story1780733359838_t9hg8qcnbn.jpg",
       "title": "L'Ombre du Pinceau Florentin",
       "language": "French",
       "translationLanguage": "English",
@@ -2879,10 +3082,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3610,
-      "updated": "2026-07-17 23:34:20.713Z"
+      "updated": "2026-08-08 06:34:29.643Z"
     },
     {
       "id": "story1780662814416",
+      "cover": "story1780662814416_3ewov0tyqc.jpg",
       "title": "รอยต่อแห่งสายน้ำ: บันทึกของมาลี",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2901,10 +3105,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5546,
-      "updated": "2026-06-29 02:15:06.601Z"
+      "updated": "2026-08-08 06:34:28.930Z"
     },
     {
       "id": "story1780649138137",
+      "cover": "story1780649138137_z9qcwqkdg2.jpg",
       "title": "B1 The New Beginning: Ali's Journey to Thailand",
       "language": "English",
       "translationLanguage": "English",
@@ -2921,10 +3126,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1645,
-      "updated": "2026-06-29 02:15:06.445Z"
+      "updated": "2026-08-08 06:34:28.347Z"
     },
     {
       "id": "story1780648206704",
+      "cover": "story1780648206704_ysuy434e8q.jpg",
       "title": "เรียนรู้อักษรไทยกับครอบครัวของฉัน",
       "language": "Thai",
       "translationLanguage": "English",
@@ -2941,10 +3147,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2460,
-      "updated": "2026-06-27 04:47:35.067Z"
+      "updated": "2026-08-08 06:34:27.791Z"
     },
     {
       "id": "story1780621997787",
+      "cover": "story1780621997787_707igadoio.jpg",
       "title": "The Mystery of the Missing Necklace",
       "language": "English",
       "translationLanguage": "English",
@@ -2961,10 +3168,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1220,
-      "updated": "2026-06-29 08:41:18.529Z"
+      "updated": "2026-08-08 06:34:26.832Z"
     },
     {
       "id": "story1780620667193",
+      "cover": "story1780620667193_n99tkrgb1q.jpg",
       "title": "The Adventures of Chao Suea: King of the Schoolyard",
       "language": "English",
       "translationLanguage": "English",
@@ -2981,10 +3189,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 878,
-      "updated": "2026-06-29 08:41:18.528Z"
+      "updated": "2026-08-08 06:34:26.248Z"
     },
     {
       "id": "story1780614206821",
+      "cover": "story1780614206821_9n217mjfh3.jpg",
       "title": "The Lantern of the Silk Road",
       "language": "English",
       "translationLanguage": "English",
@@ -3001,10 +3210,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4005,
-      "updated": "2026-06-29 02:15:05.888Z"
+      "updated": "2026-08-08 06:34:25.690Z"
     },
     {
       "id": "story1780575754712",
+      "cover": "story1780575754712_kt6z923tz8.jpg",
       "title": "Le murmure du vent : Méditations sur le chemin de l'éveil",
       "language": "French",
       "translationLanguage": "English",
@@ -3021,10 +3231,11 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6725,
-      "updated": "2026-06-29 02:15:07.184Z"
+      "updated": "2026-08-08 06:34:25.080Z"
     },
     {
       "id": "story1780574277084",
+      "cover": "story1780574277084_m2sp00lx0m.jpg",
       "title": "รอยจารึกแห่งแม่น้ำเจ้าพระยา",
       "language": "Thai",
       "translationLanguage": "English",
@@ -3043,10 +3254,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5571,
-      "updated": "2026-06-29 02:15:04.309Z"
+      "updated": "2026-08-08 06:34:24.511Z"
     },
     {
       "id": "story1780571521623",
+      "cover": "story1780571521623_2g0iukqyud.jpg",
       "title": "Smiles in the Countryside: A Volunteer Teacher's Journal - รอยยิ้มที่บ้านทุ่ง: บันทึกของครูอาสา",
       "language": "Thai",
       "translationLanguage": "English",
@@ -3063,10 +3275,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5347,
-      "updated": "2026-06-29 02:15:08.471Z"
+      "updated": "2026-08-08 06:34:23.936Z"
     },
     {
       "id": "story1780566356797",
+      "cover": "story1780566356797_gkr8jjayxk.jpg",
       "title": "Un año en la ciudad: Conversaciones cotidianas",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -3083,10 +3296,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3433,
-      "updated": "2026-06-27 04:47:32.319Z"
+      "updated": "2026-08-08 06:34:23.193Z"
     },
     {
       "id": "story1780557464079",
+      "cover": "story1780557464079_r2b0o70mcu.jpg",
       "title": "Step by Step: Everyday English Conversations for Beginners",
       "language": "English",
       "translationLanguage": "Thai",
@@ -3103,10 +3317,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4261,
-      "updated": "2026-06-27 04:47:42.638Z"
+      "updated": "2026-08-08 06:34:22.636Z"
     },
     {
       "id": "story1780495335057",
+      "cover": "story1780495335057_knh0ua8rfl.jpg",
       "title": "เงามืดแห่งการกบฏ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -3125,10 +3340,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3228,
-      "updated": "2026-06-29 02:15:04.686Z"
+      "updated": "2026-08-08 06:34:21.895Z"
     },
     {
       "id": "story1780494539631",
+      "cover": "story1780494539631_qpi0lby304.jpg",
       "title": "Un Verano en España",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -3145,10 +3361,11 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 908,
-      "updated": "2026-07-17 23:31:36.498Z"
+      "updated": "2026-08-08 06:34:21.323Z"
     },
     {
       "id": "story1780474707404",
+      "cover": "story1780474707404_0s1ev79kca.jpg",
       "title": "Ben and Mali: Everyday Conversations",
       "language": "English",
       "translationLanguage": "Thai",
@@ -3167,10 +3384,11 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 8828,
-      "updated": "2026-06-27 04:47:46.742Z"
+      "updated": "2026-08-08 06:34:20.586Z"
     },
     {
       "id": "story1780469185913",
+      "cover": "story1780469185913_47qomb18s6.jpg",
       "title": "Diego y el Gatito de su Hermano",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -3187,10 +3405,11 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 764,
-      "updated": "2026-06-27 04:47:44.685Z"
+      "updated": "2026-08-08 06:34:19.992Z"
     },
     {
       "id": "story1780464281808",
+      "cover": "story1780464281808_ile2ygtbrg.jpg",
       "title": "El Tesoro Perdido de la Isla",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -3207,10 +3426,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 581,
-      "updated": "2026-06-27 04:47:36.087Z"
+      "updated": "2026-08-08 06:34:19.450Z"
     },
     {
       "id": "story1780458565373",
+      "cover": "story1780458565373_3m1b78ea2u.jpg",
       "title": "Latidos de silencio: El diario de una vida entregada",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -3227,10 +3447,11 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 9900,
-      "updated": "2026-06-29 02:15:04.418Z"
+      "updated": "2026-08-08 06:34:18.887Z"
     },
     {
       "id": "story1780438479911",
+      "cover": "story1780438479911_yx22hjaa3x.jpg",
       "title": "Mein Herz in Berlin",
       "language": "German",
       "translationLanguage": "English",
@@ -3247,10 +3468,11 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 575,
-      "updated": "2026-07-17 23:33:12.855Z"
+      "updated": "2026-08-08 06:34:17.871Z"
     },
     {
       "id": "story1780407549825",
+      "cover": "story1780407549825_cgz2t93w39.jpg",
       "title": "มนุษย์ต่างดาวในเมืองไทย",
       "language": "Thai",
       "translationLanguage": "English",
@@ -3269,10 +3491,11 @@
       "copyrightFlag": false,
       "chaptersCount": 25,
       "wordCount": 10771,
-      "updated": "2026-06-29 02:15:04.884Z"
+      "updated": "2026-08-08 06:34:16.935Z"
     },
     {
       "id": "story1780403193770",
+      "cover": "story1780403193770_cp4spouqyl.jpg",
       "title": "Omas wunderbarer Tag",
       "language": "German",
       "translationLanguage": "English",
@@ -3289,10 +3512,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 971,
-      "updated": "2026-07-28 11:59:48.814Z"
+      "updated": "2026-08-08 06:34:16.212Z"
     },
     {
       "id": "story1780394444588",
+      "cover": "story1780394444588_oivujp9g81.jpg",
       "title": "El Tesoro Perdido de la Selva",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -3309,10 +3533,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 898,
-      "updated": "2026-06-29 02:15:08.979Z"
+      "updated": "2026-08-08 06:34:15.461Z"
     },
     {
       "id": "story1780392983429",
+      "cover": "story1780392983429_29kug37vwn.jpg",
       "title": "El Mapa del Tesoro Perdido",
       "language": "Spanish",
       "translationLanguage": "English",
@@ -3329,10 +3554,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2213,
-      "updated": "2026-06-29 02:15:09.136Z"
+      "updated": "2026-08-08 06:34:14.902Z"
     },
     {
       "id": "story1780392557600",
+      "cover": "story1780392557600_sx8gl7mmlw.jpg",
       "title": "The Hidden Valley Quest",
       "language": "English",
       "translationLanguage": "English",
@@ -3349,10 +3575,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1257,
-      "updated": "2026-07-17 23:52:00.777Z"
+      "updated": "2026-08-08 06:34:14.354Z"
     },
     {
       "id": "story1780385643471",
+      "cover": "story1780385643471_t4xgj4tahv.jpg",
       "title": "เด็กวัด: เส้นทางแห่งการเติบโต",
       "language": "Thai",
       "translationLanguage": "English",
@@ -3371,10 +3598,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3727,
-      "updated": "2026-06-29 02:15:07.098Z"
+      "updated": "2026-08-08 06:34:13.640Z"
     },
     {
       "id": "story1780374705838",
+      "cover": "story1780374705838_b1wisd0622.jpg",
       "title": "La Légende du Bois des Songes",
       "language": "French",
       "translationLanguage": "English",
@@ -3391,10 +3619,11 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3981,
-      "updated": "2026-06-29 02:15:08.638Z"
+      "updated": "2026-08-08 06:34:12.850Z"
     },
     {
       "id": "story1780372797588",
+      "cover": "story1780372797588_zun2842s9v.jpg",
       "title": "การผจญภัยในป่าลึกลับ",
       "language": "Thai",
       "translationLanguage": "English",
@@ -3413,10 +3642,11 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1663,
-      "updated": "2026-07-28 12:00:33.424Z"
+      "updated": "2026-08-08 06:34:12.106Z"
     },
     {
       "id": "story1780321046992",
+      "cover": "story1780321046992_zyu6ahywja.jpg",
       "title": "การเดินทางครั้งสุดท้ายเพื่ออนาคต",
       "language": "Thai",
       "translationLanguage": "English",
@@ -3435,7 +3665,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4422,
-      "updated": "2026-06-29 02:15:05.015Z"
+      "updated": "2026-08-08 06:34:11.349Z"
     }
   ]
 }

@@ -183,10 +183,10 @@ export default function ReaderPanel({
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [coverImgError, setCoverImgError] = useState(false);
 
-  // Reset coverImgError when cover is generated or story updates
+  // Reset coverImgError when cover is generated, story updates, or story.id/cover changes
   useEffect(() => {
     setCoverImgError(false);
-  }, [story.updated, isGeneratingCover]);
+  }, [story.id, story.cover, story.updated, isGeneratingCover]);
 
   // Reset hasFinishedChapter when chapter or story changes, and set up scroll observer
   useEffect(() => {
