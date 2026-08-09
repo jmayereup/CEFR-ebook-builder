@@ -1,9 +1,14 @@
 function readEnv(key: string): string | undefined {
-  if (typeof import.meta !== 'undefined' && import.meta.env && (import.meta.env as any)[key] !== undefined) {
-    return (import.meta.env as any)[key] as string;
-  }
   if (typeof process !== 'undefined' && process.env && process.env[key] !== undefined) {
     return process.env[key];
+  }
+  try {
+    if (key === 'VITE_COVER_CDN_URL') return import.meta.env.VITE_COVER_CDN_URL;
+    if (key === 'COVER_CDN_URL') return (import.meta.env as any).COVER_CDN_URL;
+    if (key === 'VITE_GEN_URL') return import.meta.env.VITE_GEN_URL;
+    if (key === 'TJ_GEN_URL') return (import.meta.env as any).TJ_GEN_URL;
+  } catch (e) {
+    // Ignore in non-ESM environments
   }
   return undefined;
 }

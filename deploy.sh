@@ -107,6 +107,10 @@ ssh -o StrictHostKeyChecking=accept-new "$SERVER_USER@$SERVER_IP" "bash -s" << E
   
   # Install production dependencies (fast, only additions/updates if needed)
   npm install --omit=dev --no-audit --no-fund
+
+  # Clear stale metadata cache so the server performs a fresh fetch from PocketBase on startup
+  echo "-> Resetting metadata cache (.metadata-cache-pb.json)..."
+  rm -f "$SERVER_PATH/.metadata-cache-pb.json"
   
   # Restart systemd service
   echo "Restarting service: $SERVICE_NAME"
