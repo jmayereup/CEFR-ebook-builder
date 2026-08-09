@@ -118,7 +118,7 @@ export default function StoryCard({
   const [loadingDescription, setLoadingDescription] = useState(false);
   const hasCoverImage = !imgError && !isGeneratingCover;
   const cardThemeClass = hasCoverImage
-    ? 'text-[#F9F6F0] dark:text-[#EBE4D5] border-black/15 dark:border-white/10'
+    ? 'bg-stone-100 dark:bg-stone-900 text-[#F9F6F0] dark:text-[#EBE4D5] border-black/15 dark:border-white/10'
     : coverStyle.card;
   const textMutedClass = hasCoverImage
     ? 'text-[#F9F6F0]/70 dark:text-[#EBE4D5]/70'
@@ -231,8 +231,12 @@ export default function StoryCard({
       {/* 3D Book Cover Wrapper */}
       <div className="relative w-full aspect-[3/4.2] flex-shrink-0">
         {/* 3D Pages Stack Effects (behind card, moves slightly less on hover to look like book cover lifting) */}
-        <div className="absolute right-[-3px] top-1.5 bottom-1.5 w-1.5 bg-[#faf9f6] dark:bg-[#323330] border-y border-r border-[#e3dfd3] dark:border-[#424546] rounded-r-md z-0 shadow-xs transition-all duration-300 group-hover:translate-x-[0.5px]" />
-        <div className="absolute right-[-6px] top-3 bottom-3 w-1.5 bg-[#f4ebd9] dark:bg-[#282927] border-y border-r border-[#dacfae]/70 dark:border-[#383a3b] rounded-r-md z-[-1] shadow-xs transition-all duration-300 group-hover:translate-x-[1px]" />
+        {!hasCoverImage && (
+          <>
+            <div className="absolute right-[-3px] top-1.5 bottom-1.5 w-1.5 bg-[#faf9f6] dark:bg-[#323330] border-y border-r border-[#e3dfd3] dark:border-[#424546] rounded-r-md z-0 shadow-xs transition-all duration-300 group-hover:translate-x-[0.5px]" />
+            <div className="absolute right-[-6px] top-3 bottom-3 w-1.5 bg-[#f4ebd9] dark:bg-[#282927] border-y border-r border-[#dacfae]/70 dark:border-[#383a3b] rounded-r-md z-[-1] shadow-xs transition-all duration-300 group-hover:translate-x-[1px]" />
+          </>
+        )}
 
         {/* Main Book Card */}
         <motion.div
@@ -242,8 +246,10 @@ export default function StoryCard({
               '4px 12px 24px -5px rgba(0,0,0,0.18), 1px 4px 8px -1px rgba(0,0,0,0.06)',
           }}
           transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-          className={`relative ${cardThemeClass} border rounded-l-md rounded-r-lg flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 ${
-            hasCoverImage ? 'p-2 sm:p-3' : 'p-3 sm:p-4'
+          className={`relative ${cardThemeClass} border ${
+            hasCoverImage ? 'rounded-xl' : 'rounded-l-md rounded-r-lg'
+          } flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 ${
+            hasCoverImage ? 'p-0' : 'p-3 sm:p-4'
           }`}
         >
           {isGeneratingCover && (
@@ -264,9 +270,13 @@ export default function StoryCard({
             />
           )}
 
-          {/* Left Spine Fold / Crease (adds beautiful book texture) */}
-          <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
-          <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
+          {/* Left Spine Fold / Crease (adds beautiful book texture for text covers) */}
+          {!hasCoverImage && (
+            <>
+              <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
+              <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
+            </>
+          )}
 
           {/* Centerpiece Cover Art / Title Block */}
           <div

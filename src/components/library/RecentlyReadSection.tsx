@@ -138,9 +138,9 @@ export default function RecentlyReadSection({
                 <div
                   className={`absolute inset-0 ${
                     hasCoverImage
-                      ? 'text-[#F9F6F0] dark:text-[#EBE4D5] border-black/10 dark:border-white/10'
+                      ? 'bg-stone-100 dark:bg-stone-900 text-[#F9F6F0] dark:text-[#EBE4D5] border-black/10 dark:border-white/10'
                       : coverStyle.card
-                  } border flex flex-col justify-between p-2 text-center`}
+                  } border flex flex-col justify-between ${hasCoverImage ? 'p-0' : 'p-2'} text-center`}
                 >
                   {isGeneratingCover && (
                     <div className="absolute inset-0 z-20 bg-black/45 backdrop-blur-xs flex flex-col items-center justify-center p-1 text-center text-white">
@@ -157,9 +157,13 @@ export default function RecentlyReadSection({
                     />
                   )}
 
-                  {/* Left Spine Fold / Crease */}
-                  <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
-                  <div className="absolute left-2 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
+                  {/* Left Spine Fold / Crease (for text covers) */}
+                  {!hasCoverImage && (
+                    <>
+                      <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
+                      <div className="absolute left-2 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
+                    </>
+                  )}
 
                   {/* Title Mini - only rendered if there is no cover image */}
                   {!hasCoverImage && (
@@ -172,7 +176,7 @@ export default function RecentlyReadSection({
                   )}
 
                   {/* Empty footer spacing for spine */}
-                  <div className="h-1" />
+                  {!hasCoverImage && <div className="h-1" />}
                 </div>
               </div>
 

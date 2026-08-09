@@ -1300,9 +1300,6 @@ export default function ReaderPanel({
                               alt={`${story.title} Cover`}
                               loading="eager"
                             />
-                            {/* Left Spine Crease for book feel */}
-                            <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/15 via-black/[0.03] to-transparent pointer-events-none rounded-l-md" />
-                            <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.08] dark:bg-white/[0.05] pointer-events-none" />
                           </>
                         )}
                       </motion.div>
