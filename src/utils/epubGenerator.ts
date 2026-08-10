@@ -1,6 +1,6 @@
 import JSZip from 'jszip';
 import type { Story } from '../types';
-import { getStoryCoverUrl } from './coverUtils';
+import { getStoryCoverUrls } from './coverUtils';
 import { segmentText } from './segmenter';
 
 function escapeXml(unsafe: string): string {
@@ -47,6 +47,9 @@ function formatInlineMarkdownToHtml(str: string): string {
 
 // Helper to convert WebP Blob to JPEG Blob in browser using Canvas
 async function convertWebPToJpeg(webpBlob: Blob): Promise<Blob> {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return webpBlob;
+  }
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(webpBlob);
@@ -95,24 +98,39 @@ export async function generateEpub(story: Story): Promise<Blob> {
     story.chapters.some((ch) => ch.content.includes('Translation:'));
   const stripBranding = story.isPublic === false;
 
-  // Attempt to load the cover image
+  // Attempt to load the cover image from candidate URLs (CDN R2 -> PB API proxy -> tj-gen static fallback)
   let coverBlob: Blob | null = null;
   let coverMediaType = 'image/jpeg';
   let coverExtension = 'jpg';
 
-  try {
-    const coverUrl = getStoryCoverUrl(story);
-    const response = await fetch(coverUrl);
-    if (response.ok) {
-      coverBlob = await response.blob();
-      coverMediaType = 'image/jpeg';
-      coverExtension = 'jpg';
+  const candidateUrls = getStoryCoverUrls(story);
+  for (const coverUrl of candidateUrls) {
+    try {
+      const response = await fetch(coverUrl);
+      if (response.ok) {
+        const fetchedBlob = await response.blob();
+        if (fetchedBlob && fetchedBlob.size > 0) {
+          coverBlob = fetchedBlob;
+          break;
+        }
+      }
+    } catch (err) {
+      console.warn(`Could not fetch story cover image from ${coverUrl}:`, err);
     }
-  } catch (err) {
-    console.warn(
-      'Could not fetch story cover image, generating EPUB without cover:',
-      err,
-    );
+  }
+
+  if (coverBlob) {
+    if (coverBlob.type !== 'image/jpeg') {
+      try {
+        coverBlob = await convertWebPToJpeg(coverBlob);
+      } catch (convErr) {
+        console.warn('Could not convert cover blob to JPEG, using original blob:', convErr);
+      }
+    }
+    coverMediaType = 'image/jpeg';
+    coverExtension = 'jpg';
+  } else {
+    console.warn('Could not fetch story cover image from any candidate URL, generating EPUB without cover.');
   }
 
   // 1. mimetype: Must be the absolute first file, uncompressed, with mime text
