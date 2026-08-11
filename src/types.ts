@@ -160,21 +160,57 @@ export const CEFR_LEVELS: CEFRLevel[] = [
   },
 ];
 
-export const GENRES = [
-  { id: 'mystery', label: 'Detective & Mystery 🔍' },
-  { id: 'scifi', label: 'Science Fiction 🚀' },
-  { id: 'fantasy', label: 'Fantasy 🧙' },
-  { id: 'scifi_fantasy', label: 'Sci-Fi & Fantasy (Blended) 🌌' },
-  { id: 'adventure', label: 'Adventure & Exploration 🗺️' },
-  { id: 'sliceoflife', label: 'Slice of Life & Culture ☕' },
-  { id: 'romance', label: 'Romance & Drama 💖' },
-  { id: 'folklore', label: 'Folklore & Legend 🐉' },
-  { id: 'philosophy', label: 'Spirituality & Philosophy 🧘' },
-  { id: 'historical', label: 'Historical Fiction 🏛️' },
-  { id: 'horror', label: 'Horror & Thriller 👻' },
-  { id: 'comedy', label: 'Comedy & Humor 😹' },
-  { id: 'fairy', label: 'Fairy Tales & Fables 🦄' },
-  { id: 'nonfiction', label: 'Non-Fiction 📖' },
+export interface GenreOption {
+  id: string;
+  label: string;
+}
+
+export const WRITING_TYPE_GENRES: Record<string, GenreOption[]> = {
+  narrative: [
+    { id: 'adventure', label: 'Adventure & Exploration 🗺️' },
+    { id: 'mystery', label: 'Detective & Mystery 🔍' },
+    { id: 'scifi', label: 'Science Fiction 🚀' },
+    { id: 'fantasy', label: 'Fantasy 🧙' },
+    { id: 'scifi_fantasy', label: 'Sci-Fi & Fantasy (Blended) 🌌' },
+    { id: 'sliceoflife', label: 'Slice of Life & Culture ☕' },
+    { id: 'romance', label: 'Romance & Drama 💖' },
+    { id: 'folklore', label: 'Folklore & Legend 🐉' },
+    { id: 'historical', label: 'Historical Fiction 🏛️' },
+    { id: 'horror', label: 'Horror & Thriller 👻' },
+    { id: 'comedy', label: 'Comedy & Humor 😹' },
+    { id: 'fairy', label: 'Fairy Tales & Fables 🦄' },
+  ],
+  expository: [
+    { id: 'science_nature', label: 'Science & Nature 🌿' },
+    { id: 'technology', label: 'Technology & Innovation 💻' },
+    { id: 'history_biography', label: 'History & Biography 📜' },
+    { id: 'culture_society', label: 'Culture & World Traditions 🌍' },
+    { id: 'health_wellness', label: 'Health & Everyday Science 🍎' },
+    { id: 'geography_travel', label: 'Geography & Places 🏔️' },
+    { id: 'howto_hobbies', label: 'Practical Guides & How-To 🛠️' },
+    { id: 'nonfiction', label: 'General Non-Fiction 📖' },
+  ],
+  analytical: [
+    { id: 'science_tech_analysis', label: 'Science & Tech Breakdown 🔬' },
+    { id: 'historical_analysis', label: 'Historical Cause & Effect ⏳' },
+    { id: 'social_cultural_issues', label: 'Social & Cultural Insights 📊' },
+    { id: 'philosophy', label: 'Ethics & Philosophy 🧘' },
+    { id: 'environmental_systems', label: 'Climate & Ecosystems 🌎' },
+  ],
+  descriptive: [
+    { id: 'nature_wildlife', label: 'Nature & Landscapes 🌲' },
+    { id: 'cities_architecture', label: 'Cities & Architecture 🏙️' },
+    { id: 'food_culture', label: 'Food, Cuisine & Craft 🍲' },
+    { id: 'art_music', label: 'Art, Music & Performance 🎨' },
+    { id: 'daily_life_portraits', label: 'People & Daily Scenes 📸' },
+  ],
+};
+
+export const GENRES: GenreOption[] = [
+  ...WRITING_TYPE_GENRES.narrative,
+  ...WRITING_TYPE_GENRES.expository,
+  ...WRITING_TYPE_GENRES.analytical,
+  ...WRITING_TYPE_GENRES.descriptive,
 ];
 
 export const getAverageRating = (
