@@ -195,6 +195,7 @@ export const WRITING_TYPE_GENRES: Record<string, GenreOption[]> = {
     { id: 'historical_analysis', label: 'Historical Cause & Effect ⏳' },
     { id: 'social_cultural_issues', label: 'Social & Cultural Insights 📊' },
     { id: 'philosophy', label: 'Ethics & Philosophy 🧘' },
+    { id: 'meditative', label: 'Meditative & Contemplative ☕' },
     { id: 'environmental_systems', label: 'Climate & Ecosystems 🌎' },
   ],
   descriptive: [
