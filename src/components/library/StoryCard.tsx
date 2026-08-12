@@ -93,9 +93,9 @@ export default function StoryCard({
       ? story.wordCount
       : story.chapters
         ? story.chapters.reduce(
-            (cnt, ch) => cnt + countWords(ch.content, story.language),
-            0,
-          )
+          (cnt, ch) => cnt + countWords(ch.content, story.language),
+          0,
+        )
         : 0;
 
   const chaptersCount =
@@ -206,9 +206,9 @@ export default function StoryCard({
     story.totalReads !== undefined
       ? story.totalReads
       : Object.values(completedByObj).reduce(
-          (sum: number, count: number) => sum + count,
-          0,
-        );
+        (sum: number, count: number) => sum + count,
+        0,
+      );
 
   const mainLangCode = getLanguageCodeFromName(story.language).toUpperCase();
   const transLangCode = story.translationLanguage
@@ -246,11 +246,9 @@ export default function StoryCard({
               '4px 12px 24px -5px rgba(0,0,0,0.18), 1px 4px 8px -1px rgba(0,0,0,0.06)',
           }}
           transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-          className={`relative ${cardThemeClass} border ${
-            hasCoverImage ? 'rounded-xl' : 'rounded-l-md rounded-r-lg'
-          } flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 ${
-            hasCoverImage ? 'p-0' : 'p-3 sm:p-4'
-          }`}
+          className={`relative ${cardThemeClass} border ${hasCoverImage ? 'rounded-xl' : 'rounded-l-md rounded-r-lg'
+            } flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 ${hasCoverImage ? 'p-0' : 'p-3 sm:p-4'
+            }`}
         >
           {isGeneratingCover && (
             <div className="absolute inset-0 z-20 bg-black/45 backdrop-blur-xs flex flex-col items-center justify-center p-3 text-center text-white">
@@ -280,9 +278,8 @@ export default function StoryCard({
 
           {/* Centerpiece Cover Art / Title Block */}
           <div
-            className={`flex-1 flex flex-col text-center z-10 relative rounded-xl transition-all duration-300 ${
-              hasCoverImage ? 'justify-end mt-2 mb-0.5' : 'justify-start my-0.5'
-            }`}
+            className={`flex-1 flex flex-col text-center z-10 relative rounded-xl transition-all duration-300 ${hasCoverImage ? 'justify-end mt-2 mb-0.5' : 'justify-start my-0.5'
+              }`}
           >
             {hasCoverImage ? null : (
               // Original behavior for gradient cards
@@ -393,11 +390,10 @@ export default function StoryCard({
                         return (
                           <Star
                             key={starValue}
-                            className={`w-3 h-3 ${
-                              isFilled
-                                ? 'fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400'
-                                : 'opacity-25'
-                            }`}
+                            className={`w-3 h-3 ${isFilled
+                              ? 'fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400'
+                              : 'opacity-25'
+                              }`}
                           />
                         );
                       })}
@@ -486,14 +482,21 @@ export default function StoryCard({
         </div>
 
         {/* Center Block: Intro Button */}
+        {(story.sourceType === 'gemini_storybook' || story.embedUrl) && (
+          <span
+            title="Interactive Gemini Storybook Link"
+            className="px-1 py-0.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 rounded text-[9px] font-bold border border-emerald-500/30 uppercase"
+          >
+            Pictures
+          </span>
+        )}
         <button
           type="button"
           onClick={handleToggleIntro}
-          className={`cursor-pointer text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors underline underline-offset-2 px-1 ${
-            showDescription
-              ? 'text-tj-primary decoration-tj-primary'
-              : 'text-tj-text-muted hover:text-tj-text-main decoration-tj-text-muted/50 hover:decoration-tj-text-main'
-          }`}
+          className={`cursor-pointer text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors underline underline-offset-2 px-1 ${showDescription
+            ? 'text-tj-primary decoration-tj-primary'
+            : 'text-tj-text-muted hover:text-tj-text-main decoration-tj-text-muted/50 hover:decoration-tj-text-main'
+            }`}
           title="View Description"
         >
           Intro

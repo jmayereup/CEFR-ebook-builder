@@ -80,6 +80,8 @@ export interface Story {
   totalReads?: number;
   completedBy?: Record<string, number>;
   updated?: string;
+  embedUrl?: string;
+  sourceType?: 'native' | 'gemini_storybook' | 'external';
 }
 
 export interface Language {

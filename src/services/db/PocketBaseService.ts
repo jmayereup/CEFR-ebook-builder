@@ -200,6 +200,13 @@ export class PocketBaseService implements IDatabaseService {
     await pb.collection('stories').update(storyId, updates);
   }
 
+  async updateStoryDescription(
+    storyId: string,
+    description: string,
+  ): Promise<void> {
+    await pb.collection('stories').update(storyId, { description });
+  }
+
   async updateStoryVisibility(
     storyId: string,
     isPublic: boolean,

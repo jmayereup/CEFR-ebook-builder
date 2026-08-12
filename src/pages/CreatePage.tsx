@@ -22,6 +22,8 @@ interface CreateStoryConfig {
   skipChapterGeneration?: boolean;
   copyrightFlag?: boolean;
   copyrightFlagReason?: string;
+  embedUrl?: string;
+  sourceType?: string;
 }
 
 interface CreatePageProps {

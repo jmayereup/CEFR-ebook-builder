@@ -18,6 +18,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { createStory, dbService } from '../services/db';
 import type { IUser } from '../services/types';
 import { useUIStore } from '../store/uiStore';
 import type { Chapter, Story } from '../types';
@@ -65,6 +66,8 @@ export interface StoryConfig {
   skipChapterGeneration?: boolean;
   copyrightFlag?: boolean;
   copyrightFlagReason?: string;
+  embedUrl?: string;
+  sourceType?: 'native' | 'gemini_storybook' | 'external';
 }
 
 export interface GenerationOptions {
@@ -214,6 +217,40 @@ export const useStoryGeneration = (
   const handleInitiateStory = async (config: StoryConfig): Promise<void> => {
     if (!currentUser) {
       onLoginRequired();
+      return;
+    }
+
+    if (config.embedUrl) {
+      try {
+        setIsGenerating(true);
+        const newStoryId = generatePocketBaseId();
+        const newStory = buildStory({
+          storyId: newStoryId,
+          config: {
+            ...config,
+            totalChapters: 1,
+            sourceType: config.sourceType || 'gemini_storybook',
+          },
+          chapters: [],
+          currentUser,
+          initialCreditsEstimate: 0,
+          creditsCharged: 0,
+        });
+        newStory.isCompleted = true;
+        newStory.isUnsaved = true;
+
+        await dbService.createStory(newStory);
+        newStory.isUnsaved = false;
+        onStoryCreated(newStory);
+      } catch (err: any) {
+        showAlert(
+          'Story Import Failed',
+          err.message || 'Failed to save embedded Gemini story.',
+          'error',
+        );
+      } finally {
+        setIsGenerating(false);
+      }
       return;
     }
 

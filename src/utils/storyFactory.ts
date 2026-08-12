@@ -77,6 +77,8 @@ export const buildStory = (params: StoryCreationParams): Story => {
       newStory.copyrightFlagReason = config.copyrightFlagReason;
     newStory.isPublic = false;
   }
+  if (config.embedUrl) newStory.embedUrl = config.embedUrl;
+  if (config.sourceType) newStory.sourceType = config.sourceType;
 
   return cleanCompletedStory(newStory);
 };

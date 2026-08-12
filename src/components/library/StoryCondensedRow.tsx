@@ -150,6 +150,15 @@ export default function StoryCondensedRow({
             </span>
           </div>
 
+          {(story.sourceType === 'gemini_storybook' || story.embedUrl) && (
+            <span
+              className="text-[9px] bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded-sm border border-emerald-500/30 flex items-center gap-1 font-bold"
+              title="Interactive Gemini Storybook Link"
+            >
+              Gemini ✨
+            </span>
+          )}
+
           {story.isPublic === false && (
             <span
               className="text-[9px] bg-tj-primary-light/50 text-tj-text-muted px-1.5 py-0.5 rounded-sm border border-tj-border-main flex items-center gap-1"

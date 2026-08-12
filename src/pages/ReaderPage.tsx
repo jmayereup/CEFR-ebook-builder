@@ -2,6 +2,7 @@ import { BookMarked, Globe, Lock, Share2, ShieldAlert } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import ExportPanel from '../components/app/ExportPanel';
 import ReaderPanel from '../components/ReaderPanel';
+import GeminiEmbedReader from '../components/reader/GeminiEmbedReader';
 import type { IUser } from '../services/types';
 import {
   getLanguageCodeFromName,
@@ -141,6 +142,30 @@ export default function ReaderPage({
   isSyncing = false,
   syncChangesToDatabase,
 }: ReaderPageProps) {
+  if (selectedStory.sourceType === 'gemini_storybook' || selectedStory.embedUrl) {
+    return (
+      <div className="space-y-4 max-w-5xl mx-auto">
+        <button
+          type="button"
+          onClick={() => setSelectedStory(null)}
+          className="text-xs text-tj-text-muted hover:text-tj-text-main font-semibold hover:underline cursor-pointer flex items-center gap-1 px-1 py-0.5"
+        >
+          ← Back to Library
+        </button>
+        <GeminiEmbedReader
+          story={selectedStory}
+          currentUser={currentUser}
+          bookshelf={bookshelf}
+          handleToggleBookshelf={handleToggleBookshelf}
+          handleToggleStoryPrivacy={handleToggleStoryPrivacy}
+          handleShareStoryLink={handleShareStoryLink}
+          handleDeleteStory={() => handleDeleteStory()}
+          onStoryUpdated={onStoryUpdated}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Detailed Title / Breadcrumb and Document Copier */}

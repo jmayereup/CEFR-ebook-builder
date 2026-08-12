@@ -76,6 +76,8 @@ export const updateStoryChaptersAndTitle = (
     regenerationsCount,
     creditsCharged,
   );
+export const updateStoryDescription = (storyId: string, description: string) =>
+  dbService.updateStoryDescription(storyId, description);
 export const updateStoryVisibility = (storyId: string, isPublic: boolean) =>
   dbService.updateStoryVisibility(storyId, isPublic);
 export const updateStoryModel = (storyId: string, model: string) =>

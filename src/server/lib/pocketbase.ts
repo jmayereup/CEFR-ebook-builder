@@ -180,7 +180,10 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
           copyrightFlag: false,
           chaptersCount: chapters.length,
           wordCount,
+          description: record.description || '',
           updated: record.updated || record.updatedAt || '',
+          embedUrl: record.embedUrl || undefined,
+          sourceType: record.sourceType || undefined,
         };
       });
 
@@ -280,6 +283,8 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
           wordCount,
           description: record.description || '',
           updated: record.updated || record.updatedAt || '',
+          embedUrl: record.embedUrl || undefined,
+          sourceType: record.sourceType || undefined,
         };
         updateStoriesMetadataCache(
           [
