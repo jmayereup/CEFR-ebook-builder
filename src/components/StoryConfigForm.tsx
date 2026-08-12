@@ -506,7 +506,7 @@ export default function StoryConfigForm({
       thinkingLevel: finalThinkingLevel,
       thinkingBudget: finalThinkingBudget,
       temperature: finalTemperature,
-      translationLanguage: translationTargetLanguage,
+      translationLanguage: translationTargetLanguage || 'English',
       isPublic: finalCopyrightFlag ? false : isPublic,
       skipChapterGeneration: isScratchMode,
       copyrightFlag: finalCopyrightFlag,

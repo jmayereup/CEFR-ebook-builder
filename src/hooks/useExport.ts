@@ -75,7 +75,7 @@ export function useExport(options: UseExportOptions) {
       textString += `\n`;
     }
 
-    selectedStory.chapters.forEach((ch) => {
+    (selectedStory.chapters ?? []).forEach((ch) => {
       textString += `\n=========================================\n`;
       textString += `CHAPTER ${ch.chapterNumber}: ${ch.title}\n`;
       textString += `=========================================\n\n`;
@@ -115,7 +115,7 @@ export function useExport(options: UseExportOptions) {
 
     const isBilingual =
       !!selectedStory.translationLanguage ||
-      selectedStory.chapters.some((ch) => ch.content.includes('Translation:'));
+      (selectedStory.chapters ?? []).some((ch) => ch.content.includes('Translation:'));
 
     const coverUrl = getStoryCoverUrl(selectedStory, { absolute: true });
 
@@ -130,7 +130,7 @@ export function useExport(options: UseExportOptions) {
         </p>
     `;
 
-    selectedStory.chapters.forEach((ch) => {
+    (selectedStory.chapters ?? []).forEach((ch) => {
       htmlContent += `
         <div style="margin-bottom: 24px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 16px;">
           <h2 style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #1e293b; border-bottom: 2px solid #004d2c; padding-bottom: 4px; margin-top: 10px; margin-bottom: 12px;">

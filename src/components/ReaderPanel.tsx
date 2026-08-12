@@ -47,7 +47,7 @@ import VocabGlossary from './reader/VocabGlossary';
 
 // A helper component to trigger scrolling back to the top of the reader panel
 // only after the previous chapter card has fully faded out and the new card has mounted.
-function ScrollToTop({ readerRef }: { readerRef: RefObject<HTMLDivElement> }) {
+function ScrollToTop({ readerRef }: { readerRef: RefObject<HTMLDivElement | null> }) {
   useEffect(() => {
     readerRef.current?.scrollIntoView({ behavior: 'auto', block: 'start' });
   }, [readerRef]);
@@ -79,7 +79,7 @@ interface ReaderPanelProps {
   generationStatus?: string;
   onCancelGeneration?: () => void;
   onRateStory?: (rating: number) => void;
-  lookupLimitData?: { count: number; date: string };
+  lookupLimitData?: { count: number; date: string } | null;
   onIncrementLookupCount?: () => void;
   savedVocab?: VocabularyTerm[];
   onDeleteChapter?: (index: number) => Promise<void>;
@@ -174,7 +174,7 @@ export default function ReaderPanel({
     useState<string>(translationTargetLanguage || 'English');
 
   useEffect(() => {
-    setSelectedGlossaryLanguage(translationTargetLanguage);
+    setSelectedGlossaryLanguage(translationTargetLanguage || 'English');
   }, [translationTargetLanguage]);
 
   const [hasFinishedChapter, setHasFinishedChapter] = useState(false);
@@ -254,7 +254,7 @@ export default function ReaderPanel({
     'bible' | 'audits' | 'tone' | 'outline'
   >('bible');
 
-  const activeChapter: Chapter | undefined = story.chapters[activeChapterIndex];
+  const activeChapter: Chapter | undefined = (story.chapters ?? [])[activeChapterIndex];
 
   const [selectedWordRange, setSelectedWordRange] = useState<
     [number, number] | null
@@ -384,7 +384,7 @@ export default function ReaderPanel({
     story.model?.endsWith(':free') || FREE_MODEL_IDS.has(story.model || '');
   const nextChapterCreditCost = useMemo(() => {
     if (isFreeModel) return 0;
-    const currentChaptersLoaded = story.chapters.length;
+    const currentChaptersLoaded = story.chapters?.length ?? 0;
     const nextChapterNum = currentChaptersLoaded + 1;
     const estBefore = calculateEstimatedUsage(
       nextChapterNum - 1,
@@ -414,7 +414,7 @@ export default function ReaderPanel({
   }, [
     story.model,
     story.chapterLength,
-    story.chapters.length,
+    story.chapters?.length ?? 0,
     isFreeModel,
     story.initialTotalChapters,
     story.totalChapters,
@@ -872,7 +872,7 @@ export default function ReaderPanel({
 
       if (isZenMode) {
         if (e.key === 'ArrowRight') {
-          if (activeChapterIndex < story.chapters.length - 1) {
+          if (activeChapterIndex < (story.chapters?.length ?? 0) - 1) {
             onSelectChapter(activeChapterIndex + 1);
           }
         } else if (e.key === 'ArrowLeft') {
@@ -890,7 +890,7 @@ export default function ReaderPanel({
   }, [
     isZenMode,
     activeChapterIndex,
-    story.chapters.length,
+    story.chapters?.length ?? 0,
     onSelectChapter,
     selectedWordRange,
     chapterWords,
@@ -1071,7 +1071,7 @@ export default function ReaderPanel({
           generationStatus={generationStatus}
           currentUser={currentUser}
           onRateStory={onRateStory}
-          isCreator={isCreator}
+          isCreator={Boolean(isCreator)}
           onRegenerateChapter={
             onRegenerateChapter
               ? (guidance) => onRegenerateChapter(activeChapterIndex, guidance)
@@ -1113,7 +1113,7 @@ export default function ReaderPanel({
               if (!isZenMode) return;
               const swipeThreshold = 80;
               if (info.offset.x < -swipeThreshold) {
-                if (activeChapterIndex < story.chapters.length - 1) {
+                if (activeChapterIndex < (story.chapters?.length ?? 0) - 1) {
                   onSelectChapter(activeChapterIndex + 1);
                 }
               } else if (info.offset.x > swipeThreshold) {
@@ -1210,7 +1210,7 @@ export default function ReaderPanel({
             {activeTab === 'maintenance' && isCreator ? (
               <NarrativeMaintenancePanel
                 story={story}
-                onStoryUpdated={onStoryUpdated}
+                onStoryUpdated={onStoryUpdated || (() => {})}
                 onSaveStory={onSaveStory}
                 customOpenRouterKey={customOpenRouterKey}
                 onShowAlert={onShowAlert}
@@ -1245,7 +1245,7 @@ export default function ReaderPanel({
                       showBilingual={showBilingual}
                       setShowBilingual={setShowBilingual}
                       onToggleZen={() => onToggleZen(true)}
-                      isCreator={isCreator}
+                      isCreator={Boolean(isCreator)}
                       isAdmin={isAdmin}
                       isEditing={isEditing}
                       onEditClick={() => setIsEditing(true)}
@@ -1444,7 +1444,7 @@ export default function ReaderPanel({
                     <div ref={sentinelRef} className="h-2 w-full" />
 
                     {/* Explicit book completion section */}
-                    {activeChapterIndex === story.chapters.length - 1 && (
+                    {activeChapterIndex === (story.chapters?.length ?? 0) - 1 && (
                       <div className="mt-8 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/10 dark:to-teal-950/5 border border-emerald-100 dark:border-emerald-900/20 rounded-2xl animate-fade-in text-center space-y-4">
                         <div className="space-y-1">
                           <h4 className="text-sm font-bold text-emerald-800 dark:text-emerald-400">
@@ -1506,7 +1506,7 @@ export default function ReaderPanel({
                     )}
 
                     {/* Book Rating Section */}
-                    {activeChapterIndex === story.chapters.length - 1 && (
+                    {activeChapterIndex === (story.chapters?.length ?? 0) - 1 && (
                       <div className="mt-4 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-amber-50/40 to-orange-50/30 dark:from-amber-950/10 dark:to-orange-950/5 border border-amber-100/70 dark:border-amber-900/20 rounded-2xl animate-fade-in text-center space-y-4">
                         <div className="space-y-1">
                           <h4 className="text-sm font-bold text-amber-800 dark:text-amber-400 flex items-center justify-center gap-1.5">
@@ -1577,15 +1577,15 @@ export default function ReaderPanel({
 
                     {/* Take it Offline Milestone Callout */}
                     {(story.isCompleted ||
-                      story.chapters.length === story.totalChapters) &&
+                      (story.chapters?.length ?? 0) === story.totalChapters) &&
                       ((onGenerateGlossary &&
                         (isCreator || isAdmin) &&
                         story.cefrLevel !== 'A1' &&
                         story.cefrLevel !== 'Pre-A1' &&
-                        story.chapters.some(
+                        (story.chapters ?? []).some(
                           (ch) => !ch.vocabulary || ch.vocabulary.length === 0,
                         )) ||
-                        (activeChapterIndex === story.chapters.length - 1 &&
+                        (activeChapterIndex === (story.chapters?.length ?? 0) - 1 &&
                           onDownloadEpub)) && (
                         <div className="mt-8 space-y-3 animate-fade-in">
                           {/* Generate Glossary callout — shown when chapters lack vocabulary */}
@@ -1593,7 +1593,7 @@ export default function ReaderPanel({
                             (isCreator || isAdmin) &&
                             story.cefrLevel !== 'A1' &&
                             story.cefrLevel !== 'Pre-A1' &&
-                            story.chapters.some(
+                            (story.chapters ?? []).some(
                               (ch) =>
                                 !ch.vocabulary || ch.vocabulary.length === 0,
                             ) && (
@@ -1651,7 +1651,7 @@ export default function ReaderPanel({
                             )}
 
                           {/* Download eBook callout */}
-                          {activeChapterIndex === story.chapters.length - 1 &&
+                          {activeChapterIndex === (story.chapters?.length ?? 0) - 1 &&
                             onDownloadEpub && (
                               <div className="p-5 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/10 border border-emerald-200 dark:border-emerald-900/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
                                 <div className="space-y-1">
@@ -1709,7 +1709,7 @@ export default function ReaderPanel({
                     isZenMode={isZenMode}
                     activeChapterIndex={activeChapterIndex}
                     onSelectChapter={onSelectChapter}
-                    totalChapters={story.chapters.length}
+                    totalChapters={story.chapters?.length ?? 0}
                     onSaveWord={onSaveWord}
                     onRemoveWord={onRemoveWord}
                     savedWordsSet={savedWordsSet}
@@ -1760,7 +1760,7 @@ export default function ReaderPanel({
                     <button
                       type="button"
                       disabled={
-                        activeChapterIndex === story.chapters.length - 1
+                        activeChapterIndex === (story.chapters?.length ?? 0) - 1
                       }
                       onClick={() => onSelectChapter(activeChapterIndex + 1)}
                       className="p-1 hover:bg-tj-primary-light dark:hover:bg-slate-800 text-tj-text-muted hover:text-tj-primary rounded transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center border border-transparent"

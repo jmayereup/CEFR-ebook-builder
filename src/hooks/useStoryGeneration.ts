@@ -234,7 +234,7 @@ export const useStoryGeneration = (
     const initialCreditsEstimate = calculateInitialCreditEstimate(
       config.totalChapters,
       chapterLength,
-      config.model,
+      config.model ?? '',
     );
 
     let estimatedCreditsCost = 0;
@@ -245,7 +245,7 @@ export const useStoryGeneration = (
           chNum,
           chNum - 1,
           chapterLength,
-          config.model,
+          config.model ?? '',
           initialCreditsEstimate,
           0,
         );
@@ -430,7 +430,7 @@ export const useStoryGeneration = (
             summary: ch.summary,
           }),
         )
-        .sort((a, b) => a.chapterNumber - b.chapterNumber);
+        .sort((a: any, b: any) => a.chapterNumber - b.chapterNumber);
 
       const newStory = buildStory({
         storyId: newStoryId,
@@ -510,7 +510,7 @@ export const useStoryGeneration = (
           nextChapterNumber,
           currentChapters,
           selectedStory.chapterLength || 300,
-          selectedStory.model,
+          selectedStory.model ?? '',
           selectedStory.initialCreditsEstimate,
           selectedStory.creditsCharged,
         );
@@ -682,7 +682,7 @@ export const useStoryGeneration = (
           chapterNumber,
           chapterNumber - 1,
           selectedStory.chapterLength || 300,
-          selectedStory.model,
+          selectedStory.model ?? '',
           selectedStory.initialCreditsEstimate,
           selectedStory.creditsCharged,
         );
@@ -855,7 +855,7 @@ export const useStoryGeneration = (
           currentChapters,
           selectedStory.totalChapters,
           selectedStory.chapterLength || 300,
-          selectedStory.model,
+          selectedStory.model ?? '',
           selectedStory.initialCreditsEstimate,
           selectedStory.creditsCharged,
         );
@@ -1015,7 +1015,7 @@ export const useStoryGeneration = (
               chNum,
               chNum - 1,
               activeStory.chapterLength || 300,
-              activeStory.model,
+              activeStory.model ?? '',
               activeStory.initialCreditsEstimate,
               activeStory.creditsCharged,
             );

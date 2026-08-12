@@ -93,13 +93,13 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         setFilterCefrLevel &&
         JSON.stringify(filterCefrLevel) !== JSON.stringify(urlCefr)
       ) {
-        setFilterCefrLevel(urlCefr);
+        setFilterCefrLevel(urlCefr ?? []);
       }
       if (
         setFilterLanguage &&
         JSON.stringify(filterLanguage) !== JSON.stringify(urlLang)
       ) {
-        setFilterLanguage(urlLang);
+        setFilterLanguage(urlLang ?? []);
       }
       if (setSearchQuery && searchQuery !== urlQ) {
         setSearchQuery(urlQ);
@@ -267,7 +267,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
             if (chapterNum !== null) {
               const chapterIdx = chapterNum > 0 ? chapterNum - 1 : 0;
               const validIdx =
-                chapterIdx < directStory.chapters.length ? chapterIdx : 0;
+                chapterIdx < (directStory.chapters?.length ?? 0) ? chapterIdx : 0;
               setActiveChapterIdx(validIdx);
             } else {
               const syncedItem = recentlyRead.find(
@@ -283,7 +283,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
                 idx = savedIdx ? parseInt(savedIdx, 10) : 0;
               }
               const validIdx =
-                idx >= 0 && idx < directStory.chapters.length ? idx : 0;
+                idx >= 0 && idx < (directStory.chapters?.length ?? 0) ? idx : 0;
               setActiveChapterIdx(validIdx);
               if (currentUser) {
                 localStorage.setItem(

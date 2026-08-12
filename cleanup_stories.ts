@@ -23,7 +23,7 @@ async function main() {
   try {
     console.log(`Connecting to PocketBase at: ${url}`);
     console.log(`Authenticating as: ${adminEmail}`);
-    await pb.admins.authWithPassword(adminEmail, adminPassword);
+    await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
     console.log('Successfully authenticated as Admin.');
 
     console.log('Fetching completed stories...');

@@ -18,7 +18,7 @@ const pb = new PocketBase(url);
 async function main() {
   try {
     console.log(`Authenticating as ${adminEmail}...`);
-    await pb.admins.authWithPassword(adminEmail, adminPassword);
+    await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
 
     console.log('Fetching all stories...');
     const stories = await pb.collection('stories').getFullList({

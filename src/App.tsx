@@ -212,7 +212,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     setGenerationLimitData,
     showAlert,
     onProfileLoaded: (profile) => {
-      syncInitialStreak(currentUser?.uid, profile.streak).catch((err) =>
+      syncInitialStreak(currentUser?.uid || '', profile.streak).catch((err) =>
         console.error('Error syncing user streak state:', err),
       );
     },

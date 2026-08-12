@@ -118,12 +118,12 @@ export default function BookshelfPage({
         recentlyRead={recentlyRead}
         generatingCoverIds={generatingCoverIds}
         onToggleSaved={(id, e) => {
-          e.stopPropagation();
+          e?.stopPropagation();
           handleToggleBookshelf(id);
         }}
         onSelectStory={handleSelectStory}
         onDownloadStory={onDownloadStory}
-        onDeleteStory={handleDeleteStory}
+        onDeleteStory={(storyId, e) => handleDeleteStory(storyId, e as any)}
         onFlagStory={onFlagStory}
         setActiveTab={setActiveTab}
         searchQuery={searchQuery}

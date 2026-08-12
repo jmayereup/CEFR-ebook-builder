@@ -133,7 +133,7 @@ async function main() {
   for (let i = 0; i < stories.length; i += BATCH_SIZE) {
     const batch = stories.slice(i, i + BATCH_SIZE);
     await Promise.all(
-      batch.map(async (story) => {
+      batch.map(async (story: any) => {
         const collectionId = story.collectionId || 'pbc_232317621';
         const coverField = story.cover || null;
         const localPath = findLocalCover(story.id, story.cover);

@@ -29,8 +29,8 @@ interface TranslationToastProps {
   isPaid: boolean;
   isAdmin: boolean;
   customOpenRouterKey: string;
-  lookupLimitData?: { count: number; date: string };
-  translationTargetLanguage?: string;
+  lookupLimitData?: { count: number; date: string } | null;
+  translationTargetLanguage?: string | null;
   handleFetchTranslation: () => void;
   handleSaveWordRecord: () => void;
   handlePlayWord: (word: string) => void;

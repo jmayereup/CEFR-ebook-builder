@@ -23,8 +23,9 @@ export default function ChapterNavigationBar({
   nextChapterCreditCost,
 }: ChapterNavigationBarProps) {
   const hasPrevious = activeChapterIndex > 0;
-  const hasNextLoaded = activeChapterIndex < story.chapters.length - 1;
-  const canWriteNextChapter = story.chapters.length < story.totalChapters;
+  const totalChaptersCount = story.chapters?.length ?? 0;
+  const hasNextLoaded = activeChapterIndex < totalChaptersCount - 1;
+  const canWriteNextChapter = totalChaptersCount < story.totalChapters;
 
   return (
     <div className="w-full">
@@ -40,7 +41,7 @@ export default function ChapterNavigationBar({
         </button>
 
         <span className="min-w-0 flex-1 text-center text-xs font-mono font-bold uppercase tracking-[0.18em] text-tj-text-muted sm:text-sm">
-          Chapter {activeChapterIndex + 1} of {story.chapters.length}
+          Chapter {activeChapterIndex + 1} of {totalChaptersCount}
         </span>
 
         {hasNextLoaded ? (
@@ -67,7 +68,7 @@ export default function ChapterNavigationBar({
             ) : (
               <>
                 <span>
-                  Write Ch {story.chapters.length + 1}
+                  Write Ch {totalChaptersCount + 1}
                   {isPaid && nextChapterCreditCost > 0
                     ? ` (${nextChapterCreditCost} ${nextChapterCreditCost === 1 ? 'credit' : 'credits'})`
                     : ''}

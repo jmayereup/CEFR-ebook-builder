@@ -94,7 +94,7 @@ export default function ChapterSidebar({
     useState<string>(translationTargetLanguage || 'English');
 
   useEffect(() => {
-    setSelectedGlossaryLanguage(translationTargetLanguage);
+    setSelectedGlossaryLanguage(translationTargetLanguage || 'English');
   }, [translationTargetLanguage]);
 
   const [chapterGuidance, setChapterGuidance] = useState<string>('');
@@ -125,7 +125,7 @@ export default function ChapterSidebar({
 
   const userRating = (currentUser && story.ratings?.[currentUser.uid]) || 0;
   const totalChaptersCount = story.totalChapters;
-  const currentChaptersLoaded = story.chapters.length;
+  const currentChaptersLoaded = story.chapters?.length ?? 0;
   const isBookFinished =
     story.isCompleted || currentChaptersLoaded >= totalChaptersCount;
 
@@ -133,7 +133,7 @@ export default function ChapterSidebar({
     return (
       story.cefrLevel !== 'A1' &&
       story.cefrLevel !== 'Pre-A1' &&
-      story.chapters.some((ch) => !ch.vocabulary || ch.vocabulary.length === 0)
+      (story.chapters ?? []).some((ch) => !ch.vocabulary || ch.vocabulary.length === 0)
     );
   }, [story.chapters, story.cefrLevel]);
 
@@ -283,7 +283,7 @@ export default function ChapterSidebar({
       <nav className="flex flex-col gap-1 max-h-[220px] lg:max-h-none overflow-y-auto">
         {Array.from({ length: totalChaptersCount }).map((_, index) => {
           const chapterNum = index + 1;
-          const isLoaded = index < story.chapters.length;
+          const isLoaded = index < (story.chapters?.length ?? 0);
           const isCurrent = index === activeChapterIndex;
 
           return (
@@ -321,7 +321,7 @@ export default function ChapterSidebar({
                     className="truncate max-w-[120px] lg:max-w-[150px]"
                   >
                     {isLoaded
-                      ? story.chapters[index].title
+                      ? (story.chapters ?? [])[index]?.title
                       : `Chapter ${chapterNum}`}
                   </span>
                 </div>
@@ -343,7 +343,7 @@ export default function ChapterSidebar({
                     if (
                       confirm(
                         `Are you sure you want to delete Chapter ${chapterNum}: "${
-                          story.chapters[index].title
+                          (story.chapters ?? [])[index]?.title
                         }"? This will shift subsequent chapters and cannot be undone.`,
                       )
                     ) {
@@ -808,7 +808,7 @@ export default function ChapterSidebar({
           cefrLevel={story.cefrLevel}
           customOpenRouterKey={customOpenRouterKey}
           model={story.model}
-          nextChapterNumber={story.chapters.length + 1}
+          nextChapterNumber={(story.chapters?.length ?? 0) + 1}
         />
       )}
     </div>

@@ -113,7 +113,7 @@ async function main() {
 
       // Check if cover already exists on the remote server
       if (!isForce) {
-        const appUrl = (process.env.APP_URL || url).replace(/\/$/, '');
+        const appUrl = (process.env.APP_URL || url || '').replace(/\/$/, '');
         const remoteCoverUrl = `${appUrl}/covers/${story.id}.jpg`;
         try {
           const checkRes = await fetch(remoteCoverUrl, { method: 'HEAD' });

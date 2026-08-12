@@ -125,7 +125,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       const savedIdx = localStorage.getItem(`last_read_chapter_${story.id}`);
       idx = savedIdx ? parseInt(savedIdx, 10) : 0;
     }
-    const validIdx = idx >= 0 && idx < fullStory.chapters.length ? idx : 0;
+    const validIdx = idx >= 0 && idx < (fullStory.chapters?.length ?? 0) ? idx : 0;
     setActiveChapterIdx(validIdx);
     if (currentUser) {
       localStorage.setItem(
@@ -137,7 +137,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
 
   const handleDeleteStory = async (
     storyId: string,
-    e: MouseEvent | null,
+    e: any,
     bypassConfirm = false,
   ) => {
     const deletedId = await libHandleDeleteStory(storyId, e, bypassConfirm);
@@ -183,7 +183,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
   const handleDeleteChapter = async (chapterIndex: number) => {
     if (!selectedStory) return;
     try {
-      const updatedChapters = selectedStory.chapters.filter(
+      const updatedChapters = (selectedStory.chapters ?? []).filter(
         (_, i) => i !== chapterIndex,
       );
       const reindexedChapters = updatedChapters.map((ch, i) => ({
@@ -240,7 +240,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
   ) => {
     if (!selectedStory) return;
     try {
-      const nextChapterNumber = selectedStory.chapters.length + 1;
+      const nextChapterNumber = (selectedStory.chapters?.length ?? 0) + 1;
       const isAdmin = currentUser?.isAdmin === true;
       if (!isPaid && !isAdmin && nextChapterNumber > 10) {
         showAlert(
@@ -258,7 +258,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
         vocabulary,
       };
 
-      const updatedChapters = [...selectedStory.chapters, newChapter];
+      const updatedChapters = [...(selectedStory.chapters ?? []), newChapter];
       const newTotal = Math.max(
         selectedStory.totalChapters,
         updatedChapters.length,

@@ -64,7 +64,7 @@ export default function ChapterEditForm({
     useState<string>(translationTargetLanguage || 'English');
 
   useEffect(() => {
-    setSelectedGlossaryLanguage(translationTargetLanguage);
+    setSelectedGlossaryLanguage(translationTargetLanguage || 'English');
   }, [translationTargetLanguage]);
 
   useEffect(() => {

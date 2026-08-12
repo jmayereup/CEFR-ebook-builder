@@ -95,7 +95,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
     Date.now().toString(36);
   const isBilingual =
     !!story.translationLanguage ||
-    story.chapters.some((ch) => ch.content.includes('Translation:'));
+    (story.chapters ?? []).some((ch) => ch.content.includes('Translation:'));
   const stripBranding = story.isPublic === false;
 
   // Attempt to load the cover image from candidate URLs (CDN R2 -> PB API proxy -> tj-gen static fallback)
@@ -153,7 +153,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
   let chaptersToc = '';
   const coverOffset = coverBlob ? 1 : 0;
 
-  story.chapters.forEach((chapter, index) => {
+  (story.chapters ?? []).forEach((chapter, index) => {
     const idx = index + 1;
     const playOrder = idx + 1 + coverOffset;
     chaptersManifest += `    <item id="chapter_${idx}" href="chapter_${idx}.html" media-type="application/xhtml+xml"/>\n`;
@@ -164,7 +164,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
     </navPoint>\n`;
   });
 
-  const endingPlayOrder = story.chapters.length + 2 + coverOffset;
+  const endingPlayOrder = (story.chapters?.length ?? 0) + 2 + coverOffset;
   chaptersManifest += `    <item id="ending" href="ending.html" media-type="application/xhtml+xml"/>
 `;
   chaptersSpine += `    <itemref idref="ending"/>
@@ -405,7 +405,7 @@ a.glossary-backlink {
     <h2 class="book-language">${story.language} Learner Edition</h2>
     <div class="book-meta">
       <p><strong>Level:</strong> CEFR ${story.cefrLevel}</p>
-      <p><strong>Total Chapters:</strong> ${story.chapters.length} of ${story.totalChapters}</p>
+      <p><strong>Total Chapters:</strong> ${story.chapters?.length ?? 0} of ${story.totalChapters}</p>
     </div>
     <div class="book-divider"></div>
     ${story.description ? `<p class="book-intro">${escapeXml(story.description)}</p>` : ''}
@@ -422,7 +422,7 @@ a.glossary-backlink {
   );
 
   // 7. Core individual chapter files
-  story.chapters.forEach((chapter, index) => {
+  (story.chapters ?? []).forEach((chapter, index) => {
     const idx = index + 1;
     const occurrenceTracker: { [key: string]: number } = {};
 
@@ -505,7 +505,7 @@ ${itemsHtml}
 <body>
   <div class="chapter-container">
     <h1 class="chapter-title">${escapeXml(chapter.title)}</h1>
-    <div class="chapter-meta">Chapter ${idx} of ${story.chapters.length}</div>
+    <div class="chapter-meta">Chapter ${idx} of ${story.chapters?.length ?? 0}</div>
     <div class="chapter-content">
 ${paragraphsHtml}
     </div>

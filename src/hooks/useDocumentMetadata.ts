@@ -32,7 +32,7 @@ export function useDocumentMetadata(
       return;
     }
 
-    const activeChapter = story.chapters[activeChapterIndex];
+    const activeChapter = story.chapters ? story.chapters[activeChapterIndex] : undefined;
     const chapterLabel = activeChapter
       ? ` | Ch ${activeChapter.chapterNumber}: ${activeChapter.title}`
       : '';
@@ -62,7 +62,7 @@ export function useDocumentMetadata(
       description: story.description || newDesc,
       educationalLevel: `CEFR ${story.cefrLevel}`,
       genre: story.genre,
-      numberOfPages: story.chapters.length * 8, // Estimated page count
+      numberOfPages: (story.chapters?.length ?? 0) * 8, // Estimated page count
       publisher: {
         '@type': 'Organization',
         name: 'CEFR Stories',
