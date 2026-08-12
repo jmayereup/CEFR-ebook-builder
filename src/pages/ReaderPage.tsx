@@ -5,9 +5,11 @@ import ReaderPanel from '../components/ReaderPanel';
 import type { IUser } from '../services/types';
 import {
   getLanguageCodeFromName,
+  isNonFictionGenre,
   type Story,
   type VocabularyTerm,
 } from '../types';
+import NonFictionDisclaimer from '../components/reader/NonFictionDisclaimer';
 
 interface ReaderPageProps {
   currentUser: IUser | null;
@@ -275,6 +277,9 @@ export default function ReaderPage({
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 font-sans leading-relaxed max-w-2xl">
                 {selectedStory.description}
               </p>
+            )}
+            {isNonFictionGenre(selectedStory.genre) && (
+              <NonFictionDisclaimer className="mt-3 max-w-2xl" />
             )}
           </div>
           <ExportPanel

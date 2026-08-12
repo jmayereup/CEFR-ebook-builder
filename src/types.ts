@@ -214,6 +214,23 @@ export const GENRES: GenreOption[] = [
   ...WRITING_TYPE_GENRES.descriptive,
 ];
 
+export function isNonFictionGenre(genreId?: string): boolean {
+  if (!genreId) return false;
+  const genreLower = genreId.toLowerCase().trim();
+  if (genreLower === 'nonfiction') return true;
+  const nonFictionOptions = [
+    ...WRITING_TYPE_GENRES.expository,
+    ...WRITING_TYPE_GENRES.analytical,
+    ...WRITING_TYPE_GENRES.descriptive,
+  ];
+  return nonFictionOptions.some(
+    (g) =>
+      g.id.toLowerCase() === genreLower ||
+      g.label.toLowerCase().includes(genreLower),
+  );
+}
+
+
 export const getAverageRating = (
   ratings?: Record<string, number> | null,
 ): number => {
