@@ -88,7 +88,12 @@ async function proxyToTJGen(req: express.Request, res: express.Response) {
 
     res.status(response.status);
     response.headers.forEach((val, key) => {
-      if (key.toLowerCase() !== 'content-length') {
+      const lowerKey = key.toLowerCase();
+      if (
+        lowerKey !== 'content-length' &&
+        lowerKey !== 'content-encoding' &&
+        lowerKey !== 'transfer-encoding'
+      ) {
         res.setHeader(key, val);
       }
     });

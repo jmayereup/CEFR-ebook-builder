@@ -57,7 +57,12 @@ export default function RecentlyReadSection({
 }: RecentlyReadSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [imgErrorMap, setImgErrorMap] = useState<Record<string, boolean>>({});
+  const [isMounted, setIsMounted] = useState(false);
   const currentUser = useAuthStore((state) => state.currentUser);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleImgError = (storyId: string) => {
     setImgErrorMap((prev) => ({ ...prev, [storyId]: true }));
@@ -101,7 +106,7 @@ export default function RecentlyReadSection({
           let userReadCount = 0;
           if (currentUser?.uid) {
             userReadCount = completedByObj[currentUser.uid] || 0;
-          } else if (typeof window !== 'undefined') {
+          } else if (isMounted) {
             const isLocalRead =
               localStorage.getItem(`completed_story_${story.id}`) === 'true';
             if (isLocalRead) {

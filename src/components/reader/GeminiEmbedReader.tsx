@@ -39,11 +39,17 @@ export default function GeminiEmbedReader({
   handleDeleteStory,
   onStoryUpdated,
 }: GeminiEmbedReaderProps) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(!story.description);
   const [editTitle, setEditTitle] = useState(story.title || '');
   const [editDescription, setEditDescription] = useState(story.description || '');
   const [isSaving, setIsSaving] = useState(false);
   const [imgError, setImgError] = useState(false);
+
+  React.useEffect(() => {
+    setEditTitle(story.title || '');
+    setEditDescription(story.description || '');
+    setImgError(false);
+  }, [story.id, story.title, story.description]);
 
   const isSavedInBookshelf = bookshelf.includes(story.id);
   const isOwner =
