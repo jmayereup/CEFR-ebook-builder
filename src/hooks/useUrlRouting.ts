@@ -134,11 +134,17 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         selectedStory.chapters &&
         selectedStory.chapters.length > 0
       ) {
+        const syncedItem = recentlyRead.find(
+          (item) => item.storyId === selectedStory.id,
+        );
         let idx = 0;
-        if (currentUser) {
-          const savedIdx = localStorage.getItem(
-            `last_read_chapter_${selectedStory.id}`,
-          );
+        if (syncedItem) {
+          idx = syncedItem.chapterIdx;
+        } else {
+          const savedIdx =
+            typeof window !== 'undefined'
+              ? localStorage.getItem(`last_read_chapter_${selectedStory.id}`)
+              : null;
           idx = savedIdx ? parseInt(savedIdx, 10) : 0;
         }
         const validIdx =
@@ -278,16 +284,19 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
               let idx = 0;
               if (syncedItem) {
                 idx = syncedItem.chapterIdx;
-              } else if (currentUser) {
-                const savedIdx = localStorage.getItem(
-                  `last_read_chapter_${directStory.id}`,
-                );
+              } else {
+                const savedIdx =
+                  typeof window !== 'undefined'
+                    ? localStorage.getItem(
+                        `last_read_chapter_${directStory.id}`,
+                      )
+                    : null;
                 idx = savedIdx ? parseInt(savedIdx, 10) : 0;
               }
               const validIdx =
                 idx >= 0 && idx < (directStory.chapters?.length ?? 0) ? idx : 0;
               setActiveChapterIdx(validIdx);
-              if (currentUser) {
+              if (typeof window !== 'undefined') {
                 localStorage.setItem(
                   `last_read_chapter_${directStory.id}`,
                   validIdx.toString(),

@@ -2,6 +2,8 @@ import {
   type Dispatch,
   type MouseEvent,
   type SetStateAction,
+  useEffect,
+  useRef,
   useState,
 } from 'react';
 import { createStory, type RecentlyReadItem } from '../services/db';
@@ -14,6 +16,7 @@ interface UseActiveStoryOptions {
   currentUser: IUser | null;
   recentlyRead: RecentlyReadItem[];
   setRecentlyRead: Dispatch<SetStateAction<RecentlyReadItem[]>>;
+  isUserDataLoaded?: boolean;
   libHandleSelectStory: (story: Story) => Promise<Story | null>;
   libHandleDeleteStory: (
     storyId: string,
@@ -43,6 +46,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     currentUser,
     recentlyRead,
     setRecentlyRead,
+    isUserDataLoaded,
     libHandleSelectStory,
     libHandleDeleteStory,
     libHandleToggleStoryPrivacy,
@@ -95,6 +99,50 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     return 0;
   });
 
+  const hasRestoredChapterRef = useRef<string | null>(null);
+
+  // When recentlyRead loads/updates from cloud, if the active story's chapter was at default 0
+  // and the user did not explicitly request a specific chapter via URL, restore the chapter from recentlyRead.
+  useEffect(() => {
+    if (!selectedStory) {
+      hasRestoredChapterRef.current = null;
+      return;
+    }
+
+    const pathname =
+      typeof window !== 'undefined'
+        ? window.location.pathname
+        : ssrPath || '';
+    const explicitChapterMatch = pathname.match(
+      /^\/book\/[^/]+\/chapter\/(\d+)/,
+    );
+
+    if (
+      hasRestoredChapterRef.current === selectedStory.id &&
+      explicitChapterMatch
+    ) {
+      return;
+    }
+
+    const syncedItem = recentlyRead.find(
+      (item) => item.storyId === selectedStory.id,
+    );
+    if (syncedItem && syncedItem.chapterIdx >= 0) {
+      const validIdx =
+        syncedItem.chapterIdx < (selectedStory.chapters?.length ?? 0)
+          ? syncedItem.chapterIdx
+          : 0;
+      if (
+        validIdx !== activeChapterIdx &&
+        (!explicitChapterMatch ||
+          hasRestoredChapterRef.current !== selectedStory.id)
+      ) {
+        setActiveChapterIdx(validIdx);
+        hasRestoredChapterRef.current = selectedStory.id;
+      }
+    }
+  }, [selectedStory?.id, recentlyRead, isUserDataLoaded]);
+
   const [cachedStoryIds, setCachedStoryIds] = useState<string[]>(() => {
     const local =
       typeof window !== 'undefined'
@@ -121,18 +169,23 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       localStorage.setItem('cefr_cached_story_ids', JSON.stringify(updated));
       return updated;
     });
+
     const syncedItem = recentlyRead.find((item) => item.storyId === story.id);
     let idx = 0;
     if (syncedItem) {
       idx = syncedItem.chapterIdx;
-    } else if (currentUser) {
-      const savedIdx = localStorage.getItem(`last_read_chapter_${story.id}`);
+    } else {
+      const savedIdx =
+        typeof window !== 'undefined'
+          ? localStorage.getItem(`last_read_chapter_${story.id}`)
+          : null;
       idx = savedIdx ? parseInt(savedIdx, 10) : 0;
     }
     const validIdx =
       idx >= 0 && idx < (fullStory.chapters?.length ?? 0) ? idx : 0;
     setActiveChapterIdx(validIdx);
-    if (currentUser) {
+    hasRestoredChapterRef.current = story.id;
+    if (typeof window !== 'undefined') {
       localStorage.setItem(
         `last_read_chapter_${story.id}`,
         validIdx.toString(),

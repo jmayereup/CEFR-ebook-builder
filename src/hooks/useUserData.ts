@@ -140,6 +140,7 @@ export function useUserData(options: UseUserDataOptions) {
 
   const [dirty, setDirty] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [isUserDataLoaded, setIsUserDataLoaded] = useState<boolean>(false);
   const isSyncingFromServer = useRef(false);
 
   const translationTargetLanguage = useUIStore(
@@ -430,13 +431,22 @@ export function useUserData(options: UseUserDataOptions) {
   };
 
   const updateRecentlyRead = async (storyId: string, chapterIdx: number) => {
-    setRecentlyRead((prev) => {
-      const filtered = prev.filter((item) => item.storyId !== storyId);
-      const updated = [{ storyId, chapterIdx }, ...filtered].slice(0, 100);
-      localStorage.setItem('recently_read', JSON.stringify(updated));
-      return updated;
-    });
-    // markDirty must be called outside the updater to avoid calling setState inside setState
+    const currentList = recentlyReadRef.current;
+    const existing = currentList.find((item) => item.storyId === storyId);
+    if (
+      existing &&
+      existing.chapterIdx === chapterIdx &&
+      currentList[0]?.storyId === storyId
+    ) {
+      return;
+    }
+
+    const filtered = currentList.filter((item) => item.storyId !== storyId);
+    const updated = [{ storyId, chapterIdx }, ...filtered].slice(0, 100);
+    localStorage.setItem('recently_read', JSON.stringify(updated));
+    localStorage.setItem(`last_read_chapter_${storyId}`, chapterIdx.toString());
+    setRecentlyRead(updated);
+
     if (currentUser) {
       markDirty();
     }
@@ -517,23 +527,32 @@ export function useUserData(options: UseUserDataOptions) {
                 console.error('Error parsing guest recently_read:', e);
               }
             }
-            const cloudRecentlyRead = profile.recentlyRead || [];
-            const rrMap = new Map<string, number>();
-            for (const item of [...guestRecentlyRead, ...cloudRecentlyRead]) {
-              const existing = rrMap.get(item.storyId);
-              if (existing === undefined || item.chapterIdx > existing) {
-                rrMap.set(item.storyId, item.chapterIdx);
-              }
+            const cloudRecentlyRead = parseRecentlyReadItems(
+              profile.recentlyRead,
+            );
+            const cloudMap = new Map<string, RecentlyReadItem>();
+            for (const item of cloudRecentlyRead) {
+              cloudMap.set(item.storyId, item);
             }
-            const mergedRecentlyRead: RecentlyReadItem[] = [];
-            const rrSeen = new Set<string>();
-            for (const item of [...guestRecentlyRead, ...cloudRecentlyRead]) {
-              if (!rrSeen.has(item.storyId)) {
-                rrSeen.add(item.storyId);
-                mergedRecentlyRead.push({
-                  storyId: item.storyId,
-                  chapterIdx: rrMap.get(item.storyId) ?? 0,
-                });
+
+            // Cloud history is authoritative for the user's account across devices
+            const mergedRecentlyRead: RecentlyReadItem[] = [
+              ...cloudRecentlyRead,
+            ];
+            for (const guestItem of guestRecentlyRead) {
+              const existingCloud = cloudMap.get(guestItem.storyId);
+              if (!existingCloud) {
+                mergedRecentlyRead.push(guestItem);
+              } else if (guestItem.chapterIdx > existingCloud.chapterIdx) {
+                const idx = mergedRecentlyRead.findIndex(
+                  (m) => m.storyId === guestItem.storyId,
+                );
+                if (idx !== -1) {
+                  mergedRecentlyRead[idx] = {
+                    ...mergedRecentlyRead[idx],
+                    chapterIdx: guestItem.chapterIdx,
+                  };
+                }
               }
             }
             const finalRecentlyRead = mergedRecentlyRead.slice(0, 100);
@@ -571,6 +590,12 @@ export function useUserData(options: UseUserDataOptions) {
               'recently_read',
               JSON.stringify(finalRecentlyRead),
             );
+            for (const item of finalRecentlyRead) {
+              localStorage.setItem(
+                `last_read_chapter_${item.storyId}`,
+                item.chapterIdx.toString(),
+              );
+            }
 
             if (
               profile.lookupLimitData &&
@@ -666,6 +691,7 @@ export function useUserData(options: UseUserDataOptions) {
           console.error('Error fetching user profile: ', err);
         } finally {
           isFetchingRef.current = false;
+          setIsUserDataLoaded(true);
         }
       } else {
         // Only clear states and localStorage if we transitioned from a logged-in user to a guest
@@ -688,6 +714,7 @@ export function useUserData(options: UseUserDataOptions) {
             date: todayStr,
           });
         }
+        setIsUserDataLoaded(true);
       }
       prevUserRef.current = currentUser;
     };
@@ -724,6 +751,7 @@ export function useUserData(options: UseUserDataOptions) {
     savedVocab,
     setSavedVocab,
     lookupLimitData,
+    isUserDataLoaded,
     handleIncrementLookupCount,
     handleIncrementGenerationCount,
     handleSaveWord,

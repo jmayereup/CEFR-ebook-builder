@@ -196,6 +196,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     setRecentlyRead,
     savedVocab,
     lookupLimitData,
+    isUserDataLoaded,
     handleIncrementLookupCount,
     handleIncrementGenerationCount,
     handleSaveWord,
@@ -248,6 +249,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     currentUser,
     recentlyRead,
     setRecentlyRead,
+    isUserDataLoaded,
     libHandleSelectStory: (story) => libHandleSelectStory(story),
     libHandleDeleteStory: (storyId, e, bypass) =>
       libHandleDeleteStory(storyId, e, bypass),
@@ -974,10 +976,11 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   // Track recently read books and active chapters reactively
   useEffect(() => {
-    if (selectedStory?.id) {
-      updateRecentlyReadRef.current(selectedStory.id, activeChapterIdx);
-    }
-  }, [selectedStory?.id, activeChapterIdx]);
+    if (!selectedStory?.id) return;
+    if (currentUser && !isUserDataLoaded) return;
+
+    updateRecentlyReadRef.current(selectedStory.id, activeChapterIdx);
+  }, [selectedStory?.id, activeChapterIdx, currentUser, isUserDataLoaded]);
 
   const handleLogin = async () => {
     try {
@@ -1207,6 +1210,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                       `last_read_chapter_${selectedStory.id}`,
                       idx.toString(),
                     );
+                    updateRecentlyRead(selectedStory.id, idx);
                   }}
                   handleToggleStoryPrivacy={handleToggleStoryPrivacy}
                   handleToggleBookshelf={handleToggleBookshelfWithAuth}
