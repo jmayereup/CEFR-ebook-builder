@@ -8,6 +8,7 @@ import { createStory, type RecentlyReadItem } from '../services/db';
 import type { IUser } from '../services/types';
 import type { Chapter, Story, VocabularyTerm } from '../types';
 import { cleanCompletedStory } from '../utils/storyCleanup';
+import { getStoryIdFromSegment } from '../utils/slugify';
 
 interface UseActiveStoryOptions {
   currentUser: IUser | null;
@@ -56,19 +57,22 @@ export function useActiveStory(options: UseActiveStoryOptions) {
   const [selectedStory, setSelectedStory] = useState<Story | null>(() => {
     if (ssrPath && ssrData?.story) {
       const bookMatch = ssrPath.match(/^\/book\/([^/]+)/);
-      if (bookMatch && bookMatch[1] === ssrData.story.id) {
-        return ssrData.story;
+      if (bookMatch) {
+        const storyId = getStoryIdFromSegment(bookMatch[1]);
+        if (storyId === ssrData.story.id) {
+          return ssrData.story;
+        }
       }
     } else if (
       typeof window !== 'undefined' &&
       (window as any).__PRELOADED_DATA__?.story
     ) {
       const bookMatch = window.location.pathname.match(/^\/book\/([^/]+)/);
-      if (
-        bookMatch &&
-        bookMatch[1] === (window as any).__PRELOADED_DATA__.story.id
-      ) {
-        return (window as any).__PRELOADED_DATA__.story;
+      if (bookMatch) {
+        const storyId = getStoryIdFromSegment(bookMatch[1]);
+        if (storyId === (window as any).__PRELOADED_DATA__.story.id) {
+          return (window as any).__PRELOADED_DATA__.story;
+        }
       }
     }
     return null;

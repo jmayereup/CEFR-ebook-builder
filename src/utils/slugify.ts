@@ -14,11 +14,9 @@ export function slugify(text: string): string {
     .replace(/-+$/, ''); // Trim - from end of text
 }
 
-/**
- * Extracts the story ID from a slugified segment (e.g. "my-title-story123" -> "story123").
- */
 export function getStoryIdFromSegment(segment: string): string {
-  const match = segment.match(/(story-?[a-z0-9]+)$/i);
+  if (!segment) return '';
+  const match = segment.match(/(?:^|-)(story-?[a-z0-9]+)$/i);
   if (match) {
     return match[1];
   }
