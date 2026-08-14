@@ -27,7 +27,7 @@ export default function PwaUpdateNotification() {
           () => {
             window.location.reload();
           },
-          { once: true }
+          { once: true },
         );
       }
 

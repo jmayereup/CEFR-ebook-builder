@@ -32,7 +32,9 @@ export function useDocumentMetadata(
       return;
     }
 
-    const activeChapter = story.chapters ? story.chapters[activeChapterIndex] : undefined;
+    const activeChapter = story.chapters
+      ? story.chapters[activeChapterIndex]
+      : undefined;
     const chapterLabel = activeChapter
       ? ` | Ch ${activeChapter.chapterNumber}: ${activeChapter.title}`
       : '';

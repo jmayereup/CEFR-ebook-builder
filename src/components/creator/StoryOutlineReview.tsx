@@ -68,12 +68,16 @@ export default function StoryOutlineReview({
       <div className="space-y-4">
         {/* Story Title Edit */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">
+          <label
+            htmlFor="story-outline-title"
+            className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5"
+          >
             Story Title (Target Language)
           </label>
           <div className="relative">
             <FileSignature className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
+              id="story-outline-title"
               type="text"
               value={draftTitle}
               onChange={(e) => setDraftTitle(e.target.value)}
@@ -85,15 +89,19 @@ export default function StoryOutlineReview({
 
         {/* Story Description Edit */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">
+          <label
+            htmlFor="story-outline-description"
+            className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5"
+          >
             Story Description / Synopsis (for Metadata & Cards)
           </label>
           <textarea
+            id="story-outline-description"
             value={draftDescription}
             onChange={(e) => setDraftDescription(e.target.value)}
             rows={3}
             className="w-full p-3.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm leading-relaxed placeholder:text-tj-text-muted/50 focus:border-tj-primary focus:outline-none font-sans resize-y"
-            placeholder="Insert brief synopsis/description of the story"
+            placeholder="Brief description of the story..."
           />
         </div>
 

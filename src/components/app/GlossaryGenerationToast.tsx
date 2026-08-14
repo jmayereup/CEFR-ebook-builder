@@ -85,10 +85,14 @@ export default function GlossaryGenerationToast({
 
               {/* Model selection */}
               <div className="space-y-1.5">
-                <label className="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                <label
+                  htmlFor="fallback-model-select"
+                  className="block text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest"
+                >
                   Choose Fallback Model
                 </label>
                 <select
+                  id="fallback-model-select"
                   value={selectedModel}
                   disabled={!!customOpenRouterKey}
                   onChange={(e) => setSelectedModel(e.target.value)}

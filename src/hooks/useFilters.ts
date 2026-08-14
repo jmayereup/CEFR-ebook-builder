@@ -99,10 +99,7 @@ export function useFilters(options: UseFiltersOptions) {
       if (story.copyrightFlag === true) {
         return isOwner || isAdmin;
       }
-      return (
-        story.isPublic !== false ||
-        (currentUser && (isOwner || isAdmin))
-      );
+      return story.isPublic !== false || (currentUser && (isOwner || isAdmin));
     });
   }, [stories, currentUser]);
 
@@ -141,8 +138,7 @@ export function useFilters(options: UseFiltersOptions) {
       if (story.copyrightFlag === true && !isOwner && !isAdmin) {
         return false;
       }
-      const canRead =
-        story.isPublic !== false || isOwner || isAdmin;
+      const canRead = story.isPublic !== false || isOwner || isAdmin;
       return (isOwner || isSaved) && canRead;
     });
   }, [stories, bookshelf, currentUser]);

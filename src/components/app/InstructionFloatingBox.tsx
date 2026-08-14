@@ -103,7 +103,8 @@ export default function InstructionFloatingBox({
                 <strong className="text-tj-text-amber-700 font-semibold">
                   free book generations
                 </strong>{' '}
-                while our shared library is being built. Users can generate 1-2 short stories per day for free. (No payment options required.)
+                while our shared library is being built. Users can generate 1-2
+                short stories per day for free. (No payment options required.)
               </div>
             </div>
 

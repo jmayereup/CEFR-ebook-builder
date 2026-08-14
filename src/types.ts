@@ -232,7 +232,6 @@ export function isNonFictionGenre(genreId?: string): boolean {
   );
 }
 
-
 export const getAverageRating = (
   ratings?: Record<string, number> | null,
 ): number => {

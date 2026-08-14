@@ -286,14 +286,15 @@ export default function ExportPanel({
                               </p>
                               <div className="h-[1px] w-5 bg-black/20 dark:bg-white/20 mx-auto"></div>
                               <p className="text-[7.5px] leading-[1.3] text-justify text-black/85 dark:text-white/85 line-clamp-4">
-                                {(selectedStory.chapters ?? [])[0]?.content.split(
-                                  /\n+/,
-                                )[0] || 'No content available.'}
+                                {(selectedStory.chapters ??
+                                  [])[0]?.content.split(/\n+/)[0] ||
+                                  'No content available.'}
                               </p>
                             </div>
 
                             <div className="text-center text-[6.5px] font-sans text-black/40 dark:text-white/40 border-t border-black/[0.06] dark:border-white/[0.04] pt-1">
-                              Page 1 of {(selectedStory.chapters?.length ?? 0) * 8} • 1%
+                              Page 1 of{' '}
+                              {(selectedStory.chapters?.length ?? 0) * 8} • 1%
                             </div>
                           </div>
                           {/* Kindle Logo Accent */}

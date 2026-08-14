@@ -3,13 +3,13 @@ import { AnimatePresence, motion } from 'motion/react';
 import ExportPanel from '../components/app/ExportPanel';
 import ReaderPanel from '../components/ReaderPanel';
 import GeminiEmbedReader from '../components/reader/GeminiEmbedReader';
+import NonFictionDisclaimer from '../components/reader/NonFictionDisclaimer';
 import type { IUser } from '../services/types';
 import {
   getLanguageCodeFromName,
   type Story,
   type VocabularyTerm,
 } from '../types';
-import NonFictionDisclaimer from '../components/reader/NonFictionDisclaimer';
 
 interface ReaderPageProps {
   currentUser: IUser | null;
@@ -142,7 +142,10 @@ export default function ReaderPage({
   isSyncing = false,
   syncChangesToDatabase,
 }: ReaderPageProps) {
-  if (selectedStory.sourceType === 'gemini_storybook' || selectedStory.embedUrl) {
+  if (
+    selectedStory.sourceType === 'gemini_storybook' ||
+    selectedStory.embedUrl
+  ) {
     return (
       <div className="space-y-4 max-w-5xl mx-auto">
         <button

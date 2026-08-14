@@ -12,7 +12,7 @@ import {
   initStoriesMetadataListener,
   syncUserProfileServer,
 } from './src/server/lib/database';
-import { getStoryIdFromSegment } from './src/utils/slugify';
+import { getStoryIdFromSegment, slugify } from './src/utils/slugify';
 import { getStoryCoverUrl } from './src/utils/coverUtils';
 
 const app = express();
@@ -333,16 +333,39 @@ async function bootstrap() {
           .replace(/<meta name="twitter:image" content=".*?"\s*\/?>/gi, '')
           .replace(/<meta name="twitter:card" content=".*?"\s*\/?>/gi, '');
 
+        const origin = `${req.protocol}://${req.get('host')}`;
+        const jsonLd = {
+          '@context': 'https://schema.org',
+          '@type': 'Book',
+          '@id': `${origin}/book/${slugify(story.title)}-${story.id}`,
+          name: story.title,
+          bookFormat: 'https://schema.org/EBook',
+          inLanguage: story.language,
+          description: story.description || description,
+          educationalLevel: `CEFR ${story.cefrLevel}`,
+          genre: story.genre,
+          numberOfPages: (story.chapters?.length ?? 0) * 8,
+          publisher: {
+            '@type': 'Organization',
+            name: 'CEFR Stories',
+            logo: {
+              '@type': 'ImageObject',
+              url: `${origin}/tj-logo.svg`,
+            },
+          },
+        };
+
         const dynamicMeta = `
           <meta name="description" content="${description}" />
           <meta property="og:title" content="${title}" />
           <meta property="og:description" content="${description}" />
-          <meta property="og:url" content="${req.protocol}://${req.get('host')}${req.originalUrl}" />
+          <meta property="og:url" content="${origin}${req.originalUrl}" />
           <meta property="og:image" content="${coverUrl}" />
           <meta name="twitter:title" content="${title}" />
           <meta name="twitter:description" content="${description}" />
           <meta name="twitter:image" content="${coverUrl}" />
           <meta name="twitter:card" content="summary_large_image" />
+          <script id="story-schema-jsonld" type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>
         `;
         template = template.replace('</head>', `${dynamicMeta}</head>`);
       }
@@ -353,6 +376,24 @@ async function bootstrap() {
       const appHtml = template
         .replace('<!--ssr-outlet-->', html)
         .replace('</head>', `${dataScript}</head>`);
+
+      const isPublicRoute =
+        url.startsWith('/book/') ||
+        url === '/' ||
+        url === '/browse' ||
+        url === '/about';
+
+      if (isPublicRoute && process.env.NODE_ENV === 'production') {
+        res.setHeader(
+          'Cache-Control',
+          'public, max-age=60, s-maxage=300, stale-while-revalidate=86400',
+        );
+      } else {
+        res.setHeader(
+          'Cache-Control',
+          'no-cache, no-store, must-revalidate',
+        );
+      }
 
       return res.status(200).set({ 'Content-Type': 'text/html' }).send(appHtml);
     } catch (err: any) {

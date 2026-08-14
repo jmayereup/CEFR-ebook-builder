@@ -1,5 +1,9 @@
 function readEnv(key: string): string | undefined {
-  if (typeof process !== 'undefined' && process.env && process.env[key] !== undefined) {
+  if (
+    typeof process !== 'undefined' &&
+    process.env &&
+    process.env[key] !== undefined
+  ) {
     return process.env[key];
   }
   try {
@@ -7,8 +11,10 @@ function readEnv(key: string): string | undefined {
     if (key === 'COVER_CDN_URL') return (import.meta.env as any).COVER_CDN_URL;
     if (key === 'VITE_GEN_URL') return import.meta.env.VITE_GEN_URL;
     if (key === 'TJ_GEN_URL') return (import.meta.env as any).TJ_GEN_URL;
-    if (key === 'VITE_POCKETBASE_URL') return import.meta.env.VITE_POCKETBASE_URL;
-    if (key === 'POCKETBASE_URL') return (import.meta.env as any).POCKETBASE_URL;
+    if (key === 'VITE_POCKETBASE_URL')
+      return import.meta.env.VITE_POCKETBASE_URL;
+    if (key === 'POCKETBASE_URL')
+      return (import.meta.env as any).POCKETBASE_URL;
   } catch (e) {
     // Ignore in non-ESM environments
   }
@@ -54,14 +60,12 @@ export function getStoryCoverUrl(
  * Returns an array of candidate cover URLs for a story in order of priority.
  * Useful for fetching cover blobs with CORS fallback handling.
  */
-export function getStoryCoverUrls(
-  story: {
-    id: string;
-    collectionId?: string;
-    cover?: string;
-    updated?: string | Date;
-  },
-): string[] {
+export function getStoryCoverUrls(story: {
+  id: string;
+  collectionId?: string;
+  cover?: string;
+  updated?: string | Date;
+}): string[] {
   const t = story.updated ? `?t=${new Date(story.updated).getTime()}` : '';
   const urls: string[] = [];
 
@@ -89,7 +93,9 @@ export function getStoryCoverUrls(
     urls.push(`${cdnUrl}/${collection}/${story.id}/${story.cover}${t}`);
 
     // 2. PocketBase API proxy URL (with CORS headers for browser fetch)
-    urls.push(`${pbUrl}/api/files/${collection}/${story.id}/${story.cover}${t}`);
+    urls.push(
+      `${pbUrl}/api/files/${collection}/${story.id}/${story.cover}${t}`,
+    );
   }
 
   // 3. Fallback to tj-gen static cover URL
@@ -97,5 +103,3 @@ export function getStoryCoverUrls(
 
   return Array.from(new Set(urls));
 }
-
-

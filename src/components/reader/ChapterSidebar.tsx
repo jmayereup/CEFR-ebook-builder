@@ -133,7 +133,9 @@ export default function ChapterSidebar({
     return (
       story.cefrLevel !== 'A1' &&
       story.cefrLevel !== 'Pre-A1' &&
-      (story.chapters ?? []).some((ch) => !ch.vocabulary || ch.vocabulary.length === 0)
+      (story.chapters ?? []).some(
+        (ch) => !ch.vocabulary || ch.vocabulary.length === 0,
+      )
     );
   }, [story.chapters, story.cefrLevel]);
 

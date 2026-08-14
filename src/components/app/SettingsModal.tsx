@@ -67,34 +67,28 @@ export default function SettingsModal({
   const isStoryPreset = FRONTIER_LATEST_MODELS.some(
     (m) => m.id === defaultStoryModel,
   );
-  const [selectedStoryModelOption, setSelectedStoryModelOption] = useState<string>(
-    isStoryPreset ? defaultStoryModel : 'custom',
-  );
-  const [customStoryModelIdInput, setCustomStoryModelIdInput] = useState<string>(
-    isStoryPreset ? '' : defaultStoryModel,
-  );
+  const [selectedStoryModelOption, setSelectedStoryModelOption] =
+    useState<string>(isStoryPreset ? defaultStoryModel : 'custom');
+  const [customStoryModelIdInput, setCustomStoryModelIdInput] =
+    useState<string>(isStoryPreset ? '' : defaultStoryModel);
 
   // Default Glossary Model selection state
   const isGlossaryPreset = FRONTIER_LATEST_MODELS.some(
     (m) => m.id === defaultGlossaryModel,
   );
-  const [selectedGlossaryModelOption, setSelectedGlossaryModelOption] = useState<string>(
-    isGlossaryPreset ? defaultGlossaryModel : 'custom',
-  );
-  const [customGlossaryModelIdInput, setCustomGlossaryModelIdInput] = useState<string>(
-    isGlossaryPreset ? '' : defaultGlossaryModel,
-  );
+  const [selectedGlossaryModelOption, setSelectedGlossaryModelOption] =
+    useState<string>(isGlossaryPreset ? defaultGlossaryModel : 'custom');
+  const [customGlossaryModelIdInput, setCustomGlossaryModelIdInput] =
+    useState<string>(isGlossaryPreset ? '' : defaultGlossaryModel);
 
   // Default Word Translation Model selection state
   const isTranslationPreset = FRONTIER_LATEST_MODELS.some(
     (m) => m.id === defaultTranslationModel,
   );
-  const [selectedTranslationModelOption, setSelectedTranslationModelOption] = useState<string>(
-    isTranslationPreset ? defaultTranslationModel : 'custom',
-  );
-  const [customTranslationModelIdInput, setCustomTranslationModelIdInput] = useState<string>(
-    isTranslationPreset ? '' : defaultTranslationModel,
-  );
+  const [selectedTranslationModelOption, setSelectedTranslationModelOption] =
+    useState<string>(isTranslationPreset ? defaultTranslationModel : 'custom');
+  const [customTranslationModelIdInput, setCustomTranslationModelIdInput] =
+    useState<string>(isTranslationPreset ? '' : defaultTranslationModel);
 
   const [pricingMap, setPricingMap] = useState<
     Map<string, OpenRouterModelInfo>
@@ -119,7 +113,9 @@ export default function SettingsModal({
       ? customTranslationModelIdInput.trim()
       : selectedTranslationModelOption;
 
-  const currentPricing = activeStoryModelId ? pricingMap.get(activeStoryModelId) : null;
+  const currentPricing = activeStoryModelId
+    ? pricingMap.get(activeStoryModelId)
+    : null;
   const baselineEst = currentPricing
     ? calculateBaselineStoryCost(
         10,
@@ -364,7 +360,9 @@ export default function SettingsModal({
                   <div className="relative">
                     <select
                       value={selectedStoryModelOption}
-                      onChange={(e) => setSelectedStoryModelOption(e.target.value)}
+                      onChange={(e) =>
+                        setSelectedStoryModelOption(e.target.value)
+                      }
                       className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
                     >
                       {FRONTIER_LATEST_MODELS.map((m) => (
@@ -384,7 +382,9 @@ export default function SettingsModal({
                         type="text"
                         placeholder="e.g. meta-llama/llama-3.3-70b-instruct"
                         value={customStoryModelIdInput}
-                        onChange={(e) => setCustomStoryModelIdInput(e.target.value)}
+                        onChange={(e) =>
+                          setCustomStoryModelIdInput(e.target.value)
+                        }
                         className="w-full px-3 py-2 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
                       />
                       <p className="text-[10px] text-tj-text-muted">
@@ -402,7 +402,9 @@ export default function SettingsModal({
                   <div className="relative">
                     <select
                       value={selectedGlossaryModelOption}
-                      onChange={(e) => setSelectedGlossaryModelOption(e.target.value)}
+                      onChange={(e) =>
+                        setSelectedGlossaryModelOption(e.target.value)
+                      }
                       className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
                     >
                       {FRONTIER_LATEST_MODELS.map((m) => (
@@ -422,7 +424,9 @@ export default function SettingsModal({
                         type="text"
                         placeholder="e.g. deepseek/deepseek-v4-flash"
                         value={customGlossaryModelIdInput}
-                        onChange={(e) => setCustomGlossaryModelIdInput(e.target.value)}
+                        onChange={(e) =>
+                          setCustomGlossaryModelIdInput(e.target.value)
+                        }
                         className="w-full px-3 py-2 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
                       />
                       <p className="text-[10px] text-tj-text-muted">
@@ -440,7 +444,9 @@ export default function SettingsModal({
                   <div className="relative">
                     <select
                       value={selectedTranslationModelOption}
-                      onChange={(e) => setSelectedTranslationModelOption(e.target.value)}
+                      onChange={(e) =>
+                        setSelectedTranslationModelOption(e.target.value)
+                      }
                       className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
                     >
                       {FRONTIER_LATEST_MODELS.map((m) => (
@@ -460,7 +466,9 @@ export default function SettingsModal({
                         type="text"
                         placeholder="e.g. deepseek/deepseek-v4-flash"
                         value={customTranslationModelIdInput}
-                        onChange={(e) => setCustomTranslationModelIdInput(e.target.value)}
+                        onChange={(e) =>
+                          setCustomTranslationModelIdInput(e.target.value)
+                        }
                         className="w-full px-3 py-2 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
                       />
                       <p className="text-[10px] text-tj-text-muted">
@@ -495,7 +503,8 @@ export default function SettingsModal({
                     </div>
                     <p className="text-[10px] text-tj-text-muted leading-normal">
                       A standard 10-chapter story (~25,000 total tokens) using{' '}
-                      <strong>{activeStoryModelId}</strong> will cost approximately{' '}
+                      <strong>{activeStoryModelId}</strong> will cost
+                      approximately{' '}
                       <strong className="text-tj-text-main">
                         $
                         {baselineEst.totalEstimatedCost < 0.01

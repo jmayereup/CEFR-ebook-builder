@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
 import {
-  BookOpen,
   Bookmark,
   BookmarkCheck,
+  BookOpen,
   Check,
   Edit3,
   ExternalLink,
@@ -13,10 +12,11 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
+import React, { useState } from 'react';
+import { updateStoryDescription } from '../../services/db';
 import type { Story } from '../../types';
 import { getStoryCoverUrl } from '../../utils/coverUtils';
-import { updateStoryDescription } from '../../services/db';
 
 interface GeminiEmbedReaderProps {
   story: Story;
@@ -41,7 +41,9 @@ export default function GeminiEmbedReader({
 }: GeminiEmbedReaderProps) {
   const [isEditing, setIsEditing] = useState(!story.description);
   const [editTitle, setEditTitle] = useState(story.title || '');
-  const [editDescription, setEditDescription] = useState(story.description || '');
+  const [editDescription, setEditDescription] = useState(
+    story.description || '',
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [imgError, setImgError] = useState(false);
 
@@ -153,9 +155,7 @@ export default function GeminiEmbedReader({
                 : 'text-tj-text-muted hover:text-tj-text-main hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
             title={
-              isSavedInBookshelf
-                ? 'Remove from Bookshelf'
-                : 'Save to Bookshelf'
+              isSavedInBookshelf ? 'Remove from Bookshelf' : 'Save to Bookshelf'
             }
           >
             {isSavedInBookshelf ? (
@@ -344,7 +344,8 @@ export default function GeminiEmbedReader({
               </p>
             ) : (
               <p className="text-xs text-tj-text-muted/70 italic font-sans">
-                Interactive storybook created with Google Gemini. Click edit info to add notes or description.
+                Interactive storybook created with Google Gemini. Click edit
+                info to add notes or description.
               </p>
             )}
           </div>

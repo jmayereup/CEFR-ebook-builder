@@ -99,6 +99,7 @@ export default function StreakCelebrationModal({
 
             {/* Close button */}
             <button
+              type="button"
               onClick={onClose}
               className="absolute top-4 right-4 p-2 text-tj-text-muted hover:text-tj-text-main rounded-full hover:bg-tj-primary-light transition-colors cursor-pointer"
             >
@@ -172,6 +173,7 @@ export default function StreakCelebrationModal({
               className="mt-8"
             >
               <button
+                type="button"
                 onClick={onClose}
                 className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-2xl cursor-pointer transition-all shadow-lg hover:shadow-emerald-600/20 active:scale-98"
               >

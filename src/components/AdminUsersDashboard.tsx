@@ -936,8 +936,8 @@ export default function AdminUsersDashboard({
               material (fan fiction, established franchises, etc.). They are
               forced private, excluded from the public library, and have their
               site branding stripped from exports. Unflag only after confirming
-              the story does not infringe — the owner will be able to publish
-              it again.
+              the story does not infringe — the owner will be able to publish it
+              again.
             </p>
           </div>
 

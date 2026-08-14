@@ -1,8 +1,8 @@
 import { AlertCircle, WifiOff } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  Suspense,
   lazy,
+  Suspense,
   useCallback,
   useEffect,
   useRef,
@@ -44,6 +44,7 @@ const AdminPage = lazy(() => import('./pages/AdminPage'));
 const BookshelfPage = lazy(() => import('./pages/BookshelfPage'));
 const CreatePage = lazy(() => import('./pages/CreatePage'));
 const PracticePage = lazy(() => import('./pages/PracticePage'));
+
 import {
   googleSignIn,
   initAuth,
@@ -89,7 +90,9 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
-  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>(
+    'signin',
+  );
 
   const handleOpenAuth = (mode: 'signin' | 'signup' = 'signin') => {
     setAuthModalMode(mode);
@@ -390,7 +393,11 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
               const updatedTime = data.updated || new Date().toISOString();
               setSelectedStory((prev) =>
                 prev && prev.id === sanitizedId
-                  ? { ...prev, cover: data.cover || prev.cover, updated: updatedTime }
+                  ? {
+                      ...prev,
+                      cover: data.cover || prev.cover,
+                      updated: updatedTime,
+                    }
                   : prev,
               );
               const cachedStr = localStorage.getItem(
@@ -583,7 +590,10 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   // ignore
                 }
               }
-              await loadStoriesMetadata({ refresh: true, storyId: sanitizedId });
+              await loadStoriesMetadata({
+                refresh: true,
+                storyId: sanitizedId,
+              });
             }
           })
           .catch((err) => {
@@ -1252,7 +1262,9 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   isSyncing={isSyncing}
                   syncChangesToDatabase={syncChangesToDatabase}
                   isGeneratingCover={
-                    selectedStory ? generatingCoverIds.has(selectedStory.id) : false
+                    selectedStory
+                      ? generatingCoverIds.has(selectedStory.id)
+                      : false
                   }
                 />
               </motion.div>

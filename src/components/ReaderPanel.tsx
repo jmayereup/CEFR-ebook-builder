@@ -26,12 +26,12 @@ import {
   SUPPORTED_LANGUAGES,
   type VocabularyTerm,
 } from '../types';
+import { getStoryCoverUrl } from '../utils/coverUtils';
 import {
   limitContextToTenWords,
   segmentText,
   stripMarkdown,
 } from '../utils/segmenter';
-import { getStoryCoverUrl } from '../utils/coverUtils';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
 import BilingualSwapNotification from './reader/BilingualSwapNotification';
@@ -47,7 +47,11 @@ import VocabGlossary from './reader/VocabGlossary';
 
 // A helper component to trigger scrolling back to the top of the reader panel
 // only after the previous chapter card has fully faded out and the new card has mounted.
-function ScrollToTop({ readerRef }: { readerRef: RefObject<HTMLDivElement | null> }) {
+function ScrollToTop({
+  readerRef,
+}: {
+  readerRef: RefObject<HTMLDivElement | null>;
+}) {
   useEffect(() => {
     readerRef.current?.scrollIntoView({ behavior: 'auto', block: 'start' });
   }, [readerRef]);
@@ -254,7 +258,9 @@ export default function ReaderPanel({
     'bible' | 'audits' | 'tone' | 'outline'
   >('bible');
 
-  const activeChapter: Chapter | undefined = (story.chapters ?? [])[activeChapterIndex];
+  const activeChapter: Chapter | undefined = (story.chapters ?? [])[
+    activeChapterIndex
+  ];
 
   const [selectedWordRange, setSelectedWordRange] = useState<
     [number, number] | null
@@ -1443,7 +1449,8 @@ export default function ReaderPanel({
                     <div ref={sentinelRef} className="h-2 w-full" />
 
                     {/* Explicit book completion section */}
-                    {activeChapterIndex === (story.chapters?.length ?? 0) - 1 && (
+                    {activeChapterIndex ===
+                      (story.chapters?.length ?? 0) - 1 && (
                       <div className="mt-8 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/10 dark:to-teal-950/5 border border-emerald-100 dark:border-emerald-900/20 rounded-2xl animate-fade-in text-center space-y-4">
                         <div className="space-y-1">
                           <h4 className="text-sm font-bold text-emerald-800 dark:text-emerald-400">
@@ -1505,7 +1512,8 @@ export default function ReaderPanel({
                     )}
 
                     {/* Book Rating Section */}
-                    {activeChapterIndex === (story.chapters?.length ?? 0) - 1 && (
+                    {activeChapterIndex ===
+                      (story.chapters?.length ?? 0) - 1 && (
                       <div className="mt-4 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-amber-50/40 to-orange-50/30 dark:from-amber-950/10 dark:to-orange-950/5 border border-amber-100/70 dark:border-amber-900/20 rounded-2xl animate-fade-in text-center space-y-4">
                         <div className="space-y-1">
                           <h4 className="text-sm font-bold text-amber-800 dark:text-amber-400 flex items-center justify-center gap-1.5">
@@ -1584,7 +1592,8 @@ export default function ReaderPanel({
                         (story.chapters ?? []).some(
                           (ch) => !ch.vocabulary || ch.vocabulary.length === 0,
                         )) ||
-                        (activeChapterIndex === (story.chapters?.length ?? 0) - 1 &&
+                        (activeChapterIndex ===
+                          (story.chapters?.length ?? 0) - 1 &&
                           onDownloadEpub)) && (
                         <div className="mt-8 space-y-3 animate-fade-in">
                           {/* Generate Glossary callout — shown when chapters lack vocabulary */}
@@ -1650,7 +1659,8 @@ export default function ReaderPanel({
                             )}
 
                           {/* Download eBook callout */}
-                          {activeChapterIndex === (story.chapters?.length ?? 0) - 1 &&
+                          {activeChapterIndex ===
+                            (story.chapters?.length ?? 0) - 1 &&
                             onDownloadEpub && (
                               <div className="p-5 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/10 border border-emerald-200 dark:border-emerald-900/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
                                 <div className="space-y-1">
@@ -1683,20 +1693,24 @@ export default function ReaderPanel({
                 )}
 
                 {/* Chapter Navigation Buttons (above glossary) */}
-                {!isZenMode && !isEditing && activeChapter && activeChapter.vocabulary && activeChapter.vocabulary.length > 0 && (
-                  <div className="mt-8">
-                    <ChapterNavigationBar
-                      story={story}
-                      activeChapterIndex={activeChapterIndex}
-                      onSelectChapter={onSelectChapter}
-                      onGenerateNextChapter={onGenerateNextChapter}
-                      isLoadingNext={isLoadingNext}
-                      isAutoGeneratingRemaining={isAutoGeneratingRemaining}
-                      isPaid={isPaid}
-                      nextChapterCreditCost={nextChapterCreditCost}
-                    />
-                  </div>
-                )}
+                {!isZenMode &&
+                  !isEditing &&
+                  activeChapter &&
+                  activeChapter.vocabulary &&
+                  activeChapter.vocabulary.length > 0 && (
+                    <div className="mt-8">
+                      <ChapterNavigationBar
+                        story={story}
+                        activeChapterIndex={activeChapterIndex}
+                        onSelectChapter={onSelectChapter}
+                        onGenerateNextChapter={onGenerateNextChapter}
+                        isLoadingNext={isLoadingNext}
+                        isAutoGeneratingRemaining={isAutoGeneratingRemaining}
+                        isPaid={isPaid}
+                        nextChapterCreditCost={nextChapterCreditCost}
+                      />
+                    </div>
+                  )}
 
                 {/* Dynamic glossary extracted terms */}
                 {activeChapter && !isEditing && (

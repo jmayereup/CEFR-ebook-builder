@@ -27,8 +27,9 @@ export default function FlagStoryModal({
 
   if (!isOpen || !story) return null;
 
-  const isEmailUnverified =
-    Boolean(currentUser && currentUser.emailVerified === false && !currentUser.isAdmin);
+  const isEmailUnverified = Boolean(
+    currentUser && currentUser.emailVerified === false && !currentUser.isAdmin,
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

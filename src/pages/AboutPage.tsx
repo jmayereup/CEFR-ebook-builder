@@ -48,7 +48,8 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           </h1>
 
           <p className="text-sm sm:text-base text-tj-text-muted leading-relaxed max-w-2xl font-sans">
-            Empowering language acquisition through interest-driven stories that can be read on any ebook reader.
+            Empowering language acquisition through interest-driven stories that
+            can be read on any ebook reader.
           </p>
         </div>
       </div>
@@ -72,17 +73,19 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
         <div className="space-y-3 text-xs sm:text-sm text-tj-text-main/90 leading-relaxed font-sans border-l-2 border-tj-primary/40 pl-4 py-1 my-2">
           <p>
             CEFR Stories was born out of a real personal challenge. While
-            learning Thai and striving to reach reading fluency, I wanted to read
-            engaging, level-appropriate short stories on my Kindle. However, finding accessible, graded Thai reading material formatted for
-            e-readers proved nearly impossible.
+            learning Thai and striving to reach reading fluency, I wanted to
+            read engaging, level-appropriate short stories on my Kindle.
+            However, finding accessible, graded Thai reading material formatted
+            for e-readers proved nearly impossible.
           </p>
+          <p></p>
           <p>
-          </p>
-          <p>
-            Frustrated by the lack of graded readers for non-Western languages, I
-            built CEFR Stories: an AI-driven eBook builder that crafts custom,
+            Frustrated by the lack of graded readers for non-Western languages,
+            I built CEFR Stories: an AI-driven eBook builder that crafts custom,
             multi-chapter stories guided by CEFR difficulty levels. It offers
-            helpful difficulty scaffolding, click-to-listen pronunciation help, integrated glossaries, and instant EPUB exports optimized for Kindle and other e-readers.
+            helpful difficulty scaffolding, click-to-listen pronunciation help,
+            integrated glossaries, and instant EPUB exports optimized for Kindle
+            and other e-readers.
           </p>
         </div>
       </div>
@@ -109,9 +112,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
             <strong className="text-tj-text-main">
               Input Hypothesis (i + 1)
             </strong>{' '}
-            states that we acquire language naturally when we read or hear messages
-            we understand with just a slight degree of challenge.
-            Rote grammar drills rarely build real fluency; compelling, readable text
+            states that we acquire language naturally when we read or hear
+            messages we understand with just a slight degree of challenge. Rote
+            grammar drills rarely build real fluency; compelling, readable text
             does.
           </p>
         </div>
@@ -123,8 +126,8 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               1. Scaffolding ($i+1$)
             </h4>
             <p className="text-[11px] text-tj-text-muted leading-relaxed">
-              Stories match your approximate CEFR level, introducing new vocabulary
-              in understandable contexts without overwhelming you.
+              Stories match your approximate CEFR level, introducing new
+              vocabulary in understandable contexts without overwhelming you.
             </p>
           </div>
 
@@ -134,8 +137,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               2. Topics You Love
             </h4>
             <p className="text-[11px] text-tj-text-muted leading-relaxed">
-              Krashen highlighted that input must be <em>compelling</em>. Generate
-              stories on topics you genuinely enjoy—lowering anxiety and boosting retention.
+              Krashen highlighted that input must be <em>compelling</em>.
+              Generate stories on topics you genuinely enjoy—lowering anxiety
+              and boosting retention.
             </p>
           </div>
 
@@ -145,8 +149,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               3. Low Affective Filter
             </h4>
             <p className="text-[11px] text-tj-text-muted leading-relaxed">
-              Instant word lookups and line translations eliminate reading friction,
-              keeping you in a relaxed state optimized for acquisition.
+              Instant word lookups and line translations eliminate reading
+              friction, keeping you in a relaxed state optimized for
+              acquisition.
             </p>
           </div>
         </div>
@@ -167,7 +172,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               Create Custom Stories on Topics You Are Interested In
             </h4>
             <p className="text-xs text-tj-text-muted leading-relaxed">
-              Generate full, multi-chapter stories on any subject you choose—from sci-fi mysteries and culinary journeys to local culture and fantasy adventures.
+              Generate full, multi-chapter stories on any subject you
+              choose—from sci-fi mysteries and culinary journeys to local
+              culture and fantasy adventures.
             </p>
           </div>
 
@@ -179,7 +186,10 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               Vocab Builder & Spaced Repetition (SRS)
             </h4>
             <p className="text-xs text-tj-text-muted leading-relaxed">
-              Tap any unfamiliar word while reading to save it to your deck, then practice and master your terms with spaced repetition flashcard activities. Word lists can be exported to Anki and other platforms.
+              Tap any unfamiliar word while reading to save it to your deck,
+              then practice and master your terms with spaced repetition
+              flashcard activities. Word lists can be exported to Anki and other
+              platforms.
             </p>
           </div>
 
@@ -191,7 +201,10 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               20+ Supported Languages
             </h4>
             <p className="text-xs text-tj-text-muted leading-relaxed">
-              Read stories in Thai, Spanish, French, Japanese, German, and many more with native script support, audio playback, and instant translations. Email me if you would like to see another language supported.
+              Read stories in Thai, Spanish, French, Japanese, German, and many
+              more with native script support, audio playback, and instant
+              translations. Email me if you would like to see another language
+              supported.
             </p>
           </div>
 
@@ -203,7 +216,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               CEFR Difficulty Scaffolding
             </h4>
             <p className="text-xs text-tj-text-muted leading-relaxed">
-              CEFR levels (A1 to C2) serve as rough guidelines embedded in prompts. While leveling can be less precise for non-European languages, they still provide helpful difficulty scaffolding.
+              CEFR levels (A1 to C2) serve as rough guidelines embedded in
+              prompts. While leveling can be less precise for non-European
+              languages, they still provide helpful difficulty scaffolding.
             </p>
           </div>
 
@@ -215,7 +230,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               Kindle & eReader EPUB Export
             </h4>
             <p className="text-xs text-tj-text-muted leading-relaxed">
-              Download clean, beautifully formatted EPUB files ready to transfer directly to your Kindle, Kobo, or mobile e-reader for offline reading anytime.
+              Download clean, beautifully formatted EPUB files ready to transfer
+              directly to your Kindle, Kobo, or mobile e-reader for offline
+              reading anytime.
             </p>
           </div>
         </div>
@@ -238,7 +255,8 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
         </div>
 
         <p className="text-xs sm:text-sm text-tj-text-muted leading-relaxed font-sans">
-          Have feedback, feature requests, language suggestions, or need help with your account? Reach out to support directly at the email below:
+          Have feedback, feature requests, language suggestions, or need help
+          with your account? Reach out to support directly at the email below:
         </p>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">

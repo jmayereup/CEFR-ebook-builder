@@ -267,7 +267,9 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
             if (chapterNum !== null) {
               const chapterIdx = chapterNum > 0 ? chapterNum - 1 : 0;
               const validIdx =
-                chapterIdx < (directStory.chapters?.length ?? 0) ? chapterIdx : 0;
+                chapterIdx < (directStory.chapters?.length ?? 0)
+                  ? chapterIdx
+                  : 0;
               setActiveChapterIdx(validIdx);
             } else {
               const syncedItem = recentlyRead.find(

@@ -1,6 +1,5 @@
 import { Brain, Check, Cpu, Sparkles, X, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState } from 'react';
 import { AI_MODELS } from '../../constants/models';
 
 interface ModelSelectionModalProps {

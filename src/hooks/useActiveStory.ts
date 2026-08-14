@@ -7,8 +7,8 @@ import {
 import { createStory, type RecentlyReadItem } from '../services/db';
 import type { IUser } from '../services/types';
 import type { Chapter, Story, VocabularyTerm } from '../types';
-import { cleanCompletedStory } from '../utils/storyCleanup';
 import { getStoryIdFromSegment } from '../utils/slugify';
+import { cleanCompletedStory } from '../utils/storyCleanup';
 
 interface UseActiveStoryOptions {
   currentUser: IUser | null;
@@ -129,7 +129,8 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       const savedIdx = localStorage.getItem(`last_read_chapter_${story.id}`);
       idx = savedIdx ? parseInt(savedIdx, 10) : 0;
     }
-    const validIdx = idx >= 0 && idx < (fullStory.chapters?.length ?? 0) ? idx : 0;
+    const validIdx =
+      idx >= 0 && idx < (fullStory.chapters?.length ?? 0) ? idx : 0;
     setActiveChapterIdx(validIdx);
     if (currentUser) {
       localStorage.setItem(

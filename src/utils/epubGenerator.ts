@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import { type Story } from '../types';
+import type { Story } from '../types';
 import { getStoryCoverUrls } from './coverUtils';
 import { segmentText } from './segmenter';
 
@@ -124,13 +124,18 @@ export async function generateEpub(story: Story): Promise<Blob> {
       try {
         coverBlob = await convertWebPToJpeg(coverBlob);
       } catch (convErr) {
-        console.warn('Could not convert cover blob to JPEG, using original blob:', convErr);
+        console.warn(
+          'Could not convert cover blob to JPEG, using original blob:',
+          convErr,
+        );
       }
     }
     coverMediaType = 'image/jpeg';
     coverExtension = 'jpg';
   } else {
-    console.warn('Could not fetch story cover image from any candidate URL, generating EPUB without cover.');
+    console.warn(
+      'Could not fetch story cover image from any candidate URL, generating EPUB without cover.',
+    );
   }
 
   // 1. mimetype: Must be the absolute first file, uncompressed, with mime text

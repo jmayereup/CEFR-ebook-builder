@@ -230,7 +230,11 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
   if (storyId) {
     try {
       const record = await pb.collection('stories').getOne(storyId);
-      if (record && record.isPublic !== false && record.copyrightFlag !== true) {
+      if (
+        record &&
+        record.isPublic !== false &&
+        record.copyrightFlag !== true
+      ) {
         const chapters = record.chapters || [];
         let wordCount = 0;
         for (const ch of chapters) {

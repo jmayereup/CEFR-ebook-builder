@@ -1,12 +1,8 @@
 import { useState } from 'react';
-import {
-  getLanguageCodeFromName,
-  type Story,
-} from '../types';
+import { getLanguageCodeFromName, type Story } from '../types';
+import { getStoryCoverUrl } from '../utils/coverUtils';
 import { segmentText } from '../utils/segmenter';
 import { slugify } from '../utils/slugify';
-
-import { getStoryCoverUrl } from '../utils/coverUtils';
 
 function escapeHtml(unsafe: string): string {
   return unsafe
@@ -118,7 +114,9 @@ export function useExport(options: UseExportOptions) {
 
     const isBilingual =
       !!selectedStory.translationLanguage ||
-      (selectedStory.chapters ?? []).some((ch) => ch.content.includes('Translation:'));
+      (selectedStory.chapters ?? []).some((ch) =>
+        ch.content.includes('Translation:'),
+      );
 
     const coverUrl = getStoryCoverUrl(selectedStory, { absolute: true });
 
