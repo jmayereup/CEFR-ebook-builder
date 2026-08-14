@@ -1379,7 +1379,6 @@ export default function ReaderPanel({
                 ) : (
                   <>
                     <section
-                      translate="no"
                       lang={getLanguageCodeFromName(effectivePrimaryLanguage)}
                       className={`space-y-6 select-text ${useSerif ? 'font-serif' : 'font-sans'}`}
                       style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}

@@ -222,7 +222,7 @@ export default function InteractiveParagraph({
       : `${isBilingual ? '' : 'indent-4 md:indent-6'} ${getAlignmentClass()} leading-relaxed mb-4`;
 
   return (
-    <p key={pIdx} translate="no" className={blockClass}>
+    <p key={pIdx} className={blockClass}>
       {segmentsWithPositions.map((seg) => {
         const isActive =
           startSegIdx !== -1 &&
@@ -236,7 +236,6 @@ export default function InteractiveParagraph({
             // biome-ignore lint/a11y/noStaticElementInteractions: inline text span with dictionary lookup listener
             <span
               key={seg.key}
-              tabIndex={0}
               onClick={(e) => {
                 e.stopPropagation();
                 handleWordClick(
@@ -245,18 +244,6 @@ export default function InteractiveParagraph({
                   pIdx,
                   currentWordIndex,
                 );
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleWordClick(
-                    seg.segment,
-                    paragraphText,
-                    pIdx,
-                    currentWordIndex,
-                  );
-                }
               }}
               className={getWordStyle(
                 seg.segment,
