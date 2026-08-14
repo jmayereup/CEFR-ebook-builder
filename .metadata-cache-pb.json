@@ -1,6 +1,50 @@
 {
-  "lastFetchTime": 1786453569841,
+  "lastFetchTime": 1786677903794,
   "stories": [
+    {
+      "id": "sjh64gmf7xlnt99",
+      "cover": "",
+      "title": "The Architecture of Intolerance: Understanding the Insecure Mind and Helping Young People Find Their Footing",
+      "language": "English",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "social_cultural_issues",
+      "totalChapters": 10,
+      "createdAt": "2026-08-13T01:57:30.373Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 3904,
+      "description": "A practical guide for parents, teachers, and mentors that translates psychological insights and Buddhist wisdom into everyday language to help young people resist intolerance. It reveals how insecurity, black-and-white thinking, and digital manipulation drive extremism, and provides hands-on tools to build genuine connection and intrinsic self-worth in youth.",
+      "updated": "2026-08-13 02:22:26.647Z"
+    },
+    {
+      "id": "s6qxg5c0rbgl94m",
+      "cover": "s6qxg5c0rbgl94m_p5q2y87w8w.jpg",
+      "title": "โครงสร้างของความใจแคบ: เข้าใจจิตใจที่ไม่มั่นคงและช่วยเยาวชนหาจุดยืน",
+      "language": "Thai",
+      "translationLanguage": "Thai",
+      "cefrLevel": "B1",
+      "genre": "social_cultural_issues",
+      "totalChapters": 10,
+      "createdAt": "2026-08-13T01:41:49.474Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "~google/gemini-pro-latest",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 4381,
+      "description": "This guide explores the psychological roots of youth intolerance, viewing rigid beliefs as a defense mechanism against deep-seated insecurities. It provides parents and educators with practical tools, drawing on Western psychology and Buddhist philosophy, to foster resilience, empathy, and critical thinking in young people.",
+      "updated": "2026-08-13 01:47:23.400Z"
+    },
     {
       "id": "s4a9h3tuoqnwqty",
       "cover": "s4a9h3tuoqnwqty_6vhf22k01a.jpg",
@@ -16,7 +60,6 @@
       "model": "",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 0,
@@ -41,7 +84,6 @@
       "model": "",
       "ratings": null,
       "totalReads": 0,
-      "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 0,
@@ -50,6 +92,72 @@
       "updated": "2026-08-12 10:57:47.335Z",
       "embedUrl": "https://share.gemini.google/WqFtCVRyBcpI",
       "sourceType": "gemini_storybook"
+    },
+    {
+      "id": "so0demln5pauvyk",
+      "cover": "so0demln5pauvyk_v99pewwxc5.jpg",
+      "title": "Fabriquer la vérité : L’économie politique de la réalité algorithmique",
+      "language": "French",
+      "translationLanguage": "French",
+      "cefrLevel": "B2",
+      "genre": "social_cultural_issues",
+      "totalChapters": 9,
+      "createdAt": "2026-08-12T07:36:43.373Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 9,
+      "wordCount": 3648,
+      "description": "This book traces the shift from traditional media’s manufacturing of consent to today’s algorithmic fragmentation of truth. It examines how platforms, surveillance capitalism, synthetic media, and AI reshape our shared reality and paralyze collective action. The work concludes by exploring avenues for reclaiming a common epistemic ground through public alternatives, regulation, and epistemic self-defense.",
+      "updated": "2026-08-12 07:48:21.750Z"
+    },
+    {
+      "id": "sqfxhwcsftpii4h",
+      "cover": "sqfxhwcsftpii4h_maagy6s4mj.jpg",
+      "title": "Manufacturing Truth: The Political Economy of Algorithmic Reality",
+      "language": "English",
+      "translationLanguage": "English",
+      "cefrLevel": "B2",
+      "genre": "social_cultural_issues",
+      "totalChapters": 9,
+      "createdAt": "2026-08-12T07:18:41.609Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 9,
+      "wordCount": 3938,
+      "description": "This analytical work explores how digital platforms and algorithms have transformed the very nature of truth—from a shared consensus to a fragmented, personalized commodity. It traces the shift from traditional mass media to a system where attention-driven business models, synthetic media, and algorithmic gatekeepers shape our beliefs, and it offers concrete strategies for rebuilding a trustworthy, public-oriented information commons.",
+      "updated": "2026-08-12 07:21:36.596Z"
+    },
+    {
+      "id": "s34776wgrodyglq",
+      "cover": "s34776wgrodyglq_yrhwrfmtml.jpg",
+      "title": "เปิดมือ เปลือยจิต: ละทิ้งคุณค่าที่มีเงื่อนไขตามรอยนักบุญฟรังซิส",
+      "language": "Thai",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "meditative",
+      "totalChapters": 10,
+      "createdAt": "2026-08-11T13:46:21.524Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 4986,
+      "description": "A contemplative journey through 10 reflections inspired by St. Francis of Assisi, exploring how to release the burden of conditional self-worth. By identifying the 'seven pedestals' we build and embracing spiritual poverty, perfect joy, and the 'second gaze,' it invites readers into the freedom of living with open hands and an unguarded soul.",
+      "updated": "2026-08-11 13:56:26.989Z"
     },
     {
       "id": "sliwaubdwdn0029",
@@ -70,6 +178,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4079,
+      "description": "In a mountain trade village, gifted young woodcarver Kael pursues acclaim until anxiety and frustration lead him to Master Aris. Through daily craft and quiet lessons, Kael discovers the difference between ego-driven craving (Taṇhā) and wholesome, purposeful intention (Chanda), ultimately learning to carve not for validation but from a place of inner peace.",
       "updated": "2026-08-11 06:01:45.262Z"
     },
     {
@@ -91,6 +200,7 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3087,
+      "description": "Follow Napa's intimate diary as she navigates the tension between building a meaningful life and learning to let go. Through quiet reflections, everyday moments, and deep inner shifts, she discovers that happiness may not come from choosing one path, but from holding both gently.",
       "updated": "2026-08-10 13:28:20.142Z"
     },
     {
@@ -106,13 +216,16 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
+      "ratings": {
+        "kjksljovpk623jy": 2
+      },
       "totalReads": 0,
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 7023,
-      "updated": "2026-08-11 11:52:18.968Z"
+      "description": "When a renowned philosophy professor in Bangkok is confronted by an AI that surpasses his intellectual abilities, he plunges into an existential crisis. Through encounters with Buddhist monks, Christian theologians, Taoist masters, and psychologists, he journeys from the trap of ego-driven comparison to a profound redefinition of human worth rooted in consciousness, compassion, and presence.",
+      "updated": "2026-08-11 13:44:38.017Z"
     },
     {
       "id": "skyinpig1qug6ka",
@@ -133,7 +246,8 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5597,
-      "updated": "2026-08-10 01:29:26.590Z"
+      "description": "When AI outpaces human intellect, cognitive scientist Alex Kwan faces a devastating crisis of self-worth. Through encounters with Buddhist philosophy, world religions, and modern psychology, Alex embarks on a transformative journey to discover that human value lies not in being the smartest, but in presence, compassion, and connection. This analytical exploration reveals how ancient wisdom and contemporary insight can guide us beyond the ego’s trap into a more meaningful way of being.",
+      "updated": "2026-08-11 14:09:37.495Z"
     },
     {
       "id": "sm5whprmuddlx4q",
@@ -154,6 +268,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3731,
+      "description": "A non-fiction exploration of global philosophies that promote balance, resilience, and genuine contentment over endless growth. Drawing from Swedish lagom, Danish hygge, Thai sufficiency economy, Costa Rican pura vida, and more, this book provides a practical guide to designing a life of enough, backed by psychology and cultural wisdom.",
       "updated": "2026-08-09 07:19:54.698Z"
     },
     {
@@ -175,6 +290,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3570,
+      "description": "This book explores wisdom from cultures around the world that teach balance, gratitude, and “enough.” Through Swedish lagom, Danish hygge, Thai sufficiency, and Costa Rican pura vida, readers learn how to step off the hamster wheel of more and design a life of true contentment. It offers practical steps to build resilience, strengthen social ties, and find joy without excess.",
       "updated": "2026-08-09 08:08:18.299Z"
     },
     {
@@ -196,6 +312,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1499,
+      "description": "In a colorful Mexican town, fearless young Paco bravely enters a haunted house and meets a lonely ghost girl named Lupita. Through friendship and the vibrant traditions of Día de Muertos, he helps her find peace and shows that remembering loved ones can turn a scary place into one of joy. A cute, culturally rich tale for beginner Spanish readers.",
       "updated": "2026-08-09 07:57:32.486Z"
     },
     {
@@ -217,6 +334,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 708,
+      "description": "In a bustling Costa Rican market, a boy named Carlos discovers a talking parrot that seems lost. With the help of his friend María, he follows the bird's clues to find its owner, learning the value of kindness and perseverance along the way.",
       "updated": "2026-08-09 00:43:17.575Z"
     },
     {
@@ -238,6 +356,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 732,
+      "description": "A bilingual German-English journey through Germany's diverse regions. In short, simple paragraphs, a traveler explores greetings in Bavaria, street food in Berlin, Carnival in Cologne, the Saxon dialect, and maritime traditions in Hamburg. Designed for CEFR A1 learners, each chapter compares cultural differences with clear line-by-line translations.",
       "updated": "2026-08-09 00:43:27.374Z"
     },
     {
@@ -259,6 +378,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3546,
+      "description": "Ethan Brooks has always been the smartest person in his small town, but when he earns a scholarship to a large university, he suddenly finds himself just average. Struggling with self-doubt and a fear of failure, he must learn, with the help of a wise older neighbor and new friends, that true success lies not in being the best, but in growing a little every day.",
       "updated": "2026-08-09 00:43:06.042Z"
     },
     {
@@ -280,6 +400,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4876,
+      "description": "Arm is the top student in his small rural school, praised by everyone. When he earns a scholarship to a big university in Bangkok, he struggles with being just average and becomes afraid to try new things. With the help of a wise older woman and new friends, he learns to redefine success and find his own path.",
       "updated": "2026-08-08 09:18:40.578Z"
     },
     {
@@ -301,6 +422,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5603,
+      "description": "In the late 1800s, a French-Canadian family leaves their Ontario village to drain a swamp in Michigan's Upper Peninsula, building a farm and a life. As they face harsh conditions, cultural divisions, and personal tragedies, the youngest son finds his calling in the woods with a team of Belgian horses, while his siblings scatter to different fates. This heartfelt, descriptive story explores sacrifice, resilience, and the bonds that tie a family to the land.",
       "updated": "2026-08-09 01:16:42.491Z"
     },
     {
@@ -322,6 +444,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2097,
+      "description": "When a devastating Great Lakes storm destroys Caleb's workshop and livelihood, his bitterness leads him to Margaret, an elderly woman who lost everything decades ago but radiates unshakable peace. Through her simple daily practice of gratitude, Caleb learns that true resilience is not about escaping storms, but about steering his own heart. Set on Michigan’s rugged Keweenaw Peninsula, this is a story of finding light in the darkest seasons and passing it on.",
       "updated": "2026-08-09 01:14:24.772Z"
     },
     {
@@ -343,6 +466,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6079,
+      "description": "A burnt-out environmental activist named Dao meets a wise Zen monk and discovers that true ecological healing begins within. Through mindfulness, deep listening, and community, she transforms her despair into compassionate action, realizing we are not separate from the Earth—we are the Earth waking up.",
       "updated": "2026-08-09 01:16:17.423Z"
     },
     {
@@ -364,6 +488,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 8613,
+      "description": "Evan's journey from a tech-savvy Midwestern youth to a theology student, caregiver, hidden lover, and finally a Peace Corps volunteer in Thailand. Through quiet reflection, heartbreak, and the discovery of inclusive communities, he learns to embrace his true self and find peace across cultures.",
       "updated": "2026-08-09 01:15:23.517Z"
     },
     {
@@ -385,6 +510,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4225,
+      "description": "Follow Elin, a young Swedish woman, as she rediscovers the ancient art of *lagom*—finding balance in a chaotic world. Through ten beautifully descriptive chapters, she transforms her home, work, relationships, and inner peace by embracing the philosophy of \"just enough.\" A heartwarming slice-of-life journey into Swedish culture and mindful living.",
       "updated": "2026-08-09 01:17:38.385Z"
     },
     {
@@ -406,6 +532,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4988,
+      "description": "A young Thai woman moves to Stockholm and, through the gentle guidance of a Swedish colleague, discovers the philosophy of lagom—the art of living just right. Over ten descriptive chapters, she learns to bring balance to her home, work, relationships, finances, health, and emotions, finding contentment in a high-speed world.",
       "updated": "2026-08-09 01:16:08.465Z"
     },
     {
@@ -427,6 +554,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 7167,
+      "description": "In 1970s Thailand, spirited Dao refuses to follow the traditional path expected of her—preferring English books, animal rescue, and environmental activism to quiet obedience. From her childhood in Prachinburi to university in Bangkok and back again, she carves out a life of independence and compassion, eventually finding peace surrounded by her pack of rescued dogs and an unspoken truce with her family.",
       "updated": "2026-08-09 01:16:21.310Z"
     },
     {
@@ -448,6 +576,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 10645,
+      "description": "In 1970s Prachinburi, a headstrong girl named Dao refuses the quiet obedience expected of her, pursuing her passion for English and animal welfare. As she journeys from provincial life to Bangkok and back, she carves out a life of independence, compassion, and peace on her own terms — a quiet rebellion against convention that leads to a deeply fulfilling life surrounded by rescued dogs and the gentle rhythms of home.",
       "updated": "2026-08-09 01:17:20.657Z"
     },
     {
@@ -471,6 +600,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 8830,
+      "description": "",
       "updated": "2026-08-09 01:17:04.306Z"
     },
     {
@@ -494,6 +624,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 7859,
+      "description": "This non-fiction book challenges the cultural pressure to travel, arguing that a rich, meaningful life can be built right where you are. Through 20 bite-sized essays, it debunks travel myths, validates the homebody temperament, and offers practical tools to resist FOMO, set boundaries, and rediscover the joy of staying put.",
       "updated": "2026-08-09 01:14:17.262Z"
     },
     {
@@ -515,6 +646,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5626,
+      "description": "In a Bangkok torn by political outrage, a young activist named Manop meets a Franciscan friar and a Buddhist monk who guide him on a transformative journey from reactive anger to profound grief and compassion. Through ten encounters blending Christian mysticism and Buddhist wisdom, Manop learns to dismantle his ego, embrace suffering, and discover the universal tears that connect all beings.",
       "updated": "2026-08-09 01:16:14.488Z"
     },
     {
@@ -536,6 +668,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3794,
+      "description": "This analytical text explores the intersection between Franciscan friar Richard Rohr's contemplative insights and core Buddhist philosophy. Through ten structured chapters, it examines how transforming reactive anger into transformative grief opens the door to non-dual wisdom, universal compassion, and inner peace in a polarized world.",
       "updated": "2026-08-09 01:17:28.197Z"
     },
     {
@@ -557,6 +690,7 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3334,
+      "description": "Ben, a third-generation farmer, lives in a rural valley where he cares deeply for his land, using traditional sustainable methods. But when he hears city-based climate activists blaming agriculture for environmental problems, he feels alienated and judged. The story follows Ben's journey as he navigates unpredictable seasons, corporate sales pitches, and challenging conversations, ultimately reframing his struggle and discovering that his organic practices are part of the solution, not the problem.",
       "updated": "2026-08-09 01:15:04.966Z"
     },
     {
@@ -578,6 +712,7 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3057,
+      "description": "Ben, a third-generation farmer, has always cared for his land with deep respect, but he feels attacked by the angry climate debates he sees on the news. When unpredictable seasons and corporate pressure threaten his farm, a different kind of conversation helps him see that true stewardship can bridge the divide between rural tradition and environmental health.",
       "updated": "2026-08-09 01:14:57.005Z"
     },
     {
@@ -599,6 +734,7 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3374,
+      "description": "This book explores the debate between personal lifestyle choices and corporate responsibility for climate change. Through the story of Maria, a city dweller feeling climate guilt, and an analysis of the history of the carbon footprint, it reveals how the focus on individual actions distracts from the need for systemic change. Readers will learn about the power of collective action and how to shift from a personal 'footprint' to a positive 'handprint'.",
       "updated": "2026-08-09 01:15:30.885Z"
     },
     {
@@ -620,6 +756,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2391,
+      "description": "Wasabi is a fat black and white cat who lives with her owner Well in Bangkok. When a matcha cafe opens next door, she finds a second home, becomes an internet star, and brings together a community of friends who love her.",
       "updated": "2026-08-09 01:15:20.760Z"
     },
     {
@@ -641,6 +778,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 1778,
+      "description": "Wasabi is a chubby black and white cat living on the streets of Bangkok. One day, a delicious smell leads him to a little matcha cafe, where a kind owner named Joy gives him food and a soft cushion. Soon, Wasabi becomes the cafe's beloved mascot, bringing joy to everyone who visits.",
       "updated": "2026-08-09 07:44:34.497Z"
     },
     {
@@ -662,6 +800,7 @@
       "copyrightFlag": false,
       "chaptersCount": 16,
       "wordCount": 6243,
+      "description": "Spanning decades from the volcanic ash of 1980s Washington to the tranquil woods of Michigan, this touching family narrative follows Finnish immigrant Helmi and her American dreamer husband Mark. Together with their five children, they navigate hardship, eccentric inventions, and life's quiet triumphs to discover that true wealth is built from the ground up.",
       "updated": "2026-08-09 01:17:48.951Z"
     },
     {
@@ -683,6 +822,7 @@
       "copyrightFlag": false,
       "chaptersCount": 6,
       "wordCount": 2425,
+      "description": "When Thailand's famous champion racehorse disappears and its head trainer is found dead, brilliant detective Sunan and Dr. Win travel to Pak Chong to solve the crime. Facing misleading clues, drugged Khao Soi, and a silent watchdog, Sunan uses sharp logic to uncover a web of secrets before the grand Royal Bangkok Cup. This Thai B1-level mystery adapts the classic Arthur Conan Doyle story into a captivating local setting.",
       "updated": "2026-08-09 07:46:13.872Z"
     },
     {
@@ -704,6 +844,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4460,
+      "description": "A simplified German A1-level retelling of the classic Sherlock Holmes mystery 'The Speckled Band.' Young Helen Stoner seeks help after hearing strange sounds that once preceded her sister's death. Sherlock Holmes and Dr. Watson investigate a sinister country house, uncovering a deadly secret involving a venomous snake.",
       "updated": "2026-08-09 07:49:13.302Z"
     },
     {
@@ -725,6 +866,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3624,
+      "description": "In the labyrinthine alleys of late 19th-century Talat Noi, Bangkok, reclusive scholar Khun Daeng and his companion Mek investigate a gruesome locked-room murder that baffles the police. Sifting through impossible clues and witnesses who describe a shrieking voice in an unknown tongue, they uncover a truth far stranger than any human crime — a tragedy born of animal mimicry and human arrogance.",
       "updated": "2026-08-09 07:55:19.979Z"
     },
     {
@@ -746,6 +888,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3249,
+      "description": "In the labyrinthine alleys of 19th-century Talat Noi, Bangkok, a reclusive scholar named Khun Daeng uses his razor-sharp logic to unravel a brutal locked-room murder. As witnesses babble in confusion and the police chase false leads, Khun Daeng discovers that the most horrific crimes often have the simplest, yet most inhuman, explanations.",
       "updated": "2026-08-09 01:16:55.950Z"
     },
     {
@@ -767,6 +910,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5082,
+      "description": "Set on the banks of the Chao Phraya River in early 20th-century Thailand, this adaptation of Mark Twain's classic follows Ton, a clever boy who loves freedom. From tricking friends into whitewashing a fence to witnessing a murder, running away to an island, and discovering hidden treasure, Ton navigates loyalty, courage, and the clash between tradition and modern justice. A vivid tale blending humor, suspense, and the rich sensory world of Thai village life.",
       "updated": "2026-08-09 01:16:26.377Z"
     },
     {
@@ -788,6 +932,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5907,
+      "description": "Monom is a little monkey who wants an adventure. He puts on his red backpack and visits places like a train station, a pink elephant statue, a river market, and a golden temple in Chachoengsao. Along the way, he tastes sweet mangoes, rides a boat, makes a duck friend, and finally returns to his tree home after a day full of simple, joyful discoveries.",
       "updated": "2026-08-09 07:43:03.710Z"
     },
     {
@@ -809,6 +954,7 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 11224,
+      "description": "Join Som, a cheerful ten-year-old from Bangkok, on a year-long journey through daily life, tasty food, exciting festivals, and big dreams. This simple bilingual tale uses everyday English and Thai side-by-side, helping beginners learn new words and grammar while exploring Thai culture. Perfect for young readers who want to discover language and life in a fun, friendly way.",
       "updated": "2026-08-09 01:17:12.359Z"
     },
     {
@@ -830,6 +976,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 7758,
+      "description": "What does the future hold for humanity? This book takes you on a clear, fact-based journey from our past struggles against famine and disease to a future shaped by artificial intelligence and biotechnology. Discover how shared stories built our world, why liberalism is under threat, and how new techno-religions might redefine what it means to be human.",
       "updated": "2026-08-09 01:16:32.156Z"
     },
     {
@@ -851,6 +998,7 @@
       "copyrightFlag": false,
       "chaptersCount": 9,
       "wordCount": 3994,
+      "description": "This descriptive guide illuminates the consecutive sacred days of Asarnha Bucha and Khao Phansa, tracing the historical first sermon of the Buddha and the origins of the three-month Rains Retreat. Through vivid depictions of rituals, temple life, and personal practice, it reveals how ancient traditions of seasonal stillness offer a sanctuary for inner peace in the modern world.",
       "updated": "2026-08-09 01:14:30.497Z"
     },
     {
@@ -872,6 +1020,7 @@
       "copyrightFlag": false,
       "chaptersCount": 9,
       "wordCount": 2879,
+      "description": "As the full moon of July rises, two sacred days—Asarnha Bucha and Khao Phansa—usher in the three-month Rains Retreat. This descriptive story walks you through the ancient Deer Park sermon, candlelit processions, and the quiet season of reflection, revealing how timeless rituals bring stillness to a fast-moving world.",
       "updated": "2026-08-09 01:17:14.902Z"
     },
     {
@@ -893,6 +1042,7 @@
       "copyrightFlag": false,
       "chaptersCount": 12,
       "wordCount": 5008,
+      "description": "Follow Alex as he travels around the world to hear the stories behind our greatest mythical beasts. From the Yeti to modern internet monsters, each legend reveals something about human nature and the dark corners we still fear.",
       "updated": "2026-08-09 01:16:51.026Z"
     },
     {
@@ -916,6 +1066,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6223,
+      "description": "Join St. Francis of Assisi on a modern pilgrimage through city streets, shopping malls, and digital life. In gentle, simple language, this story invites you to see the world with new eyes—finding silence in noise, joy in simplicity, and peace in the middle of everyday struggles.",
       "updated": "2026-08-09 01:16:29.148Z"
     },
     {
@@ -937,6 +1088,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2332,
+      "description": "A modern retelling of the classic Thai ghost story tailored for B1 learners. Follow Mak as he moves into an old canal-side house with his wife, only to slowly realize that she is no longer among the living. Suspense builds as he uncovers the terrifying truth and fights to escape her haunting grasp.",
       "updated": "2026-08-09 01:15:52.716Z"
     },
     {
@@ -958,6 +1110,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2437,
+      "description": "When Daniel returns to his ancestral village in Thailand, he uncovers a terrifying secret tied to the vengeful spirit of Mae Nak, a ghost who punishes the unfaithful. As eerie whispers and phantom figures haunt him, Daniel must confront his family’s dark past—or be dragged into the river’s depths forever. A chilling retelling of a Southeast Asian legend, blending folklore, suspense, and the horrors of broken promises.",
       "updated": "2026-08-09 01:15:47.921Z"
     },
     {
@@ -979,6 +1132,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3235,
+      "description": "A simple, informative book for beginner Spanish learners. Each chapter introduces a famous Spanish speaker—from Pope Francis to artists and athletes—using clear, repetitive language to build vocabulary. Discover their countries, professions, and what makes them special while practicing basic Spanish reading skills.",
       "updated": "2026-08-09 01:16:58.461Z"
     },
     {
@@ -1000,6 +1154,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 830,
+      "description": "This book tells the true story of Johnny Appleseed, a kind man who planted apple trees across America. Learn about his long walks, his love for nature, and the gift of trees he shared with everyone. A simple, beautiful tale of one man and his seeds.",
       "updated": "2026-08-09 01:14:59.386Z"
     },
     {
@@ -1021,6 +1176,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 7293,
+      "description": "After years away in the bustling city, a young woman returns to her grandmother’s quiet village by the canal, drawn by the scent of lamduan flowers and a longing for connection. As she settles into the old house and rekindles ties with the community, she unravels a long-hidden family secret that reshapes her understanding of love, sacrifice, and the meaning of home. This tender slice-of-life novel celebrates the enduring beauty of Thai rural traditions, the quiet wisdom of elders, and the delicate memories that bind us across generations.",
       "updated": "2026-08-09 01:17:54.576Z"
     },
     {
@@ -1042,6 +1198,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6107,
+      "description": "This descriptive narrative invites readers on a contemplative walk through the modern world, guided by the timeless wisdom of St. Francis of Assisi. Each chapter explores a contemporary landscape—from digital noise to environmental grief—and gently reframes it through Franciscan joy, simplicity, and compassion. The journey reveals that even amid the chaos of the 21st century, one can find sacred silence, kinship with creation, and true freedom of the heart.",
       "updated": "2026-08-09 07:55:23.389Z"
     },
     {
@@ -1063,6 +1220,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 10398,
+      "description": "A graded reader retelling Homer's epic for intermediate Thai learners. Follow Odysseus's ten-year struggle to return home from the Trojan War, while his son Telemachus searches for him and his wife Penelope fends off greedy suitors. This adaptation captures monsters, magic, and a hero's final triumph in clear, accessible language.",
       "updated": "2026-08-09 01:15:02.118Z"
     },
     {
@@ -1084,6 +1242,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 9265,
+      "description": "After the Trojan War, the Greek hero Odysseus faces monsters, sorceresses, and the anger of the gods on his ten-year voyage home. While his wife Penelope and son Telemachus defend their house from greedy suitors, Odysseus tells his incredible story of survival. This exciting retelling brings Homer's epic to life for modern readers, celebrating courage, loyalty, and the power of homecoming.",
       "updated": "2026-08-09 01:16:00.274Z"
     },
     {
@@ -1105,6 +1264,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3619,
+      "description": "This book explores the hidden side of mindfulness meditation. It explains why real practice is often difficult, not just calm, and shows how to navigate the challenges safely. Learn to grow stronger by embracing the full journey of your mind.",
       "updated": "2026-08-09 01:15:50.415Z"
     },
     {
@@ -1128,6 +1288,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4509,
+      "description": "This book uncovers the hidden challenges of mindfulness, blending scientific findings with Buddhist wisdom to show why real practice is often difficult but transformative. It guides readers through potential pitfalls and offers practical advice for building a resilient, mature mindfulness. Written in clear Thai for intermediate learners, it makes complex ideas accessible and deeply human.",
       "updated": "2026-08-09 01:16:34.853Z"
     },
     {
@@ -1149,6 +1310,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 9845,
+      "description": "A simplified analytical study guide of Yuval Noah Harari's 'Homo Deus,' breaking down 20 key chapters into easy-to-understand Thai for intermediate learners. It traces humanity's journey from conquering famine and war to facing a future where technology may render us obsolete, challenging the very meaning of being human.",
       "updated": "2026-08-09 01:15:57.728Z"
     },
     {
@@ -1172,6 +1334,7 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 4011,
+      "description": "This book provides simple, scientifically validated self-improvement tools and teaches readers to recognize manipulative marketing in the self-help industry. Written in clear Thai for intermediate learners, it offers a grounded path to real personal growth without falling for gurus selling miracles.",
       "updated": "2026-08-09 01:17:09.632Z"
     },
     {
@@ -1193,6 +1356,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6592,
+      "description": "This practical cultural guide unravels the puzzling behaviors of Western teachers in Thai schools, from their direct speech and rigid timekeeping to their chaotic active-learning classrooms. Written for Thai educators, it provides insights and strategies to bridge the gap, turning potential friction into a powerful collaboration that blends Thai harmony with Western dynamism.",
       "updated": "2026-08-09 01:17:51.909Z"
     },
     {
@@ -1214,6 +1378,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6756,
+      "description": "This practical guide helps new ESL teachers in Thailand move beyond survival mode by explaining essential cultural values—from the Wai greeting to saving face in the classroom. Through 15 thematic chapters, you’ll learn to navigate daily life, school hierarchies, and deep-rooted traditions with confidence, transforming culture confusion into cultural responsiveness.",
       "updated": "2026-08-09 01:16:05.325Z"
     },
     {
@@ -1235,6 +1400,7 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 8269,
+      "description": "Join Anna, a curious student, on a year-long journey through Germany as she explores 30 beloved traditions, from festive fireworks on New Year's Eve to the colorful lantern parades of St. Martin's Day. This bilingual German-English story for beginners (CEFR A1) introduces cultural customs in simple, repetitive language, making learning fun and accessible. Discover the heart of German culture, one tradition at a time, and build your vocabulary along the way.",
       "updated": "2026-08-09 01:14:22.420Z"
     },
     {
@@ -1258,6 +1424,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5665,
+      "description": "This book explores the evolutionary, social, and neurological mysteries of why rhythm and melody move us so deeply. From Darwin's sexual selection theory to modern brain science, it reveals how music and dance shaped human survival, bonding, and emotional life, and why we simply can't stop moving to the beat.",
       "updated": "2026-08-09 01:17:23.405Z"
     },
     {
@@ -1279,6 +1446,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3534,
+      "description": "This practical guide helps high school and college students build essential study skills for lasting success. Each chapter explains a key topic—like time management, note-taking, and exam prep—with clear steps and real-world examples. Learn to study smarter, reduce stress, and reach your academic goals with confidence.",
       "updated": "2026-08-09 01:15:12.804Z"
     },
     {
@@ -1302,6 +1470,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4937,
+      "description": "This contemplative guide takes readers on a journey through Christian history, pairing each chapter with a spiritual giant—from the desert solitude of Antony to the everyday mindfulness of Brother Lawrence and the social justice of Thomas Merton. Through descriptive narratives and timeless practices like Lectio Divina and the Examen, it shows how to cultivate inner quiet and transform ordinary life into a prayerful existence. Ultimately, it invites readers to find peace within and carry it outward in love and service to a noisy world.",
       "updated": "2026-08-09 01:17:43.534Z"
     },
     {
@@ -1323,6 +1492,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2517,
+      "description": "This analytical non-fiction book explores why minority out-groups are frequently targeted by propaganda. It presents three core reasons: their low power to retaliate, the lack of direct contact that breeds stereotypes, and the scapegoating that distracts from internal failures. Designed for intermediate Thai readers, it provides clear explanations and practical tools to recognize and resist manipulation.",
       "updated": "2026-08-09 07:55:23.840Z"
     },
     {
@@ -1346,6 +1516,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2151,
+      "description": "Why do some groups become repeated targets of hate and blame? This book explains the psychological and social reasons behind propaganda campaigns, showing how power imbalances, lack of contact, and political distraction make out-groups easy victims. By understanding these patterns, readers can learn to recognize manipulation and help build a more fair-minded society.",
       "updated": "2026-08-09 01:15:32.951Z"
     },
     {
@@ -1369,6 +1540,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4467,
+      "description": "In the bustling city of Bangkok, a young woman named Napat feels overwhelmed by the noise of modern life. Through a series of everyday challenges—from social media envy to career anxieties—she gradually learns to let go of unnecessary burdens and finds peace in the present moment. This slice-of-life story weaves timeless Zen wisdom into a heartwarming journey of self-discovery.",
       "updated": "2026-08-09 01:15:18.080Z"
     },
     {
@@ -1392,6 +1564,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1695,
+      "description": "Marco leaves his small Italian town for a new life in London, but his dream quickly meets the wall of an unfamiliar language. Through daily missteps, unexpected friendships, and quiet determination, he discovers that learning English is not just about words—it’s about finding the courage to be understood and to truly belong.",
       "updated": "2026-08-09 01:17:30.625Z"
     },
     {
@@ -1413,6 +1586,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2510,
+      "description": "Follow Ton, a passionate local tour guide, as he shares the hidden wonders and ancient secrets of Khao Yai National Forest. Through his eyes, visitors learn that the forest is not just a destination, but a living, breathing home that deserves our deepest respect and protection.",
       "updated": "2026-08-09 01:14:35.768Z"
     },
     {
@@ -1434,6 +1608,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1528,
+      "description": "Ana, a curious child, embarks on a magical adventure through a forest where she finds a hidden cave and makes a new animal friend. Together they explore wonders without a map, learning about bravery and friendship. The story ends with a delightful surprise that shows the rewards of curiosity.",
       "updated": "2026-08-09 01:14:43.806Z"
     },
     {
@@ -1455,6 +1630,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4091,
+      "description": "Through the life and writings of Henry David Thoreau, this B1-level expository text invites readers to rediscover the art of living simply, deliberately, and in harmony with nature. From his solitary experiment at Walden Pond to his bold act of civil disobedience, each chapter reveals a timeless insight about self-reliance, observation, and moral courage. A gentle yet profound guide for anyone seeking meaning beyond modern distractions.",
       "updated": "2026-08-09 01:17:25.857Z"
     },
     {
@@ -1478,6 +1654,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1732,
+      "description": "This expository journey explores the profound philosophical insights of Henry David Thoreau, guiding readers through his experiment in simple living at Walden Pond. By examining his core teachings on nature, self-reliance, and mindfulness, the book reveals how his timeless wisdom can help modern seekers find peace and inner freedom.",
       "updated": "2026-08-09 01:15:45.414Z"
     },
     {
@@ -1501,6 +1678,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2525,
+      "description": "Napa, a young Thai botanist, travels to a distant exoplanet to study alien plant life. Overwhelmed by homesickness, she struggles to adapt to the sterile station and longs for the familiar tastes and sounds of Earth. Through an unlikely friendship with a homesick alien and the creation of a shared Memory Garden, she discovers that home can be found wherever you connect with others.",
       "updated": "2026-08-09 01:17:46.029Z"
     },
     {
@@ -1522,6 +1700,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2500,
+      "description": "This gentle guide offers five Buddhist-inspired meditations to transform negativity and complaining into inner peace. Through mindful awareness, gratitude, and compassion, readers learn practical steps to quiet the restless mind and cultivate a more joyful way of being.",
       "updated": "2026-08-09 01:15:55.044Z"
     },
     {
@@ -1545,6 +1724,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1381,
+      "description": "Discover the fascinating neuroscience behind your inner critic and learn how the brain's Default Mode Network and Task-Positive Network interact like a biological see-saw. This expository guide provides practical, science-backed tools to quiet negative rumination, manage stress, and rewire your brain for a calmer, more focused mind.",
       "updated": "2026-08-09 01:14:27.038Z"
     },
     {
@@ -1566,6 +1746,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1811,
+      "description": "Pim is a Thai high school senior with one big dream: she wants to become a professional e-gamer. But her parents want her to study engineering, and this creates conflict at home. In the end, they find a kind compromise that lets Pim follow her dream while also building a safe future.",
       "updated": "2026-08-09 01:15:28.390Z"
     },
     {
@@ -1589,6 +1770,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1696,
+      "description": "When a young teacher is assigned to a remote rural school in Thailand, he soon discovers that the abandoned old building hides a dark and deadly secret. As terrifying whispers echo through the night, he must uncover the tragic past to survive a supernatural haunting that refuses to stay buried.",
       "updated": "2026-08-09 01:15:15.549Z"
     },
     {
@@ -1610,6 +1792,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2118,
+      "description": "When a young English teacher arrives at a remote, aging school in rural Issan, he quickly realizes that the students are terrified of a sealed classroom on the second floor. As supernatural encounters escalate into terrifying night terrors, he must uncover the tragic history of a ghostly student to survive his first and last semester. This spine-chilling thriller blends Thai folklore with classic haunted school suspense to keep readers on the edge of their seats.",
       "updated": "2026-08-09 07:55:25.942Z"
     },
     {
@@ -1631,6 +1814,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3254,
+      "description": "When a traditional Thai father finds himself alienated by his teenage children's modern dreams and digital lives, he must embark on a heartfelt journey of self-discovery to bridge the generational divide. Through small, everyday moments and unexpected technological missteps, he learns that true parenting isn't about controlling the future, but understanding it. 'Hot Tea and the New World' is a touching slice-of-life story about the beautiful, messy process of growing together.",
       "updated": "2026-08-09 01:14:46.089Z"
     },
     {
@@ -1652,6 +1836,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3434,
+      "description": "In a futuristic academy where magic is fueled by neural pathways, an analytical apprentice must decode the cognitive secrets of the universe to prevent a catastrophic system failure. By examining the dual pathways of memory, the limits of working memory, and the power of active retrieval, the protagonist discovers that true mastery requires balancing intense focus with subconscious diffusion. This sci-fi fantasy blend uses the principles of cognitive neuroscience to unravel a cosmic mystery.",
       "updated": "2026-08-09 07:55:26.050Z"
     },
     {
@@ -1673,6 +1858,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5848,
+      "description": "Mali, a young teacher from Chachoengsao, begins her first year at a rural school in the northern mountains of Thailand. There she meets Tom, a volunteer teacher from England, and together they help shy students discover the joy of English while sharing daily village life, friendship, and a gentle romance. This warm slice-of-life story is about learning, belonging, and the quiet moments that can change a life.",
       "updated": "2026-08-09 01:17:35.495Z"
     },
     {
@@ -1696,6 +1882,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1641,
+      "description": "When young Praew returns to her grandmother's home on Koh Samet, she discovers the legend of Nang Samet, a beautiful spirit who has protected the island for centuries. As strange storms threaten the shores and villagers grow afraid, Praew must learn the ancient ways to honor the guardian spirit before the island loses its magic forever. A tale of love, tradition, and the powerful bond between people and the sea.",
       "updated": "2026-08-09 01:16:37.447Z"
     },
     {
@@ -1719,6 +1906,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4827,
+      "description": "Set in the warm, everyday life of Chiang Mai, this heartwarming slice-of-life story follows Mena, a transgender girl finding the courage to come out and live as her true self. Through family conversations, friendship, local festivals, and quiet moments of change, the story explores acceptance, identity, and the beauty of being seen with love.",
       "updated": "2026-08-09 01:14:51.802Z"
     },
     {
@@ -1740,6 +1928,7 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 10839,
+      "description": "Journey through the heart of Thailand with thirty timeless tales that blend Buddhist fables, folk magic, and mythical legends. Each story carries a moral, a spark of humour, or a touch of the supernatural, revealing the wisdom and imagination of the Thai people. From loyal spirits to clever tricksters, these echoes of the Land of Smiles captivate and inspire readers of all ages.",
       "updated": "2026-08-09 01:14:54.498Z"
     },
     {
@@ -1761,6 +1950,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2504,
+      "description": "This book distills five timeless lessons from Lao Tzu's Tao Te Ching into simple, accessible Thai for intermediate learners. Exploring concepts like humility, adaptability, and inner peace, it guides readers to live with balance and wisdom in a changing world. Perfect for those seeking practical philosophy rooted in ancient wisdom.",
       "updated": "2026-08-09 01:16:02.588Z"
     },
     {
@@ -1782,6 +1972,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2036,
+      "description": "Why does a Western 'yes' sound so final, while a Thai smile can hide a polite 'no'? This book explores the fascinating differences between Western and Thai communication styles, from direct speech to the vital importance of saving face and reading non-verbal cues. Through clear examples and simple explanations, readers will learn to navigate cross-cultural conversations with greater understanding and respect.",
       "updated": "2026-08-09 01:15:26.151Z"
     },
     {
@@ -1805,6 +1996,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 7633,
+      "description": "This book offers a serene journey through core Buddhist teachings, gently weaving them into the fabric of everyday Thai life. Each chapter provides practical meditations and reflections, guiding laypeople to find peace, compassion, and wisdom amidst modern challenges.",
       "updated": "2026-08-09 01:14:38.250Z"
     },
     {
@@ -1828,6 +2020,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2848,
+      "description": "This expository Thai reader for intermediate learners compares core aspects of Thai and American worldviews. Through five clear chapters, it contrasts ideas of self and group, communication styles, concepts of time, family structures, and religious beliefs. Designed for B1 learners, the text uses accessible Thai to illuminate cultural differences with factual, real-world examples.",
       "updated": "2026-08-09 01:15:07.558Z"
     },
     {
@@ -1849,6 +2042,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 6172,
+      "description": "This book retells ten foundational stories from the Old Testament, from the creation of the world to Jonah's mission. Each chapter presents the biblical event in simple Thai and explains how it is commonly understood by mainstream Christian churches, highlighting themes of faith, mercy, and God's plan for humanity.",
       "updated": "2026-08-09 01:16:45.364Z"
     },
     {
@@ -1872,6 +2066,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1333,
+      "description": "A wealthy Thai businessman attempts to escape a deadly plague by locking himself and his elite friends inside a lavish estate. However, during a mysterious masquerade ball, an uninvited guest arrives to remind them that no wall is high enough to keep out death.",
       "updated": "2026-08-09 07:55:29.721Z"
     },
     {
@@ -1895,6 +2090,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1721,
+      "description": "In this Thai adaptation of Poe’s classic, a man visits his childhood friend in a decaying teak mansion surrounded by dark, stagnant waters. As a mysterious family illness and a premature burial haunt the house, the boundary between sanity and the supernatural begins to collapse during a torrential storm.",
       "updated": "2026-08-09 07:55:28.215Z"
     },
     {
@@ -1916,6 +2112,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 780,
+      "description": "A poor Thai family receives a magical monkey's paw that grants three wishes, but each comes with a terrible price. As they learn the hard way that some desires are better left unfulfilled, they must confront the consequences of their greed and the true meaning of happiness.",
       "updated": "2026-08-09 01:17:40.966Z"
     },
     {
@@ -1939,6 +2136,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2019,
+      "description": "In a remote Thai village, a struggling family comes into possession of a mystical monkey's paw that grants three wishes, only to discover that destiny demands a terrible price. This adaptation of a classic tale explores the dark consequences of trying to change fate through greed and grief.",
       "updated": "2026-08-09 07:55:28.280Z"
     },
     {
@@ -1962,6 +2160,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1908,
+      "description": "A young traveler arrives in a sleepy Thai village and meets Uncle Sommai, who spins a tall tale about his champion jumping frog, Tup. In a story filled with laughter and gentle trickery, the frog’s fate at a temple fair becomes a lesson in life’s simple joys and the art of losing with a smile. Inspired by Mark Twain’s classic, this heartwarming slice-of-life captures the spirit of Thai rural humor.",
       "updated": "2026-08-09 01:15:43.009Z"
     },
     {
@@ -1985,6 +2184,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1998,
+      "description": "When Bangkok detective Thirachai returns to his childhood village for a traditional harvest festival, he is drawn into a chilling mystery: the lottery that selects a “lucky winner” each year is actually a brutal ritual sacrifice. Inspired by Shirley Jackson’s classic tale, this gripping Thai-language story follows his dangerous investigation as he uncovers generational secrets and races to stop the next killing.",
       "updated": "2026-08-09 01:16:39.796Z"
     },
     {
@@ -2008,6 +2208,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2471,
+      "description": "A young detective investigates the disappearance of an old man in a quiet Bangkok neighborhood. The prime witness, a neighbor named Ek, seems cooperative, but is slowly consumed by a relentless, phantom heartbeat that only he can hear. As the sound grows louder, guilt and paranoia drive him to a chilling confession, revealing a crime hidden beneath the floorboards. A adaptation inspired by Edgar Allan Poe.",
       "updated": "2026-08-09 01:17:32.948Z"
     },
     {
@@ -2031,6 +2232,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2356,
+      "description": "When a curious teen moves to a quiet town and ventures into a forbidden abandoned mansion, a mysterious black cat becomes their guide through hidden corridors and dark secrets. As eerie events unfold, they uncover a century-old crime and must decide whether to bring the truth to light. A tale of adventure, guilt, and the courage to face the past.",
       "updated": "2026-08-09 01:15:40.314Z"
     },
     {
@@ -2052,6 +2254,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2431,
+      "description": "A Thai exchange student's journey through a semester in England, from the first chilly morning to tearful goodbyes. Through everyday adventures in school, food, and friendship, she learns that home is not just a place but the people she meets along the way. A heartwarming slice-of-life tale about cultural discovery and personal growth.",
       "updated": "2026-08-09 01:17:17.796Z"
     },
     {
@@ -2075,6 +2278,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 3178,
+      "description": "Mai is a high school senior in Thailand with a deep love for photography, but her parents dream of her becoming a doctor or lawyer. As she navigates her final year, she must find the courage to share her true passion and seek a path that honors both her family’s wishes and her own heart.",
       "updated": "2026-08-09 07:55:32.575Z"
     },
     {
@@ -2096,6 +2300,7 @@
       "copyrightFlag": false,
       "chaptersCount": 8,
       "wordCount": 3086,
+      "description": "\"Magnificent Humanity: The AI Era and Inalienable Dignity\" is a thoughtful expository journey in Thai for B1 learners, exploring Pope Leo XIV's encyclical on protecting human dignity amid rapid AI development. Through eight accessible chapters, readers discover the promises and perils of artificial intelligence, the unique value of human love and imperfection, and the collective responsibility to build a civilization of hope rather than power.",
       "updated": "2026-08-09 01:16:53.479Z"
     },
     {
@@ -2117,6 +2322,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4413,
+      "description": "This accessible French summary of Daniel Kahneman's 'Thinking, Fast and Slow' introduces the two systems that drive our thoughts. Through simple language and practical examples, it explores how hidden biases, mental shortcuts, and the conflict between our experiencing and remembering selves shape our decisions. Ideal for intermediate learners, it offers both language practice and insight into the quirks of the human mind.",
       "updated": "2026-08-09 01:16:47.902Z"
     },
     {
@@ -2138,6 +2344,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4786,
+      "description": "This book follows the daily life of Nat, a young office worker, as he discovers the two thinking systems in his brain. Through relatable stories, it explains common biases and mental shortcuts, offering simple ways to make better decisions.",
       "updated": "2026-08-09 01:15:35.540Z"
     },
     {
@@ -2161,6 +2368,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4616,
+      "description": "This non-fiction book for Thai learners presents the grand journey of Homo sapiens, drawing on key themes from Yuval Noah Harari's Sapiens. Across ten accessible chapters, readers explore the revolutions that shaped our species—cognitive, agricultural, and scientific—and see how shared stories like money, empires, and religions unified the world, leading to the challenges we face today.",
       "updated": "2026-08-09 01:14:40.944Z"
     },
     {
@@ -2184,6 +2392,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1706,
+      "description": "When Léa is assigned to tell her parents' love story, she uncovers a surprising romance between a rugby-obsessed father and a dreamy artist mother. Through their clashes and reconciliation, she learns that love thrives on differences, and discovers her own longing for an extraordinary connection.",
       "updated": "2026-08-09 01:15:10.499Z"
     },
     {
@@ -2207,6 +2416,7 @@
       "copyrightFlag": false,
       "chaptersCount": 4,
       "wordCount": 1476,
+      "description": "A young office worker overwhelmed by stress and self-criticism discovers the mindfulness teachings of Thich Nhat Hanh. Through the simple practice of conscious breathing and the gentle metaphor of a mother cradling her crying baby, she learns to embrace her anger and pain with tenderness, finding true freedom and self-love in the present moment.",
       "updated": "2026-08-09 01:14:19.776Z"
     },
     {
@@ -2230,6 +2440,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2114,
+      "description": "This book breaks down the brain's dopamine system using the simple metaphor of a pleasure-pain scale guarded by 'goblins.' It explains how modern quick-fix pleasures lead to addiction and emptiness, while effort-driven activities create lasting well-being. Through clear steps like self-binding and a 30-day dopamine reset, readers learn to regain control and rediscover genuine happiness.",
       "updated": "2026-08-09 01:15:37.961Z"
     },
     {
@@ -2253,6 +2464,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4190,
+      "description": "This collection of ten gentle yet profound lectures, inspired by the teachings of Pema Chödrön, guides Thai learners through essential spiritual themes like impermanence, self-compassion, and mindful presence. Each chapter offers simple, practical wisdom for navigating life's challenges with an open heart, making it perfect for intermediate Thai readers seeking inner peace and personal growth.",
       "updated": "2026-08-09 01:16:23.797Z"
     },
     {
@@ -2274,6 +2486,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5138,
+      "description": "This collection of 15 independent articles takes Thai language learners on a cultural journey across Thailand, from the mountainous North to the tropical South. Each article explores a different region, highlighting local traditions, food, and attractions, and is written in clear, intermediate-level Thai suitable for B1 learners. It is an ideal resource for improving reading skills while gaining deeper insight into Thailand's diverse regions.",
       "updated": "2026-08-09 01:17:00.959Z"
     },
     {
@@ -2295,6 +2508,7 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 12586,
+      "description": "Join Tom, an American tourist, on his 30-day adventure through Germany! From arriving at Frankfurt Airport to exploring bakeries, castles, and Christmas markets, each chapter is a self-contained slice of life. Written in simple bilingual text, this book is perfect for CEFR A1 learners to enjoy German language and culture side by side.",
       "updated": "2026-08-09 01:16:11.505Z"
     },
     {
@@ -2318,6 +2532,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 3255,
+      "description": "Trapped in the relentless noise of his own thoughts, a young designer discovers the profound teachings of mindfulness through an unexpected encounter with a village elder. Guided by the gentle wisdom of Thich Nhat Hanh’s insights, he learns to listen to the call of Mother Earth and cultivate noble silence, transforming his inner chaos into a source of healing and gratitude. This serene journey reveals how conscious breathing can unlock our ability to truly respond to the wonders of life.",
       "updated": "2026-08-09 07:55:33.054Z"
     },
     {
@@ -2339,6 +2554,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1717,
+      "description": "A restless woman discovers the healing practice of mindfulness through the simple gifts of nature. Guided by breathing and noble silence, she learns to quiet her inner noise and truly listen to the whisper of Mother Earth. This soothing story gently invites readers to find peace in the present moment.",
       "updated": "2026-08-09 01:17:07.020Z"
     },
     {
@@ -2360,6 +2576,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 4224,
+      "description": "Follow the heartwarming adventures of Mateo, a young boy from a small Mexican town, and his clever pet monkey Tito. Through everyday moments—market visits, festivals, and playful mischief—they learn about friendship, community, and the beauty of their culture. This slice-of-life story is perfect for Spanish learners at A2 level, offering simple language and relatable themes.",
       "updated": "2026-08-09 07:55:37.832Z"
     },
     {
@@ -2383,6 +2600,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1886,
+      "description": "When modern development threatens the tranquil rhythm of his lifelong home, an elderly man must navigate his feelings of nostalgia and isolation. Through a series of heartfelt community events and a sudden natural challenge, he discovers that while the village's landscape may change, its enduring cultural heart remains unbroken.",
       "updated": "2026-08-09 07:55:35.686Z"
     },
     {
@@ -2406,6 +2624,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2083,
+      "description": "When Mali, a stressed Bangkok office worker, visits her wise grandmother in Chiang Mai, she discovers that ancient Stoic wisdom and Buddhist teachings share profound insights for modern life. Through everyday events and heartfelt conversations, she learns to find peace by comparing how each tradition approaches control, impermanence, virtue, acceptance, and mindfulness. This gentle story invites readers to explore practical philosophy in a Thai setting.",
       "updated": "2026-08-09 01:14:14.608Z"
     },
     {
@@ -2429,6 +2648,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2182,
+      "description": "Tom, a young Western volunteer, arrives in Thailand feeling lost and skeptical. Through simple daily encounters at a rural temple, he discovers universal Buddhist principles like impermanence, letting go, and compassion. This heartfelt story shows how ancient wisdom can heal a modern heart, regardless of faith.",
       "updated": "2026-08-09 07:55:43.077Z"
     },
     {
@@ -2450,6 +2670,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2202,
+      "description": "How do our thoughts really flow? Can a simple choice change our life? This book walks with the great American thinker William James to find simple, practical answers for everyday problems. Through five clear reflections, we see how his ideas on consciousness, choice, truth, and hope can help us build a richer, more meaningful life.",
       "updated": "2026-08-09 07:55:35.713Z"
     },
     {
@@ -2473,6 +2694,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1774,
+      "description": "Rashid leaves his quiet life in the mountains of northern Pakistan to teach English in a lively Thai provincial school. As he struggles to connect with his students, he discovers that the greatest adventures are not only found in new landscapes but in the bridges we build between hearts. A gentle story of cultural exchange, courage, and finding home in unexpected places.",
       "updated": "2026-08-09 07:55:50.523Z"
     },
     {
@@ -2494,6 +2716,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2766,
+      "description": "This book is a gentle introduction to the life-changing ideas of William James, the father of American psychology and pragmatism. Written for intermediate Thai learners, it explores how truth works in our daily lives, why we have the right to believe even without proof, and how our actions can shape our emotions. Through simple, relatable examples, readers will discover a practical philosophy that offers hope, self-understanding, and a guide to building a meaningful life in an imperfect world.",
       "updated": "2026-08-09 07:55:49.720Z"
     },
     {
@@ -2517,6 +2740,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1435,
+      "description": "When a quiet coffee shop owner finds a forgotten notebook in his riverside cafe, he uncovers the rich cultural history and personal memories of the local community. As he connects with the notebook's owner, they team up to bridge the past and present, transforming his humble shop into a beloved gathering place for the neighborhood.",
       "updated": "2026-08-09 07:55:39.863Z"
     },
     {
@@ -2540,6 +2764,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2545,
+      "description": "This gentle five-chapter meditation follows an ordinary traveler whose quiet journey becomes a spiritual lesson in simplicity, compassion, and peace. Inspired by Franciscan principles, the story invites readers to discover how small acts of love can transform both the heart and the world.",
       "updated": "2026-08-09 07:55:40.083Z"
     },
     {
@@ -2561,6 +2786,7 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 14470,
+      "description": "Join Tawan, a new tour guide, on a fun 30-day adventure across beautiful Thailand with a group of friendly tourists. This simple, bilingual story helps beginner English learners practice essential travel vocabulary, daily routines, and polite conversations. It is the perfect 30-day practice guide for aspiring tour guides and A1 level students wanting to build real-world English confidence.",
       "updated": "2026-08-09 07:55:46.845Z"
     },
     {
@@ -2582,6 +2808,7 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 12666,
+      "description": "A friendly 30-day beginner guide for Spanish students learning English for hotels and tourism. Each short chapter shows daily hotel life with simple phrases, cultural notes, and clear practice activities. This story builds confidence with practical language for real hotel work and travel.",
       "updated": "2026-08-09 07:55:40.162Z"
     },
     {
@@ -2603,6 +2830,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3731,
+      "description": "A human exploration team lands on a distant alien world, only to discover that they are the ones being studied. As fear, curiosity, and misunderstanding grow on both sides, humans and aliens must learn to trust each other before first contact turns into conflict. This is an adventurous and hopeful story about discovery, empathy, and seeing ourselves through чужие eyes.",
       "updated": "2026-08-09 07:55:35.754Z"
     },
     {
@@ -2624,6 +2852,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4483,
+      "description": "An alien civilization on a distant planet watches as a mysterious object appears in their sky. When human explorers arrive, the aliens must decide whether to trust these strange visitors. Told from the aliens' perspective, this story explores first contact through fear, curiosity, and the discovery of a new friendship.",
       "updated": "2026-08-09 07:55:46.277Z"
     },
     {
@@ -2647,6 +2876,7 @@
       "copyrightFlag": false,
       "chaptersCount": 20,
       "wordCount": 11124,
+      "description": "After moving into his ancestral home, Tonkla discovers a cursed antique trunk that awakens the restless spirit of a woman wronged by his ancestors. He must uncover the tragic truth and perform a final act of atonement to free the house from its haunting shadow. This chilling tale explores the weight of the past and the healing power of forgiveness.",
       "updated": "2026-08-09 07:55:42.881Z"
     },
     {
@@ -2668,6 +2898,7 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 8456,
+      "description": "Follow thirty young students as they travel across the globe to discover new cultures, foods, and friendships. From the bustling streets of Bangkok to the snowy landscapes of Canada, this collection of stories captures the excitement and challenges of living abroad.",
       "updated": "2026-08-09 07:55:43.089Z"
     },
     {
@@ -2689,6 +2920,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2431,
+      "description": "In 1910, a young immigrant named Elias arrives in New Orleans seeking a fresh start. Through his love for music and the guidance of an old mentor, he discovers the vibrant soul of the city and finds his place in the birthplace of jazz.",
       "updated": "2026-08-09 07:55:37.839Z"
     },
     {
@@ -2710,6 +2942,7 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 1729,
+      "description": "Follow a curious little rabbit as it explores the beautiful world outside its home for the very first time. Along the way, the rabbit discovers nature, makes a new friend, and learns the joy of adventure. This simple, repetitive story is perfect for beginners learning basic Korean vocabulary and sentence structures.",
       "updated": "2026-08-09 07:55:35.016Z"
     },
     {
@@ -2731,6 +2964,7 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 4573,
+      "description": "A gentle slice-of-life bilingual beginner story set in a small town plaza. Through simple, repetitive Spanish and English lines, a child named Ana meets neighbors, learns words for food, animals and play, and discovers a local tradition. The story teaches greetings, numbers, polite expressions and daily routine in a warm cultural setting.",
       "updated": "2026-08-09 07:55:40.530Z"
     },
     {
@@ -2752,6 +2986,7 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 2982,
+      "description": "Follow Ben as he explores his city, visiting familiar places like the market, the library, and the park. This simple story helps learners practice basic daily routines, vocabulary, and common interactions in a friendly, slice-of-life setting.",
       "updated": "2026-08-09 07:55:47.168Z"
     },
     {
@@ -2773,6 +3008,7 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 2947,
+      "description": "Join Somchai and Malee as they plan, pack, and embark on a simple, heartwarming adventure to the mountains. This story focuses on daily communication and shared experiences between a husband and wife, using basic vocabulary perfect for absolute beginners.",
       "updated": "2026-08-09 07:55:43.792Z"
     },
     {
@@ -2794,6 +3030,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1849,
+      "description": "This story is set in the late 1890s during the transition period of the Lanna Kingdom (Northern Thailand) as it integrated more closely with Siam (Central Thailand). During this era, British timber companies were heavily active in Chiang Mai, extracting highly valuable teak wood. The story explores themes of environmental preservation, cultural heritage, and the transition from ancient beliefs to modern industry.",
       "updated": "2026-08-09 07:55:46.907Z"
     },
     {
@@ -2815,6 +3052,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 2463,
+      "description": "This non‑fiction guide introduces French learners to Stephen Krashen’s Comprehensible Input theory, explaining why understandable exposure is the key to language acquisition. Through five concise chapters, readers discover practical strategies to turn real‑world listening and reading material into effective learning tools.",
       "updated": "2026-08-09 07:55:46.455Z"
     },
     {
@@ -2838,6 +3076,7 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 3982,
+      "description": "A gentle slice‑of‑life story about Thomas and his wife Anna as they share everyday moments—from breakfast to a weekend trip. Through simple, repetitive dialogues in German and English, beginners learn basic vocabulary, numbers, and common expressions while experiencing German culture.",
       "updated": "2026-08-09 07:55:47.817Z"
     },
     {
@@ -2859,6 +3098,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1985,
+      "description": "Follow the quiet and peaceful daily life of Satou-san as they go about their day in a small Japanese town. This story uses repetitive, simple sentences and essential daily vocabulary to help beginners practice basic Japanese in a natural, cultural context.",
       "updated": "2026-08-09 07:55:40.782Z"
     },
     {
@@ -2880,6 +3120,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1672,
+      "description": "In this simple and heartwarming story, young Xiaomei learns to make dumplings with her grandmother. Through repetitive and easy sentences, readers discover a cherished Chinese tradition. Perfect for Pre-A1 learners, this slice-of-life tale celebrates family, food, and culture.",
       "updated": "2026-08-09 07:55:35.080Z"
     },
     {
@@ -2901,6 +3142,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2424,
+      "description": "Follow young Minsu through a simple, heartwarming day in Korea as he navigates school, playtime, and family life. This story uses basic vocabulary and repetitive sentence structures to help absolute beginners practice essential Korean phrases for daily life.",
       "updated": "2026-08-09 07:55:40.705Z"
     },
     {
@@ -2922,6 +3164,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3337,
+      "description": "Follow Elena, a cheerful young woman, as she goes through a typical day in the beautiful city of Madrid. This story explores daily routines, local food, and simple friendships while introducing essential Spanish vocabulary for beginners.",
       "updated": "2026-08-09 07:55:39.844Z"
     },
     {
@@ -2943,6 +3186,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2126,
+      "description": "Follow a young girl named Mali as she navigates her simple and happy daily routine in Thailand. Designed for absolute beginners, this story uses repetitive vocabulary and essential phrases to help you learn Thai through the lens of everyday life.",
       "updated": "2026-08-09 07:55:40.240Z"
     },
     {
@@ -2964,6 +3208,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4999,
+      "description": "Set against the copper boom of Michigan's Upper Peninsula in the mid‑19th century, the novel follows French‑Canadian immigrant Marie Dubois as she navigates mining life, cultural clashes, and emerging solidarity with the Ojibwe people. Through love, labor disputes, disease, and the harsh wilderness, Marie learns the power of memory and reconciliation, offering a vivid portrait of a pivotal era in American frontier history.",
       "updated": "2026-08-09 07:55:39.624Z"
     },
     {
@@ -2985,6 +3230,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1486,
+      "description": "A gentle story of a young girl named María who discovers the beauty of simple Catholic prayers in everyday moments. Through repetitive, bilingual lines, readers learn basic vocabulary while experiencing spirituality, gratitude, and community.",
       "updated": "2026-08-09 07:55:49.899Z"
     },
     {
@@ -3006,6 +3252,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4441,
+      "description": "In 1776 Paris, a young printer becomes entangled in the dangerous web of diplomacy as he helps Benjamin Franklin spread revolutionary ideas. Alongside a noblewoman committed to the cause, he must navigate royal surveillance and personal sacrifice to champion the fight for liberty across the Atlantic.",
       "updated": "2026-08-09 07:55:40.864Z"
     },
     {
@@ -3027,6 +3274,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4777,
+      "description": "In a future where technology has stifled the natural world, a young scavenger uncovers the truth about an ancient, controlling AI. To reclaim their freedom, she must form an unlikely alliance with mythical creatures and bridge the gap between magic and machine.",
       "updated": "2026-08-09 07:55:47.298Z"
     },
     {
@@ -3048,6 +3296,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5168,
+      "description": "Set in the 1970s, the story follows Kongkiat, a dedicated park ranger working in Khao Yai National Park as he balances his duty to protect the forest against illegal logging and poaching. Through his eyes, readers explore the struggle between development and conservation, ultimately learning the importance of protecting Thailand's natural heritage for future generations.",
       "updated": "2026-08-09 07:55:50.613Z"
     },
     {
@@ -3069,6 +3318,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 833,
+      "description": "Elena is a dedicated woman who leaves her home to start a new job as a housekeeper in sunny California. Through simple daily routines and meaningful connections, she discovers how to balance her heritage with her new life in the United States.",
       "updated": "2026-08-09 07:55:43.201Z"
     },
     {
@@ -3090,6 +3340,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1259,
+      "description": "Leo finds a mysterious old map in his grandfather's attic that leads to a hidden treasure in the mountains. Together with his friend Ana, he embarks on an exciting journey to discover the secrets of the past and learns that the greatest treasures are often the stories we share.",
       "updated": "2026-08-09 07:55:46.415Z"
     },
     {
@@ -3111,6 +3362,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 889,
+      "description": "Join Pedro and his new puppy Luna in a heartwarming adventure as they navigate everyday life together. From finding Luna in the park to celebrating Pedro's birthday, this bilingual story explores themes of friendship, family, and new experiences through simple, repetitive language perfect for A1 learners.",
       "updated": "2026-08-09 07:55:43.063Z"
     },
     {
@@ -3132,6 +3384,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1027,
+      "description": "Ana visits Costa Rica for the first time and explores its culture, food, and nature with her friend Luisa. Through simple, repetitive language, she learns basic Spanish while enjoying the beauty of the country. A heartwarming story perfect for beginner learners.",
       "updated": "2026-08-09 07:55:39.804Z"
     },
     {
@@ -3153,6 +3406,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 945,
+      "description": "Young Nita visits her aunt's Thai restaurant where she learns how to order food in English. Through simple conversations, she discovers new dishes and restaurant customs in this heartwarming cultural story.",
       "updated": "2026-08-09 07:55:46.142Z"
     },
     {
@@ -3174,6 +3428,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1285,
+      "description": "Maya is a young girl living in beautiful Bangkok. Join her as she discovers the joy in simple daily moments, from eating breakfast to playing in the park with friends.",
       "updated": "2026-08-09 07:55:47.250Z"
     },
     {
@@ -3195,6 +3450,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1290,
+      "description": "Leo is a young boy who discovers a mysterious old map in his attic. Follow him as he travels through forests, rivers, and mountains to find a secret place. This is a simple story about courage, friendship, and the joy of exploring the world.",
       "updated": "2026-08-09 07:55:39.838Z"
     },
     {
@@ -3216,6 +3472,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 837,
+      "description": "Lukas is excited and a little nervous about his first day of school. Follow his journey from waking up to returning home, learning simple German words and phrases along the way. This heartwarming story introduces basic vocabulary and everyday situations perfect for A1 learners.",
       "updated": "2026-08-09 07:55:43.720Z"
     },
     {
@@ -3237,6 +3494,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1119,
+      "description": "Lina, a curious 10-year-old girl, moves to a village near an old castle. She discovers a hidden gate, a treasure, and makes a new friend. Together, they learn about the castle's history and share their findings with the village.",
       "updated": "2026-08-09 07:55:49.959Z"
     },
     {
@@ -3258,6 +3516,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3610,
+      "description": "Set in the vibrant heart of 15th-century Florence, a young apprentice named Matteo strives to make a name for himself in the prestigious workshop of Verrocchio. Alongside the brilliant and enigmatic Leonardo da Vinci, Matteo discovers that true art requires not just skill, but a deep curiosity about the world itself.",
       "updated": "2026-08-09 07:55:46.491Z"
     },
     {
@@ -3281,6 +3540,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5546,
+      "description": "",
       "updated": "2026-08-09 07:55:42.792Z"
     },
     {
@@ -3302,6 +3562,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1645,
+      "description": "",
       "updated": "2026-08-09 07:55:43.340Z"
     },
     {
@@ -3323,6 +3584,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2460,
+      "description": "",
       "updated": "2026-08-09 07:55:46.469Z"
     },
     {
@@ -3344,6 +3606,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1220,
+      "description": "",
       "updated": "2026-08-09 07:55:40.305Z"
     },
     {
@@ -3365,6 +3628,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 878,
+      "description": "",
       "updated": "2026-08-09 07:55:42.796Z"
     },
     {
@@ -3386,6 +3650,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4005,
+      "description": "",
       "updated": "2026-08-09 07:55:40.239Z"
     },
     {
@@ -3407,6 +3672,7 @@
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6725,
+      "description": "",
       "updated": "2026-08-09 07:55:44.434Z"
     },
     {
@@ -3430,6 +3696,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5571,
+      "description": "",
       "updated": "2026-08-09 07:55:35.669Z"
     },
     {
@@ -3451,6 +3718,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 5347,
+      "description": "",
       "updated": "2026-08-09 07:55:46.910Z"
     },
     {
@@ -3472,6 +3740,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3433,
+      "description": "",
       "updated": "2026-08-09 07:55:50.086Z"
     },
     {
@@ -3493,6 +3762,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4261,
+      "description": "",
       "updated": "2026-08-09 07:55:42.884Z"
     },
     {
@@ -3516,6 +3786,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3228,
+      "description": "",
       "updated": "2026-08-09 07:55:36.128Z"
     },
     {
@@ -3537,6 +3808,7 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 908,
+      "description": "",
       "updated": "2026-08-09 01:18:35.281Z"
     },
     {
@@ -3560,6 +3832,7 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 8828,
+      "description": "",
       "updated": "2026-08-09 01:18:32.234Z"
     },
     {
@@ -3581,6 +3854,7 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 764,
+      "description": "",
       "updated": "2026-08-09 01:18:29.923Z"
     },
     {
@@ -3602,6 +3876,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 581,
+      "description": "",
       "updated": "2026-08-09 01:18:27.866Z"
     },
     {
@@ -3623,6 +3898,7 @@
       "copyrightFlag": false,
       "chaptersCount": 30,
       "wordCount": 9900,
+      "description": "",
       "updated": "2026-08-09 01:18:25.110Z"
     },
     {
@@ -3644,6 +3920,7 @@
       "copyrightFlag": false,
       "chaptersCount": 7,
       "wordCount": 575,
+      "description": "",
       "updated": "2026-08-09 01:18:22.129Z"
     },
     {
@@ -3667,6 +3944,7 @@
       "copyrightFlag": false,
       "chaptersCount": 25,
       "wordCount": 10771,
+      "description": "",
       "updated": "2026-08-09 01:18:19.193Z"
     },
     {
@@ -3688,6 +3966,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 971,
+      "description": "",
       "updated": "2026-08-09 01:18:16.349Z"
     },
     {
@@ -3709,6 +3988,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 898,
+      "description": "",
       "updated": "2026-08-09 01:18:13.828Z"
     },
     {
@@ -3730,6 +4010,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 2213,
+      "description": "",
       "updated": "2026-08-09 01:18:11.192Z"
     },
     {
@@ -3751,6 +4032,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1257,
+      "description": "",
       "updated": "2026-08-09 01:18:08.950Z"
     },
     {
@@ -3774,6 +4056,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3727,
+      "description": "",
       "updated": "2026-08-09 01:18:06.416Z"
     },
     {
@@ -3795,6 +4078,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3981,
+      "description": "",
       "updated": "2026-08-09 01:18:03.854Z"
     },
     {
@@ -3818,6 +4102,7 @@
       "copyrightFlag": false,
       "chaptersCount": 5,
       "wordCount": 1663,
+      "description": "",
       "updated": "2026-08-09 01:13:04.941Z"
     },
     {
@@ -3841,6 +4126,7 @@
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4422,
+      "description": "",
       "updated": "2026-08-09 01:18:00.640Z"
     }
   ]

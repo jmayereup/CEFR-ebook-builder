@@ -1342,7 +1342,7 @@ export default function ReaderPanel({
                 )}
 
                 {!isZenMode && activeChapter && (
-                  <div className="mb-6">
+                  <nav aria-label="Chapter navigation" className="mb-6">
                     <ChapterNavigationBar
                       story={story}
                       activeChapterIndex={activeChapterIndex}
@@ -1353,7 +1353,7 @@ export default function ReaderPanel({
                       isPaid={isPaid}
                       nextChapterCreditCost={nextChapterCreditCost}
                     />
-                  </div>
+                  </nav>
                 )}
 
                 {!activeChapter ? (
@@ -1378,7 +1378,7 @@ export default function ReaderPanel({
                   />
                 ) : (
                   <>
-                    <div
+                    <section
                       translate="no"
                       lang={getLanguageCodeFromName(effectivePrimaryLanguage)}
                       className={`space-y-6 select-text ${useSerif ? 'font-serif' : 'font-sans'}`}
@@ -1438,7 +1438,7 @@ export default function ReaderPanel({
                           </div>
                         );
                       })}
-                    </div>
+                    </section>
 
                     {/* Sentinel element to detect when user has scrolled to the bottom of the chapter */}
                     <div ref={sentinelRef} className="h-2 w-full" />

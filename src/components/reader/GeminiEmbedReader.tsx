@@ -85,7 +85,7 @@ export default function GeminiEmbedReader({
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <article className="space-y-6 max-w-4xl mx-auto">
       {/* Header & Controls Toolbar */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -389,6 +389,6 @@ export default function GeminiEmbedReader({
           </div>
         </div>
       </motion.div>
-    </div>
+    </article>
   );
 }

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { getLanguageCodeFromName } from '../../types';
 import { segmentText } from '../../utils/segmenter';
 
@@ -233,10 +233,9 @@ export default function InteractiveParagraph({
         if (seg.isWordLike) {
           const currentWordIndex = wordIndexInPara++;
           return (
-            // biome-ignore lint/a11y/useSemanticElements: span is required to keep text layout inline within paragraph
+            // biome-ignore lint/a11y/noStaticElementInteractions: inline text span with dictionary lookup listener
             <span
               key={seg.key}
-              role="button"
               tabIndex={0}
               onClick={(e) => {
                 e.stopPropagation();
@@ -281,6 +280,10 @@ export default function InteractiveParagraph({
               {seg.segment}
             </span>
           );
+        }
+
+        if (/^\s+$/.test(seg.segment)) {
+          return <Fragment key={seg.key}>{seg.segment}</Fragment>;
         }
 
         return (

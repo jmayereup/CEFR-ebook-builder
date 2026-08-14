@@ -167,10 +167,10 @@ export default function ReaderPage({
   }
 
   return (
-    <div className="space-y-6">
+    <article className="space-y-6">
       {/* Detailed Title / Breadcrumb and Document Copier */}
       {!isZenMode && (
-        <div className="bg-tj-bg-card p-5 rounded-2xl border border-tj-border-main shadow-sm flex flex-col gap-4">
+        <header className="bg-tj-bg-card p-5 rounded-2xl border border-tj-border-main shadow-sm flex flex-col gap-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-1.5">
@@ -232,12 +232,12 @@ export default function ReaderPage({
               </div>
 
               <div className="flex items-center gap-2.5">
-                <h2
+                <h1
                   lang={getLanguageCodeFromName(selectedStory.language)}
                   className="text-2xl font-serif font-black text-slate-900 dark:text-white leading-tight"
                 >
                   {selectedStory.title}
-                </h2>
+                </h1>
 
                 {/* Save to Bookshelf button */}
                 <button
@@ -304,23 +304,25 @@ export default function ReaderPage({
                 </p>
               )}
             </div>
-            <ExportPanel
-              selectedStory={selectedStory}
-              showExportMenu={showExportMenu}
-              setShowExportMenu={setShowExportMenu}
-              showDocOptions={showDocOptions}
-              setShowDocOptions={setShowDocOptions}
-              showEpubLinks={showEpubLinks}
-              setShowEpubLinks={setShowEpubLinks}
-              copyStatus={copyStatus}
-              isExportingEpub={isExportingEpub}
-              triggerCopyPlaintext={triggerCopyPlaintext}
-              triggerCopyRichText={triggerCopyRichText}
-              handleDownloadEpub={handleDownloadEpub}
-            />
+            <aside aria-label="Story export options">
+              <ExportPanel
+                selectedStory={selectedStory}
+                showExportMenu={showExportMenu}
+                setShowExportMenu={setShowExportMenu}
+                showDocOptions={showDocOptions}
+                setShowDocOptions={setShowDocOptions}
+                showEpubLinks={showEpubLinks}
+                setShowEpubLinks={setShowEpubLinks}
+                copyStatus={copyStatus}
+                isExportingEpub={isExportingEpub}
+                triggerCopyPlaintext={triggerCopyPlaintext}
+                triggerCopyRichText={triggerCopyRichText}
+                handleDownloadEpub={handleDownloadEpub}
+              />
+            </aside>
           </div>
           <NonFictionDisclaimer className="mt-1" />
-        </div>
+        </header>
       )}
 
       {/* Novel reading window */}
@@ -365,6 +367,6 @@ export default function ReaderPage({
         isGeneratingCover={isGeneratingCover}
         onExit={() => setSelectedStory(null)}
       />
-    </div>
+    </article>
   );
 }
