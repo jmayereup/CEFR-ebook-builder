@@ -138,8 +138,6 @@ export function useUserData(options: UseUserDataOptions) {
     defaultLookupLimitData,
   );
 
-  const [dirty, setDirty] = useState<boolean>(false);
-  const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [isUserDataLoaded, setIsUserDataLoaded] = useState<boolean>(false);
   const isSyncingFromServer = useRef(false);
 
@@ -159,7 +157,13 @@ export function useUserData(options: UseUserDataOptions) {
       return;
     }
     if (currentUser) {
-      markDirty();
+      saveUserProfileData(currentUser.uid, {
+        translationTargetLanguage,
+        readerFontSize,
+        readerUseSerif,
+      }).catch((err) =>
+        console.error('[useUserData] Failed to sync UI settings:', err),
+      );
     }
   }, [translationTargetLanguage, readerFontSize, readerUseSerif, currentUser]);
 
@@ -167,90 +171,19 @@ export function useUserData(options: UseUserDataOptions) {
   const bookshelfRef = useRef(bookshelf);
   const recentlyReadRef = useRef(recentlyRead);
   const lookupLimitDataRef = useRef(lookupLimitData);
-  const dirtyRef = useRef(dirty);
 
   useEffect(() => {
     savedVocabRef.current = savedVocab;
     bookshelfRef.current = bookshelf;
     recentlyReadRef.current = recentlyRead;
     lookupLimitDataRef.current = lookupLimitData;
-    dirtyRef.current = dirty;
-  }, [savedVocab, bookshelf, recentlyRead, lookupLimitData, dirty]);
+  }, [savedVocab, bookshelf, recentlyRead, lookupLimitData]);
 
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevUserRef = useRef<{ uid: string } | null>(null);
 
-  const markDirty = () => {
-    setDirty(true);
-    dirtyRef.current = true;
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    timeoutRef.current = setTimeout(() => {
-      syncChangesToDatabase().catch((err) =>
-        console.error('[Auto-Sync] Sync failed:', err),
-      );
-    }, 2000); // 2 seconds
-  };
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
   const syncChangesToDatabase = async (): Promise<void> => {
-    if (!currentUser || !dirtyRef.current) return;
-    setIsSyncing(true);
-    try {
-      const payload = {
-        userId: currentUser.uid,
-        bookshelf: bookshelfRef.current,
-        recentlyRead: recentlyReadRef.current,
-        lookupLimitData: lookupLimitDataRef.current,
-        translationTargetLanguage:
-          useUIStore.getState().translationTargetLanguage,
-        readerFontSize: useUIStore.getState().readerFontSize,
-        readerUseSerif: useUIStore.getState().readerUseSerif,
-      };
-
-      const response = await fetch('/api/users/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error('Server sync failed');
-      }
-
-      setDirty(false);
-      dirtyRef.current = false;
-    } catch (err) {
-      console.error('Failed to sync cached user data to database:', err);
-    } finally {
-      setIsSyncing(false);
-    }
+    // No-op kept for backwards-compatible API signatures since writes are instant
   };
-
-  // Use beforeunload to prevent accidental tab closures on PC when dirty
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (dirtyRef.current) {
-        e.preventDefault();
-        e.returnValue =
-          'You have unsaved changes. Are you sure you want to leave?';
-        return e.returnValue;
-      }
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
 
   const handleIncrementLookupCount = () => {
     const todayStr = new Date().toISOString().split('T')[0];
@@ -261,12 +194,15 @@ export function useUserData(options: UseUserDataOptions) {
       };
 
       localStorage.setItem('lookup_limit_data', JSON.stringify(updated));
+      if (currentUser) {
+        saveUserProfileData(currentUser.uid, {
+          lookupLimitData: updated,
+        }).catch((err) =>
+          console.error('[useUserData] Failed to sync lookup limit:', err),
+        );
+      }
       return updated;
     });
-    // markDirty must be called outside the updater to avoid calling setState inside setState
-    if (currentUser) {
-      markDirty();
-    }
   };
 
   const handleIncrementGenerationCount = (
@@ -426,7 +362,11 @@ export function useUserData(options: UseUserDataOptions) {
     setBookshelf(updated);
     localStorage.setItem('bookshelf', JSON.stringify(updated));
     if (currentUser) {
-      markDirty();
+      saveUserProfileData(currentUser.uid, {
+        bookshelf: updated,
+      }).catch((err) =>
+        console.error('[useUserData] Failed to sync bookshelf:', err),
+      );
     }
   };
 
@@ -448,7 +388,11 @@ export function useUserData(options: UseUserDataOptions) {
     setRecentlyRead(updated);
 
     if (currentUser) {
-      markDirty();
+      saveUserProfileData(currentUser.uid, {
+        recentlyRead: updated,
+      }).catch((err) =>
+        console.error('[useUserData] Failed to sync recentlyRead:', err),
+      );
     }
   };
 
@@ -721,27 +665,123 @@ export function useUserData(options: UseUserDataOptions) {
 
     // Trigger initial load
     loadSavedVocab(true);
+  }, [currentUser, authChecking, setIsPaid, setGenerationLimitData]);
 
-    // Set up listeners for tab focus, visibility change, and online status to automatically re-fetch/sync
-    const handleTriggerLoad = () => {
-      if (
-        typeof document !== 'undefined' &&
-        document.visibilityState === 'visible'
-      ) {
-        loadSavedVocab(false);
-      }
-    };
+  // Realtime subscription to the user's record on PocketBase for instant multi-device sync
+  useEffect(() => {
+    if (!currentUser?.uid) return;
 
-    window.addEventListener('focus', handleTriggerLoad);
-    window.addEventListener('visibilitychange', handleTriggerLoad);
-    window.addEventListener('online', handleTriggerLoad);
+    let isMounted = true;
+    const unsubPromise = pb
+      .collection('users')
+      .subscribe(currentUser.uid, (e) => {
+        if (!isMounted || e.action !== 'update' || !e.record) return;
+
+        const updatedRecord = e.record as any;
+
+        // 1. Sync Bookshelf
+        if (Array.isArray(updatedRecord.bookshelf)) {
+          setBookshelf((prev) => {
+            if (
+              JSON.stringify(prev) ===
+              JSON.stringify(updatedRecord.bookshelf)
+            ) {
+              return prev;
+            }
+            localStorage.setItem(
+              'bookshelf',
+              JSON.stringify(updatedRecord.bookshelf),
+            );
+            return updatedRecord.bookshelf;
+          });
+        }
+
+        // 2. Sync Recently Read
+        if (updatedRecord.recentlyRead) {
+          const parsed = parseRecentlyReadItems(updatedRecord.recentlyRead);
+          setRecentlyRead((prev) => {
+            if (JSON.stringify(prev) === JSON.stringify(parsed)) {
+              return prev;
+            }
+            localStorage.setItem('recently_read', JSON.stringify(parsed));
+            for (const item of parsed) {
+              localStorage.setItem(
+                `last_read_chapter_${item.storyId}`,
+                item.chapterIdx.toString(),
+              );
+            }
+            return parsed;
+          });
+        }
+
+        // 3. Sync Lookup Limit
+        if (updatedRecord.lookupLimitData) {
+          let parsedLookup = updatedRecord.lookupLimitData;
+          if (typeof parsedLookup === 'string') {
+            try {
+              parsedLookup = JSON.parse(parsedLookup);
+            } catch {}
+          }
+          if (parsedLookup && typeof parsedLookup === 'object') {
+            setLookupLimitData((prev) => {
+              if (JSON.stringify(prev) === JSON.stringify(parsedLookup)) {
+                return prev;
+              }
+              localStorage.setItem(
+                'lookup_limit_data',
+                JSON.stringify(parsedLookup),
+              );
+              return parsedLookup;
+            });
+          }
+        }
+
+        // 4. Sync Paid Tier
+        if (typeof updatedRecord.isPaid === 'boolean') {
+          setIsPaid(updatedRecord.isPaid);
+        }
+
+        // 5. Sync Reader UI Preferences without circular save
+        isSyncingFromServer.current = true;
+        if (updatedRecord.translationTargetLanguage !== undefined) {
+          useUIStore
+            .getState()
+            .setTranslationTargetLanguage(
+              updatedRecord.translationTargetLanguage,
+            );
+        }
+        if (
+          typeof updatedRecord.readerFontSize === 'number' &&
+          updatedRecord.readerFontSize >= 14 &&
+          updatedRecord.readerFontSize <= 26
+        ) {
+          useUIStore
+            .getState()
+            .setReaderFontSize(updatedRecord.readerFontSize);
+        }
+        if (typeof updatedRecord.readerUseSerif === 'boolean') {
+          useUIStore
+            .getState()
+            .setReaderUseSerif(updatedRecord.readerUseSerif);
+        }
+        isSyncingFromServer.current = false;
+      });
 
     return () => {
-      window.removeEventListener('focus', handleTriggerLoad);
-      window.removeEventListener('visibilitychange', handleTriggerLoad);
-      window.removeEventListener('online', handleTriggerLoad);
+      isMounted = false;
+      unsubPromise
+        .then((unsub) => {
+          if (typeof unsub === 'function') {
+            unsub();
+          } else {
+            pb.collection('users').unsubscribe(currentUser.uid);
+          }
+        })
+        .catch(() => {
+          pb.collection('users').unsubscribe(currentUser.uid);
+        });
     };
-  }, [currentUser, authChecking, setIsPaid, setGenerationLimitData]);
+  }, [currentUser?.uid, setIsPaid]);
 
   return {
     bookshelf,
@@ -759,8 +799,8 @@ export function useUserData(options: UseUserDataOptions) {
     handleUpdateWordSRS,
     handleToggleBookshelf,
     updateRecentlyRead,
-    dirty,
-    isSyncing,
+    dirty: false,
+    isSyncing: false,
     syncChangesToDatabase,
   };
 }

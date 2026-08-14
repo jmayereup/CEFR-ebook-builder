@@ -141,59 +141,14 @@ export function useLibrary(options: UseLibraryOptions) {
     setStoriesLoading(true);
     try {
       const cacheKey = `cefr_story_cache_${story.id}`;
+
+      // Check local storage for an unsaved draft or offline access
       const cachedStoryStr = localStorage.getItem(cacheKey);
       if (cachedStoryStr) {
         try {
           const cachedStory = JSON.parse(cachedStoryStr) as Story;
-          if (cachedStory?.isUnsaved) {
-            console.log(
-              `[Cache Hit] Loading unsaved draft story ${story.id} ("${story.title}") from localStorage cache.`,
-            );
+          if (cachedStory?.isUnsaved || !isOnline) {
             return cachedStory;
-          }
-          if (cachedStory?.chapters) {
-            const cachedChaptersCount = cachedStory.chapters.length;
-            const cachedWordCount = cachedStory.chapters.reduce(
-              (sum, ch) => sum + countWords(ch.content, cachedStory.language),
-              0,
-            );
-
-            const refChaptersCount =
-              story.chaptersCount !== undefined
-                ? story.chaptersCount
-                : story.chapters
-                  ? story.chapters.length
-                  : 0;
-
-            const refWordCount =
-              story.wordCount !== undefined
-                ? story.wordCount
-                : story.chapters
-                  ? story.chapters.reduce(
-                      (sum, ch) => sum + countWords(ch.content, story.language),
-                      0,
-                    )
-                  : 0;
-
-            const cachedUpdated = cachedStory.updated;
-            const refUpdated = story.updated;
-            const isTimestampMatch =
-              cachedUpdated && refUpdated && cachedUpdated === refUpdated;
-
-            if (
-              cachedChaptersCount === refChaptersCount &&
-              cachedWordCount === refWordCount &&
-              (!refUpdated || isTimestampMatch)
-            ) {
-              console.log(
-                `[Cache Hit] Loading story ${story.id} ("${story.title}") from localStorage cache.`,
-              );
-              return cachedStory;
-            } else {
-              console.log(
-                `[Cache Mismatch] Story ${story.id} cache mismatch. Cached chapters: ${cachedChaptersCount}, ref: ${refChaptersCount}. Cached wordCount: ${cachedWordCount}, ref: ${refWordCount}. Cached updated: ${cachedUpdated}, ref: ${refUpdated}.`,
-              );
-            }
           }
         } catch (e) {
           console.error(`Failed to parse cached story ${story.id}:`, e);
@@ -202,6 +157,12 @@ export function useLibrary(options: UseLibraryOptions) {
 
       const fullStory = await fetchStory(story.id);
       if (!fullStory) {
+        // Fallback to local cache if DB fetch failed but cache exists
+        if (cachedStoryStr) {
+          try {
+            return JSON.parse(cachedStoryStr) as Story;
+          } catch {}
+        }
         showAlert(
           'Story Not Found',
           'The requested story could not be loaded.',
@@ -209,6 +170,7 @@ export function useLibrary(options: UseLibraryOptions) {
         );
         return null;
       }
+
       localStorage.setItem(cacheKey, JSON.stringify(fullStory));
       return fullStory;
     } catch (err) {
