@@ -14,9 +14,8 @@ const pbUrl = process.env.VITE_POCKETBASE_URL || 'https://pb.teacherjake.com';
 const cdnUrl = (
   process.env.VITE_COVER_CDN_URL || 'https://files.teacherjake.com'
 ).replace(/\/+$/, '');
-const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL || 'jake@teacherjake.com';
-const adminPassword =
-  process.env.POCKETBASE_ADMIN_PASSWORD || 'FHgo-uqVSSntM0WPbR_C';
+const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
+const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
 const userEmail = process.env.POCKETBASE_EMAIL || adminEmail;
 const userPassword = process.env.POCKETBASE_PASSWORD || adminPassword;
 

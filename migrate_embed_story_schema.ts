@@ -4,9 +4,8 @@ import PocketBase from 'pocketbase';
 dotenv.config();
 
 const pbUrl = process.env.POCKETBASE_URL || 'http://127.0.0.1:8090';
-const adminEmail =
-  process.env.POCKETBASE_ADMIN_EMAIL || 'admin@teacherjake.com';
-const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD || 'password123';
+const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
+const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
 
 const pb = new PocketBase(pbUrl);
 
