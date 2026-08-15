@@ -11,17 +11,7 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'prompt',
-        includeAssets: [
-          'favicon.ico',
-          'tj-logo.svg',
-          'tj-logo-maskable.svg',
-          'tj-logo-192.png',
-          'tj-logo-512.png',
-          'tj-logo-maskable-192.png',
-          'tj-logo-maskable-512.png',
-          'screenshot-desktop.png',
-          'screenshot-mobile.png',
-        ],
+        includeAssets: ['favicon.ico', 'tj-logo.svg'],
         manifest: {
           name: 'CEFR Stories - Reading Companion',
           short_name: 'CEFR Stories',
@@ -88,6 +78,9 @@ export default defineConfig(() => {
           ],
         },
         workbox: {
+          clientsClaim: true,
+          skipWaiting: false,
+          cleanupOutdatedCaches: true,
           globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
           navigateFallbackDenylist: [/^\/covers/],
           runtimeCaching: [

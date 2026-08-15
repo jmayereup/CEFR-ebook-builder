@@ -251,10 +251,15 @@ async function bootstrap() {
               'Cache-Control',
               'public, max-age=31536000, immutable',
             );
-          } else if (filePath.endsWith('sw.js')) {
+          } else if (
+            filePath.endsWith('sw.js') ||
+            filePath.endsWith('manifest.webmanifest') ||
+            filePath.includes('workbox-') ||
+            filePath.endsWith('registerSW.js')
+          ) {
             res.setHeader(
               'Cache-Control',
-              'public, max-age=0, must-revalidate',
+              'no-cache, no-store, must-revalidate',
             );
           }
         },
