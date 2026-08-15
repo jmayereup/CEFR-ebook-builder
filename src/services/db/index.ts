@@ -157,6 +157,8 @@ export const updateStreak = (userId: string, streak: UserStreakData) =>
   dbService.updateStreak(userId, streak);
 
 // Highlights & Notes
+export const fetchAllUserHighlights = (userId: string) =>
+  dbService.fetchAllUserHighlights(userId);
 export const fetchStoryHighlights = (userId: string, storyId: string) =>
   dbService.fetchStoryHighlights(userId, storyId);
 export const createStoryHighlight = (

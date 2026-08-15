@@ -183,13 +183,13 @@ export default function HighlightToolbar({
   // Adjust toolbar position so it stays within viewport
   const viewportWidth =
     typeof window !== 'undefined' ? window.innerWidth : 1000;
-  const toolbarWidth = isEditingNote ? 300 : 280;
-  let leftPos = position.x - toolbarWidth / 2;
+  const toolbarEstimatedWidth = isEditingNote ? 340 : (activeHighlight ? 360 : 310);
+  let leftPos = position.x - toolbarEstimatedWidth / 2;
   if (leftPos < 12) leftPos = 12;
-  if (leftPos + toolbarWidth > viewportWidth - 12) {
-    leftPos = viewportWidth - toolbarWidth - 12;
+  if (leftPos + toolbarEstimatedWidth > viewportWidth - 12) {
+    leftPos = viewportWidth - toolbarEstimatedWidth - 12;
   }
-  const topPos = Math.max(16, position.y - (isEditingNote ? 190 : 54));
+  const topPos = Math.max(16, position.y - (isEditingNote ? 195 : 56));
 
   return (
     <motion.div
@@ -198,16 +198,15 @@ export default function HighlightToolbar({
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.92, y: 6 }}
       transition={{ duration: 0.15, ease: 'easeOut' }}
-      className="fixed z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-2xl rounded-2xl p-1.5 flex flex-col gap-2 select-none"
+      className="fixed z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-2xl rounded-2xl p-1.5 flex flex-col gap-2 select-none w-max max-w-[calc(100vw-24px)]"
       style={{
         left: `${leftPos}px`,
         top: `${topPos}px`,
-        maxWidth: `${toolbarWidth}px`,
       }}
       onClick={(e) => e.stopPropagation()}
     >
       {/* TOP TOOLBAR ROW: Color dots & actions */}
-      <div className="flex items-center gap-1.5 px-1 py-0.5">
+      <div className="flex items-center gap-1.5 px-0.5 py-0.5">
         {/* COLOR PALETTE */}
         <div className="flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-xl">
           {HIGHLIGHT_COLORS.map((c) => {
@@ -220,7 +219,7 @@ export default function HighlightToolbar({
                   e.stopPropagation();
                   onSelectColor(c.id);
                 }}
-                className={`w-6 h-6 rounded-full border ${c.dotClass} flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-sm ${
+                className={`w-6 h-6 rounded-full border ${c.dotClass} flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-xs ${
                   isSelected
                     ? 'ring-2 ring-tj-primary ring-offset-1 dark:ring-offset-slate-900 scale-105'
                     : ''
@@ -235,85 +234,91 @@ export default function HighlightToolbar({
           })}
         </div>
 
-        <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-0.5" />
+        <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-0.5 shrink-0" />
 
-        {/* NOTE TOGGLE BUTTON */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsEditingNote((prev) => !prev);
-          }}
-          className={`p-1.5 rounded-xl transition-colors cursor-pointer ${
-            isEditingNote || activeHighlight?.note
-              ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-          title={activeHighlight?.note ? 'Edit Note' : 'Add Note'}
-        >
-          <MessageSquare className="w-4 h-4" />
-        </button>
-
-        {/* TRANSLATE / DICTIONARY BUTTON */}
-        {onTranslate && (
+        {/* ACTIONS GROUP */}
+        <div className="flex items-center gap-0.5">
+          {/* NOTE TOGGLE BUTTON */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onTranslate();
-              onClose();
+              setIsEditingNote((prev) => !prev);
             }}
-            className="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
-            title="Dictionary / Translation"
+            className={`p-1.5 rounded-xl transition-colors cursor-pointer ${
+              isEditingNote || activeHighlight?.note
+                ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+            title={activeHighlight?.note ? 'Edit Note' : 'Add Note'}
           >
-            <BookOpen className="w-4 h-4" />
+            <MessageSquare className="w-4 h-4" />
           </button>
-        )}
 
-        {/* COPY SNIPPET */}
-        {onCopy && (
-          <button
-            type="button"
-            onClick={handleCopyClick}
-            className="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
-            title={copied ? 'Copied!' : 'Copy text'}
-          >
-            {copied ? (
-              <Check className="w-4 h-4 text-emerald-500" />
-            ) : (
-              <Copy className="w-4 h-4" />
-            )}
-          </button>
-        )}
+          {/* TRANSLATE / DICTIONARY BUTTON */}
+          {onTranslate && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onTranslate();
+                onClose();
+              }}
+              className="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+              title="Dictionary / Translation"
+            >
+              <BookOpen className="w-4 h-4" />
+            </button>
+          )}
 
-        {/* DELETE HIGHLIGHT (IF EXISTING) */}
-        {activeHighlight && onDeleteHighlight && (
+          {/* COPY SNIPPET */}
+          {onCopy && (
+            <button
+              type="button"
+              onClick={handleCopyClick}
+              className="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+              title={copied ? 'Copied!' : 'Copy text'}
+            >
+              {copied ? (
+                <Check className="w-4 h-4 text-emerald-500" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
+            </button>
+          )}
+        </div>
+
+        <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-0.5 shrink-0" />
+
+        {/* RIGHT SIDE ACTIONS: TRASH & CLOSE */}
+        <div className="flex items-center gap-0.5">
+          {activeHighlight && onDeleteHighlight && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteHighlight();
+                onClose();
+              }}
+              className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer"
+              title="Remove Highlight"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onDeleteHighlight();
               onClose();
             }}
-            className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer"
-            title="Remove Highlight"
+            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl cursor-pointer transition-colors"
+            title="Close toolbar"
           >
-            <Trash2 className="w-4 h-4" />
+            <X className="w-4 h-4" />
           </button>
-        )}
-
-        {/* CLOSE BUTTON */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-          className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg cursor-pointer ml-auto"
-          title="Close toolbar"
-        >
-          <X className="w-3.5 h-3.5" />
-        </button>
+        </div>
       </div>
 
       {/* NOTE EDITING POPDOWN */}

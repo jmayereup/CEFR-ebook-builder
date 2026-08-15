@@ -760,6 +760,32 @@ export class PocketBaseService implements IDatabaseService {
 
   // ── Highlights & Notes ────────────────────────────────────────────────────
 
+  async fetchAllUserHighlights(userId: string): Promise<StoryHighlight[]> {
+    try {
+      const records = await pb.collection('story_highlights').getFullList({
+        filter: `user = "${userId}"`,
+        sort: '-created',
+      });
+      return records.map((r: any) => ({
+        id: r.id,
+        user: r.user,
+        story: r.story,
+        chapterIndex: r.chapterIndex ?? 0,
+        paragraphIndex: r.paragraphIndex ?? 0,
+        startOffset: r.startOffset ?? 0,
+        endOffset: r.endOffset ?? 0,
+        text: r.text || '',
+        color: r.color || 'yellow',
+        note: r.note || '',
+        created: r.created,
+        updated: r.updated,
+      }));
+    } catch (err: any) {
+      console.error('[PocketBase] Failed to fetch all user highlights:', err);
+      return [];
+    }
+  }
+
   async fetchStoryHighlights(
     userId: string,
     storyId: string,

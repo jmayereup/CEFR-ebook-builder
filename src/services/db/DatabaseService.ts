@@ -211,6 +211,9 @@ export interface IDatabaseService {
 
   // ── Highlights & Notes ────────────────────────────────────────────────────
 
+  /** Fetch all highlights and notes for all stories created by the user. */
+  fetchAllUserHighlights(userId: string): Promise<StoryHighlight[]>;
+
   /** Fetch all highlights and notes for a specific story created by the user. */
   fetchStoryHighlights(
     userId: string,
