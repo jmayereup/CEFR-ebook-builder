@@ -98,7 +98,8 @@ export const HIGHLIGHT_STYLE_MAP: Record<
 
 interface HighlightToolbarProps {
   activeHighlight?: StoryHighlight | null;
-  position: { x: number; y: number } | null;
+  selectedText?: string;
+  position?: { x: number; y: number } | null;
   onSelectColor: (color: HighlightColor) => void;
   onSaveNote: (note: string) => void;
   onDeleteHighlight?: () => void;
@@ -110,7 +111,7 @@ interface HighlightToolbarProps {
 
 export default function HighlightToolbar({
   activeHighlight,
-  position,
+  selectedText = '',
   onSelectColor,
   onSaveNote,
   onDeleteHighlight,
@@ -127,13 +128,9 @@ export default function HighlightToolbar({
   useEffect(() => {
     if (activeHighlight?.note) {
       setNoteText(activeHighlight.note);
-    } else {
-      setNoteText('');
-    }
-    // If opening an existing highlight with a note, open note view
-    if (activeHighlight?.note) {
       setIsEditingNote(true);
     } else {
+      setNoteText('');
       setIsEditingNote(false);
     }
   }, [activeHighlight]);
@@ -165,8 +162,6 @@ export default function HighlightToolbar({
     };
   }, [onClose]);
 
-  if (!position) return null;
-
   const handleCopyClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onCopy?.();
@@ -181,35 +176,36 @@ export default function HighlightToolbar({
     setIsEditingNote(false);
   };
 
-  // Adjust toolbar position so it stays within viewport
-  const viewportWidth =
-    typeof window !== 'undefined' ? window.innerWidth : 1000;
-  const toolbarEstimatedWidth = isEditingNote ? 340 : (activeHighlight ? 360 : 310);
-  let leftPos = position.x - toolbarEstimatedWidth / 2;
-  if (leftPos < 12) leftPos = 12;
-  if (leftPos + toolbarEstimatedWidth > viewportWidth - 12) {
-    leftPos = viewportWidth - toolbarEstimatedWidth - 12;
-  }
-  const topPos = Math.max(16, position.y - (isEditingNote ? 195 : 56));
+  const previewSnippet = (activeHighlight?.text || selectedText || '').trim();
 
   return (
     <motion.div
       ref={toolbarRef}
-      initial={{ opacity: 0, scale: 0.92, y: 6 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.92, y: 6 }}
-      transition={{ duration: 0.15, ease: 'easeOut' }}
-      className="fixed z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-2xl rounded-2xl p-1.5 flex flex-col gap-2 select-none w-max max-w-[calc(100vw-24px)]"
-      style={{
-        left: `${leftPos}px`,
-        top: `${topPos}px`,
-      }}
+      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 40, scale: 0.95 }}
+      transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+      className="fixed bottom-4 left-3 right-3 md:left-1/2 md:-translate-x-1/2 md:w-auto md:max-w-xl z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 shadow-[0_16px_48px_rgba(0,0,0,0.2)] rounded-2xl p-2 md:p-2.5 flex flex-col gap-2 select-none touch-pan-x"
       onClick={(e) => e.stopPropagation()}
     >
+      {/* Optional snippet preview if long text or active note */}
+      {previewSnippet && (
+        <div className="px-2 pt-0.5 pb-1 flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800/80 text-[11px] text-slate-500 dark:text-slate-400 truncate">
+          <span className="truncate italic font-serif">
+            “{previewSnippet}”
+          </span>
+          {activeHighlight && (
+            <span className="shrink-0 text-[10px] font-semibold text-tj-primary uppercase tracking-wider">
+              Highlighted
+            </span>
+          )}
+        </div>
+      )}
+
       {/* TOP TOOLBAR ROW: Color dots & actions */}
-      <div className="flex items-center gap-1.5 px-0.5 py-0.5">
+      <div className="flex items-center justify-between gap-1.5 md:gap-2">
         {/* COLOR PALETTE */}
-        <div className="flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-xl">
+        <div className="flex items-center gap-1.5 bg-slate-100/90 dark:bg-slate-800/90 p-1 md:p-1.5 rounded-xl">
           {HIGHLIGHT_COLORS.map((c) => {
             const isSelected = activeHighlight?.color === c.id;
             return (
@@ -220,7 +216,7 @@ export default function HighlightToolbar({
                   e.stopPropagation();
                   onSelectColor(c.id);
                 }}
-                className={`w-6 h-6 rounded-full border ${c.dotClass} flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-xs ${
+                className={`w-7 h-7 md:w-8 md:h-8 rounded-full border ${c.dotClass} flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-xs ${
                   isSelected
                     ? 'ring-2 ring-tj-primary ring-offset-1 dark:ring-offset-slate-900 scale-105'
                     : ''
@@ -235,10 +231,10 @@ export default function HighlightToolbar({
           })}
         </div>
 
-        <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-0.5 shrink-0" />
+        <div className="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-0.5 shrink-0" />
 
         {/* ACTIONS GROUP */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           {/* NOTE TOGGLE BUTTON */}
           <button
             type="button"
@@ -246,7 +242,7 @@ export default function HighlightToolbar({
               e.stopPropagation();
               setIsEditingNote((prev) => !prev);
             }}
-            className={`p-1.5 rounded-xl transition-colors cursor-pointer ${
+            className={`p-2 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-semibold ${
               isEditingNote || activeHighlight?.note
                 ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
                 : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -254,6 +250,9 @@ export default function HighlightToolbar({
             title={activeHighlight?.note ? 'Edit Note' : 'Add Note'}
           >
             <MessageSquare className="w-4 h-4" />
+            <span className="hidden sm:inline">
+              {activeHighlight?.note ? 'Edit Note' : 'Note'}
+            </span>
           </button>
 
           {/* TRANSLATE / DICTIONARY BUTTON */}
@@ -265,10 +264,11 @@ export default function HighlightToolbar({
                 onTranslate();
                 onClose();
               }}
-              className="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+              className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
               title="Dictionary / Translation"
             >
               <BookOpen className="w-4 h-4" />
+              <span className="hidden sm:inline">Translate</span>
             </button>
           )}
 
@@ -277,7 +277,7 @@ export default function HighlightToolbar({
             <button
               type="button"
               onClick={handleCopyClick}
-              className="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+              className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
               title={copied ? 'Copied!' : 'Copy text'}
             >
               {copied ? (
@@ -289,7 +289,7 @@ export default function HighlightToolbar({
           )}
         </div>
 
-        <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-0.5 shrink-0" />
+        <div className="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-0.5 shrink-0" />
 
         {/* RIGHT SIDE ACTIONS: TRASH & CLOSE */}
         <div className="flex items-center gap-0.5">
@@ -301,7 +301,7 @@ export default function HighlightToolbar({
                 onDeleteHighlight();
                 onClose();
               }}
-              className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer"
+              className="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer"
               title="Remove Highlight"
             >
               <Trash2 className="w-4 h-4" />
@@ -314,7 +314,7 @@ export default function HighlightToolbar({
               e.stopPropagation();
               onClose();
             }}
-            className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl cursor-pointer transition-colors"
+            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl cursor-pointer transition-colors"
             title="Close toolbar"
           >
             <X className="w-4 h-4" />
@@ -339,7 +339,7 @@ export default function HighlightToolbar({
               rows={3}
               // biome-ignore lint/a11y/noAutofocus: popover note editor requires focus
               autoFocus
-              className="w-full text-xs p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-tj-primary resize-none font-sans"
+              className="w-full text-xs p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-tj-primary resize-none font-sans"
             />
             <div className="flex items-center justify-between text-xs">
               <span className="text-[10px] text-slate-400">
@@ -351,14 +351,14 @@ export default function HighlightToolbar({
                 <button
                   type="button"
                   onClick={() => setIsEditingNote(false)}
-                  className="px-2 py-1 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-xs cursor-pointer font-medium"
+                  className="px-2.5 py-1 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-xs cursor-pointer font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!isLoggedIn}
-                  className="px-3 py-1 bg-tj-primary hover:bg-tj-primary-hover text-white rounded-lg text-xs font-semibold cursor-pointer transition shadow-sm disabled:opacity-50"
+                  className="px-3.5 py-1.5 bg-tj-primary hover:bg-tj-primary-hover text-white rounded-lg text-xs font-semibold cursor-pointer transition shadow-sm disabled:opacity-50"
                 >
                   {isLoggedIn ? 'Save Note' : 'Sign in to save'}
                 </button>
@@ -370,3 +370,4 @@ export default function HighlightToolbar({
     </motion.div>
   );
 }
+

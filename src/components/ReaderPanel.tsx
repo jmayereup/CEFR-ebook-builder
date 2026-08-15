@@ -836,50 +836,47 @@ export default function ReaderPanel({
   };
 
   const handleTextSelection = () => {
-    const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
-      return;
-    }
-    const text = selection.toString().trim();
-    if (!text || text.length < 1) return;
+    // Small timeout ensures touch selection handles on mobile browsers have finished updating
+    setTimeout(() => {
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+        return;
+      }
+      const text = selection.toString().trim();
+      if (!text || text.length < 1) return;
 
-    // Find the paragraph element
-    const anchorNode = selection.anchorNode;
-    const paraEl =
-      anchorNode instanceof HTMLElement
-        ? anchorNode.closest('[data-paragraph-index]')
-        : anchorNode?.parentElement?.closest('[data-paragraph-index]');
+      // Find the paragraph element
+      const anchorNode = selection.anchorNode;
+      const paraEl =
+        anchorNode instanceof HTMLElement
+          ? anchorNode.closest('[data-paragraph-index]')
+          : anchorNode?.parentElement?.closest('[data-paragraph-index]');
 
-    if (!paraEl) return;
-    const pIdxStr = paraEl.getAttribute('data-paragraph-index');
-    if (pIdxStr === null) return;
-    const pIdx = parseInt(pIdxStr, 10);
+      if (!paraEl) return;
+      const pIdxStr = paraEl.getAttribute('data-paragraph-index');
+      if (pIdxStr === null) return;
+      const pIdx = parseInt(pIdxStr, 10);
 
-    const range = selection.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
+      const paraText = effectiveDisplayParagraphs[pIdx]?.original || '';
+      const startOffset = Math.max(0, paraText.indexOf(text));
+      const endOffset = startOffset + text.length;
 
-    const paraText = effectiveDisplayParagraphs[pIdx]?.original || '';
-    const startOffset = Math.max(0, paraText.indexOf(text));
-    const endOffset = startOffset + text.length;
+      // Dismiss word selection if open
+      setSelectedWord(null);
+      setSelectedWordRange(null);
 
-    // Dismiss word selection if open
-    setSelectedWord(null);
-    setSelectedWordRange(null);
-
-    setHighlightToolbarState({
-      activeHighlight: null,
-      selection: {
-        text,
-        chapterIndex: activeChapterIndex,
-        paragraphIndex: pIdx,
-        startOffset,
-        endOffset,
-      },
-      position: {
-        x: rect.left + rect.width / 2,
-        y: rect.top,
-      },
-    });
+      setHighlightToolbarState({
+        activeHighlight: null,
+        selection: {
+          text,
+          chapterIndex: activeChapterIndex,
+          paragraphIndex: pIdx,
+          startOffset,
+          endOffset,
+        },
+        position: null,
+      });
+    }, 40);
   };
 
   const handleHighlightClick = (
@@ -2025,7 +2022,11 @@ export default function ReaderPanel({
         {highlightToolbarState && (
           <HighlightToolbar
             activeHighlight={highlightToolbarState.activeHighlight}
-            position={highlightToolbarState.position}
+            selectedText={
+              highlightToolbarState.activeHighlight?.text ||
+              highlightToolbarState.selection?.text ||
+              ''
+            }
             onSelectColor={handleSelectHighlightColor}
             onSaveNote={handleSaveHighlightNote}
             onDeleteHighlight={handleDeleteHighlight}

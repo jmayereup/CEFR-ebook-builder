@@ -646,6 +646,11 @@ export default function NotesPage({
                 <div className="space-y-3">
                   {/* 1. QUOTE BLOCK (PRIMARY FOCUS) */}
                   <div
+                    lang={
+                      story?.language
+                        ? getLanguageCodeFromName(story.language)
+                        : undefined
+                    }
                     className={`p-3.5 rounded-xl border border-l-4 font-serif text-[14px] leading-relaxed select-text transition-colors shadow-2xs ${conf.quoteClass}`}
                   >
                     “{h.text}”

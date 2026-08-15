@@ -112,9 +112,20 @@ export default function InteractiveParagraph({
   onHighlightClick,
 }: InteractiveParagraphProps) {
   const langCode = getLanguageCodeFromName(language);
-  const isAsiatic = ['japanese', 'chinese', 'ja', 'zh'].some((c) =>
-    language.toLowerCase().includes(c),
-  );
+  const isSpaceLess = [
+    'thai',
+    'th',
+    'japanese',
+    'ja',
+    'chinese',
+    'zh',
+    'lao',
+    'lo',
+    'khmer',
+    'km',
+    'burmese',
+    'my',
+  ].some((c) => language.toLowerCase().includes(c) || langCode === c);
 
   const { cleanText, ranges, isBlockquote, isHeader } = useMemo(() => {
     return parseMarkdownRanges(paragraphText);
@@ -137,7 +148,7 @@ export default function InteractiveParagraph({
 
   const segmentsWithPositions = useMemo(() => {
     let currPos = 0;
-    return segments.map((seg, idx) => {
+    const rawSegments = segments.map((seg, idx) => {
       const startPos = currPos;
       const endPos = currPos + seg.segment.length;
       currPos = endPos;
@@ -165,36 +176,97 @@ export default function InteractiveParagraph({
         key: `seg-${pIdx}-${idx}-${seg.segment}`,
       };
     });
+
+    return rawSegments.map((seg, idx, arr) => {
+      const prevSeg = idx > 0 ? arr[idx - 1] : null;
+      const nextSeg = idx < arr.length - 1 ? arr[idx + 1] : null;
+
+      const isHighlight = !!seg.highlight;
+      const isHighlightStart =
+        isHighlight &&
+        (!prevSeg || prevSeg.highlight?.id !== seg.highlight?.id);
+      const isHighlightEnd =
+        isHighlight &&
+        (!nextSeg || nextSeg.highlight?.id !== seg.highlight?.id);
+
+      return {
+        ...seg,
+        isHighlightStart,
+        isHighlightEnd,
+      };
+    });
   }, [segments, ranges, highlights, pIdx]);
+
+  const getHighlightClassNames = (
+    highlight: StoryHighlight,
+    isHighlightStart: boolean,
+    isHighlightEnd: boolean,
+    isBold = false,
+    isItalic = false,
+  ) => {
+    const styleConfig =
+      HIGHLIGHT_STYLE_MAP[highlight.color] || HIGHLIGHT_STYLE_MAP.yellow;
+    const noteBorder =
+      highlight.note && highlight.note.trim() ? styleConfig.borderClass : '';
+
+    let roundedClass = 'rounded-none';
+    if (isHighlightStart && isHighlightEnd) {
+      roundedClass = 'rounded-xs';
+    } else if (isHighlightStart) {
+      roundedClass = 'rounded-l-xs rounded-r-none';
+    } else if (isHighlightEnd) {
+      roundedClass = 'rounded-r-xs rounded-l-none';
+    }
+
+    let paddingClass = 'px-0';
+    if (isHighlightStart && isHighlightEnd) {
+      paddingClass = isSpaceLess ? 'px-0.5' : 'px-1';
+    } else if (isHighlightStart) {
+      paddingClass = isSpaceLess ? 'pl-0.5 pr-0' : 'pl-1 pr-0';
+    } else if (isHighlightEnd) {
+      paddingClass = isSpaceLess ? 'pr-0.5 pl-0' : 'pr-1 pl-0';
+    }
+
+    let weightClass = isSpaceLess ? '' : 'font-medium';
+    if (isBold) weightClass = 'font-bold';
+    if (isItalic) weightClass += ' italic';
+
+    return `${styleConfig.bgClass} ${noteBorder} ${roundedClass} ${paddingClass} mx-0 cursor-pointer transition select-text ${weightClass}`;
+  };
 
   const getWordStyle = (
     word: string,
-    isAsiaticChar = false,
     isActive = false,
     isBold = false,
     isItalic = false,
     highlight?: StoryHighlight,
+    isHighlightStart = true,
+    isHighlightEnd = true,
   ) => {
     const wordClean = word.toLowerCase().trim();
     const isSaved = savedWordsSet?.has(wordClean);
     const isGlossary = glossaryWordsSet?.has(wordClean);
 
-    const paddingClass = isAsiaticChar ? 'px-0.5' : 'px-1 -mx-1';
-    let weightClass = isAsiaticChar ? '' : 'font-medium';
+    let weightClass = isSpaceLess ? '' : 'font-medium';
     if (isBold) weightClass = 'font-bold';
     if (isItalic) weightClass += ' italic';
 
     if (isActive) {
-      return `text-tj-primary dark:text-tj-primary-hover underline decoration-2 decoration-black dark:decoration-white underline-offset-4 ${paddingClass} cursor-pointer transition font-bold ${isItalic ? 'italic' : ''} select-text`;
+      const activePad = isSpaceLess ? 'px-0' : 'px-1 -mx-1';
+      return `text-tj-primary dark:text-tj-primary-hover underline decoration-2 decoration-black dark:decoration-white underline-offset-4 ${activePad} cursor-pointer transition font-bold ${isItalic ? 'italic' : ''} select-text`;
     }
 
     if (highlight) {
-      const styleConfig =
-        HIGHLIGHT_STYLE_MAP[highlight.color] || HIGHLIGHT_STYLE_MAP.yellow;
-      const noteBorder =
-        highlight.note && highlight.note.trim() ? styleConfig.borderClass : '';
-      return `${styleConfig.bgClass} ${noteBorder} rounded-xs ${paddingClass} cursor-pointer transition ${weightClass} select-text`;
+      return getHighlightClassNames(
+        highlight,
+        isHighlightStart,
+        isHighlightEnd,
+        isBold,
+        isItalic,
+      );
     }
+
+    const paddingClass = isSpaceLess ? 'px-0' : 'px-1 -mx-1';
 
     if (isSaved) {
       return `text-amber-800 dark:text-amber-300 border-b border-amber-500/35 dark:border-amber-400/20 hover:border-amber-600 dark:hover:border-amber-400 ${paddingClass} cursor-pointer transition ${weightClass} select-text`;
@@ -203,8 +275,8 @@ export default function InteractiveParagraph({
       return `text-tj-primary dark:text-tj-primary-hover border-b border-tj-primary-border/60 dark:border-tj-primary-border/30 hover:border-tj-primary dark:hover:border-tj-primary-hover ${paddingClass} cursor-pointer transition ${weightClass} select-text`;
     }
 
-    if (isAsiaticChar) {
-      return `hover:text-tj-primary px-0.5 cursor-pointer transition underline decoration-transparent hover:decoration-tj-primary-border ${isItalic ? 'italic' : ''} select-text`;
+    if (isSpaceLess) {
+      return `hover:text-tj-primary px-0 cursor-pointer transition underline decoration-transparent hover:decoration-tj-primary-border ${isItalic ? 'italic' : ''} select-text`;
     }
     return `hover:text-tj-primary px-1 -mx-1 cursor-pointer transition ${weightClass} underline decoration-transparent hover:decoration-tj-primary-border select-text`;
   };
@@ -253,6 +325,7 @@ export default function InteractiveParagraph({
       key={pIdx}
       id={`chapter-para-${pIdx}`}
       data-paragraph-index={pIdx}
+      lang={langCode}
       className={`${blockClass} transition-colors duration-500`}
     >
       {segmentsWithPositions.map((seg) => {
@@ -303,11 +376,12 @@ export default function InteractiveParagraph({
               }}
               className={getWordStyle(
                 seg.segment,
-                isAsiatic,
                 isActive,
                 seg.isBold,
                 seg.isItalic,
                 seg.highlight,
+                seg.isHighlightStart,
+                seg.isHighlightEnd,
               )}
             >
               {seg.segment}
@@ -327,20 +401,20 @@ export default function InteractiveParagraph({
         }
 
         if (seg.highlight) {
-          const styleConfig =
-            HIGHLIGHT_STYLE_MAP[seg.highlight.color] ||
-            HIGHLIGHT_STYLE_MAP.yellow;
-          const noteBorder =
-            seg.highlight.note?.trim()
-              ? styleConfig.borderClass
-              : '';
+          const highlightClasses = getHighlightClassNames(
+            seg.highlight,
+            seg.isHighlightStart,
+            seg.isHighlightEnd,
+            seg.isBold,
+            seg.isItalic,
+          );
           return (
             // biome-ignore lint/a11y/noStaticElementInteractions: highlight segment click listener
             // biome-ignore lint/a11y/useKeyWithClickEvents: highlight segment click listener
             <span
               key={seg.key}
               onClick={handleClick}
-              className={`${styleConfig.bgClass} ${noteBorder} rounded-xs select-text cursor-pointer ${seg.isItalic ? 'italic' : ''} ${seg.isBold ? 'font-bold' : ''}`}
+              className={highlightClasses}
             >
               {seg.segment}
             </span>
@@ -363,3 +437,4 @@ export default function InteractiveParagraph({
     </p>
   );
 }
+

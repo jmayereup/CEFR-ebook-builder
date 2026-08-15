@@ -1,6 +1,50 @@
 {
-  "lastFetchTime": 1786677903794,
+  "lastFetchTime": 1786766545636,
   "stories": [
+    {
+      "id": "sbllgqhogv4clc0",
+      "cover": "sbllgqhogv4clc0_3zn4b1yl1y.jpg",
+      "title": "ระยะห่างระหว่างเรา",
+      "language": "Thai",
+      "translationLanguage": "Thai",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 15,
+      "createdAt": "2026-08-15T02:04:48.071Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 0,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 15,
+      "wordCount": 5023,
+      "description": "Julian and Hana are two working professionals who delete their dating apps after facing modern dating fatigue. Each retreats into online spaces that initially comfort them but eventually deepen resentment between men and women. Through an unexpected meeting and honest conversations, they learn to replace collective cynicism with individual curiosity and mutual respect.",
+      "updated": "2026-08-15 04:00:11.972Z"
+    },
+    {
+      "id": "slw2mait5inljr4",
+      "cover": "slw2mait5inljr4_56lvfgg05u.jpg",
+      "title": "เส้นด้ายเงียบ: บันทึกชีวิตในเมืองเล็ก ห้องเรียนไกล และรักที่มั่นคง",
+      "language": "Thai",
+      "translationLanguage": "Thai",
+      "cefrLevel": "B1",
+      "genre": "sliceoflife",
+      "totalChapters": 10,
+      "createdAt": "2026-08-14T10:51:54.083Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "deepseek/deepseek-v4-pro",
+      "ratings": null,
+      "totalReads": 1,
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 4257,
+      "description": "A warm, introspective memoir tracing a life of quiet purpose across small-town America, spiritual searching, volunteer work in the city, and teaching in Southeast Asia. Through ten reflective chapters, the narrator explores simplicity, cross-cultural connection, enduring long-distance love, and the gift of caring for aging parents. This gentle narrative celebrates a life measured not by milestones, but by presence, curiosity, and human bonds.",
+      "updated": "2026-08-14 10:56:34.277Z"
+    },
     {
       "id": "sjh64gmf7xlnt99",
       "cover": "",
@@ -43,7 +87,7 @@
       "chaptersCount": 10,
       "wordCount": 4381,
       "description": "This guide explores the psychological roots of youth intolerance, viewing rigid beliefs as a defense mechanism against deep-seated insecurities. It provides parents and educators with practical tools, drawing on Western psychology and Buddhist philosophy, to foster resilience, empathy, and critical thinking in young people.",
-      "updated": "2026-08-13 01:47:23.400Z"
+      "updated": "2026-08-14 14:31:07.096Z"
     },
     {
       "id": "s4a9h3tuoqnwqty",
