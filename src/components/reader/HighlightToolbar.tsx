@@ -24,39 +24,40 @@ export const HIGHLIGHT_COLORS: {
     label: 'Yellow',
     dotClass: 'bg-amber-300 border-amber-400',
     bgClass:
-      'bg-amber-100/80 dark:bg-amber-900/40 text-amber-950 dark:text-amber-100',
-    borderClass: 'border-amber-400/60 dark:border-amber-500/40',
+      'bg-amber-50/90 dark:bg-amber-950/40 text-slate-900 dark:text-amber-100',
+    borderClass: 'border-amber-300/80 dark:border-amber-700/60 border-l-amber-400',
   },
   {
     id: 'green',
     label: 'Mint',
     dotClass: 'bg-emerald-300 border-emerald-400',
     bgClass:
-      'bg-emerald-100/80 dark:bg-emerald-900/40 text-emerald-950 dark:text-emerald-100',
-    borderClass: 'border-emerald-400/60 dark:border-emerald-500/40',
+      'bg-emerald-50/90 dark:bg-emerald-950/40 text-slate-900 dark:text-emerald-100',
+    borderClass: 'border-emerald-300/80 dark:border-emerald-700/60 border-l-emerald-400',
   },
   {
     id: 'blue',
     label: 'Sky',
     dotClass: 'bg-sky-300 border-sky-400',
-    bgClass: 'bg-sky-100/80 dark:bg-sky-900/40 text-sky-950 dark:text-sky-100',
-    borderClass: 'border-sky-400/60 dark:border-sky-500/40',
+    bgClass:
+      'bg-sky-50/90 dark:bg-sky-950/40 text-slate-900 dark:text-sky-100',
+    borderClass: 'border-sky-300/80 dark:border-sky-700/60 border-l-sky-400',
   },
   {
     id: 'purple',
     label: 'Lavender',
     dotClass: 'bg-purple-300 border-purple-400',
     bgClass:
-      'bg-purple-100/80 dark:bg-purple-900/40 text-purple-950 dark:text-purple-100',
-    borderClass: 'border-purple-400/60 dark:border-purple-500/40',
+      'bg-purple-50/90 dark:bg-purple-950/40 text-slate-900 dark:text-purple-100',
+    borderClass: 'border-purple-300/80 dark:border-purple-700/60 border-l-purple-400',
   },
   {
     id: 'pink',
     label: 'Rose',
     dotClass: 'bg-pink-300 border-pink-400',
     bgClass:
-      'bg-pink-100/80 dark:bg-pink-900/40 text-pink-950 dark:text-pink-100',
-    borderClass: 'border-pink-400/60 dark:border-pink-500/40',
+      'bg-pink-50/90 dark:bg-pink-950/40 text-slate-900 dark:text-pink-100',
+    borderClass: 'border-pink-300/80 dark:border-pink-700/60 border-l-pink-400',
   },
 ];
 

@@ -102,6 +102,18 @@ async function main() {
     { name: 'text', type: 'text', required: true },
     { name: 'color', type: 'text', required: true },
     { name: 'note', type: 'text', required: false },
+    {
+      name: 'created',
+      type: 'autodate',
+      onCreate: true,
+      onUpdate: false,
+    },
+    {
+      name: 'updated',
+      type: 'autodate',
+      onCreate: true,
+      onUpdate: true,
+    },
   ];
 
   const rules = {

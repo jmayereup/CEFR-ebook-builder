@@ -87,11 +87,19 @@ export default function StoryNotesSidebarTab({
       .sort((a, b) => a - b);
 
     for (const chIdx of chapterIndices) {
-      const chapterTitle =
-        story.chapters?.[chIdx]?.title || `Chapter ${chIdx + 1}`;
-      md += `## Chapter ${chIdx + 1}: ${chapterTitle}\n\n`;
+      const rawTitle = story.chapters?.[chIdx]?.title?.trim() || '';
+      const chNum = chIdx + 1;
+      const isGeneric =
+        !rawTitle ||
+        /^chapter\s*\d+$/i.test(rawTitle) ||
+        rawTitle.toLowerCase() === `chapter ${chNum}`.toLowerCase();
+      const chapterHeading = isGeneric
+        ? `Chapter ${chNum}`
+        : `Chapter ${chNum}: ${rawTitle}`;
+
+      md += `## ${chapterHeading}\n\n`;
       for (const h of groupedByChapter[chIdx]) {
-        md += `> "${h.text}"\n`;
+        md += `> “${h.text}”\n`;
         if (h.note?.trim()) {
           md += `\n**Note**: ${h.note}\n`;
         }
@@ -299,9 +307,9 @@ export default function StoryNotesSidebarTab({
                     }
                     setTimeout(() => onJumpToHighlight(h), 100);
                   }}
-                  className={`p-2 rounded-lg border text-slate-800 dark:text-slate-200 cursor-pointer font-serif italic text-xs leading-relaxed ${colorConf.bgClass} ${colorConf.borderClass}`}
+                  className={`p-2.5 rounded-xl border border-l-4 cursor-pointer font-serif text-[12.5px] leading-relaxed select-text transition-all ${colorConf.bgClass} ${colorConf.borderClass}`}
                 >
-                  "{h.text}"
+                  “{h.text}”
                 </div>
 
                 {/* ATTACHED NOTE */}

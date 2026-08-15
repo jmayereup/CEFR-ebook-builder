@@ -43,6 +43,7 @@ import ReaderPage from './pages/ReaderPage';
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const BookshelfPage = lazy(() => import('./pages/BookshelfPage'));
 const CreatePage = lazy(() => import('./pages/CreatePage'));
+const NotesPage = lazy(() => import('./pages/NotesPage'));
 const PracticePage = lazy(() => import('./pages/PracticePage'));
 
 import {
@@ -54,6 +55,7 @@ import {
 import {
   createStory,
   decrementStoryCompletion,
+  fetchAllUserHighlights,
   fetchPendingDeletionFlags,
   fetchStory,
   type GenerationLimitData,
@@ -119,21 +121,50 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   // App States
   const { darkMode, toggleDarkMode } = useDarkMode();
   const [activeTab, setActiveTab] = useState<
-    'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about'
+    | 'browse'
+    | 'bookshelf'
+    | 'notes'
+    | 'create'
+    | 'practice'
+    | 'admin'
+    | 'about'
   >(() => {
     if (ssrPath) {
       const tabMatch = ssrPath.match(
-        /^\/(browse|bookshelf|create|practice|admin|about)/,
+        /^\/(browse|bookshelf|notes|create|practice|admin|about)/,
       );
       if (tabMatch) return tabMatch[1] as any;
     } else if (typeof window !== 'undefined') {
       const tabMatch = window.location.pathname.match(
-        /^\/(browse|bookshelf|create|practice|admin|about)/,
+        /^\/(browse|bookshelf|notes|create|practice|admin|about)/,
       );
       if (tabMatch) return tabMatch[1] as any;
     }
     return 'browse';
   });
+
+  const [notesCount, setNotesCount] = useState<number>(0);
+
+  // Sync total notes count for badge
+  useEffect(() => {
+    if (!currentUser) {
+      setNotesCount(0);
+      return;
+    }
+    let active = true;
+    fetchAllUserHighlights(currentUser.uid)
+      .then((data) => {
+        if (active) {
+          setNotesCount(data.length);
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching highlight count for badge:', err);
+      });
+    return () => {
+      active = false;
+    };
+  }, [currentUser]);
 
   const [isPaid, setIsPaid] = useState<boolean>(false);
   const [generationLimitData, setGenerationLimitData] =
@@ -491,7 +522,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   // Pending navigation guard states
   const [pendingNavigation, setPendingNavigation] = useState<{
-    tab?: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about';
+    tab?: typeof activeTab;
     clearStory?: boolean;
     scrollDashboard?: boolean;
   } | null>(null);
@@ -1119,6 +1150,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
           storiesCount={visibleStories.length}
           bookshelfCount={bookshelfStories.length}
           savedVocabCount={savedVocab.length}
+          notesCount={notesCount}
           selectedStory={selectedStory}
           dirty={dirty}
           isSyncing={isSyncing}
@@ -1345,6 +1377,21 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   setFilterReadingStatus={setFilterReadingStatus}
                   onRefreshPrivateStories={loadPrivateStories}
                   privateStoriesLoading={privateStoriesLoading}
+                />
+              </motion.div>
+            ) : activeTab === 'notes' ? (
+              <motion.div
+                key="notes"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <NotesPage
+                  currentUser={currentUser}
+                  stories={stories}
+                  onSelectStory={handleSelectStory}
+                  setActiveTab={handleRequestTabChange}
+                  onOpenAuth={handleOpenAuth}
                 />
               </motion.div>
             ) : activeTab === 'create' ? (

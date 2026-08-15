@@ -436,6 +436,7 @@ export type StoryCompletionsRecord = {
 export type StoryHighlightsRecord = {
 	chapterIndex?: number
 	color: string
+	created: IsoAutoDateString
 	endOffset?: number
 	id: string
 	note?: string
@@ -443,6 +444,7 @@ export type StoryHighlightsRecord = {
 	startOffset?: number
 	story: RecordIdString
 	text: string
+	updated: IsoAutoDateString
 	user: RecordIdString
 }
 

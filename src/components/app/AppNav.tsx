@@ -1,6 +1,7 @@
 import {
   BookMarked,
   Grid,
+  Highlighter,
   Info,
   Layers,
   Menu,
@@ -14,14 +15,29 @@ import { useAuthStore } from '../../store/authStore';
 import type { Story } from '../../types';
 
 interface AppNavProps {
-  activeTab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about';
+  activeTab:
+    | 'browse'
+    | 'bookshelf'
+    | 'notes'
+    | 'create'
+    | 'practice'
+    | 'admin'
+    | 'about';
   setActiveTab: (
-    tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about',
+    tab:
+      | 'browse'
+      | 'bookshelf'
+      | 'notes'
+      | 'create'
+      | 'practice'
+      | 'admin'
+      | 'about',
   ) => void;
   setSelectedStory: (story: Story | null) => void;
   storiesCount: number;
   bookshelfCount: number;
   savedVocabCount: number;
+  notesCount?: number;
   selectedStory: Story | null;
   dirty?: boolean;
   isSyncing?: boolean;
@@ -35,6 +51,7 @@ export default function AppNav({
   storiesCount,
   bookshelfCount,
   savedVocabCount,
+  notesCount = 0,
   selectedStory,
   dirty: _dirty = false,
   isSyncing: _isSyncing = false,
@@ -87,6 +104,24 @@ export default function AppNav({
             >
               <BookMarked className="w-3.5 h-3.5" />
               <span>My Bookshelf ({bookshelfCount})</span>
+            </button>
+          )}
+
+          {mounted && !!currentUser && (
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedStory(null);
+                setActiveTab('notes');
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold rounded transition-all cursor-pointer shrink-0 ${
+                activeTab === 'notes'
+                  ? 'bg-tj-mint text-tj-text-main border border-tj-success/50 shadow-none font-sans font-bold'
+                  : 'text-tj-text-muted hover:bg-tj-bg-recessed hover:text-tj-text-main border border-transparent font-sans bg-transparent'
+              }`}
+            >
+              <Highlighter className="w-3.5 h-3.5" />
+              <span>Notes {notesCount > 0 ? `(${notesCount})` : ''}</span>
             </button>
           )}
 
@@ -200,6 +235,26 @@ export default function AppNav({
                 aria-label={`My Bookshelf (${bookshelfCount})`}
               >
                 <BookMarked className="w-4 h-4" />
+              </button>
+            )}
+
+            {mounted && !!currentUser && (
+              <button
+                id="nav-mobile-notes"
+                type="button"
+                onClick={() => {
+                  setSelectedStory(null);
+                  setActiveTab('notes');
+                }}
+                className={`flex items-center justify-center h-8 w-8 rounded-lg border transition-all cursor-pointer shrink-0 ${
+                  activeTab === 'notes'
+                    ? 'bg-tj-mint text-tj-text-main border-tj-success/50'
+                    : 'text-tj-text-muted hover:bg-tj-bg-recessed hover:text-tj-text-main border-transparent bg-transparent'
+                }`}
+                title={`Notes ${notesCount > 0 ? `(${notesCount})` : ''}`}
+                aria-label={`Notes ${notesCount > 0 ? `(${notesCount})` : ''}`}
+              >
+                <Highlighter className="w-4 h-4" />
               </button>
             )}
 
@@ -321,6 +376,25 @@ export default function AppNav({
                 >
                   <BookMarked className="w-4 h-4" />
                   <span>My Bookshelf ({bookshelfCount})</span>
+                </button>
+              )}
+
+              {mounted && !!currentUser && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedStory(null);
+                    setActiveTab('notes');
+                    setIsMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded transition-all cursor-pointer w-full text-left border ${
+                    activeTab === 'notes'
+                      ? 'bg-tj-mint text-tj-text-main border-tj-success/50 font-bold'
+                      : 'text-tj-text-muted hover:bg-tj-bg-recessed hover:text-tj-text-main border-transparent bg-transparent'
+                  }`}
+                >
+                  <Highlighter className="w-4 h-4" />
+                  <span>Notes ({notesCount})</span>
                 </button>
               )}
 

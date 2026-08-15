@@ -10,9 +10,23 @@ interface UseUrlRoutingOptions {
   setSelectedStory: (story: Story | null) => void;
   activeChapterIdx: number;
   setActiveChapterIdx: (idx: number) => void;
-  activeTab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about';
+  activeTab:
+    | 'browse'
+    | 'bookshelf'
+    | 'notes'
+    | 'create'
+    | 'practice'
+    | 'admin'
+    | 'about';
   setActiveTab: (
-    tab: 'browse' | 'bookshelf' | 'create' | 'practice' | 'admin' | 'about',
+    tab:
+      | 'browse'
+      | 'bookshelf'
+      | 'notes'
+      | 'create'
+      | 'practice'
+      | 'admin'
+      | 'about',
   ) => void;
   storiesLoading: boolean;
   isOnline: boolean;
@@ -74,7 +88,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     const bookChapterMatch = path.match(/^\/book\/([^/]+)\/chapter\/(\d+)/);
     const bookMatch = path.match(/^\/book\/([^/]+)/);
     const tabMatch = path.match(
-      /^\/(browse|bookshelf|create|practice|admin|about)/,
+      /^\/(browse|bookshelf|notes|create|practice|admin|about)/,
     );
 
     // Sync search/filters from URL query parameters
@@ -157,6 +171,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
       const tab = tabMatch[1] as
         | 'browse'
         | 'bookshelf'
+        | 'notes'
         | 'create'
         | 'practice'
         | 'admin'

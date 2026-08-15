@@ -234,6 +234,28 @@ export default function ReaderPanel({
     };
   }, [activeChapterIndex, story.id, onChapterFinished]);
 
+  // Deep-link scrolling when arriving with target highlight paragraph from NotesPage
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const targetPara = sessionStorage.getItem('target_highlight_paragraph');
+    if (targetPara !== null) {
+      sessionStorage.removeItem('target_highlight_paragraph');
+      const pIdx = parseInt(targetPara, 10);
+      if (!Number.isNaN(pIdx)) {
+        setTimeout(() => {
+          const el = document.getElementById(`chapter-para-${pIdx}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('ring-2', 'ring-tj-primary', 'rounded-xl');
+            setTimeout(() => {
+              el.classList.remove('ring-2', 'ring-tj-primary', 'rounded-xl');
+            }, 2500);
+          }
+        }, 400);
+      }
+    }
+  }, [activeChapterIndex, story.id]);
+
   useEffect(() => {
     const completedByObj = story.completedBy || {};
     const userReadCount = currentUser?.uid

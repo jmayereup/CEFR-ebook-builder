@@ -156,7 +156,11 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     return [];
   });
 
-  const handleSelectStory = async (story: Story) => {
+  const handleSelectStory = async (
+    story: Story,
+    overrideChapterIdx?: number,
+    targetParagraphIdx?: number,
+  ) => {
     const fullStory = await libHandleSelectStory(story);
     if (!fullStory) return;
 
@@ -168,17 +172,32 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       return updated;
     });
 
-    const syncedItem = recentlyRead.find((item) => item.storyId === story.id);
-    let idx = 0;
-    if (syncedItem) {
-      idx = syncedItem.chapterIdx;
-    } else {
-      const savedIdx =
-        typeof window !== 'undefined'
-          ? localStorage.getItem(`last_read_chapter_${story.id}`)
-          : null;
-      idx = savedIdx ? parseInt(savedIdx, 10) : 0;
+    if (
+      targetParagraphIdx !== undefined &&
+      typeof window !== 'undefined'
+    ) {
+      sessionStorage.setItem(
+        'target_highlight_paragraph',
+        targetParagraphIdx.toString(),
+      );
     }
+
+    let idx = 0;
+    if (overrideChapterIdx !== undefined) {
+      idx = overrideChapterIdx;
+    } else {
+      const syncedItem = recentlyRead.find((item) => item.storyId === story.id);
+      if (syncedItem) {
+        idx = syncedItem.chapterIdx;
+      } else {
+        const savedIdx =
+          typeof window !== 'undefined'
+            ? localStorage.getItem(`last_read_chapter_${story.id}`)
+            : null;
+        idx = savedIdx ? parseInt(savedIdx, 10) : 0;
+      }
+    }
+
     const validIdx =
       idx >= 0 && idx < (fullStory.chapters?.length ?? 0) ? idx : 0;
     setActiveChapterIdx(validIdx);
