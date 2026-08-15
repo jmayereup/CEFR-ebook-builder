@@ -325,6 +325,7 @@ export default function InteractiveParagraph({
       key={pIdx}
       id={`chapter-para-${pIdx}`}
       data-paragraph-index={pIdx}
+      data-active-paragraph={activeWordRangeInPara !== null ? 'true' : undefined}
       lang={langCode}
       className={`${blockClass} transition-colors duration-500`}
     >
@@ -357,6 +358,8 @@ export default function InteractiveParagraph({
             // biome-ignore lint/a11y/useKeyWithClickEvents: inline text span with dictionary lookup and highlight listener
             <span
               key={seg.key}
+              data-active-word={isActive ? 'true' : undefined}
+              data-paragraph-index={pIdx}
               onClick={(e) => {
                 if (seg.highlight && onHighlightClick) {
                   e.stopPropagation();

@@ -13,7 +13,14 @@ import {
   Volume2,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { FREE_MODEL_IDS } from '../constants/models';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
 import { useStoryHighlights } from '../hooks/useStoryHighlights';
@@ -718,7 +725,7 @@ export default function ReaderPanel({
         const proposedStart = Math.min(start, clickedFlatIdx);
         const proposedEnd = Math.max(end, clickedFlatIdx);
         const wordCount = proposedEnd - proposedStart + 1;
-        if (wordCount <= 10) {
+        if (wordCount <= 50) {
           newRange = [proposedStart, proposedEnd];
         }
       }
@@ -768,14 +775,49 @@ export default function ReaderPanel({
     }
   }, [selectedWord, selectedWordRange, chapterWords]);
 
-  // Helper checks for range adjustment
+  // Ensure the highlighted / selected word is smoothly scrolled well above the bottom toast (showing upcoming lines)
+  useEffect(() => {
+    if (!selectedWord) return;
+
+    // Small delay to allow layout and toast rendering to settle
+    const timeoutId = setTimeout(() => {
+      const activeEl =
+        document.querySelector('[data-active-word="true"]') ||
+        (selectedWordRange && chapterWords[selectedWordRange[0]]
+          ? document.getElementById(
+              `chapter-para-${chapterWords[selectedWordRange[0]].pIdx}`,
+            )
+          : null);
+
+      if (!activeEl) return;
+
+      const rect = activeEl.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      // Position the active highlighted word around 18% from the top (leaving 4-6 lines visible below it)
+      const desiredTop = Math.max(70, Math.min(140, viewportHeight * 0.18));
+      const bottomThreshold = viewportHeight - 340; // Clearance above toast
+
+      // If hidden behind or near the bottom toast, or not scrolled up enough to show subsequent lines
+      if (rect.bottom > bottomThreshold || rect.top < 65) {
+        const scrollDelta = rect.top - desiredTop;
+        window.scrollBy({
+          top: scrollDelta,
+          behavior: 'smooth',
+        });
+      }
+    }, 80);
+
+    return () => clearTimeout(timeoutId);
+  }, [selectedWord, selectedWordRange, chapterWords]);
+
+  // Helper checks for range adjustment (up to 50 words)
   const canExtendLeft =
     selectedWordRange !== null &&
     selectedWordRange[0] > 0 &&
     selectedWordRange[0] < chapterWords.length &&
     chapterWords[selectedWordRange[0] - 1]?.pIdx ===
       chapterWords[selectedWordRange[0]]?.pIdx &&
-    selectedWordRange[1] - (selectedWordRange[0] - 1) + 1 <= 10;
+    selectedWordRange[1] - (selectedWordRange[0] - 1) + 1 <= 50;
 
   const canShrinkLeft =
     selectedWordRange !== null && selectedWordRange[0] < selectedWordRange[1];
@@ -789,7 +831,7 @@ export default function ReaderPanel({
     selectedWordRange[1] < chapterWords.length - 1 &&
     chapterWords[selectedWordRange[1] + 1]?.pIdx ===
       chapterWords[selectedWordRange[1]]?.pIdx &&
-    selectedWordRange[1] + 1 - selectedWordRange[0] + 1 <= 10;
+    selectedWordRange[1] + 1 - selectedWordRange[0] + 1 <= 50;
 
   const handleExtendLeft = () => {
     if (canExtendLeft && selectedWordRange) {
@@ -835,116 +877,284 @@ export default function ReaderPanel({
     }
   };
 
-  const handleTextSelection = () => {
-    // Small timeout ensures touch selection handles on mobile browsers have finished updating
-    setTimeout(() => {
-      const selection = window.getSelection();
-      if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
-        return;
+  const getOffsetsForWordRange = useCallback(
+    (
+      startFlatIdx: number,
+      endFlatIdx: number,
+    ): { startOffset: number; endOffset: number } | null => {
+      const startWord = chapterWords[startFlatIdx];
+      const endWord = chapterWords[endFlatIdx];
+      if (!startWord || !endWord || startWord.pIdx !== endWord.pIdx) return null;
+
+      const pIdx = startWord.pIdx;
+      const dp = effectiveDisplayParagraphs[pIdx];
+      if (!dp) return null;
+
+      const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
+      const segments = segmentText(
+        dp.original,
+        targetLangCode,
+        segmentMatchingSet,
+      );
+
+      const minParaIdx = Math.min(startWord.indexInPara, endWord.indexInPara);
+      const maxParaIdx = Math.max(startWord.indexInPara, endWord.indexInPara);
+
+      let wordIdx = 0;
+      let currPos = 0;
+      let startOffset = 0;
+      let endOffset = dp.original.length;
+      let foundStart = false;
+
+      for (let sIdx = 0; sIdx < segments.length; sIdx++) {
+        const seg = segments[sIdx];
+        const segLen = seg.segment.length;
+        if (seg.isWordLike) {
+          if (wordIdx === minParaIdx && !foundStart) {
+            startOffset = currPos;
+            foundStart = true;
+          }
+          if (wordIdx === maxParaIdx) {
+            endOffset = currPos + segLen;
+            break;
+          }
+          wordIdx++;
+        }
+        currPos += segLen;
       }
-      const text = selection.toString().trim();
-      if (!text || text.length < 1) return;
 
-      // Find the paragraph element
-      const anchorNode = selection.anchorNode;
-      const paraEl =
-        anchorNode instanceof HTMLElement
-          ? anchorNode.closest('[data-paragraph-index]')
-          : anchorNode?.parentElement?.closest('[data-paragraph-index]');
+      return { startOffset, endOffset };
+    },
+    [
+      chapterWords,
+      effectiveDisplayParagraphs,
+      effectivePrimaryLanguage,
+      segmentMatchingSet,
+    ],
+  );
 
-      if (!paraEl) return;
-      const pIdxStr = paraEl.getAttribute('data-paragraph-index');
-      if (pIdxStr === null) return;
-      const pIdx = parseInt(pIdxStr, 10);
+  const activeHighlightForToast = useMemo<StoryHighlight | null>(() => {
+    if (!selectedWordRange) return null;
+    const offsets = getOffsetsForWordRange(
+      selectedWordRange[0],
+      selectedWordRange[1],
+    );
+    if (!offsets) return null;
+    const pIdx = chapterWords[selectedWordRange[0]]?.pIdx;
+    if (pIdx === undefined) return null;
 
-      const paraText = effectiveDisplayParagraphs[pIdx]?.original || '';
-      const startOffset = Math.max(0, paraText.indexOf(text));
-      const endOffset = startOffset + text.length;
+    const paraHighlights = getHighlightsForParagraph(activeChapterIndex, pIdx);
+    return (
+      paraHighlights.find(
+        (h) =>
+          (offsets.startOffset >= h.startOffset &&
+            offsets.endOffset <= h.endOffset) ||
+          (h.startOffset >= offsets.startOffset &&
+            h.endOffset <= offsets.endOffset) ||
+          (offsets.startOffset < h.endOffset &&
+            offsets.endOffset > h.startOffset),
+      ) || null
+    );
+  }, [
+    selectedWordRange,
+    getOffsetsForWordRange,
+    chapterWords,
+    getHighlightsForParagraph,
+    activeChapterIndex,
+  ]);
 
-      // Dismiss word selection if open
-      setSelectedWord(null);
-      setSelectedWordRange(null);
+  const handleToastHighlightColor = (color: HighlightColor) => {
+    if (!selectedWordRange || !selectedWord) return;
+    const offsets = getOffsetsForWordRange(
+      selectedWordRange[0],
+      selectedWordRange[1],
+    );
+    if (!offsets) return;
+    const pIdx = chapterWords[selectedWordRange[0]]?.pIdx;
+    if (pIdx === undefined) return;
 
-      setHighlightToolbarState({
-        activeHighlight: null,
-        selection: {
-          text,
-          chapterIndex: activeChapterIndex,
-          paragraphIndex: pIdx,
-          startOffset,
-          endOffset,
-        },
-        position: null,
+    if (activeHighlightForToast) {
+      updateHighlight(activeHighlightForToast.id, { color });
+    } else {
+      addHighlight({
+        text: selectedWord.word,
+        chapterIndex: activeChapterIndex,
+        paragraphIndex: pIdx,
+        startOffset: offsets.startOffset,
+        endOffset: offsets.endOffset,
+        color,
       });
-    }, 40);
+    }
+  };
+
+  const handleToastHighlightNote = (note: string) => {
+    if (!selectedWordRange || !selectedWord) return;
+    const offsets = getOffsetsForWordRange(
+      selectedWordRange[0],
+      selectedWordRange[1],
+    );
+    if (!offsets) return;
+    const pIdx = chapterWords[selectedWordRange[0]]?.pIdx;
+    if (pIdx === undefined) return;
+
+    if (activeHighlightForToast) {
+      updateHighlight(activeHighlightForToast.id, { note });
+    } else {
+      addHighlight({
+        text: selectedWord.word,
+        chapterIndex: activeChapterIndex,
+        paragraphIndex: pIdx,
+        startOffset: offsets.startOffset,
+        endOffset: offsets.endOffset,
+        color: 'yellow',
+        note,
+      });
+    }
+  };
+
+  const handleToastDeleteHighlight = () => {
+    if (activeHighlightForToast) {
+      removeHighlight(activeHighlightForToast.id);
+    }
   };
 
   const handleHighlightClick = (
     highlight: StoryHighlight,
-    position: { x: number; y: number },
+    _position?: { x: number; y: number },
   ) => {
-    // Dismiss word selection if open
-    setSelectedWord(null);
-    setSelectedWordRange(null);
+    const pIdx = highlight.paragraphIndex;
+    const dp = effectiveDisplayParagraphs[pIdx];
+    if (!dp) return;
 
-    setHighlightToolbarState({
-      activeHighlight: highlight,
-      selection: null,
-      position,
-    });
-  };
+    const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
+    const segments = segmentText(
+      dp.original,
+      targetLangCode,
+      segmentMatchingSet,
+    );
 
-  const handleSelectHighlightColor = (color: HighlightColor) => {
-    if (!highlightToolbarState) return;
+    const matchingWords = chapterWords
+      .map((w, idx) => ({ ...w, flatIdx: idx }))
+      .filter((w) => w.pIdx === pIdx);
 
-    if (highlightToolbarState.activeHighlight?.id) {
-      updateHighlight(highlightToolbarState.activeHighlight.id, { color });
-      setHighlightToolbarState((prev) =>
-        prev && prev.activeHighlight
-          ? {
-              ...prev,
-              activeHighlight: { ...prev.activeHighlight, color },
-            }
-          : null,
-      );
-    } else if (highlightToolbarState.selection) {
-      addHighlight({
-        ...highlightToolbarState.selection,
-        color,
+    let currPos = 0;
+    let wordIdx = 0;
+    const wordSpans: { flatIdx: number; startPos: number; endPos: number }[] = [];
+
+    for (const seg of segments) {
+      const start = currPos;
+      const end = currPos + seg.segment.length;
+      currPos = end;
+      if (seg.isWordLike) {
+        const found = matchingWords.find((mw) => mw.indexInPara === wordIdx);
+        if (found) {
+          wordSpans.push({
+            flatIdx: found.flatIdx,
+            startPos: start,
+            endPos: end,
+          });
+        }
+        wordIdx++;
+      }
+    }
+
+    const overlapping = wordSpans.filter(
+      (ws) =>
+        ws.startPos < highlight.endOffset && ws.endPos > highlight.startOffset,
+    );
+
+    if (overlapping.length > 0) {
+      const firstFlatIdx = overlapping[0].flatIdx;
+      const lastFlatIdx = overlapping[overlapping.length - 1].flatIdx;
+      const newRange: [number, number] = [firstFlatIdx, lastFlatIdx];
+      setSelectedWordRange(newRange);
+      updateSelectedWordForRange(firstFlatIdx, lastFlatIdx);
+    } else {
+      setSelectedWord({
+        word: highlight.text,
+        context: dp.original,
+        translation: '',
+        partOfSpeech: 'Phrase',
+        definition: '',
+        isFetching: false,
+        saveSuccess: false,
       });
-      window.getSelection()?.removeAllRanges();
-      setHighlightToolbarState(null);
     }
   };
 
-  const handleSaveHighlightNote = (note: string) => {
-    if (!highlightToolbarState) return;
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
+    const text = selection.toString().trim();
+    if (!text || text.length < 1) return;
 
-    if (highlightToolbarState.activeHighlight?.id) {
-      updateHighlight(highlightToolbarState.activeHighlight.id, { note });
-      setHighlightToolbarState((prev) =>
-        prev && prev.activeHighlight
-          ? {
-              ...prev,
-              activeHighlight: { ...prev.activeHighlight, note },
-            }
-          : null,
-      );
-    } else if (highlightToolbarState.selection) {
-      addHighlight({
-        ...highlightToolbarState.selection,
-        color: 'yellow',
-        note,
-      });
-      window.getSelection()?.removeAllRanges();
-      setHighlightToolbarState(null);
+    const anchorNode = selection.anchorNode;
+    const paraEl =
+      anchorNode instanceof HTMLElement
+        ? anchorNode.closest('[data-paragraph-index]')
+        : anchorNode?.parentElement?.closest('[data-paragraph-index]');
+
+    if (!paraEl) return;
+    const pIdxStr = paraEl.getAttribute('data-paragraph-index');
+    if (pIdxStr === null) return;
+    const pIdx = parseInt(pIdxStr, 10);
+    const dp = effectiveDisplayParagraphs[pIdx];
+    if (!dp) return;
+
+    const matchingWords = chapterWords
+      .map((w, idx) => ({ ...w, flatIdx: idx }))
+      .filter((w) => w.pIdx === pIdx);
+
+    const startOffset = Math.max(0, dp.original.indexOf(text));
+    const endOffset = startOffset + text.length;
+
+    const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
+    const segments = segmentText(
+      dp.original,
+      targetLangCode,
+      segmentMatchingSet,
+    );
+
+    let currPos = 0;
+    let wordIdx = 0;
+    const wordSpans: { flatIdx: number; startPos: number; endPos: number }[] = [];
+
+    for (const seg of segments) {
+      const start = currPos;
+      const end = currPos + seg.segment.length;
+      currPos = end;
+      if (seg.isWordLike) {
+        const found = matchingWords.find((mw) => mw.indexInPara === wordIdx);
+        if (found) {
+          wordSpans.push({
+            flatIdx: found.flatIdx,
+            startPos: start,
+            endPos: end,
+          });
+        }
+        wordIdx++;
+      }
     }
-  };
 
-  const handleDeleteHighlight = () => {
-    if (highlightToolbarState?.activeHighlight?.id) {
-      removeHighlight(highlightToolbarState.activeHighlight.id);
-      setHighlightToolbarState(null);
+    const overlapping = wordSpans.filter(
+      (ws) => ws.startPos < endOffset && ws.endPos > startOffset,
+    );
+
+    if (overlapping.length > 0) {
+      const firstFlatIdx = overlapping[0].flatIdx;
+      const lastFlatIdx = overlapping[overlapping.length - 1].flatIdx;
+      setSelectedWordRange([firstFlatIdx, lastFlatIdx]);
+      updateSelectedWordForRange(firstFlatIdx, lastFlatIdx);
+    } else {
+      setSelectedWord({
+        word: text,
+        context: dp.original,
+        translation: '',
+        partOfSpeech: 'Phrase',
+        definition: '',
+        isFetching: false,
+        saveSuccess: false,
+      });
     }
   };
 
@@ -1314,6 +1524,8 @@ export default function ReaderPanel({
               }
             }}
             className={`bg-tj-bg-card text-tj-text-main ${isZenMode ? 'p-6 sm:p-12 md:p-16' : 'p-4 sm:p-6 md:p-8'} ${
+              selectedWord ? 'pb-72 sm:pb-80' : ''
+            } ${
               columnWidth === 'narrow'
                 ? 'max-w-xl'
                 : columnWidth === 'wide'
@@ -1321,7 +1533,7 @@ export default function ReaderPanel({
                   : columnWidth === 'full'
                     ? 'max-w-full'
                     : 'max-w-3xl'
-            } sm:rounded-lg border-x-0 border-y sm:border border-tj-border-main shadow-none mx-auto relative overflow-hidden`}
+            } sm:rounded-lg border-x-0 border-y sm:border border-tj-border-main shadow-none mx-auto relative overflow-hidden transition-all duration-300`}
           >
             <ScrollToTop readerRef={readerRef} />
             {/* Terracotta progress bookmark line at the top of the reading view card */}
@@ -1982,7 +2194,7 @@ export default function ReaderPanel({
         </AnimatePresence>
       </div>
 
-      {/* FLOAT TRANSLATION AND SAVING TOAST MODAL */}
+      {/* FLOAT TRANSLATION, HIGHLIGHT AND SAVING TOAST MODAL */}
       <TranslationToast
         isOnline={isOnline}
         selectedWord={selectedWord}
@@ -2015,6 +2227,10 @@ export default function ReaderPanel({
         onShrinkLeft={handleShrinkLeft}
         onShrinkRight={handleShrinkRight}
         onExtendRight={handleExtendRight}
+        activeHighlight={activeHighlightForToast}
+        onSelectHighlightColor={handleToastHighlightColor}
+        onSaveHighlightNote={handleToastHighlightNote}
+        onDeleteHighlight={handleToastDeleteHighlight}
       />
 
       {/* FLOATING HIGHLIGHT & NOTE TOOLBAR */}
