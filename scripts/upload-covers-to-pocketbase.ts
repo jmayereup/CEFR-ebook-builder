@@ -11,7 +11,8 @@ config({ path: resolve(process.cwd(), '.env.local') });
 
 const url = process.env.VITE_POCKETBASE_URL || 'https://pb.teacherjake.com';
 const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL || 'jake@teacherjake.com';
-const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD || 'FHgo-uqVSSntM0WPbR_C';
+const adminPassword =
+  process.env.POCKETBASE_ADMIN_PASSWORD || 'FHgo-uqVSSntM0WPbR_C';
 const userEmail = process.env.POCKETBASE_EMAIL || adminEmail;
 const userPassword = process.env.POCKETBASE_PASSWORD || adminPassword;
 
@@ -19,7 +20,9 @@ const pb = new PocketBase(url);
 
 const tempCoversDir = path.resolve(process.cwd(), 'temp', 'covers');
 const publicCoversDir = path.resolve(process.cwd(), 'public', 'covers');
-const COVERS_DIR = fs.existsSync(tempCoversDir) ? tempCoversDir : publicCoversDir;
+const COVERS_DIR = fs.existsSync(tempCoversDir)
+  ? tempCoversDir
+  : publicCoversDir;
 
 async function main() {
   console.log(`==================================================`);
@@ -67,10 +70,16 @@ async function main() {
         }
       }
 
-      console.log(`[UPLOAD] Uploading cover for story: ${storyId} (${record.title})`);
+      console.log(
+        `[UPLOAD] Uploading cover for story: ${storyId} (${record.title})`,
+      );
       const fileBuf = fs.readFileSync(filePath);
       const formData = new FormData();
-      formData.append('cover', new Blob([fileBuf], { type: 'image/jpeg' }), file);
+      formData.append(
+        'cover',
+        new Blob([fileBuf], { type: 'image/jpeg' }),
+        file,
+      );
 
       await pb.collection('stories').update(storyId, formData);
       successCount++;
@@ -79,7 +88,10 @@ async function main() {
         console.warn(`[SKIP] Story record ${storyId} not found in PocketBase.`);
         skippedCount++;
       } else {
-        console.error(`[ERROR] Failed to upload cover for story ${storyId}:`, err.message || err);
+        console.error(
+          `[ERROR] Failed to upload cover for story ${storyId}:`,
+          err.message || err,
+        );
         errorCount++;
       }
     }

@@ -1,9 +1,11 @@
-import PocketBase from 'pocketbase';
 import dotenv from 'dotenv';
+import PocketBase from 'pocketbase';
+
 dotenv.config();
 
 const pbUrl = process.env.POCKETBASE_URL || 'http://127.0.0.1:8090';
-const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL || 'admin@teacherjake.com';
+const adminEmail =
+  process.env.POCKETBASE_ADMIN_EMAIL || 'admin@teacherjake.com';
 const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD || 'password123';
 
 const pb = new PocketBase(pbUrl);
@@ -37,7 +39,9 @@ async function main() {
     if (typeof (pb as any).admins !== 'undefined') {
       await (pb as any).admins.authWithPassword(adminEmail, adminPassword);
     } else {
-      await pb.collection('_superusers').authWithPassword(adminEmail, adminPassword);
+      await pb
+        .collection('_superusers')
+        .authWithPassword(adminEmail, adminPassword);
     }
   } catch (err) {
     console.error('Superuser authentication failed:', err);
@@ -51,15 +55,21 @@ async function main() {
   const fieldsToAdd = NEW_FIELDS.filter((f) => !existingNames.has(f.name));
 
   if (fieldsToAdd.length === 0) {
-    console.log('All embed fields (embedUrl, sourceType) already exist — skipping.');
+    console.log(
+      'All embed fields (embedUrl, sourceType) already exist — skipping.',
+    );
     return;
   }
 
-  console.log(`Adding ${fieldsToAdd.length} field(s): ${fieldsToAdd.map((f) => f.name).join(', ')}`);
+  console.log(
+    `Adding ${fieldsToAdd.length} field(s): ${fieldsToAdd.map((f) => f.name).join(', ')}`,
+  );
   const mergedFields = [...(stories.fields || []), ...fieldsToAdd];
 
   await pb.collections.update(stories.id, { fields: mergedFields });
-  console.log('Successfully updated stories collection with embedUrl and sourceType fields!');
+  console.log(
+    'Successfully updated stories collection with embedUrl and sourceType fields!',
+  );
 }
 
 main().catch((err) => {

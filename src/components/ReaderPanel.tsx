@@ -16,13 +16,16 @@ import { AnimatePresence, motion } from 'motion/react';
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { FREE_MODEL_IDS } from '../constants/models';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
+import { useStoryHighlights } from '../hooks/useStoryHighlights';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import {
   type Chapter,
   getAverageRating,
   getLanguageCodeFromName,
+  type HighlightColor,
   type Story,
+  type StoryHighlight,
   SUPPORTED_LANGUAGES,
   type VocabularyTerm,
 } from '../types';
@@ -38,6 +41,7 @@ import BilingualSwapNotification from './reader/BilingualSwapNotification';
 import ChapterEditForm from './reader/ChapterEditForm';
 import ChapterNavigationBar from './reader/ChapterNavigationBar';
 import ChapterSidebar from './reader/ChapterSidebar';
+import HighlightToolbar from './reader/HighlightToolbar';
 import InteractiveParagraph from './reader/InteractiveParagraph';
 import NarrativeMaintenancePanel from './reader/NarrativeMaintenancePanel';
 import PreferredLanguageModal from './reader/PreferredLanguageModal';
@@ -269,6 +273,36 @@ export default function ReaderPanel({
   const [showLanguageModal, setShowLanguageModal] = useState<boolean>(false);
   const [isReaderSettingsOpen, setIsReaderSettingsOpen] =
     useState<boolean>(false);
+
+  const {
+    highlights,
+    addHighlight,
+    updateHighlight,
+    removeHighlight,
+    getHighlightsForParagraph,
+  } = useStoryHighlights({
+    storyId: story.id,
+    currentUser,
+    onUnauthorized: () => {
+      onShowAlert?.(
+        'Sign In Required',
+        'Please sign in or create an account to save highlights and personal notes.',
+        'info',
+      );
+    },
+  });
+
+  const [highlightToolbarState, setHighlightToolbarState] = useState<{
+    activeHighlight?: StoryHighlight | null;
+    selection?: {
+      text: string;
+      chapterIndex: number;
+      paragraphIndex: number;
+      startOffset: number;
+      endOffset: number;
+    } | null;
+    position: { x: number; y: number } | null;
+  } | null>(null);
 
   interface DisplayParagraph {
     original: string;
@@ -779,6 +813,135 @@ export default function ReaderPanel({
     }
   };
 
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+      return;
+    }
+    const text = selection.toString().trim();
+    if (!text || text.length < 1) return;
+
+    // Find the paragraph element
+    const anchorNode = selection.anchorNode;
+    const paraEl =
+      anchorNode instanceof HTMLElement
+        ? anchorNode.closest('[data-paragraph-index]')
+        : anchorNode?.parentElement?.closest('[data-paragraph-index]');
+
+    if (!paraEl) return;
+    const pIdxStr = paraEl.getAttribute('data-paragraph-index');
+    if (pIdxStr === null) return;
+    const pIdx = parseInt(pIdxStr, 10);
+
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    const paraText = effectiveDisplayParagraphs[pIdx]?.original || '';
+    const startOffset = Math.max(0, paraText.indexOf(text));
+    const endOffset = startOffset + text.length;
+
+    // Dismiss word selection if open
+    setSelectedWord(null);
+    setSelectedWordRange(null);
+
+    setHighlightToolbarState({
+      activeHighlight: null,
+      selection: {
+        text,
+        chapterIndex: activeChapterIndex,
+        paragraphIndex: pIdx,
+        startOffset,
+        endOffset,
+      },
+      position: {
+        x: rect.left + rect.width / 2,
+        y: rect.top,
+      },
+    });
+  };
+
+  const handleHighlightClick = (
+    highlight: StoryHighlight,
+    position: { x: number; y: number },
+  ) => {
+    // Dismiss word selection if open
+    setSelectedWord(null);
+    setSelectedWordRange(null);
+
+    setHighlightToolbarState({
+      activeHighlight: highlight,
+      selection: null,
+      position,
+    });
+  };
+
+  const handleSelectHighlightColor = (color: HighlightColor) => {
+    if (!highlightToolbarState) return;
+
+    if (highlightToolbarState.activeHighlight?.id) {
+      updateHighlight(highlightToolbarState.activeHighlight.id, { color });
+      setHighlightToolbarState((prev) =>
+        prev && prev.activeHighlight
+          ? {
+              ...prev,
+              activeHighlight: { ...prev.activeHighlight, color },
+            }
+          : null,
+      );
+    } else if (highlightToolbarState.selection) {
+      addHighlight({
+        ...highlightToolbarState.selection,
+        color,
+      });
+      window.getSelection()?.removeAllRanges();
+      setHighlightToolbarState(null);
+    }
+  };
+
+  const handleSaveHighlightNote = (note: string) => {
+    if (!highlightToolbarState) return;
+
+    if (highlightToolbarState.activeHighlight?.id) {
+      updateHighlight(highlightToolbarState.activeHighlight.id, { note });
+      setHighlightToolbarState((prev) =>
+        prev && prev.activeHighlight
+          ? {
+              ...prev,
+              activeHighlight: { ...prev.activeHighlight, note },
+            }
+          : null,
+      );
+    } else if (highlightToolbarState.selection) {
+      addHighlight({
+        ...highlightToolbarState.selection,
+        color: 'yellow',
+        note,
+      });
+      window.getSelection()?.removeAllRanges();
+      setHighlightToolbarState(null);
+    }
+  };
+
+  const handleDeleteHighlight = () => {
+    if (highlightToolbarState?.activeHighlight?.id) {
+      removeHighlight(highlightToolbarState.activeHighlight.id);
+      setHighlightToolbarState(null);
+    }
+  };
+
+  const handleJumpToHighlight = (highlight: StoryHighlight) => {
+    const paraEl = document.getElementById(
+      `chapter-para-${highlight.paragraphIndex}`,
+    );
+    if (paraEl) {
+      paraEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      paraEl.classList.add('ring-2', 'ring-tj-primary', 'rounded-xl');
+      setTimeout(() => {
+        paraEl.classList.remove('ring-2', 'ring-tj-primary', 'rounded-xl');
+      }, 2000);
+    }
+  };
+
   const playSentenceContainingWord = (word: string, paragraphText: string) => {
     if (!window.speechSynthesis) return;
 
@@ -1096,6 +1259,9 @@ export default function ReaderPanel({
           onGenerateGlossary={onGenerateGlossary}
           onStoryUpdated={onStoryUpdated}
           onGenerateCover={onGenerateCover}
+          highlights={highlights}
+          onJumpToHighlight={handleJumpToHighlight}
+          onDeleteHighlight={removeHighlight}
         />
       )}
 
@@ -1386,6 +1552,8 @@ export default function ReaderPanel({
                   <>
                     <section
                       lang={getLanguageCodeFromName(effectivePrimaryLanguage)}
+                      onMouseUp={handleTextSelection}
+                      onTouchEnd={handleTextSelection}
                       className={`space-y-6 select-text ${useSerif ? 'font-serif' : 'font-sans'}`}
                       style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
                     >
@@ -1402,6 +1570,10 @@ export default function ReaderPanel({
                           isActiveParagraph && startWord && endWord
                             ? [startWord.indexInPara, endWord.indexInPara]
                             : null;
+                        const paraHighlights = getHighlightsForParagraph(
+                          activeChapterIndex,
+                          idx,
+                        );
                         return (
                           <div
                             key={idx}
@@ -1419,6 +1591,8 @@ export default function ReaderPanel({
                                   savedWordsSet={savedWordsSet}
                                   activeWordRangeInPara={activeWordRangeInPara}
                                   alignment={alignment}
+                                  highlights={paraHighlights}
+                                  onHighlightClick={handleHighlightClick}
                                 />
                               </div>
                               {showBilingual && (
@@ -1823,6 +1997,53 @@ export default function ReaderPanel({
         onShrinkRight={handleShrinkRight}
         onExtendRight={handleExtendRight}
       />
+
+      {/* FLOATING HIGHLIGHT & NOTE TOOLBAR */}
+      <AnimatePresence>
+        {highlightToolbarState && (
+          <HighlightToolbar
+            activeHighlight={highlightToolbarState.activeHighlight}
+            position={highlightToolbarState.position}
+            onSelectColor={handleSelectHighlightColor}
+            onSaveNote={handleSaveHighlightNote}
+            onDeleteHighlight={handleDeleteHighlight}
+            onTranslate={() => {
+              const snippet =
+                highlightToolbarState.activeHighlight?.text ||
+                highlightToolbarState.selection?.text ||
+                '';
+              if (snippet) {
+                const startWord = chapterWords.find((w) =>
+                  w.word
+                    .toLowerCase()
+                    .includes(snippet.toLowerCase().slice(0, 10)),
+                );
+                setSelectedWord({
+                  word: snippet,
+                  context: startWord ? startWord.paragraphText : snippet,
+                  translation: '',
+                  partOfSpeech: '',
+                  definition: '',
+                  isFetching: false,
+                  saveSuccess: false,
+                });
+                handleFetchTranslation();
+              }
+            }}
+            onCopy={() => {
+              const snippet =
+                highlightToolbarState.activeHighlight?.text ||
+                highlightToolbarState.selection?.text ||
+                '';
+              if (snippet) {
+                navigator.clipboard.writeText(snippet);
+              }
+            }}
+            onClose={() => setHighlightToolbarState(null)}
+            isLoggedIn={Boolean(currentUser?.uid || (currentUser as any)?.id)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* PREFERRED LANGUAGE MODAL FOR NEW USERS */}
       <PreferredLanguageModal

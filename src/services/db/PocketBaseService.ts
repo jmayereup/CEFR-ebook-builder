@@ -7,6 +7,7 @@ import type {
   RecentlyReadItem,
   Story,
   StoryBible,
+  StoryHighlight,
   UserProfileData,
   UserStreakData,
   VocabularyTerm,
@@ -755,5 +756,106 @@ export class PocketBaseService implements IDatabaseService {
 
     await pb.collection('users').update(userId, { streak: updated });
     return updated;
+  }
+
+  // ── Highlights & Notes ────────────────────────────────────────────────────
+
+  async fetchStoryHighlights(
+    userId: string,
+    storyId: string,
+  ): Promise<StoryHighlight[]> {
+    try {
+      const records = await pb.collection('story_highlights').getFullList({
+        filter: `user = "${userId}" && story = "${storyId}"`,
+        sort: '+chapterIndex,+paragraphIndex,+startOffset',
+      });
+      return records.map((r: any) => ({
+        id: r.id,
+        user: r.user,
+        story: r.story,
+        chapterIndex: r.chapterIndex,
+        paragraphIndex: r.paragraphIndex,
+        startOffset: r.startOffset,
+        endOffset: r.endOffset,
+        text: r.text,
+        color: r.color,
+        note: r.note || '',
+        created: r.created,
+        updated: r.updated,
+      }));
+    } catch (err: any) {
+      console.error('[PocketBase] Failed to fetch highlights:', err);
+      return [];
+    }
+  }
+
+  async createStoryHighlight(
+    userId: string,
+    highlight: Omit<StoryHighlight, 'id' | 'created' | 'updated'>,
+  ): Promise<StoryHighlight> {
+    const payload = {
+      user: userId,
+      story: highlight.story,
+      chapterIndex: highlight.chapterIndex,
+      paragraphIndex: highlight.paragraphIndex,
+      startOffset: highlight.startOffset,
+      endOffset: highlight.endOffset,
+      text: highlight.text,
+      color: highlight.color,
+      note: highlight.note || '',
+    };
+    const created: any = await pb
+      .collection('story_highlights')
+      .create(payload);
+    return {
+      id: created.id,
+      user: created.user,
+      story: created.story,
+      chapterIndex: created.chapterIndex,
+      paragraphIndex: created.paragraphIndex,
+      startOffset: created.startOffset,
+      endOffset: created.endOffset,
+      text: created.text,
+      color: created.color,
+      note: created.note || '',
+      created: created.created,
+      updated: created.updated,
+    };
+  }
+
+  async updateStoryHighlight(
+    _userId: string,
+    highlightId: string,
+    updates: Partial<StoryHighlight>,
+  ): Promise<StoryHighlight> {
+    const payload: Record<string, any> = {};
+    if (updates.color !== undefined) payload.color = updates.color;
+    if (updates.note !== undefined) payload.note = updates.note;
+    if (updates.text !== undefined) payload.text = updates.text;
+
+    const updated: any = await pb
+      .collection('story_highlights')
+      .update(highlightId, payload);
+    return {
+      id: updated.id,
+      user: updated.user,
+      story: updated.story,
+      chapterIndex: updated.chapterIndex,
+      paragraphIndex: updated.paragraphIndex,
+      startOffset: updated.startOffset,
+      endOffset: updated.endOffset,
+      text: updated.text,
+      color: updated.color,
+      note: updated.note || '',
+      created: updated.created,
+      updated: updated.updated,
+    };
+  }
+
+  async deleteStoryHighlight(
+    _userId: string,
+    highlightId: string,
+  ): Promise<void> {
+    await pb.collection('story_highlights').delete(highlightId);
   }
 }

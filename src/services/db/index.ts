@@ -15,6 +15,7 @@ import type {
   RecentlyReadItem,
   Story,
   StoryBible,
+  StoryHighlight,
   UserProfileData,
   UserStreakData,
   VocabularyTerm,
@@ -155,6 +156,21 @@ export const recordDailyActivity = (userId: string) =>
 export const updateStreak = (userId: string, streak: UserStreakData) =>
   dbService.updateStreak(userId, streak);
 
+// Highlights & Notes
+export const fetchStoryHighlights = (userId: string, storyId: string) =>
+  dbService.fetchStoryHighlights(userId, storyId);
+export const createStoryHighlight = (
+  userId: string,
+  highlight: Omit<StoryHighlight, 'id' | 'created' | 'updated'>,
+) => dbService.createStoryHighlight(userId, highlight);
+export const updateStoryHighlight = (
+  userId: string,
+  highlightId: string,
+  updates: Partial<StoryHighlight>,
+) => dbService.updateStoryHighlight(userId, highlightId, updates);
+export const deleteStoryHighlight = (userId: string, highlightId: string) =>
+  dbService.deleteStoryHighlight(userId, highlightId);
+
 // Export types so callers can import from a single location
 export type {
   GenerationLimitData,
@@ -163,6 +179,7 @@ export type {
   MetadataOptions,
   ProfileUpdatePayload,
   RecentlyReadItem,
+  StoryHighlight,
   UserProfileData,
   UserStreakData,
 };

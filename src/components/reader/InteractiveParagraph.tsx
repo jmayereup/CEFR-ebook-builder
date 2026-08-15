@@ -1,6 +1,8 @@
+import type React from 'react';
 import { Fragment, useMemo } from 'react';
-import { getLanguageCodeFromName } from '../../types';
+import { getLanguageCodeFromName, type StoryHighlight } from '../../types';
 import { segmentText } from '../../utils/segmenter';
+import { HIGHLIGHT_STYLE_MAP } from './HighlightToolbar';
 
 interface StyledRange {
   start: number;
@@ -89,6 +91,11 @@ interface InteractiveParagraphProps {
   savedWordsSet?: Set<string>;
   activeWordRangeInPara?: [number, number] | null;
   alignment?: 'left' | 'center' | 'right' | 'justify';
+  highlights?: StoryHighlight[];
+  onHighlightClick?: (
+    highlight: StoryHighlight,
+    position: { x: number; y: number },
+  ) => void;
 }
 
 export default function InteractiveParagraph({
@@ -101,6 +108,8 @@ export default function InteractiveParagraph({
   savedWordsSet,
   activeWordRangeInPara = null,
   alignment = 'justify',
+  highlights,
+  onHighlightClick,
 }: InteractiveParagraphProps) {
   const langCode = getLanguageCodeFromName(language);
   const isAsiatic = ['japanese', 'chinese', 'ja', 'zh'].some((c) =>
@@ -137,6 +146,14 @@ export default function InteractiveParagraph({
         (r) => startPos >= r.start && endPos <= r.end,
       );
 
+      // Check if segment overlaps any highlight
+      const matchingHighlight = highlights?.find((h) => {
+        return (
+          (startPos >= h.startOffset && endPos <= h.endOffset) ||
+          (startPos < h.endOffset && endPos > h.startOffset)
+        );
+      });
+
       return {
         ...seg,
         index: idx,
@@ -144,10 +161,11 @@ export default function InteractiveParagraph({
         endPos,
         isBold: matchingRange?.isBold,
         isItalic: matchingRange?.isItalic,
+        highlight: matchingHighlight,
         key: `seg-${pIdx}-${idx}-${seg.segment}`,
       };
     });
-  }, [segments, ranges, pIdx]);
+  }, [segments, ranges, highlights, pIdx]);
 
   const getWordStyle = (
     word: string,
@@ -155,6 +173,7 @@ export default function InteractiveParagraph({
     isActive = false,
     isBold = false,
     isItalic = false,
+    highlight?: StoryHighlight,
   ) => {
     const wordClean = word.toLowerCase().trim();
     const isSaved = savedWordsSet?.has(wordClean);
@@ -167,6 +186,14 @@ export default function InteractiveParagraph({
 
     if (isActive) {
       return `text-tj-primary dark:text-tj-primary-hover underline decoration-2 decoration-black dark:decoration-white underline-offset-4 ${paddingClass} cursor-pointer transition font-bold ${isItalic ? 'italic' : ''} select-text`;
+    }
+
+    if (highlight) {
+      const styleConfig =
+        HIGHLIGHT_STYLE_MAP[highlight.color] || HIGHLIGHT_STYLE_MAP.yellow;
+      const noteBorder =
+        highlight.note && highlight.note.trim() ? styleConfig.borderClass : '';
+      return `${styleConfig.bgClass} ${noteBorder} rounded-xs ${paddingClass} cursor-pointer transition ${weightClass} select-text`;
     }
 
     if (isSaved) {
@@ -222,7 +249,12 @@ export default function InteractiveParagraph({
       : `${isBilingual ? '' : 'indent-4 md:indent-6'} ${getAlignmentClass()} leading-relaxed mb-4`;
 
   return (
-    <p key={pIdx} className={blockClass}>
+    <p
+      key={pIdx}
+      id={`chapter-para-${pIdx}`}
+      data-paragraph-index={pIdx}
+      className={`${blockClass} transition-colors duration-500`}
+    >
       {segmentsWithPositions.map((seg) => {
         const isActive =
           startSegIdx !== -1 &&
@@ -230,13 +262,37 @@ export default function InteractiveParagraph({
           seg.index >= startSegIdx &&
           seg.index <= endSegIdx;
 
+        const handleClick = (e: React.MouseEvent) => {
+          if (seg.highlight && onHighlightClick) {
+            e.stopPropagation();
+            onHighlightClick(seg.highlight, {
+              x: e.clientX,
+              y: e.clientY,
+            });
+            return;
+          }
+          if (seg.isWordLike) {
+            e.stopPropagation();
+            handleWordClick(seg.segment, paragraphText, pIdx, seg.index);
+          }
+        };
+
         if (seg.isWordLike) {
           const currentWordIndex = wordIndexInPara++;
           return (
-            // biome-ignore lint/a11y/noStaticElementInteractions: inline text span with dictionary lookup listener
+            // biome-ignore lint/a11y/noStaticElementInteractions: inline text span with dictionary lookup and highlight listener
+            // biome-ignore lint/a11y/useKeyWithClickEvents: inline text span with dictionary lookup and highlight listener
             <span
               key={seg.key}
               onClick={(e) => {
+                if (seg.highlight && onHighlightClick) {
+                  e.stopPropagation();
+                  onHighlightClick(seg.highlight, {
+                    x: e.clientX,
+                    y: e.clientY,
+                  });
+                  return;
+                }
                 e.stopPropagation();
                 handleWordClick(
                   seg.segment,
@@ -251,6 +307,7 @@ export default function InteractiveParagraph({
                 isActive,
                 seg.isBold,
                 seg.isItalic,
+                seg.highlight,
               )}
             >
               {seg.segment}
@@ -263,6 +320,27 @@ export default function InteractiveParagraph({
             <span
               key={seg.key}
               className={`text-tj-primary dark:text-tj-primary-hover underline decoration-2 decoration-black dark:decoration-white underline-offset-4 cursor-pointer font-bold ${seg.isItalic ? 'italic' : ''} select-text`}
+            >
+              {seg.segment}
+            </span>
+          );
+        }
+
+        if (seg.highlight) {
+          const styleConfig =
+            HIGHLIGHT_STYLE_MAP[seg.highlight.color] ||
+            HIGHLIGHT_STYLE_MAP.yellow;
+          const noteBorder =
+            seg.highlight.note?.trim()
+              ? styleConfig.borderClass
+              : '';
+          return (
+            // biome-ignore lint/a11y/noStaticElementInteractions: highlight segment click listener
+            // biome-ignore lint/a11y/useKeyWithClickEvents: highlight segment click listener
+            <span
+              key={seg.key}
+              onClick={handleClick}
+              className={`${styleConfig.bgClass} ${noteBorder} rounded-xs select-text cursor-pointer ${seg.isItalic ? 'italic' : ''} ${seg.isBold ? 'font-bold' : ''}`}
             >
               {seg.segment}
             </span>

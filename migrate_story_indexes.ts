@@ -71,7 +71,9 @@ async function main() {
   });
 
   if (missingIndexes.length === 0) {
-    console.log('All target indexes already exist on stories collection — skipping migration.');
+    console.log(
+      'All target indexes already exist on stories collection — skipping migration.',
+    );
     return;
   }
 

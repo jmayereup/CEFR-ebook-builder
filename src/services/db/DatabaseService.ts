@@ -13,6 +13,7 @@ import type {
   RecentlyReadItem,
   Story,
   StoryBible,
+  StoryHighlight,
   UserProfileData,
   UserStreakData,
   VocabularyTerm,
@@ -207,4 +208,28 @@ export interface IDatabaseService {
 
   /** Directly update the user streak data. */
   updateStreak(userId: string, streak: UserStreakData): Promise<void>;
+
+  // ── Highlights & Notes ────────────────────────────────────────────────────
+
+  /** Fetch all highlights and notes for a specific story created by the user. */
+  fetchStoryHighlights(
+    userId: string,
+    storyId: string,
+  ): Promise<StoryHighlight[]>;
+
+  /** Create a new highlight and optional note. */
+  createStoryHighlight(
+    userId: string,
+    highlight: Omit<StoryHighlight, 'id' | 'created' | 'updated'>,
+  ): Promise<StoryHighlight>;
+
+  /** Update an existing highlight's color, text, or attached note. */
+  updateStoryHighlight(
+    userId: string,
+    highlightId: string,
+    updates: Partial<StoryHighlight>,
+  ): Promise<StoryHighlight>;
+
+  /** Delete a highlight. */
+  deleteStoryHighlight(userId: string, highlightId: string): Promise<void>;
 }

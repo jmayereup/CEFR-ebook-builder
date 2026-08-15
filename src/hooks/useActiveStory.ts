@@ -110,9 +110,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     }
 
     const pathname =
-      typeof window !== 'undefined'
-        ? window.location.pathname
-        : ssrPath || '';
+      typeof window !== 'undefined' ? window.location.pathname : ssrPath || '';
     const explicitChapterMatch = pathname.match(
       /^\/book\/[^/]+\/chapter\/(\d+)/,
     );

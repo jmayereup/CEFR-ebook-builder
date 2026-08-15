@@ -4,10 +4,10 @@ import { config } from 'dotenv';
 import { resolve } from 'path';
 import PocketBaseClass from 'pocketbase';
 import sharp from 'sharp';
+
 const TJ_GEN_URL = (
   process.env.TJ_GEN_URL || 'https://gen.teacherjake.com'
 ).replace(/\/$/, '');
-
 
 const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
@@ -146,26 +146,36 @@ async function main() {
           headers['x-openrouter-api-key'] = openrouterApiKey;
         }
 
-        const response = await fetch(`${TJ_GEN_URL}/api/stories/generate-cover`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            storyId: story.id,
-            force: isForce,
-          }),
-        });
+        const response = await fetch(
+          `${TJ_GEN_URL}/api/stories/generate-cover`,
+          {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+              storyId: story.id,
+              force: isForce,
+            }),
+          },
+        );
 
         if (!response.ok) {
           const errText = await response.text();
-          throw new Error(`tj-gen API error (status ${response.status}): ${errText}`);
+          throw new Error(
+            `tj-gen API error (status ${response.status}): ${errText}`,
+          );
         }
 
         const resData = (await response.json()) as any;
         if (resData.success) {
-          console.log(`[SUCCESS] Cover generated for "${story.title}" via tj-gen.`);
+          console.log(
+            `[SUCCESS] Cover generated for "${story.title}" via tj-gen.`,
+          );
           generatedCount++;
         } else {
-          console.error(`[ERROR] tj-gen reported failure for "${story.title}":`, resData.error);
+          console.error(
+            `[ERROR] tj-gen reported failure for "${story.title}":`,
+            resData.error,
+          );
         }
 
         await new Promise((resolve) => setTimeout(resolve, 2000));

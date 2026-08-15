@@ -12,8 +12,8 @@ import {
   initStoriesMetadataListener,
   syncUserProfileServer,
 } from './src/server/lib/database';
-import { getStoryIdFromSegment, slugify } from './src/utils/slugify';
 import { getStoryCoverUrl } from './src/utils/coverUtils';
+import { getStoryIdFromSegment, slugify } from './src/utils/slugify';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -99,8 +99,7 @@ async function proxyToTJGen(req: express.Request, res: express.Response) {
     });
 
     if (response.body) {
-      // @ts-ignore Node fetch ReadableStream reader to Express response
-      const reader = response.body.getReader();
+      const reader = (response.body as any).getReader();
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -389,10 +388,7 @@ async function bootstrap() {
           'public, max-age=60, s-maxage=300, stale-while-revalidate=86400',
         );
       } else {
-        res.setHeader(
-          'Cache-Control',
-          'no-cache, no-store, must-revalidate',
-        );
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       }
 
       return res.status(200).set({ 'Content-Type': 'text/html' }).send(appHtml);

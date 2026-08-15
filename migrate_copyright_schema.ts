@@ -71,13 +71,13 @@ async function main() {
   const stories = await pb.collections.getOne('stories');
 
   // ── Fields ──────────────────────────────────────────────────────────────
-  const existingNames = new Set(
-    (stories.fields || []).map((f: any) => f.name),
-  );
+  const existingNames = new Set((stories.fields || []).map((f: any) => f.name));
   const fieldsToAdd = NEW_FIELDS.filter((f) => !existingNames.has(f.name));
 
   if (fieldsToAdd.length === 0) {
-    console.log('All copyright fields already exist — skipping field creation.');
+    console.log(
+      'All copyright fields already exist — skipping field creation.',
+    );
   } else {
     console.log(
       `Adding ${fieldsToAdd.length} field(s): ${fieldsToAdd.map((f) => f.name).join(', ')}`,
@@ -95,8 +95,13 @@ async function main() {
   const alreadyMigrated = (rule: string | null | undefined) =>
     typeof rule === 'string' && rule.includes('copyrightFlag');
 
-  if (alreadyMigrated(stories.listRule) && alreadyMigrated(stories.updateRule)) {
-    console.log('API rules already contain copyrightFlag — skipping rule patch.');
+  if (
+    alreadyMigrated(stories.listRule) &&
+    alreadyMigrated(stories.updateRule)
+  ) {
+    console.log(
+      'API rules already contain copyrightFlag — skipping rule patch.',
+    );
   } else {
     console.log('Patching stories collection API rules...');
     await pb.collections.update(stories.id, {
@@ -123,7 +128,9 @@ async function main() {
   console.log('');
   console.log('Next steps:');
   console.log('  1. npm run flag-copyright:dry   (review the backfill report)');
-  console.log('  2. npm run flag-copyright       (apply flags to existing stories)');
+  console.log(
+    '  2. npm run flag-copyright       (apply flags to existing stories)',
+  );
   console.log(
     '  3. Reset the server metadata cache (Admin dashboard button, or GET /api/stories/metadata?refresh=true&forceAll=true)',
   );

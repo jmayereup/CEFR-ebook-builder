@@ -13,6 +13,7 @@
     "lint": "tsc --noEmit",
     "typegen": "node -e \"require('dotenv').config(); const { spawnSync } = require('child_process'); spawnSync('npx', ['pocketbase-typegen', '--url', process.env.VITE_POCKETBASE_URL, '--email', process.env.POCKETBASE_ADMIN_EMAIL, '--password', process.env.POCKETBASE_ADMIN_PASSWORD, '--out', 'src/services/db/pocketbase-types.ts'], { stdio: 'inherit', shell: true });\"",
     "migrate:copyright-schema": "tsx migrate_copyright_schema.ts",
+    "migrate:highlights-schema": "tsx migrate_highlights_schema.ts",
     "migrate:embed-schema": "tsx migrate_embed_story_schema.ts",
     "migrate:story-indexes": "tsx migrate_story_indexes.ts",
     "flag-copyright:dry": "tsx migrate_copyright_flags.ts --dry",

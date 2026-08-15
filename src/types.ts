@@ -299,3 +299,20 @@ export interface SRSRecord {
   easeFactor: number;
   nextReviewDate: string;
 }
+
+export type HighlightColor = 'yellow' | 'green' | 'blue' | 'purple' | 'pink';
+
+export interface StoryHighlight {
+  id?: string;
+  user?: string;
+  story: string;
+  chapterIndex: number;
+  paragraphIndex: number;
+  startOffset: number;
+  endOffset: number;
+  text: string;
+  color: HighlightColor;
+  note?: string;
+  created?: string;
+  updated?: string;
+}

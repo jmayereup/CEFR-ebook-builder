@@ -20,10 +20,10 @@ import fs from 'node:fs';
 import { config } from 'dotenv';
 import { resolve } from 'path';
 import PocketBaseClass from 'pocketbase';
+
 const TJ_GEN_URL = (
   process.env.TJ_GEN_URL || 'https://gen.teacherjake.com'
 ).replace(/\/$/, '');
-
 
 const PocketBase = (PocketBaseClass as any).default || PocketBaseClass;
 
@@ -58,8 +58,6 @@ const concurrency = concurrencyArg
 const storyArg = args.find((a) => a.startsWith('--story='));
 const targetStoryId = storyArg ? storyArg.split('=')[1] : undefined;
 
-
-
 interface ClassificationResult {
   storyId: string;
   title: string;
@@ -81,9 +79,7 @@ async function classifyStory(story: any): Promise<ClassificationResult> {
     story.promptNotes
       ? `Author concept notes: ${String(story.promptNotes).slice(0, 1500)}`
       : '',
-    firstChapterContent
-      ? `Opening excerpt: ${firstChapterContent}`
-      : '',
+    firstChapterContent ? `Opening excerpt: ${firstChapterContent}` : '',
   ]
     .filter(Boolean)
     .join('\n\n')
@@ -180,8 +176,7 @@ async function main() {
     sort: '-created',
   });
 
-  const toScan =
-    !targetStoryId && limit ? stories.slice(0, limit) : stories;
+  const toScan = !targetStoryId && limit ? stories.slice(0, limit) : stories;
 
   console.log(
     `Found ${stories.length} public unflagged stories; scanning ${toScan.length}.`,
@@ -228,7 +223,9 @@ async function main() {
 
   if (isDryRun) {
     console.log('');
-    console.log('DRY RUN — the following stories WOULD be flagged & privatized:');
+    console.log(
+      'DRY RUN — the following stories WOULD be flagged & privatized:',
+    );
     for (const f of flagged) {
       console.log(`  - "${f.title}" (${f.storyId}): ${f.ipRiskReason}`);
     }
@@ -260,7 +257,9 @@ async function main() {
   }
 
   console.log('');
-  console.log(`Done. ${updated}/${flagged.length} stories flagged & privatized.`);
+  console.log(
+    `Done. ${updated}/${flagged.length} stories flagged & privatized.`,
+  );
   console.log(
     'IMPORTANT: now reset the server metadata cache (Admin dashboard "Reset Metadata Cache" button, or GET /api/stories/metadata?refresh=true&forceAll=true).',
   );

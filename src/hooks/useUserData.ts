@@ -683,8 +683,7 @@ export function useUserData(options: UseUserDataOptions) {
         if (Array.isArray(updatedRecord.bookshelf)) {
           setBookshelf((prev) => {
             if (
-              JSON.stringify(prev) ===
-              JSON.stringify(updatedRecord.bookshelf)
+              JSON.stringify(prev) === JSON.stringify(updatedRecord.bookshelf)
             ) {
               return prev;
             }
@@ -755,14 +754,10 @@ export function useUserData(options: UseUserDataOptions) {
           updatedRecord.readerFontSize >= 14 &&
           updatedRecord.readerFontSize <= 26
         ) {
-          useUIStore
-            .getState()
-            .setReaderFontSize(updatedRecord.readerFontSize);
+          useUIStore.getState().setReaderFontSize(updatedRecord.readerFontSize);
         }
         if (typeof updatedRecord.readerUseSerif === 'boolean') {
-          useUIStore
-            .getState()
-            .setReaderUseSerif(updatedRecord.readerUseSerif);
+          useUIStore.getState().setReaderUseSerif(updatedRecord.readerUseSerif);
         }
         isSyncingFromServer.current = false;
       });
