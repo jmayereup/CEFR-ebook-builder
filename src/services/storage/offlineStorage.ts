@@ -5,12 +5,12 @@ import type { Story } from '../../types';
 // IndexedDB is only initialized in browser environments (SSR safe)
 const storyStore =
   typeof window !== 'undefined' && typeof indexedDB !== 'undefined'
-    ? createStore('tj-books-offline-db', 'stories')
+    ? createStore('tj-books-stories-db', 'stories')
     : null;
 
 const metaStore =
   typeof window !== 'undefined' && typeof indexedDB !== 'undefined'
-    ? createStore('tj-books-offline-db', 'meta')
+    ? createStore('tj-books-meta-db', 'meta')
     : null;
 
 const GUEST_COMPLETED_KEY = 'guest_completed_story_ids';

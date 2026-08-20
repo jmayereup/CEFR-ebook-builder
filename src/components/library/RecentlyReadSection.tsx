@@ -91,7 +91,7 @@ export default function RecentlyReadSection({
     });
   }, [updatedTimestamps, generatingKey, items]);
 
-  if (!items || items.length === 0) return null;
+  if (!isMounted || !items || items.length === 0) return null;
 
   const visibleItems = isExpanded ? items : items.slice(0, 3);
 

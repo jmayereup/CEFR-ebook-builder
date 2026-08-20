@@ -75,13 +75,14 @@ export default function LibraryGrid({
   const currentUser = useAuthStore((state) => state.currentUser);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
-  const [viewMode, setViewMode] = useState<'grid' | 'condensed'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('library_view_mode');
-      return saved === 'condensed' ? 'condensed' : 'grid';
+  const [viewMode, setViewMode] = useState<'grid' | 'condensed'>('grid');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('library_view_mode');
+    if (saved === 'condensed') {
+      setViewMode('condensed');
     }
-    return 'grid';
-  });
+  }, []);
 
   const handleToggleViewMode = (mode: 'grid' | 'condensed') => {
     setViewMode(mode);
