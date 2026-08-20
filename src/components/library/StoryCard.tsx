@@ -191,7 +191,8 @@ export default function StoryCard({
   let userReadCount = 0;
   if (currentUser?.uid) {
     userReadCount = completedByObj[currentUser.uid] || 0;
-  } else if (typeof window !== 'undefined') {
+  }
+  if (userReadCount === 0 && typeof window !== 'undefined') {
     const isLocalRead =
       localStorage.getItem(`completed_story_${story.id}`) === 'true';
     if (isLocalRead) {

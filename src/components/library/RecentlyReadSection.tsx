@@ -106,7 +106,8 @@ export default function RecentlyReadSection({
           let userReadCount = 0;
           if (currentUser?.uid) {
             userReadCount = completedByObj[currentUser.uid] || 0;
-          } else if (isMounted) {
+          }
+          if (userReadCount === 0 && isMounted) {
             const isLocalRead =
               localStorage.getItem(`completed_story_${story.id}`) === 'true';
             if (isLocalRead) {

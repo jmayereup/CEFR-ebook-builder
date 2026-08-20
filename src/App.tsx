@@ -235,6 +235,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     handleUpdateWordSRS,
     handleToggleBookshelf,
     updateRecentlyRead,
+    removeFromRecentlyRead,
     dirty,
     isSyncing,
     syncChangesToDatabase,
@@ -298,6 +299,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   // Stories & library — extracted to useLibrary hook
   const {
     stories,
+    setPublicStories,
+    setPrivateStories,
     storiesLoading,
     privateStoriesLoading,
     loadStoriesMetadata,
@@ -950,10 +953,12 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   // Keep mutable references of callbacks to prevent unnecessary useEffect triggers
   const updateRecentlyReadRef = useRef(updateRecentlyRead);
+  const removeFromRecentlyReadRef = useRef(removeFromRecentlyRead);
   const handleRecordDailyActivityRef = useRef(handleRecordDailyActivity);
 
   useEffect(() => {
     updateRecentlyReadRef.current = updateRecentlyRead;
+    removeFromRecentlyReadRef.current = removeFromRecentlyRead;
     handleRecordDailyActivityRef.current = handleRecordDailyActivity;
   });
 
@@ -963,6 +968,61 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   const handleStoryFinished = useCallback(
     async (storyId: string) => {
+      // 1. Mark in localStorage for instant local/offline sync
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`completed_story_${storyId}`, 'true');
+      }
+
+      // 2. Remove from recentlyRead list so finished story leaves "Reading"
+      removeFromRecentlyReadRef.current(storyId);
+
+      // 3. Optimistically update stories in state
+      setPublicStories((prev) =>
+        prev.map((s) => {
+          if (s.id !== storyId) return s;
+          const completedBy = { ...(s.completedBy || {}) };
+          if (currentUser) {
+            completedBy[currentUser.uid] =
+              (completedBy[currentUser.uid] || 0) + 1;
+          }
+          return {
+            ...s,
+            completedBy,
+            totalReads: (s.totalReads ?? 0) + 1,
+          };
+        }),
+      );
+
+      setPrivateStories((prev) =>
+        prev.map((s) => {
+          if (s.id !== storyId) return s;
+          const completedBy = { ...(s.completedBy || {}) };
+          if (currentUser) {
+            completedBy[currentUser.uid] =
+              (completedBy[currentUser.uid] || 0) + 1;
+          }
+          return {
+            ...s,
+            completedBy,
+            totalReads: (s.totalReads ?? 0) + 1,
+          };
+        }),
+      );
+
+      setSelectedStory((prev) => {
+        if (!prev || prev.id !== storyId) return prev;
+        const completedBy = { ...(prev.completedBy || {}) };
+        if (currentUser) {
+          completedBy[currentUser.uid] =
+            (completedBy[currentUser.uid] || 0) + 1;
+        }
+        return {
+          ...prev,
+          completedBy,
+          totalReads: (prev.totalReads ?? 0) + 1,
+        };
+      });
+
       if (currentUser) {
         try {
           await incrementStoryCompletion(storyId, currentUser.uid);
@@ -970,15 +1030,81 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         } catch (err) {
           console.error('Failed to increment story completion:', err);
         }
-      } else {
-        localStorage.setItem(`completed_story_${storyId}`, 'true');
       }
     },
-    [currentUser, loadStoriesMetadata],
+    [
+      currentUser,
+      loadStoriesMetadata,
+      setPublicStories,
+      setPrivateStories,
+      setSelectedStory,
+    ],
   );
 
   const handleStoryUnfinished = useCallback(
     async (storyId: string) => {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(`completed_story_${storyId}`);
+      }
+
+      setPublicStories((prev) =>
+        prev.map((s) => {
+          if (s.id !== storyId) return s;
+          const completedBy = { ...(s.completedBy || {}) };
+          if (currentUser && completedBy[currentUser.uid]) {
+            const newCount = completedBy[currentUser.uid] - 1;
+            if (newCount > 0) {
+              completedBy[currentUser.uid] = newCount;
+            } else {
+              delete completedBy[currentUser.uid];
+            }
+          }
+          return {
+            ...s,
+            completedBy,
+            totalReads: Math.max(0, (s.totalReads ?? 0) - 1),
+          };
+        }),
+      );
+
+      setPrivateStories((prev) =>
+        prev.map((s) => {
+          if (s.id !== storyId) return s;
+          const completedBy = { ...(s.completedBy || {}) };
+          if (currentUser && completedBy[currentUser.uid]) {
+            const newCount = completedBy[currentUser.uid] - 1;
+            if (newCount > 0) {
+              completedBy[currentUser.uid] = newCount;
+            } else {
+              delete completedBy[currentUser.uid];
+            }
+          }
+          return {
+            ...s,
+            completedBy,
+            totalReads: Math.max(0, (s.totalReads ?? 0) - 1),
+          };
+        }),
+      );
+
+      setSelectedStory((prev) => {
+        if (!prev || prev.id !== storyId) return prev;
+        const completedBy = { ...(prev.completedBy || {}) };
+        if (currentUser && completedBy[currentUser.uid]) {
+          const newCount = completedBy[currentUser.uid] - 1;
+          if (newCount > 0) {
+            completedBy[currentUser.uid] = newCount;
+          } else {
+            delete completedBy[currentUser.uid];
+          }
+        }
+        return {
+          ...prev,
+          completedBy,
+          totalReads: Math.max(0, (prev.totalReads ?? 0) - 1),
+        };
+      });
+
       if (currentUser) {
         try {
           await decrementStoryCompletion(storyId, currentUser.uid);
@@ -986,11 +1112,15 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         } catch (err) {
           console.error('Failed to decrement story completion:', err);
         }
-      } else {
-        localStorage.removeItem(`completed_story_${storyId}`);
       }
     },
-    [currentUser, loadStoriesMetadata],
+    [
+      currentUser,
+      loadStoriesMetadata,
+      setPublicStories,
+      setPrivateStories,
+      setSelectedStory,
+    ],
   );
 
   // Flush any pending debounced writes to database before the page unloads or App unmounts
@@ -1010,8 +1140,30 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     if (!selectedStory?.id) return;
     if (currentUser && !isUserDataLoaded) return;
 
+    // If story is already completed and user is on the final chapter, do not auto-add to recentlyRead
+    const isStoryCompleted =
+      (currentUser &&
+        (selectedStory.completedBy?.[currentUser.uid] || 0) > 0) ||
+      (typeof window !== 'undefined' &&
+        localStorage.getItem(`completed_story_${selectedStory.id}`) === 'true');
+    const isAtLastChapter =
+      activeChapterIdx >=
+      (selectedStory.chapters?.length || selectedStory.totalChapters || 1) - 1;
+
+    if (isStoryCompleted && isAtLastChapter) {
+      return;
+    }
+
     updateRecentlyReadRef.current(selectedStory.id, activeChapterIdx);
-  }, [selectedStory?.id, activeChapterIdx, currentUser, isUserDataLoaded]);
+  }, [
+    selectedStory?.id,
+    selectedStory?.completedBy,
+    selectedStory?.chapters?.length,
+    selectedStory?.totalChapters,
+    activeChapterIdx,
+    currentUser,
+    isUserDataLoaded,
+  ]);
 
   const handleLogin = async () => {
     try {

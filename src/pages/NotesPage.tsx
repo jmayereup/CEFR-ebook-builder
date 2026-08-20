@@ -25,7 +25,12 @@ import {
   updateStoryHighlight,
 } from '../services/db';
 import type { IUser } from '../services/types';
-import type { HighlightColor, Story, StoryHighlight } from '../types';
+import {
+  type HighlightColor,
+  type Story,
+  type StoryHighlight,
+  getLanguageCodeFromName,
+} from '../types';
 
 interface NotesPageProps {
   currentUser: IUser | null;

@@ -396,6 +396,22 @@ export function useUserData(options: UseUserDataOptions) {
     }
   };
 
+  const removeFromRecentlyRead = async (storyId: string) => {
+    const currentList = recentlyReadRef.current;
+    const updated = currentList.filter((item) => item.storyId !== storyId);
+    localStorage.setItem('recently_read', JSON.stringify(updated));
+    localStorage.removeItem(`last_read_chapter_${storyId}`);
+    setRecentlyRead(updated);
+
+    if (currentUser) {
+      saveUserProfileData(currentUser.uid, {
+        recentlyRead: updated,
+      }).catch((err) =>
+        console.error('[useUserData] Failed to sync recentlyRead:', err),
+      );
+    }
+  };
+
   // Load saved vocabulary and lookup limit from database (if user is authenticated) or localStorage
   useEffect(() => {
     if (authChecking) return;
@@ -794,6 +810,7 @@ export function useUserData(options: UseUserDataOptions) {
     handleUpdateWordSRS,
     handleToggleBookshelf,
     updateRecentlyRead,
+    removeFromRecentlyRead,
     dirty: false,
     isSyncing: false,
     syncChangesToDatabase,

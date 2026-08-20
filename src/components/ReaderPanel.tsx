@@ -2243,9 +2243,9 @@ export default function ReaderPanel({
               highlightToolbarState.selection?.text ||
               ''
             }
-            onSelectColor={handleSelectHighlightColor}
-            onSaveNote={handleSaveHighlightNote}
-            onDeleteHighlight={handleDeleteHighlight}
+            onSelectColor={handleToastHighlightColor}
+            onSaveNote={handleToastHighlightNote}
+            onDeleteHighlight={handleToastDeleteHighlight}
             onTranslate={() => {
               const snippet =
                 highlightToolbarState.activeHighlight?.text ||

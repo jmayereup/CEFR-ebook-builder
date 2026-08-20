@@ -177,10 +177,10 @@ export function useFilters(options: UseFiltersOptions) {
       .map((item) => {
         const story = stories.find((s) => s.id === item.storyId);
         if (!story) return null;
-        const isCompletedByUser = currentUser
-          ? (story.completedBy?.[currentUser.uid] || 0) > 0
-          : typeof window !== 'undefined' &&
-            localStorage.getItem(`completed_story_${story.id}`) === 'true';
+        const isCompletedByUser =
+          (currentUser && (story.completedBy?.[currentUser.uid] || 0) > 0) ||
+          (typeof window !== 'undefined' &&
+            localStorage.getItem(`completed_story_${story.id}`) === 'true');
         if (isCompletedByUser) return null;
         return {
           story,

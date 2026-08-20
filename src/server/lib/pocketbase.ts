@@ -140,11 +140,19 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
     }
 
     const completionsMap: Record<string, number> = {};
+    const completedByMap: Record<string, Record<string, number>> = {};
     for (const comp of completions) {
       const storyId = comp.story;
       const timesRead = comp.timesRead ?? 0;
       if (storyId) {
         completionsMap[storyId] = (completionsMap[storyId] ?? 0) + timesRead;
+        if (comp.user) {
+          if (!completedByMap[storyId]) {
+            completedByMap[storyId] = {};
+          }
+          completedByMap[storyId][comp.user] =
+            (completedByMap[storyId][comp.user] ?? 0) + timesRead;
+        }
       }
     }
 
@@ -176,6 +184,7 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
           model: record.model,
           ratings: record.ratings,
           totalReads: completionsMap[record.id] || 0,
+          completedBy: completedByMap[record.id] || {},
           isPublic: record.isPublic !== false,
           copyrightFlag: false,
           chaptersCount: chapters.length,

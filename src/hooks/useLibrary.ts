@@ -314,6 +314,8 @@ export function useLibrary(options: UseLibraryOptions) {
 
   return {
     stories,
+    setPublicStories,
+    setPrivateStories,
     storiesLoading,
     privateStoriesLoading,
     loadStoriesMetadata,

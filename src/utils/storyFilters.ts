@@ -112,9 +112,9 @@ export const filterAndSortStories = (
         let isRead = false;
         if (currentUser) {
           isRead = (story.completedBy?.[currentUser.uid] || 0) > 0;
-        } else {
+        }
+        if (!isRead && typeof window !== 'undefined') {
           isRead =
-            typeof window !== 'undefined' &&
             localStorage.getItem(`completed_story_${story.id}`) === 'true';
         }
 

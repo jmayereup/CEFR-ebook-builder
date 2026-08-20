@@ -105,7 +105,30 @@ export class PocketBaseService implements IDatabaseService {
       const record = await pb
         .collection('stories')
         .getOne<AppStoriesResponse>(storyId);
-      return record as unknown as Story;
+      const storyObj = record as unknown as Story;
+      try {
+        const comps = await pb.collection('story_completions').getFullList({
+          filter: `story = "${storyId}"`,
+          fields: 'user,timesRead',
+        });
+        const completedBy: Record<string, number> = {};
+        let totalReads = 0;
+        for (const c of comps) {
+          totalReads += c.timesRead ?? 0;
+          if (c.user) {
+            completedBy[c.user] =
+              (completedBy[c.user] ?? 0) + (c.timesRead ?? 0);
+          }
+        }
+        storyObj.completedBy = completedBy;
+        storyObj.totalReads = totalReads;
+      } catch (compError) {
+        console.warn(
+          `[PocketBaseService] Failed to load completions for story ${storyId}:`,
+          compError,
+        );
+      }
+      return storyObj;
     } catch (error: any) {
       if (error.status === 404) return null;
       throw error;
@@ -119,7 +142,32 @@ export class PocketBaseService implements IDatabaseService {
         filter: `creatorId = "${userId}" && isPublic = false`,
         sort: '-createdAt',
       });
-    return records as unknown as Story[];
+    try {
+      const comps = await pb.collection('story_completions').getFullList({
+        filter: `user = "${userId}"`,
+        fields: 'story,user,timesRead',
+      });
+      const userCompletions: Record<string, number> = {};
+      for (const c of comps) {
+        if (c.story) {
+          userCompletions[c.story] =
+            (userCompletions[c.story] ?? 0) + (c.timesRead ?? 0);
+        }
+      }
+      return records.map((r: any) => ({
+        ...r,
+        completedBy: {
+          [userId]: userCompletions[r.id] ?? 0,
+        },
+        totalReads: userCompletions[r.id] ?? 0,
+      })) as unknown as Story[];
+    } catch (compError) {
+      console.warn(
+        '[PocketBaseService] Failed to load completions for private stories:',
+        compError,
+      );
+      return records as unknown as Story[];
+    }
   }
 
   async fetchStoriesMetadata(options: MetadataOptions = {}): Promise<Story[]> {
