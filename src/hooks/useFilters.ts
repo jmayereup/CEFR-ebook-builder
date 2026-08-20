@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { IUser } from '../services/types';
+import { useUIStore } from '../store/uiStore';
 import type { Story } from '../types';
 import { filterAndSortStories, type SortBy } from '../utils/storyFilters';
 
@@ -24,6 +25,9 @@ function getSearchString(ssrPath?: string): string {
 
 export function useFilters(options: UseFiltersOptions) {
   const { stories, bookshelf, recentlyRead, currentUser, ssrPath } = options;
+  const guestCompletedStoryIds = useUIStore(
+    (state) => state.guestCompletedStoryIds,
+  );
 
   const queryParams = useMemo(() => {
     const searchStr = getSearchString(ssrPath);
@@ -115,6 +119,7 @@ export function useFilters(options: UseFiltersOptions) {
         sortBy,
         currentUser,
         recentlyRead,
+        guestCompletedStoryIds,
       }),
     [
       visibleStories,
@@ -126,6 +131,7 @@ export function useFilters(options: UseFiltersOptions) {
       sortBy,
       currentUser,
       recentlyRead,
+      guestCompletedStoryIds,
     ],
   );
 
@@ -155,6 +161,7 @@ export function useFilters(options: UseFiltersOptions) {
         sortBy,
         currentUser,
         recentlyRead,
+        guestCompletedStoryIds,
       }),
     [
       bookshelfStories,
@@ -166,6 +173,7 @@ export function useFilters(options: UseFiltersOptions) {
       sortBy,
       currentUser,
       recentlyRead,
+      guestCompletedStoryIds,
     ],
   );
 
@@ -179,8 +187,7 @@ export function useFilters(options: UseFiltersOptions) {
         if (!story) return null;
         const isCompletedByUser =
           (currentUser && (story.completedBy?.[currentUser.uid] || 0) > 0) ||
-          (typeof window !== 'undefined' &&
-            localStorage.getItem(`completed_story_${story.id}`) === 'true');
+          guestCompletedStoryIds.includes(story.id);
         if (isCompletedByUser) return null;
         return {
           story,
@@ -189,7 +196,7 @@ export function useFilters(options: UseFiltersOptions) {
       })
       .filter((item): item is { story: Story; chapterIdx: number } => !!item)
       .slice(0, 9);
-  }, [recentlyRead, stories, currentUser]);
+  }, [recentlyRead, stories, currentUser, guestCompletedStoryIds]);
 
   return {
     searchQuery,

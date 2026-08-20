@@ -7,6 +7,11 @@ import {
   useState,
 } from 'react';
 import { createStory, type RecentlyReadItem } from '../services/db';
+import {
+  getAllCachedStoryIds,
+  removeStory as removeStoryFromOffline,
+  saveStory as saveStoryToOffline,
+} from '../services/storage/offlineStorage';
 import type { IUser } from '../services/types';
 import type { Chapter, Story, VocabularyTerm } from '../types';
 import { getStoryIdFromSegment } from '../utils/slugify';
@@ -101,32 +106,21 @@ export function useActiveStory(options: UseActiveStoryOptions) {
 
   const hasRestoredChapterRef = useRef<string | null>(null);
 
-  // When recentlyRead loads/updates from cloud, if the active story's chapter was at default 0
-  // and the user did not explicitly request a specific chapter via URL, restore the chapter from recentlyRead.
+  // Sync active chapter index from recentlyRead when story loads
   useEffect(() => {
-    if (!selectedStory) {
-      hasRestoredChapterRef.current = null;
-      return;
-    }
-
-    const pathname =
-      typeof window !== 'undefined' ? window.location.pathname : ssrPath || '';
-    const explicitChapterMatch = pathname.match(
-      /^\/book\/[^/]+\/chapter\/(\d+)/,
-    );
-
-    if (
-      hasRestoredChapterRef.current === selectedStory.id &&
-      explicitChapterMatch
-    ) {
-      return;
-    }
-
+    if (!selectedStory || !isUserDataLoaded) return;
     const syncedItem = recentlyRead.find(
       (item) => item.storyId === selectedStory.id,
     );
-    if (syncedItem && syncedItem.chapterIdx >= 0) {
+    if (syncedItem) {
+      const currentPath =
+        typeof window !== 'undefined' ? window.location.pathname : '';
+      const explicitChapterMatch = currentPath.match(
+        /^\/book\/[^/]+\/chapter\/\d+/,
+      );
+
       const validIdx =
+        syncedItem.chapterIdx >= 0 &&
         syncedItem.chapterIdx < (selectedStory.chapters?.length ?? 0)
           ? syncedItem.chapterIdx
           : 0;
@@ -141,20 +135,11 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     }
   }, [selectedStory?.id, recentlyRead, isUserDataLoaded]);
 
-  const [cachedStoryIds, setCachedStoryIds] = useState<string[]>(() => {
-    const local =
-      typeof window !== 'undefined'
-        ? localStorage.getItem('cefr_cached_story_ids')
-        : null;
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        console.error('Error parsing cached story IDs:', e);
-      }
-    }
-    return [];
-  });
+  const [cachedStoryIds, setCachedStoryIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    getAllCachedStoryIds().then(setCachedStoryIds);
+  }, []);
 
   const handleSelectStory = async (
     story: Story,
@@ -165,17 +150,13 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     if (!fullStory) return;
 
     setSelectedStory(fullStory);
+    await saveStoryToOffline(fullStory);
     setCachedStoryIds((prev) => {
       if (prev.includes(story.id)) return prev;
-      const updated = [...prev, story.id];
-      localStorage.setItem('cefr_cached_story_ids', JSON.stringify(updated));
-      return updated;
+      return [...prev, story.id];
     });
 
-    if (
-      targetParagraphIdx !== undefined &&
-      typeof window !== 'undefined'
-    ) {
+    if (targetParagraphIdx !== undefined && typeof window !== 'undefined') {
       sessionStorage.setItem(
         'target_highlight_paragraph',
         targetParagraphIdx.toString(),
@@ -187,27 +168,13 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       idx = overrideChapterIdx;
     } else {
       const syncedItem = recentlyRead.find((item) => item.storyId === story.id);
-      if (syncedItem) {
-        idx = syncedItem.chapterIdx;
-      } else {
-        const savedIdx =
-          typeof window !== 'undefined'
-            ? localStorage.getItem(`last_read_chapter_${story.id}`)
-            : null;
-        idx = savedIdx ? parseInt(savedIdx, 10) : 0;
-      }
+      idx = syncedItem ? syncedItem.chapterIdx : 0;
     }
 
     const validIdx =
       idx >= 0 && idx < (fullStory.chapters?.length ?? 0) ? idx : 0;
     setActiveChapterIdx(validIdx);
     hasRestoredChapterRef.current = story.id;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(
-        `last_read_chapter_${story.id}`,
-        validIdx.toString(),
-      );
-    }
   };
 
   const handleDeleteStory = async (
@@ -218,14 +185,9 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     const deletedId = await libHandleDeleteStory(storyId, e, bypassConfirm);
     if (!deletedId) return;
 
-    // Clean up local state
-    setCachedStoryIds((prev) => {
-      const updated = prev.filter((id) => id !== storyId);
-      localStorage.setItem('cefr_cached_story_ids', JSON.stringify(updated));
-      return updated;
-    });
-    localStorage.removeItem(`cefr_story_cache_${storyId}`);
-    localStorage.removeItem(`last_read_chapter_${storyId}`);
+    // Clean up offline storage and local state
+    await removeStoryFromOffline(storyId);
+    setCachedStoryIds((prev) => prev.filter((id) => id !== storyId));
     if (selectedStory?.id === storyId) {
       setSelectedStory(null);
     }
@@ -241,10 +203,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     setSelectedStory((prev) => {
       if (prev && prev.id === storyId) {
         const updated = { ...prev, isPublic: newIsPublic !== false };
-        localStorage.setItem(
-          `cefr_story_cache_${storyId}`,
-          JSON.stringify(updated),
-        );
+        saveStoryToOffline(updated);
         return updated;
       }
       return prev;
@@ -278,10 +237,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
         isUnsaved: wasUnsaved,
       });
       setSelectedStory(updatedStory);
-      localStorage.setItem(
-        `cefr_story_cache_${updatedStory.id}`,
-        JSON.stringify(updatedStory),
-      );
+      await saveStoryToOffline(updatedStory);
 
       if (!wasUnsaved) {
         await createStory(updatedStory);
@@ -290,12 +246,6 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       if (activeChapterIdx >= reindexedChapters.length) {
         const newIdx = Math.max(0, reindexedChapters.length - 1);
         setActiveChapterIdx(newIdx);
-        if (currentUser) {
-          localStorage.setItem(
-            `last_read_chapter_${selectedStory.id}`,
-            newIdx.toString(),
-          );
-        }
       }
     } catch (err) {
       console.error('Failed to delete chapter:', err);
@@ -349,10 +299,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
         isUnsaved: wasUnsaved,
       });
       setSelectedStory(updatedStory);
-      localStorage.setItem(
-        `cefr_story_cache_${updatedStory.id}`,
-        JSON.stringify(updatedStory),
-      );
+      await saveStoryToOffline(updatedStory);
 
       if (!wasUnsaved) {
         await createStory(updatedStory);
@@ -360,12 +307,6 @@ export function useActiveStory(options: UseActiveStoryOptions) {
 
       const newIdx = updatedChapters.length - 1;
       setActiveChapterIdx(newIdx);
-      if (currentUser) {
-        localStorage.setItem(
-          `last_read_chapter_${selectedStory.id}`,
-          newIdx.toString(),
-        );
-      }
     } catch (err) {
       console.error('Failed to add custom chapter:', err);
       const message = err instanceof Error ? err.message : String(err);
@@ -382,11 +323,10 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     const fullStory = await libHandleSelectStory(story);
     if (!fullStory) return;
 
+    await saveStoryToOffline(fullStory);
     setCachedStoryIds((prev) => {
       if (prev.includes(story.id)) return prev;
-      const updated = [...prev, story.id];
-      localStorage.setItem('cefr_cached_story_ids', JSON.stringify(updated));
-      return updated;
+      return [...prev, story.id];
     });
 
     showAlert(

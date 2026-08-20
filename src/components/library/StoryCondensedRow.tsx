@@ -15,6 +15,7 @@ import {
 import { motion } from 'motion/react';
 import type React from 'react';
 import { useState } from 'react';
+import { useUIStore } from '../../store/uiStore';
 import {
   GENRES,
   getAverageRating,
@@ -60,6 +61,9 @@ export default function StoryCondensedRow({
   recentlyRead = [],
   className = '',
 }: StoryCondensedRowProps) {
+  const guestCompletedStoryIds = useUIStore(
+    (state) => state.guestCompletedStoryIds,
+  );
   const [isExpanded, setIsExpanded] = useState(false);
 
   const wordCount =
@@ -88,13 +92,8 @@ export default function StoryCondensedRow({
   let userReadCount = 0;
   if (currentUser?.uid) {
     userReadCount = completedByObj[currentUser.uid] || 0;
-  }
-  if (userReadCount === 0 && typeof window !== 'undefined') {
-    const isLocalRead =
-      localStorage.getItem(`completed_story_${story.id}`) === 'true';
-    if (isLocalRead) {
-      userReadCount = 1;
-    }
+  } else if (guestCompletedStoryIds.includes(story.id)) {
+    userReadCount = 1;
   }
   const isRead = userReadCount > 0;
 

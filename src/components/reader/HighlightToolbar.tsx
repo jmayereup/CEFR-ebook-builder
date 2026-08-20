@@ -25,7 +25,8 @@ export const HIGHLIGHT_COLORS: {
     dotClass: 'bg-amber-300 border-amber-400',
     bgClass:
       'bg-amber-50/90 dark:bg-amber-950/40 text-slate-900 dark:text-amber-100',
-    borderClass: 'border-amber-300/80 dark:border-amber-700/60 border-l-amber-400',
+    borderClass:
+      'border-amber-300/80 dark:border-amber-700/60 border-l-amber-400',
   },
   {
     id: 'green',
@@ -33,14 +34,14 @@ export const HIGHLIGHT_COLORS: {
     dotClass: 'bg-emerald-300 border-emerald-400',
     bgClass:
       'bg-emerald-50/90 dark:bg-emerald-950/40 text-slate-900 dark:text-emerald-100',
-    borderClass: 'border-emerald-300/80 dark:border-emerald-700/60 border-l-emerald-400',
+    borderClass:
+      'border-emerald-300/80 dark:border-emerald-700/60 border-l-emerald-400',
   },
   {
     id: 'blue',
     label: 'Sky',
     dotClass: 'bg-sky-300 border-sky-400',
-    bgClass:
-      'bg-sky-50/90 dark:bg-sky-950/40 text-slate-900 dark:text-sky-100',
+    bgClass: 'bg-sky-50/90 dark:bg-sky-950/40 text-slate-900 dark:text-sky-100',
     borderClass: 'border-sky-300/80 dark:border-sky-700/60 border-l-sky-400',
   },
   {
@@ -49,7 +50,8 @@ export const HIGHLIGHT_COLORS: {
     dotClass: 'bg-purple-300 border-purple-400',
     bgClass:
       'bg-purple-50/90 dark:bg-purple-950/40 text-slate-900 dark:text-purple-100',
-    borderClass: 'border-purple-300/80 dark:border-purple-700/60 border-l-purple-400',
+    borderClass:
+      'border-purple-300/80 dark:border-purple-700/60 border-l-purple-400',
   },
   {
     id: 'pink',
@@ -191,9 +193,7 @@ export default function HighlightToolbar({
       {/* Optional snippet preview if long text or active note */}
       {previewSnippet && (
         <div className="px-2 pt-0.5 pb-1 flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800/80 text-[11px] text-slate-500 dark:text-slate-400 truncate">
-          <span className="truncate italic font-serif">
-            “{previewSnippet}”
-          </span>
+          <span className="truncate italic font-serif">“{previewSnippet}”</span>
           {activeHighlight && (
             <span className="shrink-0 text-[10px] font-semibold text-tj-primary uppercase tracking-wider">
               Highlighted
@@ -370,4 +370,3 @@ export default function HighlightToolbar({
     </motion.div>
   );
 }
-

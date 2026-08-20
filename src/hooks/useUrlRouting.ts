@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchStory, type RecentlyReadItem } from '../services/db';
+import { getStory, saveStory } from '../services/storage/offlineStorage';
 import type { IUser } from '../services/types';
 import type { Story } from '../types';
 import { getStoryIdFromSegment, slugify } from '../utils/slugify';
@@ -151,16 +152,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         const syncedItem = recentlyRead.find(
           (item) => item.storyId === selectedStory.id,
         );
-        let idx = 0;
-        if (syncedItem) {
-          idx = syncedItem.chapterIdx;
-        } else {
-          const savedIdx =
-            typeof window !== 'undefined'
-              ? localStorage.getItem(`last_read_chapter_${selectedStory.id}`)
-              : null;
-          idx = savedIdx ? parseInt(savedIdx, 10) : 0;
-        }
+        const idx = syncedItem ? syncedItem.chapterIdx : 0;
         const validIdx =
           idx >= 0 && idx < selectedStory.chapters.length ? idx : 0;
         setActiveChapterIdx(validIdx);
@@ -196,6 +188,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     setFilterCefrLevel,
     sortBy,
     setSortBy,
+    recentlyRead,
   ]);
 
   const handleUrlRoutingRef = useRef(handleUrlRouting);
@@ -239,28 +232,17 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     if (!storiesLoading) {
       let active = true;
       (async () => {
-        // Check local storage for an unsaved draft first
-        const cacheKey = `cefr_story_cache_${storyId}`;
-        const cachedStoryStr = localStorage.getItem(cacheKey);
-        let directStory: Story | null = null;
-        if (cachedStoryStr) {
-          try {
-            const cachedStory = JSON.parse(cachedStoryStr) as Story;
-            if (cachedStory?.isUnsaved) {
-              directStory = cachedStory;
-              console.log(
-                `[Router] Loaded unsaved draft story ${storyId} from localStorage cache.`,
-              );
-            }
-          } catch (e) {
-            console.error('Failed to parse cached story:', e);
-          }
-        }
-
-        if (!directStory) {
-          directStory = await fetchStory(storyId);
-          if (directStory) {
-            localStorage.setItem(cacheKey, JSON.stringify(directStory));
+        // Check offline storage for an unsaved draft first
+        let directStory = await getStory(storyId);
+        if (directStory?.isUnsaved) {
+          console.log(
+            `[Router] Loaded unsaved draft story ${storyId} from IndexedDB cache.`,
+          );
+        } else {
+          const fetched = await fetchStory(storyId);
+          if (fetched) {
+            directStory = fetched;
+            await saveStory(directStory);
           }
         }
 
@@ -268,7 +250,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
           const meta = stories.find((s) => s.id === storyId);
           if (meta?.cover) {
             directStory = { ...directStory, cover: meta.cover };
-            localStorage.setItem(cacheKey, JSON.stringify(directStory));
+            await saveStory(directStory);
           }
         }
 
@@ -296,27 +278,10 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
               const syncedItem = recentlyRead.find(
                 (item) => item.storyId === directStory.id,
               );
-              let idx = 0;
-              if (syncedItem) {
-                idx = syncedItem.chapterIdx;
-              } else {
-                const savedIdx =
-                  typeof window !== 'undefined'
-                    ? localStorage.getItem(
-                        `last_read_chapter_${directStory.id}`,
-                      )
-                    : null;
-                idx = savedIdx ? parseInt(savedIdx, 10) : 0;
-              }
+              const idx = syncedItem ? syncedItem.chapterIdx : 0;
               const validIdx =
                 idx >= 0 && idx < (directStory.chapters?.length ?? 0) ? idx : 0;
               setActiveChapterIdx(validIdx);
-              if (typeof window !== 'undefined') {
-                localStorage.setItem(
-                  `last_read_chapter_${directStory.id}`,
-                  validIdx.toString(),
-                );
-              }
             }
             setPendingNavigation(null);
             return;
@@ -350,6 +315,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     setSelectedStory,
     setActiveChapterIdx,
     setActiveTab,
+    stories,
   ]);
 
   // Redirect unsigned-in users away from the bookshelf

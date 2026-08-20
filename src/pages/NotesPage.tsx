@@ -26,10 +26,10 @@ import {
 } from '../services/db';
 import type { IUser } from '../services/types';
 import {
+  getLanguageCodeFromName,
   type HighlightColor,
   type Story,
   type StoryHighlight,
-  getLanguageCodeFromName,
 } from '../types';
 
 interface NotesPageProps {
@@ -41,7 +41,14 @@ interface NotesPageProps {
     targetParagraphIdx?: number,
   ) => void;
   setActiveTab: (
-    tab: 'browse' | 'bookshelf' | 'notes' | 'create' | 'practice' | 'admin' | 'about',
+    tab:
+      | 'browse'
+      | 'bookshelf'
+      | 'notes'
+      | 'create'
+      | 'practice'
+      | 'admin'
+      | 'about',
   ) => void;
   onOpenAuth?: (mode?: 'signin' | 'signup') => void;
 }
@@ -125,7 +132,7 @@ export default function NotesPage({
 
   // Filtered and sorted highlights
   const filteredHighlights = useMemo(() => {
-    let result = highlights.filter((h) => {
+    const result = highlights.filter((h) => {
       // Filter by book
       if (selectedBookId !== 'all' && h.story !== selectedBookId) {
         return false;
@@ -157,12 +164,16 @@ export default function NotesPage({
       if (sortBy === 'newest') {
         const timeB = b.created ? new Date(b.created).getTime() : 0;
         const timeA = a.created ? new Date(a.created).getTime() : 0;
-        return (Number.isNaN(timeB) ? 0 : timeB) - (Number.isNaN(timeA) ? 0 : timeA);
+        return (
+          (Number.isNaN(timeB) ? 0 : timeB) - (Number.isNaN(timeA) ? 0 : timeA)
+        );
       }
       if (sortBy === 'oldest') {
         const timeB = b.created ? new Date(b.created).getTime() : 0;
         const timeA = a.created ? new Date(a.created).getTime() : 0;
-        return (Number.isNaN(timeA) ? 0 : timeA) - (Number.isNaN(timeB) ? 0 : timeB);
+        return (
+          (Number.isNaN(timeA) ? 0 : timeA) - (Number.isNaN(timeB) ? 0 : timeB)
+        );
       }
       if (sortBy === 'book') {
         const titleA = storyMap.get(a.story)?.title || '';
@@ -181,7 +192,15 @@ export default function NotesPage({
     });
 
     return result;
-  }, [highlights, selectedBookId, selectedColor, onlyNotes, searchQuery, sortBy, storyMap]);
+  }, [
+    highlights,
+    selectedBookId,
+    selectedColor,
+    onlyNotes,
+    searchQuery,
+    sortBy,
+    storyMap,
+  ]);
 
   // Stats
   const totalNotesCount = useMemo(() => {
@@ -385,7 +404,9 @@ export default function NotesPage({
               Save Notes & Highlights
             </h2>
             <p className="text-sm text-tj-text-muted leading-relaxed">
-              Sign in to highlight passages in 5 pastel colors, annotate paragraphs with study notes, and review your highlights across all books in one central place.
+              Sign in to highlight passages in 5 pastel colors, annotate
+              paragraphs with study notes, and review your highlights across all
+              books in one central place.
             </p>
           </div>
           <div className="pt-2">
@@ -440,9 +461,7 @@ export default function NotesPage({
             className="p-2 text-tj-text-muted hover:text-tj-text-main bg-tj-bg-recessed border border-tj-border-main rounded-xl text-xs font-semibold cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-800"
             title="Refresh notes"
           >
-            <RefreshCw
-              className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`}
-            />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
 
           <button
@@ -535,9 +554,7 @@ export default function NotesPage({
                 <button
                   key={c.id}
                   type="button"
-                  onClick={() =>
-                    setSelectedColor(isSelected ? 'all' : c.id)
-                  }
+                  onClick={() => setSelectedColor(isSelected ? 'all' : c.id)}
                   className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium cursor-pointer transition-all border ${
                     isSelected
                       ? 'border-tj-primary ring-1 ring-tj-primary shadow-xs'

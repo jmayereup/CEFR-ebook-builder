@@ -9,6 +9,7 @@ import {
 import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
+import { useUIStore } from '../../store/uiStore';
 import { GENRES, getLanguageCodeFromName, type Story } from '../../types';
 import { getStoryCoverUrl } from '../../utils/coverUtils';
 
@@ -59,6 +60,9 @@ export default function RecentlyReadSection({
   const [imgErrorMap, setImgErrorMap] = useState<Record<string, boolean>>({});
   const [isMounted, setIsMounted] = useState(false);
   const currentUser = useAuthStore((state) => state.currentUser);
+  const guestCompletedStoryIds = useUIStore(
+    (state) => state.guestCompletedStoryIds,
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -106,13 +110,8 @@ export default function RecentlyReadSection({
           let userReadCount = 0;
           if (currentUser?.uid) {
             userReadCount = completedByObj[currentUser.uid] || 0;
-          }
-          if (userReadCount === 0 && isMounted) {
-            const isLocalRead =
-              localStorage.getItem(`completed_story_${story.id}`) === 'true';
-            if (isLocalRead) {
-              userReadCount = 1;
-            }
+          } else if (guestCompletedStoryIds.includes(story.id)) {
+            userReadCount = 1;
           }
 
           const isCompletedUser = userReadCount > 0;

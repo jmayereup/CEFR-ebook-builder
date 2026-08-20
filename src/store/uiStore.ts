@@ -1,4 +1,9 @@
 import { create } from 'zustand';
+import {
+  getGuestCompletedStoryIds,
+  migrateFromLocalStorage,
+  saveGuestCompletedStoryIds,
+} from '../services/storage/offlineStorage';
 
 interface UIState {
   isOnline: boolean;
@@ -11,6 +16,7 @@ interface UIState {
   readerUseSerif: boolean;
   readerTextAlignment: 'left' | 'center' | 'right' | 'justify';
   readerColumnWidth: 'narrow' | 'medium' | 'wide' | 'full';
+  guestCompletedStoryIds: string[];
   setIsOnline: (isOnline: boolean) => void;
   setCustomOpenRouterKey: (key: string) => void;
   setTranslationTargetLanguage: (lang: string | null) => void;
@@ -25,10 +31,13 @@ interface UIState {
   setReaderColumnWidth: (
     columnWidth: 'narrow' | 'medium' | 'wide' | 'full',
   ) => void;
+  setGuestCompletedStoryIds: (ids: string[]) => void;
+  addGuestCompletedStoryId: (id: string) => void;
+  removeGuestCompletedStoryId: (id: string) => void;
   initializeClientState: () => void;
 }
 
-export const useUIStore = create<UIState>((set) => ({
+export const useUIStore = create<UIState>((set, get) => ({
   isOnline: true,
   customOpenRouterKey: '',
   translationTargetLanguage: null,
@@ -39,6 +48,7 @@ export const useUIStore = create<UIState>((set) => ({
   readerUseSerif: true,
   readerTextAlignment: 'justify',
   readerColumnWidth: 'medium',
+  guestCompletedStoryIds: [],
   setIsOnline: (isOnline) => set({ isOnline }),
   setCustomOpenRouterKey: (key) => {
     if (typeof localStorage !== 'undefined') {
@@ -112,6 +122,24 @@ export const useUIStore = create<UIState>((set) => ({
     }
     set({ readerColumnWidth: columnWidth });
   },
+  setGuestCompletedStoryIds: (ids) => {
+    set({ guestCompletedStoryIds: ids });
+    saveGuestCompletedStoryIds(ids);
+  },
+  addGuestCompletedStoryId: (id) => {
+    const current = get().guestCompletedStoryIds;
+    if (!current.includes(id)) {
+      const updated = [...current, id];
+      set({ guestCompletedStoryIds: updated });
+      saveGuestCompletedStoryIds(updated);
+    }
+  },
+  removeGuestCompletedStoryId: (id) => {
+    const current = get().guestCompletedStoryIds;
+    const updated = current.filter((item) => item !== id);
+    set({ guestCompletedStoryIds: updated });
+    saveGuestCompletedStoryIds(updated);
+  },
   initializeClientState: () => {
     if (typeof localStorage !== 'undefined') {
       const key = localStorage.getItem('custom_openrouter_api_key') || '';
@@ -159,6 +187,20 @@ export const useUIStore = create<UIState>((set) => ({
         readerTextAlignment: align,
         readerColumnWidth: width,
       });
+
+      // Background migration and guest completed story IDs load
+      (async () => {
+        try {
+          await migrateFromLocalStorage();
+          const ids = await getGuestCompletedStoryIds();
+          set({ guestCompletedStoryIds: ids });
+        } catch (e) {
+          console.error(
+            '[uiStore] Failed to initialize offline storage/migration:',
+            e,
+          );
+        }
+      })();
     }
     if (typeof navigator !== 'undefined') {
       set({ isOnline: navigator.onLine });

@@ -8,6 +8,7 @@ import {
   rateStory,
   updateStoryVisibility,
 } from '../services/db';
+import { getStory, saveStory } from '../services/storage/offlineStorage';
 import type { IUser } from '../services/types';
 import type { Story } from '../types';
 import { countWords } from '../utils/wordCounter';
@@ -140,28 +141,17 @@ export function useLibrary(options: UseLibraryOptions) {
     }
     setStoriesLoading(true);
     try {
-      const cacheKey = `cefr_story_cache_${story.id}`;
-
-      // Check local storage for an unsaved draft or offline access
-      const cachedStoryStr = localStorage.getItem(cacheKey);
-      if (cachedStoryStr) {
-        try {
-          const cachedStory = JSON.parse(cachedStoryStr) as Story;
-          if (cachedStory?.isUnsaved || !isOnline) {
-            return cachedStory;
-          }
-        } catch (e) {
-          console.error(`Failed to parse cached story ${story.id}:`, e);
-        }
+      // Check offline storage for an unsaved draft or offline access
+      const cachedStory = await getStory(story.id);
+      if (cachedStory && (cachedStory.isUnsaved || !isOnline)) {
+        return cachedStory;
       }
 
       const fullStory = await fetchStory(story.id);
       if (!fullStory) {
-        // Fallback to local cache if DB fetch failed but cache exists
-        if (cachedStoryStr) {
-          try {
-            return JSON.parse(cachedStoryStr) as Story;
-          } catch {}
+        // Fallback to offline cache if DB fetch failed but cache exists
+        if (cachedStory) {
+          return cachedStory;
         }
         showAlert(
           'Story Not Found',
@@ -171,7 +161,7 @@ export function useLibrary(options: UseLibraryOptions) {
         return null;
       }
 
-      localStorage.setItem(cacheKey, JSON.stringify(fullStory));
+      await saveStory(fullStory);
       return fullStory;
     } catch (err) {
       console.error('Error loading story chapters:', err);

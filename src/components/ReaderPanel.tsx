@@ -263,16 +263,19 @@ export default function ReaderPanel({
     }
   }, [activeChapterIndex, story.id]);
 
+  const guestCompletedStoryIds = useUIStore(
+    (state) => state.guestCompletedStoryIds,
+  );
+
   useEffect(() => {
     const completedByObj = story.completedBy || {};
     const userReadCount = currentUser?.uid
       ? completedByObj[currentUser.uid] || 0
-      : 0;
-    const isLocalRead =
-      typeof window !== 'undefined' &&
-      localStorage.getItem(`completed_story_${story.id}`) === 'true';
-    setSessionFinished(userReadCount > 0 || isLocalRead);
-  }, [story.id, story.completedBy, currentUser]);
+      : guestCompletedStoryIds.includes(story.id)
+        ? 1
+        : 0;
+    setSessionFinished(userReadCount > 0);
+  }, [story.id, story.completedBy, currentUser, guestCompletedStoryIds]);
 
   const fontSize = useUIStore((state) => state.readerFontSize);
   const setFontSize = useUIStore((state) => state.setReaderFontSize);
@@ -884,7 +887,8 @@ export default function ReaderPanel({
     ): { startOffset: number; endOffset: number } | null => {
       const startWord = chapterWords[startFlatIdx];
       const endWord = chapterWords[endFlatIdx];
-      if (!startWord || !endWord || startWord.pIdx !== endWord.pIdx) return null;
+      if (!startWord || !endWord || startWord.pIdx !== endWord.pIdx)
+        return null;
 
       const pIdx = startWord.pIdx;
       const dp = effectiveDisplayParagraphs[pIdx];
@@ -1039,7 +1043,8 @@ export default function ReaderPanel({
 
     let currPos = 0;
     let wordIdx = 0;
-    const wordSpans: { flatIdx: number; startPos: number; endPos: number }[] = [];
+    const wordSpans: { flatIdx: number; startPos: number; endPos: number }[] =
+      [];
 
     for (const seg of segments) {
       const start = currPos;
@@ -1084,7 +1089,8 @@ export default function ReaderPanel({
 
   const handleTextSelection = () => {
     const selection = window.getSelection();
-    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0)
+      return;
     const text = selection.toString().trim();
     if (!text || text.length < 1) return;
 
@@ -1117,7 +1123,8 @@ export default function ReaderPanel({
 
     let currPos = 0;
     let wordIdx = 0;
-    const wordSpans: { flatIdx: number; startPos: number; endPos: number }[] = [];
+    const wordSpans: { flatIdx: number; startPos: number; endPos: number }[] =
+      [];
 
     for (const seg of segments) {
       const start = currPos;

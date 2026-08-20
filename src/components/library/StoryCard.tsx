@@ -15,6 +15,7 @@ import {
 import { motion } from 'motion/react';
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useUIStore } from '../../store/uiStore';
 import {
   GENRES,
   getAverageRating,
@@ -88,6 +89,9 @@ export default function StoryCard({
   className = '',
 }: StoryCardProps) {
   const cardRef = React.useRef<HTMLDivElement>(null);
+  const guestCompletedStoryIds = useUIStore(
+    (state) => state.guestCompletedStoryIds,
+  );
   const wordCount =
     story.wordCount !== undefined
       ? story.wordCount
@@ -191,13 +195,8 @@ export default function StoryCard({
   let userReadCount = 0;
   if (currentUser?.uid) {
     userReadCount = completedByObj[currentUser.uid] || 0;
-  }
-  if (userReadCount === 0 && typeof window !== 'undefined') {
-    const isLocalRead =
-      localStorage.getItem(`completed_story_${story.id}`) === 'true';
-    if (isLocalRead) {
-      userReadCount = 1;
-    }
+  } else if (guestCompletedStoryIds.includes(story.id)) {
+    userReadCount = 1;
   }
 
   const isRead = userReadCount > 0;

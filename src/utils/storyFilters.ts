@@ -20,6 +20,7 @@ export interface StoryFilters {
   sortBy: SortBy;
   currentUser: { uid: string } | null;
   recentlyRead: RecentlyReadItem[];
+  guestCompletedStoryIds?: string[];
 }
 
 /** Returns the resolved chapter count for a story (handles metadata-only stories). */
@@ -52,20 +53,16 @@ export const matchesLanguageFilter = (
   filterLanguage: string[],
 ): boolean => {
   if (filterLanguage.length === 0) return true;
-  if (filterLanguage.includes(story.language)) return true;
-  if (
-    isSwappableBilingual(story) &&
-    story.translationLanguage &&
-    filterLanguage.includes(story.translationLanguage)
-  ) {
-    return true;
-  }
-  return false;
+  return filterLanguage.some(
+    (fl) =>
+      story.language.toLowerCase() === fl.toLowerCase() ||
+      (isSwappableBilingual(story) &&
+        story.translationLanguage?.toLowerCase() === fl.toLowerCase()),
+  );
 };
 
 /**
- * Filters and sorts an array of stories according to the given criteria.
- * This is the single source of truth for library / bookshelf filtering.
+ * Filters and sorts an array of stories according to the provided criteria.
  */
 export const filterAndSortStories = (
   stories: Story[],
@@ -80,19 +77,23 @@ export const filterAndSortStories = (
     sortBy,
     currentUser,
     recentlyRead,
+    guestCompletedStoryIds = [],
   } = filters;
 
   return stories
     .filter((story) => {
-      // 1. Language filter — swappable bilingual books also surface under their translation language
+      // 1. Language filter
       if (!matchesLanguageFilter(story, filterLanguage)) return false;
 
-      // 2. CEFR level filter
+      // 2. CEFR Level filter
       if (
         filterCefrLevel.length > 0 &&
-        !filterCefrLevel.includes(story.cefrLevel)
-      )
+        !filterCefrLevel.some(
+          (fcl) => story.cefrLevel.toLowerCase() === fcl.toLowerCase(),
+        )
+      ) {
         return false;
+      }
 
       // 3. Genre filter
       if (filterGenre.length > 0) {
@@ -112,10 +113,8 @@ export const filterAndSortStories = (
         let isRead = false;
         if (currentUser) {
           isRead = (story.completedBy?.[currentUser.uid] || 0) > 0;
-        }
-        if (!isRead && typeof window !== 'undefined') {
-          isRead =
-            localStorage.getItem(`completed_story_${story.id}`) === 'true';
+        } else if (guestCompletedStoryIds.length > 0) {
+          isRead = guestCompletedStoryIds.includes(story.id);
         }
 
         const isInProgress =

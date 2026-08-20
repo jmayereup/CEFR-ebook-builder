@@ -4,6 +4,7 @@ import {
   fetchUserProfile,
   fetchUserVocab,
   type GenerationLimitData,
+  incrementStoryCompletion,
   type RecentlyReadItem,
   saveUserGenerationLimit,
   saveUserProfileData,
@@ -384,7 +385,6 @@ export function useUserData(options: UseUserDataOptions) {
     const filtered = currentList.filter((item) => item.storyId !== storyId);
     const updated = [{ storyId, chapterIdx }, ...filtered].slice(0, 100);
     localStorage.setItem('recently_read', JSON.stringify(updated));
-    localStorage.setItem(`last_read_chapter_${storyId}`, chapterIdx.toString());
     setRecentlyRead(updated);
 
     if (currentUser) {
@@ -400,7 +400,6 @@ export function useUserData(options: UseUserDataOptions) {
     const currentList = recentlyReadRef.current;
     const updated = currentList.filter((item) => item.storyId !== storyId);
     localStorage.setItem('recently_read', JSON.stringify(updated));
-    localStorage.removeItem(`last_read_chapter_${storyId}`);
     setRecentlyRead(updated);
 
     if (currentUser) {
@@ -550,11 +549,22 @@ export function useUserData(options: UseUserDataOptions) {
               'recently_read',
               JSON.stringify(finalRecentlyRead),
             );
-            for (const item of finalRecentlyRead) {
-              localStorage.setItem(
-                `last_read_chapter_${item.storyId}`,
-                item.chapterIdx.toString(),
-              );
+
+            // Sync any guest completed stories to PocketBase upon login
+            const guestCompletions =
+              useUIStore.getState().guestCompletedStoryIds;
+            if (guestCompletions && guestCompletions.length > 0) {
+              for (const sId of guestCompletions) {
+                try {
+                  await incrementStoryCompletion(sId, currentUser.uid);
+                } catch (err) {
+                  console.warn(
+                    `[useUserData] Failed to sync guest completion for ${sId}:`,
+                    err,
+                  );
+                }
+              }
+              useUIStore.getState().setGuestCompletedStoryIds([]);
             }
 
             if (
@@ -719,12 +729,6 @@ export function useUserData(options: UseUserDataOptions) {
               return prev;
             }
             localStorage.setItem('recently_read', JSON.stringify(parsed));
-            for (const item of parsed) {
-              localStorage.setItem(
-                `last_read_chapter_${item.storyId}`,
-                item.chapterIdx.toString(),
-              );
-            }
             return parsed;
           });
         }

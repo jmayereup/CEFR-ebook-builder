@@ -62,6 +62,11 @@ import {
   incrementStoryCompletion,
   saveUserLookupLimitDebounced,
 } from './services/db';
+import {
+  getStory,
+  removeStory as removeStoryFromOffline,
+  saveStory as saveStoryToOffline,
+} from './services/storage/offlineStorage';
 import { useAuthStore } from './store/authStore';
 import { useUIStore } from './store/uiStore';
 import type { DeletionFlag, Story } from './types';
@@ -121,13 +126,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   // App States
   const { darkMode, toggleDarkMode } = useDarkMode();
   const [activeTab, setActiveTab] = useState<
-    | 'browse'
-    | 'bookshelf'
-    | 'notes'
-    | 'create'
-    | 'practice'
-    | 'admin'
-    | 'about'
+    'browse' | 'bookshelf' | 'notes' | 'create' | 'practice' | 'admin' | 'about'
   >(() => {
     if (ssrPath) {
       const tabMatch = ssrPath.match(
@@ -390,7 +389,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       creatorEmail: currentUser?.email || cleanedStory.creatorEmail,
     } as Story;
 
-    // Immediately reflect changes in UI and local storage cache
+    // Immediately reflect changes in UI and offline storage cache
     const localStory = {
       ...storyToSave,
       isUnsaved: false,
@@ -398,18 +397,12 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     setSelectedStory(localStory);
     if (isNewStory) {
       setActiveChapterIdx(0);
-      localStorage.setItem(`last_read_chapter_${sanitizedId}`, '0');
       setActiveTab('browse');
     }
-    localStorage.setItem(
-      `cefr_story_cache_${sanitizedId}`,
-      JSON.stringify(localStory),
-    );
+    await saveStoryToOffline(localStory);
     setCachedStoryIds((prev) => {
       if (prev.includes(sanitizedId)) return prev;
-      const updated = [...prev, sanitizedId];
-      localStorage.setItem('cefr_cached_story_ids', JSON.stringify(updated));
-      return updated;
+      return [...prev, sanitizedId];
     });
 
     try {
@@ -436,21 +429,11 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                     }
                   : prev,
               );
-              const cachedStr = localStorage.getItem(
-                `cefr_story_cache_${sanitizedId}`,
-              );
-              if (cachedStr) {
-                try {
-                  const cachedObj = JSON.parse(cachedStr);
-                  if (data.cover) cachedObj.cover = data.cover;
-                  cachedObj.updated = updatedTime;
-                  localStorage.setItem(
-                    `cefr_story_cache_${sanitizedId}`,
-                    JSON.stringify(cachedObj),
-                  );
-                } catch (e) {
-                  // ignore
-                }
+              const cachedObj = await getStory(sanitizedId);
+              if (cachedObj) {
+                if (data.cover) cachedObj.cover = data.cover;
+                cachedObj.updated = updatedTime;
+                await saveStoryToOffline(cachedObj);
               }
               await loadStoriesMetadata({
                 refresh: true,
@@ -479,10 +462,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       );
       const fallbackStory = { ...cleaned, isUnsaved: true };
       setSelectedStory(fallbackStory);
-      localStorage.setItem(
-        `cefr_story_cache_${sanitizedId}`,
-        JSON.stringify(fallbackStory),
-      );
+      await saveStoryToOffline(fallbackStory);
     }
   };
 
@@ -611,20 +591,10 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   ? { ...prev, updated: updatedTime }
                   : prev,
               );
-              const cachedStr = localStorage.getItem(
-                `cefr_story_cache_${sanitizedId}`,
-              );
-              if (cachedStr) {
-                try {
-                  const cachedObj = JSON.parse(cachedStr);
-                  cachedObj.updated = updatedTime;
-                  localStorage.setItem(
-                    `cefr_story_cache_${sanitizedId}`,
-                    JSON.stringify(cachedObj),
-                  );
-                } catch (e) {
-                  // ignore
-                }
+              const cachedObj = await getStory(sanitizedId);
+              if (cachedObj) {
+                cachedObj.updated = updatedTime;
+                await saveStoryToOffline(cachedObj);
               }
               await loadStoriesMetadata({
                 refresh: true,
@@ -655,34 +625,16 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
       // Clean up old ID cache keys if they differ
       if (oldId !== sanitizedId) {
-        const lastReadChapter = localStorage.getItem(
-          `last_read_chapter_${oldId}`,
-        );
-        if (lastReadChapter !== null) {
-          localStorage.setItem(
-            `last_read_chapter_${sanitizedId}`,
-            lastReadChapter,
-          );
-        }
-        localStorage.removeItem(`cefr_story_cache_${oldId}`);
-        localStorage.removeItem(`last_read_chapter_${oldId}`);
+        await removeStoryFromOffline(oldId);
         setCachedStoryIds((prev) => {
           const filtered = prev.filter((id) => id !== oldId);
-          const updated = filtered.includes(sanitizedId)
+          return filtered.includes(sanitizedId)
             ? filtered
             : [...filtered, sanitizedId];
-          localStorage.setItem(
-            'cefr_cached_story_ids',
-            JSON.stringify(updated),
-          );
-          return updated;
         });
       }
 
-      localStorage.setItem(
-        `cefr_story_cache_${sanitizedId}`,
-        JSON.stringify(finalizedStory),
-      );
+      await saveStoryToOffline(finalizedStory);
       loadStoriesMetadata({ refresh: true, storyId: sanitizedId });
 
       // Sync any pending user changes (like recentlyRead) to prevent beforeunload prompts
@@ -737,19 +689,11 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         });
       }
 
-      const cachedStr = localStorage.getItem(`cefr_story_cache_${storyId}`);
-      if (cachedStr) {
-        try {
-          const cachedObj = JSON.parse(cachedStr);
-          if (data.cover) cachedObj.cover = data.cover;
-          cachedObj.updated = updatedTime;
-          localStorage.setItem(
-            `cefr_story_cache_${storyId}`,
-            JSON.stringify(cachedObj),
-          );
-        } catch (e) {
-          // ignore
-        }
+      const cachedObj = await getStory(storyId);
+      if (cachedObj) {
+        if (data.cover) cachedObj.cover = data.cover;
+        cachedObj.updated = updatedTime;
+        await saveStoryToOffline(cachedObj);
       }
 
       // Refresh stories metadata in the library list
@@ -805,30 +749,21 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     if (selectedStory) {
       setIsDiscardingStory(true);
       const storyId = selectedStory.id;
-      const cacheKey = `cefr_story_cache_${storyId}`;
       try {
         const dbStory = await fetchStory(storyId);
         if (dbStory) {
-          localStorage.setItem(cacheKey, JSON.stringify(dbStory));
+          await saveStoryToOffline(dbStory);
           setSelectedStory(dbStory);
         } else {
-          // If the story draft does not exist in DB, clean up from localStorage and active list
-          localStorage.removeItem(cacheKey);
-          localStorage.removeItem(`last_read_chapter_${storyId}`);
+          // If the story draft does not exist in DB, clean up from offline storage and active list
+          await removeStoryFromOffline(storyId);
           setSelectedStory(null);
-          setCachedStoryIds((prev) => {
-            const updated = prev.filter((id) => id !== storyId);
-            localStorage.setItem(
-              'cefr_cached_story_ids',
-              JSON.stringify(updated),
-            );
-            return updated;
-          });
+          setCachedStoryIds((prev) => prev.filter((id) => id !== storyId));
         }
       } catch (err) {
         console.error('Failed to restore story from database on discard:', err);
-        // Fallback: clear the cache key so it doesn't stay dirty
-        localStorage.removeItem(cacheKey);
+        // Fallback: clear the offline cache entry so it doesn't stay dirty
+        await removeStoryFromOffline(storyId);
         setSelectedStory(null);
       } finally {
         setIsDiscardingStory(false);
@@ -928,10 +863,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   completedBy: matchingStory.completedBy,
                   updated: matchingStory.updated || prev.updated,
                 };
-                localStorage.setItem(
-                  `cefr_story_cache_${prev.id}`,
-                  JSON.stringify(updated),
-                );
+                saveStoryToOffline(updated);
                 return updated;
               }
               return null;
@@ -968,9 +900,9 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   const handleStoryFinished = useCallback(
     async (storyId: string) => {
-      // 1. Mark in localStorage for instant local/offline sync
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(`completed_story_${storyId}`, 'true');
+      // 1. Mark in guest state if unauthenticated
+      if (!currentUser) {
+        useUIStore.getState().addGuestCompletedStoryId(storyId);
       }
 
       // 2. Remove from recentlyRead list so finished story leaves "Reading"
@@ -1043,8 +975,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   const handleStoryUnfinished = useCallback(
     async (storyId: string) => {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(`completed_story_${storyId}`);
+      if (!currentUser) {
+        useUIStore.getState().removeGuestCompletedStoryId(storyId);
       }
 
       setPublicStories((prev) =>
@@ -1141,11 +1073,11 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     if (currentUser && !isUserDataLoaded) return;
 
     // If story is already completed and user is on the final chapter, do not auto-add to recentlyRead
+    const guestCompletedStoryIds = useUIStore.getState().guestCompletedStoryIds;
     const isStoryCompleted =
       (currentUser &&
         (selectedStory.completedBy?.[currentUser.uid] || 0) > 0) ||
-      (typeof window !== 'undefined' &&
-        localStorage.getItem(`completed_story_${selectedStory.id}`) === 'true');
+      guestCompletedStoryIds.includes(selectedStory.id);
     const isAtLastChapter =
       activeChapterIdx >=
       (selectedStory.chapters?.length || selectedStory.totalChapters || 1) - 1;
@@ -1390,10 +1322,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   activeChapterIdx={activeChapterIdx}
                   onSelectChapter={(idx) => {
                     setActiveChapterIdx(idx);
-                    localStorage.setItem(
-                      `last_read_chapter_${selectedStory.id}`,
-                      idx.toString(),
-                    );
                     updateRecentlyRead(selectedStory.id, idx);
                   }}
                   handleToggleStoryPrivacy={handleToggleStoryPrivacy}

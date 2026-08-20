@@ -325,7 +325,9 @@ export default function InteractiveParagraph({
       key={pIdx}
       id={`chapter-para-${pIdx}`}
       data-paragraph-index={pIdx}
-      data-active-paragraph={activeWordRangeInPara !== null ? 'true' : undefined}
+      data-active-paragraph={
+        activeWordRangeInPara !== null ? 'true' : undefined
+      }
       lang={langCode}
       className={`${blockClass} transition-colors duration-500`}
     >
@@ -440,4 +442,3 @@ export default function InteractiveParagraph({
     </p>
   );
 }
-
