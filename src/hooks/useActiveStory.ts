@@ -87,6 +87,30 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     return null;
   });
 
+  const [loadingStoryId, setLoadingStoryId] = useState<string | null>(() => {
+    let pathVal = ssrPath;
+    if (!pathVal && typeof window !== 'undefined') {
+      pathVal = window.location.pathname;
+    }
+    if (pathVal) {
+      const bookMatch = pathVal.match(/^\/book\/([^/]+)/);
+      if (bookMatch) {
+        const storyId = getStoryIdFromSegment(bookMatch[1]);
+        if (
+          (ssrData?.story && ssrData.story.id === storyId) ||
+          (typeof window !== 'undefined' &&
+            (window as any).__PRELOADED_DATA__?.story?.id === storyId)
+        ) {
+          return null;
+        }
+        return storyId;
+      }
+    }
+    return null;
+  });
+
+  const [loadingStory, setLoadingStory] = useState<Partial<Story> | null>(null);
+
   const [activeChapterIdx, setActiveChapterIdx] = useState<number>(() => {
     let pathVal = ssrPath;
     if (!pathVal && typeof window !== 'undefined') {
@@ -146,35 +170,51 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     overrideChapterIdx?: number,
     targetParagraphIdx?: number,
   ) => {
-    const fullStory = await libHandleSelectStory(story);
-    if (!fullStory) return;
+    setLoadingStory(story);
+    setLoadingStoryId(story.id);
+    try {
+      const fullStory = await libHandleSelectStory(story);
+      if (!fullStory) {
+        setLoadingStory(null);
+        setLoadingStoryId(null);
+        return;
+      }
 
-    setSelectedStory(fullStory);
-    await saveStoryToOffline(fullStory);
-    setCachedStoryIds((prev) => {
-      if (prev.includes(story.id)) return prev;
-      return [...prev, story.id];
-    });
+      setSelectedStory(fullStory);
+      setLoadingStory(null);
+      setLoadingStoryId(null);
+      await saveStoryToOffline(fullStory);
+      setCachedStoryIds((prev) => {
+        if (prev.includes(story.id)) return prev;
+        return [...prev, story.id];
+      });
 
-    if (targetParagraphIdx !== undefined && typeof window !== 'undefined') {
-      sessionStorage.setItem(
-        'target_highlight_paragraph',
-        targetParagraphIdx.toString(),
-      );
+      if (targetParagraphIdx !== undefined && typeof window !== 'undefined') {
+        sessionStorage.setItem(
+          'target_highlight_paragraph',
+          targetParagraphIdx.toString(),
+        );
+      }
+
+      let idx = 0;
+      if (overrideChapterIdx !== undefined) {
+        idx = overrideChapterIdx;
+      } else {
+        const syncedItem = recentlyRead.find(
+          (item) => item.storyId === story.id,
+        );
+        idx = syncedItem ? syncedItem.chapterIdx : 0;
+      }
+
+      const validIdx =
+        idx >= 0 && idx < (fullStory.chapters?.length ?? 0) ? idx : 0;
+      setActiveChapterIdx(validIdx);
+      hasRestoredChapterRef.current = story.id;
+    } catch (err) {
+      setLoadingStory(null);
+      setLoadingStoryId(null);
+      throw err;
     }
-
-    let idx = 0;
-    if (overrideChapterIdx !== undefined) {
-      idx = overrideChapterIdx;
-    } else {
-      const syncedItem = recentlyRead.find((item) => item.storyId === story.id);
-      idx = syncedItem ? syncedItem.chapterIdx : 0;
-    }
-
-    const validIdx =
-      idx >= 0 && idx < (fullStory.chapters?.length ?? 0) ? idx : 0;
-    setActiveChapterIdx(validIdx);
-    hasRestoredChapterRef.current = story.id;
   };
 
   const handleDeleteStory = async (
@@ -339,6 +379,10 @@ export function useActiveStory(options: UseActiveStoryOptions) {
   return {
     selectedStory,
     setSelectedStory,
+    loadingStory,
+    setLoadingStory,
+    loadingStoryId,
+    setLoadingStoryId,
     activeChapterIdx,
     setActiveChapterIdx,
     cachedStoryIds,

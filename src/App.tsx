@@ -5,6 +5,7 @@ import {
   Suspense,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -23,6 +24,7 @@ import SettingsModal from './components/app/SettingsModal';
 import StreakCelebrationModal from './components/app/StreakCelebrationModal';
 import UnsavedChangesModal from './components/app/UnsavedChangesModal';
 import FlagStoryModal from './components/library/FlagStoryModal';
+import ReaderSkeleton from './components/reader/ReaderSkeleton';
 import { useActiveStory } from './hooks/useActiveStory';
 import { useAdSense } from './hooks/useAdSense';
 import { useDarkMode } from './hooks/useDarkMode';
@@ -266,6 +268,10 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   const {
     selectedStory,
     setSelectedStory,
+    loadingStory,
+    setLoadingStory,
+    loadingStoryId,
+    setLoadingStoryId,
     activeChapterIdx,
     setActiveChapterIdx,
     cachedStoryIds,
@@ -317,6 +323,19 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     showAlert,
     ssrData,
   });
+
+  // Derive metadata for story currently loading into the reader
+  const loadingStoryMetadata = useMemo(() => {
+    if (loadingStory) return loadingStory;
+    if (loadingStoryId) {
+      const found = stories.find((s) => s.id === loadingStoryId);
+      if (found) return found;
+      return { id: loadingStoryId };
+    }
+    return null;
+  }, [loadingStory, loadingStoryId, stories]);
+
+  const isStoryLoading = !selectedStory && (!!loadingStoryId || !!loadingStory);
 
   // Dynamic SEO metadata & schema updates — must follow selectedStory / activeChapterIdx declarations
   useDocumentMetadata(selectedStory, activeChapterIdx);
@@ -519,9 +538,12 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         console.error('Auto-sync failed on tab change:', err),
       );
     }
+    setLoadingStory(null);
+    setLoadingStoryId(null);
     if (selectedStory?.isUnsaved) {
       setPendingNavigation({ tab });
     } else {
+      setSelectedStory(null);
       setActiveTab(tab);
     }
   };
@@ -532,6 +554,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         console.error('Auto-sync failed on clear story:', err),
       );
     }
+    setLoadingStory(null);
+    setLoadingStoryId(null);
     if (selectedStory?.isUnsaved) {
       setPendingNavigation({ clearStory: true });
     } else {
@@ -1156,6 +1180,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   useUrlRouting({
     selectedStory,
     setSelectedStory,
+    loadingStoryId,
+    setLoadingStoryId,
     activeChapterIdx,
     setActiveChapterIdx,
     activeTab,
@@ -1383,6 +1409,18 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                       ? generatingCoverIds.has(selectedStory.id)
                       : false
                   }
+                />
+              </motion.div>
+            ) : isStoryLoading ? (
+              <motion.div
+                key="reader-skeleton"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <ReaderSkeleton
+                  story={loadingStoryMetadata}
+                  onBack={handleRequestClearStory}
                 />
               </motion.div>
             ) : activeTab === 'browse' ? (

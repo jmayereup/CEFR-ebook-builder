@@ -9,6 +9,8 @@ import type { SortBy } from '../utils/storyFilters';
 interface UseUrlRoutingOptions {
   selectedStory: Story | null;
   setSelectedStory: (story: Story | null) => void;
+  loadingStoryId?: string | null;
+  setLoadingStoryId?: (id: string | null) => void;
   activeChapterIdx: number;
   setActiveChapterIdx: (idx: number) => void;
   activeTab:
@@ -54,6 +56,8 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
   const {
     selectedStory,
     setSelectedStory,
+    loadingStoryId,
+    setLoadingStoryId,
     activeChapterIdx,
     setActiveChapterIdx,
     activeTab,
@@ -78,7 +82,27 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
   const [pendingNavigation, setPendingNavigation] = useState<{
     storyId: string;
     chapterNum: number | null;
-  } | null>(null);
+  } | null>(() => {
+    if (typeof window !== 'undefined') {
+      const bookChapterMatch = window.location.pathname.match(
+        /^\/book\/([^/]+)\/chapter\/(\d+)/,
+      );
+      const bookMatch = window.location.pathname.match(/^\/book\/([^/]+)/);
+      if (bookChapterMatch) {
+        return {
+          storyId: getStoryIdFromSegment(bookChapterMatch[1]),
+          chapterNum: parseInt(bookChapterMatch[2], 10),
+        };
+      }
+      if (bookMatch) {
+        return {
+          storyId: getStoryIdFromSegment(bookMatch[1]),
+          chapterNum: null,
+        };
+      }
+    }
+    return null;
+  });
 
   const isFirstRender = useRef(true);
 
@@ -139,6 +163,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
           chapterIdx < selectedStory.chapters.length ? chapterIdx : 0;
         setActiveChapterIdx(validIdx);
       } else {
+        setLoadingStoryId?.(storyId);
         setPendingNavigation({ storyId, chapterNum });
       }
     } else if (bookMatch) {
@@ -157,6 +182,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
           idx >= 0 && idx < selectedStory.chapters.length ? idx : 0;
         setActiveChapterIdx(validIdx);
       } else {
+        setLoadingStoryId?.(storyId);
         setPendingNavigation({ storyId, chapterNum: null });
       }
     } else if (tabMatch) {
@@ -168,9 +194,11 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         | 'practice'
         | 'admin'
         | 'about';
+      setLoadingStoryId?.(null);
       setActiveTab(tab);
       setSelectedStory(null);
     } else {
+      setLoadingStoryId?.(null);
       setActiveTab('browse');
       setSelectedStory(null);
     }
@@ -179,6 +207,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     setActiveChapterIdx,
     setActiveTab,
     setSelectedStory,
+    setLoadingStoryId,
     currentUser,
     searchQuery,
     setSearchQuery,
@@ -221,6 +250,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         'This story is not saved for offline reading. Please connect to the internet to download it.',
         'warning',
       );
+      setLoadingStoryId?.(null);
       setPendingNavigation(null);
       window.history.replaceState(null, '', '/');
       setActiveTab('browse');
@@ -267,6 +297,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
 
           if (isAllowed) {
             setSelectedStory(directStory);
+            setLoadingStoryId?.(null);
             if (chapterNum !== null) {
               const chapterIdx = chapterNum > 0 ? chapterNum - 1 : 0;
               const validIdx =
@@ -294,6 +325,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
           'The requested story could not be found or you do not have permission to view it.',
           'error',
         );
+        setLoadingStoryId?.(null);
         setPendingNavigation(null);
         window.history.replaceState(null, '', '/');
         setActiveTab('browse');
@@ -313,6 +345,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     showAlert,
     recentlyRead,
     setSelectedStory,
+    setLoadingStoryId,
     setActiveChapterIdx,
     setActiveTab,
     stories,

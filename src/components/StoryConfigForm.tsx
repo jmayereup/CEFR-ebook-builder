@@ -23,7 +23,6 @@ import {
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
 } from '../constants/models';
-import { buildApiHeaders } from '../utils/modelUtils';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import {
@@ -32,6 +31,7 @@ import {
   SUPPORTED_LANGUAGES,
   WRITING_TYPE_GENRES,
 } from '../types';
+import { buildApiHeaders } from '../utils/modelUtils';
 import { checkGenerationPermission } from '../utils/permissionUtils';
 import {
   calculateEstimatedUsage,

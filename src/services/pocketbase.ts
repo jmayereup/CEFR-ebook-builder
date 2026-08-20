@@ -15,11 +15,12 @@ pb.autoCancellation(false);
 /**
  * Returns authorization headers containing the active PocketBase user token if logged in.
  */
-export function getAuthHeaders(customHeaders: Record<string, string> = {}): Record<string, string> {
+export function getAuthHeaders(
+  customHeaders: Record<string, string> = {},
+): Record<string, string> {
   const headers: Record<string, string> = { ...customHeaders };
   if (pb.authStore.isValid && pb.authStore.token) {
     headers['Authorization'] = `Bearer ${pb.authStore.token}`;
   }
   return headers;
 }
-

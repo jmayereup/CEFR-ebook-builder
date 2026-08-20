@@ -37,6 +37,7 @@ import {
   type VocabularyTerm,
 } from '../types';
 import { getStoryCoverUrl } from '../utils/coverUtils';
+import { buildApiHeaders } from '../utils/modelUtils';
 import {
   limitContextToTenWords,
   segmentText,
@@ -44,7 +45,6 @@ import {
 } from '../utils/segmenter';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
-import { buildApiHeaders } from '../utils/modelUtils';
 import BilingualSwapNotification from './reader/BilingualSwapNotification';
 import ChapterEditForm from './reader/ChapterEditForm';
 import ChapterNavigationBar from './reader/ChapterNavigationBar';
