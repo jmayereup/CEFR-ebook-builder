@@ -544,6 +544,7 @@ export const WorksheetsLessonTypeOptions = {
 	"speed-review": "speed-review",
 	"chapter-book": "chapter-book",
 	"pronunciation": "pronunciation",
+	"tj-test": "tj-test",
 	"quiz-element": "quiz-element",
 } as const
 export type WorksheetsLessonTypeOptions = typeof WorksheetsLessonTypeOptions[keyof typeof WorksheetsLessonTypeOptions]
