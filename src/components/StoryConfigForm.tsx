@@ -23,6 +23,7 @@ import {
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
 } from '../constants/models';
+import { buildApiHeaders } from '../utils/modelUtils';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 import {
@@ -379,12 +380,7 @@ export default function StoryConfigForm({
       supportsTemp && !isThinkingActive ? temperature : undefined;
 
     try {
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (customOpenRouterKey) {
-        headers['X-OpenRouter-API-Key'] = customOpenRouterKey;
-      }
+      const headers = buildApiHeaders(customOpenRouterKey);
 
       const response = await fetch('/api/stories/generate-outline', {
         method: 'POST',
@@ -477,12 +473,7 @@ export default function StoryConfigForm({
     if (isScratchMode && !finalCopyrightFlag) {
       setIsClassifying(true);
       try {
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-        };
-        if (customOpenRouterKey) {
-          headers['X-OpenRouter-API-Key'] = customOpenRouterKey;
-        }
+        const headers = buildApiHeaders(customOpenRouterKey);
         const response = await fetch('/api/stories/classify-ip', {
           method: 'POST',
           headers,

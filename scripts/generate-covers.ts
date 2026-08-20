@@ -145,6 +145,11 @@ async function main() {
         if (openrouterApiKey) {
           headers['x-openrouter-api-key'] = openrouterApiKey;
         }
+        if (pb.authStore.isValid && pb.authStore.token) {
+          headers['authorization'] = `Bearer ${pb.authStore.token}`;
+        } else if (process.env.INTERNAL_SERVICE_KEY) {
+          headers['x-service-key'] = process.env.INTERNAL_SERVICE_KEY;
+        }
 
         const response = await fetch(
           `${TJ_GEN_URL}/api/stories/generate-cover`,

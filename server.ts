@@ -73,6 +73,18 @@ async function proxyToTJGen(req: express.Request, res: express.Response) {
       'content-type': req.headers['content-type'] || 'application/json',
     };
 
+    if (req.headers.authorization) {
+      headers['authorization'] = req.headers.authorization as string;
+    }
+    if (req.headers['x-token']) {
+      headers['x-token'] = req.headers['x-token'] as string;
+    }
+    if (req.headers['x-service-key']) {
+      headers['x-service-key'] = req.headers['x-service-key'] as string;
+    } else if (process.env.INTERNAL_SERVICE_KEY) {
+      headers['x-service-key'] = process.env.INTERNAL_SERVICE_KEY;
+    }
+
     const customKey =
       req.headers['x-openrouter-api-key'] ||
       req.headers['X-OpenRouter-API-Key'];

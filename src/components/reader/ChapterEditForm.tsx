@@ -18,6 +18,7 @@ import {
   SUPPORTED_LANGUAGES,
   type VocabularyTerm,
 } from '../../types';
+import { buildApiHeaders } from '../../utils/modelUtils';
 
 interface ChapterEditFormProps {
   story: Story;
@@ -102,12 +103,7 @@ export default function ChapterEditForm({
     setIsGeneratingGlossary(true);
     setGlossaryError(null);
     try {
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (customOpenRouterKey) {
-        headers['X-OpenRouter-API-Key'] = customOpenRouterKey;
-      }
+      const headers = buildApiHeaders(customOpenRouterKey);
 
       const activeModel = modelId || selectedModel;
 

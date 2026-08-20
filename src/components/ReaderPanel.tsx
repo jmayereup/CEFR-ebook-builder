@@ -44,6 +44,7 @@ import {
 } from '../utils/segmenter';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
+import { buildApiHeaders } from '../utils/modelUtils';
 import BilingualSwapNotification from './reader/BilingualSwapNotification';
 import ChapterEditForm from './reader/ChapterEditForm';
 import ChapterNavigationBar from './reader/ChapterNavigationBar';
@@ -1326,12 +1327,7 @@ export default function ReaderPanel({
     setSelectedWord((prev) => (prev ? { ...prev, isFetching: true } : null));
 
     try {
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (customOpenRouterKey) {
-        headers['X-OpenRouter-API-Key'] = customOpenRouterKey;
-      }
+      const headers = buildApiHeaders(customOpenRouterKey);
 
       const response = await fetch('/api/translate', {
         method: 'POST',

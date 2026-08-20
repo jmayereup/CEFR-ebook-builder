@@ -21,6 +21,7 @@ import {
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
 import { SUPPORTED_LANGUAGES } from '../../types';
+import { buildApiHeaders } from '../../utils/modelUtils';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -138,10 +139,7 @@ export default function SettingsModal({
     setKeyTestResult(null);
 
     try {
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        'X-OpenRouter-API-Key': testKey.trim(),
-      };
+      const headers = buildApiHeaders(testKey.trim());
 
       const response = await fetch('/api/translate', {
         method: 'POST',

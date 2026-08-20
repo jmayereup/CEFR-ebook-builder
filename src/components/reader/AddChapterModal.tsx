@@ -4,6 +4,7 @@ import { AI_MODELS, FRONTIER_LATEST_MODELS } from '../../constants/models';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
 import type { VocabularyTerm } from '../../types';
+import { buildApiHeaders } from '../../utils/modelUtils';
 
 interface AddChapterModalProps {
   isOpen: boolean;
@@ -27,7 +28,7 @@ export default function AddChapterModal({
   language,
   cefrLevel,
   customOpenRouterKey = '',
-  model = '',
+  model: modelId = '',
   nextChapterNumber,
 }: AddChapterModalProps) {
   const defaultStoryModel = useUIStore((state) => state.defaultStoryModel);
@@ -40,7 +41,7 @@ export default function AddChapterModal({
   const [errorMsg, setErrorMsg] = useState('');
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState<string>(
-    model || defaultStoryModel || 'deepseek/deepseek-v4-pro',
+    modelId || defaultStoryModel || 'deepseek/deepseek-v4-pro',
   );
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function AddChapterModal({
 
   if (!isOpen) return null;
 
-  const handleGenerateGlossary = async (modelId?: string) => {
+  const handleGenerateGlossary = async (modelOverride?: string) => {
     if (!content.trim()) {
       setErrorMsg('Please enter chapter content before generating a glossary.');
       return;
@@ -61,14 +62,9 @@ export default function AddChapterModal({
     setIsGeneratingGlossary(true);
 
     try {
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (customOpenRouterKey) {
-        headers['X-OpenRouter-API-Key'] = customOpenRouterKey;
-      }
+      const headers = buildApiHeaders(customOpenRouterKey);
 
-      const activeModel = modelId || selectedModel;
+      const activeModel = modelOverride || selectedModel;
 
       const response = await fetch('/api/stories/generate-glossary', {
         method: 'POST',

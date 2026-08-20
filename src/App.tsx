@@ -70,6 +70,7 @@ import {
 import { useAuthStore } from './store/authStore';
 import { useUIStore } from './store/uiStore';
 import type { DeletionFlag, Story } from './types';
+import { buildApiHeaders } from './utils/modelUtils';
 import { cleanCompletedStory } from './utils/storyCleanup';
 
 interface AppProps {
@@ -413,7 +414,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         setGeneratingCoverIds((prev) => new Set(prev).add(sanitizedId));
         fetch('/api/stories/generate-cover/generate', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: buildApiHeaders(),
           body: JSON.stringify({ storyId: sanitizedId, force: false }),
         })
           .then(async (res) => {
@@ -579,7 +580,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         setGeneratingCoverIds((prev) => new Set(prev).add(sanitizedId));
         fetch('/api/stories/generate-cover/generate', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: buildApiHeaders(),
           body: JSON.stringify({ storyId: sanitizedId, force: false }),
         })
           .then(async (res) => {
@@ -670,7 +671,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     try {
       const response = await fetch('/api/stories/generate-cover/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: buildApiHeaders(),
         body: JSON.stringify({ storyId, force }),
       });
       if (!response.ok) {

@@ -26,16 +26,22 @@ export const getModelDisplayName = (modelId?: string): string => {
   return modelId;
 };
 
+import { pb } from '../services/pocketbase';
+
 /**
  * Builds the Authorization / API-key request headers for a generation call.
- * Encapsulates the isDeepSeek branching that was copy-pasted 4× across the codebase.
+ * Automatically attaches the active PocketBase user JWT token when logged in.
  */
 export const buildApiHeaders = (
-  customOpenRouterKey: string,
+  customOpenRouterKey?: string,
 ): Record<string, string> => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
+
+  if (pb.authStore.isValid && pb.authStore.token) {
+    headers['Authorization'] = `Bearer ${pb.authStore.token}`;
+  }
 
   if (customOpenRouterKey) {
     headers['X-OpenRouter-API-Key'] = customOpenRouterKey;
@@ -43,3 +49,4 @@ export const buildApiHeaders = (
 
   return headers;
 };
+
