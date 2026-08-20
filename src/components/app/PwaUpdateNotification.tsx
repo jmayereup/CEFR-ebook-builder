@@ -7,7 +7,21 @@ export default function PwaUpdateNotification() {
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
-  } = useRegisterSW();
+  } = useRegisterSW({
+    onRegistered(r) {
+      // Check for SW update on focus or visibility change
+      if (r) {
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            r.update().catch(() => {});
+          }
+        });
+      }
+    },
+    onRegisterError(error) {
+      console.error('Service worker registration error:', error);
+    },
+  });
 
   const [show, setShow] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -33,9 +47,21 @@ export default function PwaUpdateNotification() {
         navigator.serviceWorker.addEventListener('controllerchange', doReload, {
           once: true,
         });
+
+        // Also post SKIP_WAITING directly to all waiting workers in registrations
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          if (registration.waiting) {
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+        }
       }
 
       await updateServiceWorker(true);
+
+      // Dismiss prompt immediately so it does not persist across state transitions
+      setShow(false);
+      setNeedRefresh(false);
 
       // Fallback reload in case controllerchange didn't trigger
       setTimeout(doReload, 1500);

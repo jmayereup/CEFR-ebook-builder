@@ -393,20 +393,8 @@ async function bootstrap() {
         .replace('<!--ssr-outlet-->', html)
         .replace('</head>', `${dataScript}</head>`);
 
-      const isPublicRoute =
-        url.startsWith('/book/') ||
-        url === '/' ||
-        url === '/browse' ||
-        url === '/about';
-
-      if (isPublicRoute && process.env.NODE_ENV === 'production') {
-        res.setHeader(
-          'Cache-Control',
-          'public, max-age=60, s-maxage=300, stale-while-revalidate=86400',
-        );
-      } else {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      }
+      // HTML documents must never be cached by browser/CDN so PWAs and chunk updates stay immediately in sync
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
       return res.status(200).set({ 'Content-Type': 'text/html' }).send(appHtml);
     } catch (err: any) {
