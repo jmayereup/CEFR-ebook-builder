@@ -19,7 +19,6 @@ import CookieConsent from './components/app/CookieConsent';
 import FloatingFooter from './components/app/FloatingFooter';
 import GlossaryGenerationToast from './components/app/GlossaryGenerationToast';
 import InstructionFloatingBox from './components/app/InstructionFloatingBox';
-import PwaUpdateNotification from './components/app/PwaUpdateNotification';
 import SettingsModal from './components/app/SettingsModal';
 import StreakCelebrationModal from './components/app/StreakCelebrationModal';
 import UnsavedChangesModal from './components/app/UnsavedChangesModal';
@@ -1668,7 +1667,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       <InstructionFloatingBox
         onOpenAuth={(mode = 'signup') => handleOpenAuth(mode)}
       />
-      <PwaUpdateNotification />
     </div>
   );
 }

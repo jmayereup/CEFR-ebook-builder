@@ -10,7 +10,7 @@ export default defineConfig(() => {
       react(),
       tailwindcss(),
       VitePWA({
-        registerType: 'prompt',
+        registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'tj-logo.svg'],
         manifest: {
           name: 'CEFR Stories - Reading Companion',
@@ -79,28 +79,10 @@ export default defineConfig(() => {
         },
         workbox: {
           clientsClaim: true,
-          skipWaiting: false,
+          skipWaiting: true,
           cleanupOutdatedCaches: true,
-          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+          globPatterns: ['**/*.{js,css,ico,png,svg,woff2}'],
           navigateFallbackDenylist: [/^\/covers/],
-          runtimeCaching: [
-            {
-              urlPattern: ({ url, sameOrigin }) =>
-                sameOrigin && url.pathname === '/api/stories/metadata',
-              handler: 'NetworkFirst',
-              options: {
-                cacheName: 'stories-metadata-cache',
-                expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
-                },
-                cacheableResponse: {
-                  statuses: [200],
-                },
-                networkTimeoutSeconds: 5,
-              },
-            },
-          ],
         },
       }),
     ],
