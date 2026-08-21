@@ -85,17 +85,19 @@ export default defineConfig(() => {
           navigateFallbackDenylist: [/^\/covers/],
           runtimeCaching: [
             {
-              urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
+              urlPattern: ({ url, sameOrigin }) =>
+                sameOrigin && url.pathname === '/api/stories/metadata',
               handler: 'NetworkFirst',
               options: {
-                cacheName: 'api-cache',
+                cacheName: 'stories-metadata-cache',
                 expiration: {
-                  maxEntries: 100,
+                  maxEntries: 50,
                   maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
                 },
                 cacheableResponse: {
-                  statuses: [0, 200],
+                  statuses: [200],
                 },
+                networkTimeoutSeconds: 5,
               },
             },
           ],
