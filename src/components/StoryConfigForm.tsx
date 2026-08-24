@@ -37,6 +37,7 @@ import {
   calculateEstimatedUsage,
   getRecommendedWordCount,
 } from '../utils/storyEstimation';
+import { generatePocketBaseId } from '../utils/storyFactory';
 import ModelSelectionModal from './creator/ModelSelectionModal';
 import StoryOutlineReview from './creator/StoryOutlineReview';
 
@@ -96,6 +97,7 @@ const WRITING_TYPES = [
 
 interface StoryConfigFormProps {
   onSubmit: (config: {
+    storyId?: string;
     language: string;
     cefrLevel: string;
     genre: string;
@@ -245,6 +247,7 @@ export default function StoryConfigForm({
   // Outline step states
   const [isDraftingOutline, setIsDraftingOutline] = useState(false);
   const [showOutlineReview, setShowOutlineReview] = useState(false);
+  const [draftStoryId, setDraftStoryId] = useState('');
   const [draftTitle, setDraftTitle] = useState('');
   const [draftOutline, setDraftOutline] = useState('');
   const [draftDescription, setDraftDescription] = useState('');
@@ -381,11 +384,14 @@ export default function StoryConfigForm({
 
     try {
       const headers = buildApiHeaders(customOpenRouterKey);
+      const storyId = draftStoryId || generatePocketBaseId();
+      setDraftStoryId(storyId);
 
       const response = await fetch('/api/stories/generate-outline', {
         method: 'POST',
         headers,
         body: JSON.stringify({
+          storyId,
           language: selectedLanguageName,
           cefrLevel,
           genre,
@@ -397,6 +403,7 @@ export default function StoryConfigForm({
           thinkingBudget: finalThinkingBudget,
           temperature: finalTemperature,
           translationLanguage: translationTargetLanguage,
+          isPublic,
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
         }),
@@ -414,6 +421,9 @@ export default function StoryConfigForm({
       const data = await response.json();
       if (data.error) {
         throw new Error(data.error);
+      }
+      if (data.storyId) {
+        setDraftStoryId(data.storyId);
       }
       setDraftTitle(data.storyTitle || '');
       setDraftOutline(data.outline || '');
@@ -532,6 +542,7 @@ export default function StoryConfigForm({
       supportsTemp && !isThinkingActive ? temperature : undefined;
 
     onSubmit({
+      storyId: draftStoryId || undefined,
       language: selectedLanguageName,
       cefrLevel,
       genre,
@@ -1709,6 +1720,7 @@ export default function StoryConfigForm({
                     type="button"
                     disabled={!currentUser || isDraftingOutline || isLoading}
                     onClick={() => {
+                      setDraftStoryId('');
                       setDraftTitle('');
                       setDraftDescription('');
                       setDraftOutline('');

@@ -4,6 +4,7 @@ import type { GenerationLimitData } from '../services/db';
 import type { IUser } from '../services/types';
 
 interface CreateStoryConfig {
+  storyId?: string;
   language: string;
   cefrLevel: string;
   genre: string;

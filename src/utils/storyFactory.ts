@@ -10,6 +10,15 @@ import type { StoryConfig } from '../hooks/useStoryGeneration';
 import type { Chapter, Story } from '../types';
 import { cleanCompletedStory } from './storyCleanup';
 
+export function generatePocketBaseId(): string {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let id = 's'; // Start with 's' to distinguish stories from other records, and ensure it starts with a letter
+  for (let i = 0; i < 14; i++) {
+    id += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return id;
+}
+
 export interface StoryCreationParams {
   storyId: string;
   config: StoryConfig;

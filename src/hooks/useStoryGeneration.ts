@@ -32,22 +32,14 @@ import {
 import { fetchWithRetry } from '../utils/fetchWithRetry';
 import { buildApiHeaders, getModelBaseName } from '../utils/modelUtils';
 import { checkGenerationPermission } from '../utils/permissionUtils';
-import { buildStory } from '../utils/storyFactory';
+import { buildStory, generatePocketBaseId } from '../utils/storyFactory';
 
 // ---------------------------------------------------------------------------
 // Public interface
 // ---------------------------------------------------------------------------
 
-function generatePocketBaseId(): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let id = 's'; // Start with 's' to distinguish stories from other records, and ensure it starts with a letter
-  for (let i = 0; i < 14; i++) {
-    id += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return id;
-}
-
 export interface StoryConfig {
+  storyId?: string;
   language: string;
   cefrLevel: string;
   genre: string;
@@ -223,7 +215,7 @@ export const useStoryGeneration = (
     if (config.embedUrl) {
       try {
         setIsGenerating(true);
-        const newStoryId = generatePocketBaseId();
+        const newStoryId = config.storyId || generatePocketBaseId();
         const newStory = buildStory({
           storyId: newStoryId,
           config: {
@@ -337,7 +329,7 @@ export const useStoryGeneration = (
     // ---------------------------------------------------------------------------
     if (config.skipChapterGeneration) {
       try {
-        const newStoryId = generatePocketBaseId();
+        const newStoryId = config.storyId || generatePocketBaseId();
         const emptyChapter: Chapter = {
           chapterNumber: 1,
           title: 'Chapter 1',
@@ -379,7 +371,7 @@ export const useStoryGeneration = (
     const signal = abortControllerRef.current.signal;
 
     try {
-      const newStoryId = generatePocketBaseId();
+      const newStoryId = config.storyId || generatePocketBaseId();
       const headers = buildApiHeaders(customOpenRouterKey);
 
       const response = await fetchWithRetry(
