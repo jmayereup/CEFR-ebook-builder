@@ -38,7 +38,7 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set, get) => ({
-  isOnline: true,
+  isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
   customOpenRouterKey: '',
   translationTargetLanguage: null,
   defaultStoryModel: 'deepseek/deepseek-v4-pro',

@@ -83,6 +83,70 @@ export default defineConfig(() => {
           cleanupOutdatedCaches: true,
           globPatterns: ['**/*.{js,css,ico,png,svg,woff2}'],
           navigateFallbackDenylist: [/^\/covers/],
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'google-fonts-cache',
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 * 24 * 365,
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
+            },
+            {
+              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'gstatic-fonts-cache',
+                expiration: {
+                  maxEntries: 20,
+                  maxAgeSeconds: 60 * 60 * 24 * 365,
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
+            },
+            {
+              urlPattern: /\/api\/stories\/metadata/,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'stories-metadata-cache',
+                networkTimeoutSeconds: 3,
+                expiration: {
+                  maxEntries: 1,
+                  maxAgeSeconds: 60 * 60 * 24,
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
+            },
+            {
+              urlPattern: ({ url }) =>
+                url.pathname.startsWith('/covers/') ||
+                url.hostname === 'files.teacherjake.com' ||
+                url.hostname === 'gen.teacherjake.com' ||
+                (url.hostname === 'pb.teacherjake.com' &&
+                  url.pathname.startsWith('/api/files/')),
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'story-covers-cache',
+                expiration: {
+                  maxEntries: 100,
+                  maxAgeSeconds: 60 * 60 * 24 * 30,
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
+            },
+          ],
         },
       }),
     ],

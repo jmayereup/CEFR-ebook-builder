@@ -56,15 +56,12 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
   const {
     selectedStory,
     setSelectedStory,
-    loadingStoryId,
     setLoadingStoryId,
     activeChapterIdx,
     setActiveChapterIdx,
     activeTab,
     setActiveTab,
-    storiesLoading,
     isOnline,
-    cachedStoryIds,
     currentUser,
     recentlyRead,
     stories = [],
@@ -208,7 +205,6 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     setActiveTab,
     setSelectedStory,
     setLoadingStoryId,
-    currentUser,
     searchQuery,
     setSearchQuery,
     filterLanguage,
@@ -244,104 +240,96 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     if (!pendingNavigation) return;
     const { storyId, chapterNum } = pendingNavigation;
 
-    if (!isOnline && !cachedStoryIds.includes(storyId)) {
-      showAlert(
-        'Story Offline',
-        'This story is not saved for offline reading. Please connect to the internet to download it.',
-        'warning',
-      );
-      setLoadingStoryId?.(null);
-      setPendingNavigation(null);
-      window.history.replaceState(null, '', '/');
-      setActiveTab('browse');
-      setSelectedStory(null);
-      return;
-    }
+    let active = true;
+    (async () => {
+      // Check offline storage first
+      let directStory = await getStory(storyId);
 
-    // Fetch story directly from database since stories array holds metadata only
-    if (!storiesLoading) {
-      let active = true;
-      (async () => {
-        // Check offline storage for an unsaved draft first
-        let directStory = await getStory(storyId);
-        if (directStory?.isUnsaved) {
-          console.log(
-            `[Router] Loaded unsaved draft story ${storyId} from IndexedDB cache.`,
-          );
-        } else {
+      // If online and not an unsaved draft, attempt fetch from DB
+      if (isOnline && !directStory?.isUnsaved) {
+        try {
           const fetched = await fetchStory(storyId);
           if (fetched) {
             directStory = fetched;
             await saveStory(directStory);
           }
+        } catch (fetchErr) {
+          console.warn(
+            `[Router] Network fetch failed for story "${storyId}", using cached version if available:`,
+            fetchErr,
+          );
         }
+      }
 
-        if (directStory && !directStory.cover) {
-          const meta = stories.find((s) => s.id === storyId);
-          if (meta?.cover) {
-            directStory = { ...directStory, cover: meta.cover };
-            await saveStory(directStory);
+      if (!active) return;
+
+      if (directStory && !directStory.cover) {
+        const meta = stories.find((s) => s.id === storyId);
+        if (meta?.cover) {
+          directStory = { ...directStory, cover: meta.cover };
+          await saveStory(directStory);
+        }
+      }
+
+      if (directStory) {
+        const isOwner =
+          currentUser && directStory.creatorId === currentUser.uid;
+        const isAdmin = currentUser?.isAdmin === true;
+        const isCopyrightBlocked = directStory.copyrightFlag === true;
+        const isAllowed =
+          !isCopyrightBlocked &&
+          (directStory.isPublic !== false || isOwner || isAdmin || !isOnline);
+
+        if (isAllowed) {
+          setSelectedStory(directStory);
+          setLoadingStoryId?.(null);
+          if (chapterNum !== null) {
+            const chapterIdx = chapterNum > 0 ? chapterNum - 1 : 0;
+            const validIdx =
+              chapterIdx < (directStory.chapters?.length ?? 0) ? chapterIdx : 0;
+            setActiveChapterIdx(validIdx);
+          } else {
+            const syncedItem = recentlyRead.find(
+              (item) => item.storyId === directStory.id,
+            );
+            const idx = syncedItem ? syncedItem.chapterIdx : 0;
+            const validIdx =
+              idx >= 0 && idx < (directStory.chapters?.length ?? 0) ? idx : 0;
+            setActiveChapterIdx(validIdx);
           }
+          setPendingNavigation(null);
+          return;
         }
+      }
 
-        if (!active) return;
-
-        if (directStory) {
-          const isOwner =
-            currentUser && directStory.creatorId === currentUser.uid;
-          const isAdmin = currentUser?.isAdmin === true;
-          const isCopyrightBlocked = directStory.copyrightFlag === true;
-          const isAllowed =
-            !isCopyrightBlocked &&
-            (directStory.isPublic !== false || isOwner || isAdmin);
-
-          if (isAllowed) {
-            setSelectedStory(directStory);
-            setLoadingStoryId?.(null);
-            if (chapterNum !== null) {
-              const chapterIdx = chapterNum > 0 ? chapterNum - 1 : 0;
-              const validIdx =
-                chapterIdx < (directStory.chapters?.length ?? 0)
-                  ? chapterIdx
-                  : 0;
-              setActiveChapterIdx(validIdx);
-            } else {
-              const syncedItem = recentlyRead.find(
-                (item) => item.storyId === directStory.id,
-              );
-              const idx = syncedItem ? syncedItem.chapterIdx : 0;
-              const validIdx =
-                idx >= 0 && idx < (directStory.chapters?.length ?? 0) ? idx : 0;
-              setActiveChapterIdx(validIdx);
-            }
-            setPendingNavigation(null);
-            return;
-          }
-        }
-
-        // If story is not found or user is not allowed to read it
+      // If story is not found or user is not allowed to read it
+      if (!isOnline) {
+        showAlert(
+          'Story Offline',
+          'This story is not saved for offline reading. Please connect to the internet to download it.',
+          'warning',
+        );
+      } else {
         showAlert(
           'Story Not Found',
           'The requested story could not be found or you do not have permission to view it.',
           'error',
         );
-        setLoadingStoryId?.(null);
-        setPendingNavigation(null);
-        window.history.replaceState(null, '', '/');
-        setActiveTab('browse');
-        setSelectedStory(null);
-      })();
+      }
+      setLoadingStoryId?.(null);
+      setPendingNavigation(null);
+      window.history.replaceState(null, '', '/');
+      setActiveTab('browse');
+      setSelectedStory(null);
+    })();
 
-      return () => {
-        active = false;
-      };
-    }
+    return () => {
+      active = false;
+    };
   }, [
-    storiesLoading,
     pendingNavigation,
     currentUser,
     isOnline,
-    cachedStoryIds,
     showAlert,
     recentlyRead,
     setSelectedStory,

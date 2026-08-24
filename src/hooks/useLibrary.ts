@@ -8,10 +8,13 @@ import {
   rateStory,
   updateStoryVisibility,
 } from '../services/db';
-import { getStory, saveStory } from '../services/storage/offlineStorage';
+import {
+  getAllCachedStories,
+  getStory,
+  saveStory,
+} from '../services/storage/offlineStorage';
 import type { IUser } from '../services/types';
 import type { Story } from '../types';
-import { countWords } from '../utils/wordCounter';
 
 interface UseLibraryOptions {
   currentUser: IUser | null;
@@ -46,6 +49,17 @@ export function useLibrary(options: UseLibraryOptions) {
     return [];
   });
   const [privateStories, setPrivateStories] = useState<Story[]>([]);
+  const [offlineCachedStories, setOfflineCachedStories] = useState<Story[]>([]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Reload cached stories whenever cached IDs update
+  useEffect(() => {
+    getAllCachedStories().then((cached) => {
+      if (cached && cached.length > 0) {
+        setOfflineCachedStories(cached);
+      }
+    });
+  }, [cachedStoryIds]);
+
   const [storiesLoading, setStoriesLoading] = useState<boolean>(() => {
     if (
       ssrData?.stories ||
@@ -90,6 +104,14 @@ export function useLibrary(options: UseLibraryOptions) {
         lastMetadataFetchRef.current = Date.now();
       } catch (error) {
         console.error('Failed to load public stories metadata:', error);
+        try {
+          const cached = await getAllCachedStories();
+          if (cached && cached.length > 0) {
+            setOfflineCachedStories(cached);
+          }
+        } catch (cacheErr) {
+          console.error('Failed to load cached stories on fallback:', cacheErr);
+        }
       } finally {
         setStoriesLoading(false);
       }
@@ -117,9 +139,15 @@ export function useLibrary(options: UseLibraryOptions) {
   // Derive and memoize merged stories list to prevent extra renders
   const stories = useMemo(() => {
     const map = new Map<string, Story>();
+    // Seed with offline cached stories so offline stories are ALWAYS available
+    offlineCachedStories.forEach((s) => {
+      map.set(s.id, s);
+    });
+    // Overlay public stories metadata (fresher when online)
     publicStories.forEach((s) => {
       map.set(s.id, s);
     });
+    // Overlay private stories
     privateStories.forEach((s) => {
       map.set(s.id, s);
     });
@@ -128,43 +156,69 @@ export function useLibrary(options: UseLibraryOptions) {
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
-  }, [publicStories, privateStories]);
+  }, [publicStories, privateStories, offlineCachedStories]);
 
   const handleSelectStory = async (story: Story): Promise<Story | null> => {
-    if (!isOnline && !cachedStoryIds.includes(story.id)) {
-      showAlert(
-        'Story Offline',
-        'This story is not saved for offline reading. Please connect to the internet to download it.',
-        'warning',
-      );
-      return null;
-    }
     setStoriesLoading(true);
     try {
-      // Check offline storage for an unsaved draft or offline access
+      // Check offline storage first
       const cachedStory = await getStory(story.id);
+
+      // If offline or story is an unsaved draft, return cached version immediately
       if (cachedStory && (cachedStory.isUnsaved || !isOnline)) {
         return cachedStory;
       }
 
-      const fullStory = await fetchStory(story.id);
-      if (!fullStory) {
-        // Fallback to offline cache if DB fetch failed but cache exists
-        if (cachedStory) {
-          return cachedStory;
+      // Try network fetch if online
+      if (isOnline) {
+        try {
+          const fullStory = await fetchStory(story.id);
+          if (fullStory) {
+            await saveStory(fullStory);
+            setOfflineCachedStories((prev) => {
+              const exists = prev.some((p) => p.id === fullStory.id);
+              return exists
+                ? prev.map((p) => (p.id === fullStory.id ? fullStory : p))
+                : [...prev, fullStory];
+            });
+            return fullStory;
+          }
+        } catch (fetchErr) {
+          console.warn(
+            `[Library] Network fetch failed for story "${story.id}", falling back to cache:`,
+            fetchErr,
+          );
+          if (cachedStory) {
+            return cachedStory;
+          }
         }
+      }
+
+      // Fallback to cache if exists
+      if (cachedStory) {
+        return cachedStory;
+      }
+
+      if (!isOnline) {
+        showAlert(
+          'Story Offline',
+          'This story is not saved for offline reading. Please connect to the internet to download it.',
+          'warning',
+        );
+      } else {
         showAlert(
           'Story Not Found',
           'The requested story could not be loaded.',
           'error',
         );
-        return null;
       }
-
-      await saveStory(fullStory);
-      return fullStory;
+      return null;
     } catch (err) {
       console.error('Error loading story chapters:', err);
+      const cachedStory = await getStory(story.id);
+      if (cachedStory) {
+        return cachedStory;
+      }
       showAlert(
         'Error Loading Story',
         'Failed to fetch the story chapters. Please check your connection.',
