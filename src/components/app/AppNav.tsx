@@ -141,7 +141,7 @@ export default function AppNav({
             <span>Create Story</span>
           </button>
 
-          {mounted && showVocabBuilder && (
+          {showVocabBuilder && (
             <button
               type="button"
               onClick={() => {
@@ -276,7 +276,7 @@ export default function AppNav({
               <PlusCircle className="w-4 h-4" />
             </button>
 
-            {mounted && showVocabBuilder && (
+            {showVocabBuilder && (
               <button
                 id="nav-mobile-practice"
                 type="button"
@@ -415,7 +415,7 @@ export default function AppNav({
                 <span>Create Story</span>
               </button>
 
-              {mounted && showVocabBuilder && (
+              {showVocabBuilder && (
                 <button
                   type="button"
                   onClick={() => {

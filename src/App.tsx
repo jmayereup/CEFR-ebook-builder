@@ -97,6 +97,11 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     (state) => state.initializeClientState,
   );
 
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>(
@@ -1219,7 +1224,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
           }}
         />
       )}
-      {!isOnline && (
+      {isMounted && !isOnline && (
         <div className="bg-amber-500/10 border-b border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs py-2 px-4 text-center font-medium flex items-center justify-center gap-2">
           <WifiOff className="w-3.5 h-3.5 animate-pulse" />
           <span>
