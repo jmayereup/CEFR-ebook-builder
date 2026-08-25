@@ -13,6 +13,7 @@ export const getModelBaseName = (modelId?: string): string => {
   if (modelId.includes('hermes')) return 'Hermes';
   if (modelId.includes('mistral')) return 'Mistral';
   if (modelId.includes('kimi') || modelId.includes('moonshot')) return 'Kimi';
+  if (modelId.includes('glm') || modelId.includes('z-ai')) return 'GLM';
   return 'DeepSeek';
 };
 

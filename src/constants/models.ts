@@ -109,6 +109,11 @@ export const FRONTIER_LATEST_MODELS = [
     category: 'pro' as const,
   },
   {
+    id: '~z-ai/glm-latest',
+    name: 'Z-AI: GLM Latest',
+    category: 'pro' as const,
+  },
+  {
     id: 'nousresearch/hermes-3-llama-3.1-405b',
     name: 'Nous: Hermes 3 405B',
     category: 'pro' as const,
