@@ -54,10 +54,16 @@ export class PocketBaseService implements IDatabaseService {
     if (pbStory.isCompleted) {
       pbStory.promptNotes = '';
       pbStory.outline = '';
-      pbStory.storyBible = null;
-      pbStory.consistencyAudits = null;
+      delete pbStory.storyBible;
+      delete pbStory.consistencyAudits;
       pbStory.toneRefreshGuidance = '';
     }
+
+    // Clean null/undefined values for numeric & optional schema fields
+    if (pbStory.thinkingBudget == null) delete pbStory.thinkingBudget;
+    if (pbStory.temperature == null) delete pbStory.temperature;
+    if (pbStory.storyBible == null) delete pbStory.storyBible;
+    if (pbStory.consistencyAudits == null) delete pbStory.consistencyAudits;
 
     try {
       const { id, ...updateData } = pbStory;
@@ -74,6 +80,20 @@ export class PocketBaseService implements IDatabaseService {
         try {
           await pb.collection('stories').create(pbStory);
         } catch (createError: any) {
+          const responseData =
+            createError?.response?.data || createError?.data || {};
+          if (responseData?.id?.code === 'validation_not_unique') {
+            // Story was pre-created (e.g., by tj-gen during outline autosave).
+            // Attempt update on pre-existing record.
+            console.log(
+              '[PocketBase] Story pre-exists (validation_not_unique), updating id:',
+              pbStory.id,
+            );
+            const { id, ...updatePayload } = pbStory;
+            await pb.collection('stories').update(pbStory.id, updatePayload);
+            return;
+          }
+
           console.error(
             '[PocketBase] 400 create error response:',
             JSON.stringify(
@@ -87,11 +107,6 @@ export class PocketBaseService implements IDatabaseService {
             JSON.stringify(pbStory, null, 2),
           );
 
-          const responseData =
-            createError?.response?.data || createError?.data || {};
-          if (responseData?.id?.code === 'validation_not_unique') {
-            throw new Error('You do not have permission to edit this story.');
-          }
           throw createError;
         }
       } else {
