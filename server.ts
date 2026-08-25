@@ -386,12 +386,12 @@ async function bootstrap() {
         template = template.replace('</head>', `${dynamicMeta}</head>`);
       }
 
-      const { html } = render(url, preloadedData);
+      const { html, head = '' } = render(url, preloadedData);
 
       const dataScript = `<script>window.__PRELOADED_DATA__ = ${JSON.stringify(preloadedData).replace(/</g, '\\u003c')};</script>`;
       const appHtml = template
         .replace('<!--ssr-outlet-->', html)
-        .replace('</head>', `${dataScript}</head>`);
+        .replace('</head>', `${head}${dataScript}</head>`);
 
       // HTML documents must never be cached by browser/CDN so PWAs and chunk updates stay immediately in sync
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
