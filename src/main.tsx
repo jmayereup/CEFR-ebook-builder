@@ -27,6 +27,15 @@ if (typeof window !== 'undefined' && window.localStorage) {
 
 const container = document.getElementById('root')!;
 
+const preloadedData =
+  typeof window !== 'undefined'
+    ? (window as any).__PRELOADED_DATA__
+    : undefined;
+const currentPath =
+  typeof window !== 'undefined'
+    ? window.location.pathname + window.location.search
+    : undefined;
+
 // If there is pre-rendered server HTML (not the static app-loading-screen spinner), hydrate it.
 if (
   container.firstElementChild &&
@@ -35,13 +44,13 @@ if (
   hydrateRoot(
     container,
     <StrictMode>
-      <App />
+      <App ssrPath={currentPath} ssrData={preloadedData} />
     </StrictMode>,
   );
 } else {
   createRoot(container).render(
     <StrictMode>
-      <App />
+      <App ssrPath={currentPath} ssrData={preloadedData} />
     </StrictMode>,
   );
 }

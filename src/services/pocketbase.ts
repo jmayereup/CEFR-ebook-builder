@@ -11,6 +11,9 @@ const pbUrl = rawUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
 
 export const pb = new PocketBase(pbUrl) as TypedPocketBase;
 pb.autoCancellation(false);
+if (pb.realtime) {
+  (pb.realtime as any).maxReconnectAttempts = 3;
+}
 
 /**
  * Returns authorization headers containing the active PocketBase user token if logged in.

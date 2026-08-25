@@ -95,46 +95,9 @@ export function useUserData(options: UseUserDataOptions) {
     onProfileLoadedRef.current = onProfileLoaded;
   }, [onProfileLoaded]);
 
-  const [bookshelf, setBookshelf] = useState<string[]>(() => {
-    const local =
-      typeof window !== 'undefined' ? localStorage.getItem('bookshelf') : null;
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        console.error('Error parsing bookshelf from localStorage:', e);
-      }
-    }
-    return [];
-  });
-  const [recentlyRead, setRecentlyRead] = useState<RecentlyReadItem[]>(() => {
-    const local =
-      typeof window !== 'undefined'
-        ? localStorage.getItem('recently_read')
-        : null;
-    if (local) {
-      try {
-        return parseRecentlyReadItems(JSON.parse(local));
-      } catch (e) {
-        console.error('Error parsing recently_read from localStorage:', e);
-      }
-    }
-    return [];
-  });
-  const [savedVocab, setSavedVocab] = useState<VocabularyTerm[]>(() => {
-    const local =
-      typeof window !== 'undefined'
-        ? localStorage.getItem('saved_vocab')
-        : null;
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        console.error('Error parsing saved vocab from localStorage:', e);
-      }
-    }
-    return [];
-  });
+  const [bookshelf, setBookshelf] = useState<string[]>([]);
+  const [recentlyRead, setRecentlyRead] = useState<RecentlyReadItem[]>([]);
+  const [savedVocab, setSavedVocab] = useState<VocabularyTerm[]>([]);
   const [lookupLimitData, setLookupLimitData] = useState<LookupLimitData>(
     defaultLookupLimitData,
   );
@@ -683,6 +646,37 @@ export function useUserData(options: UseUserDataOptions) {
             monthlyCreditsMonth: thisMonthStr,
             date: todayStr,
           });
+        } else {
+          // Initial guest hydration from localStorage
+          const guestBookshelfRaw = localStorage.getItem('bookshelf');
+          if (guestBookshelfRaw) {
+            try {
+              setBookshelf(JSON.parse(guestBookshelfRaw));
+            } catch {}
+          }
+          const guestRecentlyReadRaw = localStorage.getItem('recently_read');
+          if (guestRecentlyReadRaw) {
+            try {
+              setRecentlyRead(
+                parseRecentlyReadItems(JSON.parse(guestRecentlyReadRaw)),
+              );
+            } catch {}
+          }
+          const guestVocabRaw = localStorage.getItem('saved_vocab');
+          if (guestVocabRaw) {
+            try {
+              setSavedVocab(JSON.parse(guestVocabRaw));
+            } catch {}
+          }
+          const guestLookupRaw = localStorage.getItem('lookup_limit_data');
+          if (guestLookupRaw) {
+            try {
+              const parsed = JSON.parse(guestLookupRaw);
+              if (parsed.date === todayStr) {
+                setLookupLimitData(parsed);
+              }
+            } catch {}
+          }
         }
         setIsUserDataLoaded(true);
       }
@@ -691,110 +685,142 @@ export function useUserData(options: UseUserDataOptions) {
 
     // Trigger initial load
     loadSavedVocab(true);
+
+    // Refresh profile on window/tab focus to sync multi-device state seamlessly
+    const handleFocus = () => {
+      if (document.visibilityState === 'visible') {
+        loadSavedVocab(false);
+      }
+    };
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('visibilitychange', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('visibilitychange', handleFocus);
+    };
   }, [currentUser, authChecking, setIsPaid, setGenerationLimitData]);
 
-  // Realtime subscription to the user's record on PocketBase for instant multi-device sync
+  // Realtime subscription to the user's record on PocketBase with error guard
   useEffect(() => {
     if (!currentUser?.uid) return;
 
     let isMounted = true;
-    const unsubPromise = pb
-      .collection('users')
-      .subscribe(currentUser.uid, (e) => {
-        if (!isMounted || e.action !== 'update' || !e.record) return;
+    let unsubFn: (() => void) | null = null;
 
-        const updatedRecord = e.record as any;
+    try {
+      pb.collection('users')
+        .subscribe(currentUser.uid, (e) => {
+          if (!isMounted || e.action !== 'update' || !e.record) return;
 
-        // 1. Sync Bookshelf
-        if (Array.isArray(updatedRecord.bookshelf)) {
-          setBookshelf((prev) => {
-            if (
-              JSON.stringify(prev) === JSON.stringify(updatedRecord.bookshelf)
-            ) {
-              return prev;
-            }
-            localStorage.setItem(
-              'bookshelf',
-              JSON.stringify(updatedRecord.bookshelf),
-            );
-            return updatedRecord.bookshelf;
-          });
-        }
+          const updatedRecord = e.record as any;
 
-        // 2. Sync Recently Read
-        if (updatedRecord.recentlyRead) {
-          const parsed = parseRecentlyReadItems(updatedRecord.recentlyRead);
-          setRecentlyRead((prev) => {
-            if (JSON.stringify(prev) === JSON.stringify(parsed)) {
-              return prev;
-            }
-            localStorage.setItem('recently_read', JSON.stringify(parsed));
-            return parsed;
-          });
-        }
-
-        // 3. Sync Lookup Limit
-        if (updatedRecord.lookupLimitData) {
-          let parsedLookup = updatedRecord.lookupLimitData;
-          if (typeof parsedLookup === 'string') {
-            try {
-              parsedLookup = JSON.parse(parsedLookup);
-            } catch {}
-          }
-          if (parsedLookup && typeof parsedLookup === 'object') {
-            setLookupLimitData((prev) => {
-              if (JSON.stringify(prev) === JSON.stringify(parsedLookup)) {
+          // 1. Sync Bookshelf
+          if (Array.isArray(updatedRecord.bookshelf)) {
+            setBookshelf((prev) => {
+              if (
+                JSON.stringify(prev) === JSON.stringify(updatedRecord.bookshelf)
+              ) {
                 return prev;
               }
               localStorage.setItem(
-                'lookup_limit_data',
-                JSON.stringify(parsedLookup),
+                'bookshelf',
+                JSON.stringify(updatedRecord.bookshelf),
               );
-              return parsedLookup;
+              return updatedRecord.bookshelf;
             });
           }
-        }
 
-        // 4. Sync Paid Tier
-        if (typeof updatedRecord.isPaid === 'boolean') {
-          setIsPaid(updatedRecord.isPaid);
-        }
+          // 2. Sync Recently Read
+          if (updatedRecord.recentlyRead) {
+            const parsed = parseRecentlyReadItems(updatedRecord.recentlyRead);
+            setRecentlyRead((prev) => {
+              if (JSON.stringify(prev) === JSON.stringify(parsed)) {
+                return prev;
+              }
+              localStorage.setItem('recently_read', JSON.stringify(parsed));
+              return parsed;
+            });
+          }
 
-        // 5. Sync Reader UI Preferences without circular save
-        isSyncingFromServer.current = true;
-        if (updatedRecord.translationTargetLanguage !== undefined) {
-          useUIStore
-            .getState()
-            .setTranslationTargetLanguage(
-              updatedRecord.translationTargetLanguage,
-            );
-        }
-        if (
-          typeof updatedRecord.readerFontSize === 'number' &&
-          updatedRecord.readerFontSize >= 14 &&
-          updatedRecord.readerFontSize <= 26
-        ) {
-          useUIStore.getState().setReaderFontSize(updatedRecord.readerFontSize);
-        }
-        if (typeof updatedRecord.readerUseSerif === 'boolean') {
-          useUIStore.getState().setReaderUseSerif(updatedRecord.readerUseSerif);
-        }
-        isSyncingFromServer.current = false;
-      });
+          // 3. Sync Lookup Limit
+          if (updatedRecord.lookupLimitData) {
+            let parsedLookup = updatedRecord.lookupLimitData;
+            if (typeof parsedLookup === 'string') {
+              try {
+                parsedLookup = JSON.parse(parsedLookup);
+              } catch {}
+            }
+            if (parsedLookup && typeof parsedLookup === 'object') {
+              setLookupLimitData((prev) => {
+                if (JSON.stringify(prev) === JSON.stringify(parsedLookup)) {
+                  return prev;
+                }
+                localStorage.setItem(
+                  'lookup_limit_data',
+                  JSON.stringify(parsedLookup),
+                );
+                return parsedLookup;
+              });
+            }
+          }
+
+          // 4. Sync Paid Tier
+          if (typeof updatedRecord.isPaid === 'boolean') {
+            setIsPaid(updatedRecord.isPaid);
+          }
+
+          // 5. Sync Reader UI Preferences without circular save
+          isSyncingFromServer.current = true;
+          if (updatedRecord.translationTargetLanguage !== undefined) {
+            useUIStore
+              .getState()
+              .setTranslationTargetLanguage(
+                updatedRecord.translationTargetLanguage,
+              );
+          }
+          if (
+            typeof updatedRecord.readerFontSize === 'number' &&
+            updatedRecord.readerFontSize >= 14 &&
+            updatedRecord.readerFontSize <= 26
+          ) {
+            useUIStore
+              .getState()
+              .setReaderFontSize(updatedRecord.readerFontSize);
+          }
+          if (typeof updatedRecord.readerUseSerif === 'boolean') {
+            useUIStore
+              .getState()
+              .setReaderUseSerif(updatedRecord.readerUseSerif);
+          }
+          isSyncingFromServer.current = false;
+        })
+        .then((unsub) => {
+          if (typeof unsub === 'function') {
+            unsubFn = unsub;
+          }
+        })
+        .catch((err) => {
+          console.warn(
+            '[useUserData] Realtime subscription failed (will use focus sync):',
+            err?.message || err,
+          );
+        });
+    } catch (err) {
+      console.warn('[useUserData] Realtime subscription init error:', err);
+    }
 
     return () => {
       isMounted = false;
-      unsubPromise
-        .then((unsub) => {
-          if (typeof unsub === 'function') {
-            unsub();
-          } else {
-            pb.collection('users').unsubscribe(currentUser.uid);
-          }
-        })
-        .catch(() => {
-          pb.collection('users').unsubscribe(currentUser.uid);
-        });
+      if (unsubFn) {
+        try {
+          unsubFn();
+        } catch {}
+      } else {
+        try {
+          pb.collection('users').unsubscribe(currentUser.uid).catch(() => {});
+        } catch {}
+      }
     };
   }, [currentUser?.uid, setIsPaid]);
 

@@ -41,44 +41,49 @@ export function useFilters(options: UseFiltersOptions) {
   }, [ssrPath]);
 
   const [searchQuery, setSearchQuery] = useState(() => queryParams.q || '');
-  const [filterLanguage, setFilterLanguage] = useState<string[]>(() => {
-    if (queryParams.lang) return queryParams.lang;
-    if (typeof window === 'undefined') return [];
-    try {
-      const stored = localStorage.getItem('library_filter_language');
-      if (!stored) return [];
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) return parsed;
-      if (parsed === 'All') return [];
-      return [parsed];
-    } catch {
-      const val = localStorage.getItem('library_filter_language');
-      if (val === 'All' || !val) return [];
-      return [val];
-    }
-  });
-  const [filterCefrLevel, setFilterCefrLevel] = useState<string[]>(() => {
-    if (queryParams.cefr) return queryParams.cefr;
-    if (typeof window === 'undefined') return [];
-    try {
-      const stored = localStorage.getItem('library_filter_cefr_level');
-      if (!stored) return [];
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) return parsed;
-      if (parsed === 'All') return [];
-      return [parsed];
-    } catch {
-      const val = localStorage.getItem('library_filter_cefr_level');
-      if (val === 'All' || !val) return [];
-      return [val];
-    }
-  });
+  const [filterLanguage, setFilterLanguage] = useState<string[]>(
+    () => queryParams.lang || [],
+  );
+  const [filterCefrLevel, setFilterCefrLevel] = useState<string[]>(
+    () => queryParams.cefr || [],
+  );
   const [filterGenre, setFilterGenre] = useState<string[]>([]);
   const [filterReadingStatus, setFilterReadingStatus] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortBy>(() => {
     if (queryParams.sort) return queryParams.sort as SortBy;
     return 'newest';
   });
+
+  // Restore saved library filters from localStorage on client mount if not specified in URL query
+  useEffect(() => {
+    if (!queryParams.lang) {
+      try {
+        const stored = localStorage.getItem('library_filter_language');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setFilterLanguage(parsed);
+          } else if (typeof parsed === 'string' && parsed !== 'All' && parsed) {
+            setFilterLanguage([parsed]);
+          }
+        }
+      } catch {}
+    }
+
+    if (!queryParams.cefr) {
+      try {
+        const stored = localStorage.getItem('library_filter_cefr_level');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setFilterCefrLevel(parsed);
+          } else if (typeof parsed === 'string' && parsed !== 'All' && parsed) {
+            setFilterCefrLevel([parsed]);
+          }
+        }
+      } catch {}
+    }
+  }, []);
 
   // Remember library filters
   useEffect(() => {

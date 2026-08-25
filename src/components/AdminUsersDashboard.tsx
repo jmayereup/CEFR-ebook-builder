@@ -336,12 +336,18 @@ export default function AdminUsersDashboard({
     fetchAllUsers();
 
     // Subscribe to real-time updates
-    pb.collection('users').subscribe('*', () => {
-      fetchAllUsers();
-    });
+    try {
+      pb.collection('users')
+        .subscribe('*', () => {
+          fetchAllUsers();
+        })
+        .catch(() => {});
+    } catch {}
 
     return () => {
-      pb.collection('users').unsubscribe('*');
+      try {
+        pb.collection('users').unsubscribe('*').catch(() => {});
+      } catch {}
     };
   }, [isAdmin]);
 

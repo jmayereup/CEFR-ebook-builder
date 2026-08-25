@@ -172,29 +172,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     useState<GenerationLimitData>(() => {
       const todayStr = new Date().toISOString().split('T')[0];
       const thisMonthStr = todayStr.substring(0, 7);
-      const local =
-        typeof window !== 'undefined'
-          ? localStorage.getItem('generation_limit_data')
-          : null;
-      if (local) {
-        try {
-          const parsed = JSON.parse(local);
-          return {
-            freeModelCount:
-              parsed.date === todayStr
-                ? (parsed.freeModelCount ?? parsed.gemmaDeepseekCount ?? 0)
-                : 0,
-            monthlyCreditsUsed:
-              parsed.monthlyCreditsMonth === thisMonthStr
-                ? (parsed.monthlyCreditsUsed ?? 0)
-                : 0,
-            monthlyCreditsMonth: parsed.monthlyCreditsMonth ?? thisMonthStr,
-            date: todayStr,
-          };
-        } catch (e) {
-          console.error('Error parsing generation limit data:', e);
-        }
-      }
       return {
         freeModelCount: 0,
         monthlyCreditsUsed: 0,
