@@ -1,4 +1,4 @@
-import { Lock, LogIn, X } from 'lucide-react';
+import { Lock, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
@@ -7,14 +7,13 @@ import { emailSignIn, emailSignUp } from '../../services/auth';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLogin: () => void;
+  onLogin?: () => void;
   initialMode?: 'signin' | 'signup';
 }
 
 export default function AuthModal({
   isOpen,
   onClose,
-  onLogin,
   initialMode = 'signin',
 }: AuthModalProps) {
   const [isSignUp, setIsSignUp] = useState(initialMode === 'signup');
@@ -56,17 +55,6 @@ export default function AuthModal({
       );
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setError(null);
-    try {
-      await onLogin();
-      onClose();
-    } catch (err: any) {
-      console.error('Google sign in error:', err);
-      setError(err.message || 'Google authentication failed.');
     }
   };
 
@@ -222,25 +210,6 @@ export default function AuthModal({
               )}
             </button>
           </form>
-
-          {/* Divider */}
-          <div className="relative flex py-1.5 items-center">
-            <div className="flex-grow border-t border-tj-border-main/50"></div>
-            <span className="flex-shrink mx-3 text-[9px] font-bold text-tj-text-muted uppercase tracking-wider">
-              Or
-            </span>
-            <div className="flex-grow border-t border-tj-border-main/50"></div>
-          </div>
-
-          {/* Google Sign In option */}
-          <button
-            type="button"
-            onClick={handleGoogleSignIn}
-            className="w-full py-2.5 px-4 border border-tj-border-main hover:bg-tj-bg-recessed text-tj-text-main font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer bg-transparent"
-          >
-            <LogIn className="w-3.5 h-3.5 text-tj-text-muted" />
-            <span>Continue with Google</span>
-          </button>
         </div>
       </motion.div>
     </div>

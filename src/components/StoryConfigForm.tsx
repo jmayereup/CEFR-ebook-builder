@@ -1151,11 +1151,7 @@ export default function StoryConfigForm({
                           let restrictionLabel = '';
 
                           if (!isAdmin && !isByokActive) {
-                            if (currentUser?.emailVerified === false) {
-                              isModelRestricted = true;
-                              restrictionLabel =
-                                ' 🔒 (Email Verification Required)';
-                            } else if (!isPaid) {
+                            if (!isPaid) {
                               if (!isFreeModelLocal(model.id)) {
                                 isModelRestricted = true;
                                 restrictionLabel = ' 🔒 (Paid Tier Required)';
@@ -1609,17 +1605,6 @@ export default function StoryConfigForm({
                         Limited Time
                       </span>
                     </div>
-                    {currentUser?.emailVerified === false && (
-                      <div className="p-3 bg-amber-50 dark:bg-amber-955/20 text-amber-800 dark:text-amber-300 text-xs rounded-xl border border-amber-200 dark:border-amber-900/40 font-medium">
-                        ⚠️{' '}
-                        <span className="font-bold">
-                          Email Verification Required:
-                        </span>{' '}
-                        Please verify your email address to use free daily
-                        credits or configure your own OpenRouter API Key in
-                        Settings.
-                      </div>
-                    )}
                     <div className="grid grid-cols-2 gap-3 text-center">
                       <div className="p-2.5 bg-tj-bg-card border border-tj-border-main rounded-xl">
                         <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">

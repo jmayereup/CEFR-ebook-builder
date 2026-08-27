@@ -48,7 +48,6 @@ const NotesPage = lazy(() => import('./pages/NotesPage'));
 const PracticePage = lazy(() => import('./pages/PracticePage'));
 
 import {
-  googleSignIn,
   initAuth,
   logout,
   syncUserProfile,
@@ -1103,18 +1102,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     isUserDataLoaded,
   ]);
 
-  const handleLogin = async () => {
-    try {
-      const result = await googleSignIn();
-      if (result) {
-        setCurrentUser(result.user);
-        const profile = await syncUserProfile(result.user);
-        setIsPaid(profile.isPaid);
-        setShowLoginPrompt(false);
-      }
-    } catch (error) {
-      console.error('Google sign-in error:', error);
-    }
+  const handleLogin = () => {
+    handleOpenAuth('signin');
   };
 
   const handleLogout = async () => {

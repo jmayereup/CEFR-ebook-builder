@@ -44,14 +44,8 @@ export const checkGenerationPermission = (
     return null;
   }
 
-  // 2. Unverified email accounts cannot use free system credits
-  if (!isEmailVerified) {
-    return {
-      title: 'Email Verification Required',
-      message:
-        'Please verify your email address to use daily free generation credits. (Alternatively, configure your own OpenRouter API key in Settings for unlimited access).',
-    };
-  }
+  // 2. Unverified email accounts check (temporarily disabled)
+  // Email verification is no longer required for generations.
 
   // 3. Regular users using system key get 25 daily credits across all models
   if (dailyCreditsUsed + estimatedCreditsCost > 25) {
