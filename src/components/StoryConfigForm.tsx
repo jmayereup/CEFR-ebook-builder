@@ -329,7 +329,7 @@ export default function StoryConfigForm({
       isAdmin,
       customOpenRouterKey,
       freeModelCount,
-      monthlyCreditsUsed,
+      dailyCreditsUsed,
       estimatedCreditsCost,
       1,
       currentUser?.emailVerified ?? true,

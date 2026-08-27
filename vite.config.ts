@@ -81,7 +81,7 @@ export default defineConfig(() => {
           clientsClaim: true,
           skipWaiting: true,
           cleanupOutdatedCaches: true,
-          globPatterns: ['**/*.{js,css,ico,png,svg,woff2}'],
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
           navigateFallbackDenylist: [/^\/covers/],
           runtimeCaching: [
             {
