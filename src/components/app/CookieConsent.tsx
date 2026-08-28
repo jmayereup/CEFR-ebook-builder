@@ -3,6 +3,10 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 
 export default function CookieConsent() {
+  // Master switch to disable cookie consent banner when no cookies are active
+  const ENABLE_COOKIE_CONSENT = false;
+  if (!ENABLE_COOKIE_CONSENT) return null;
+
   const [showBanner, setShowBanner] = useState<boolean>(false);
   const [showPreferences, setShowPreferences] = useState<boolean>(false);
 

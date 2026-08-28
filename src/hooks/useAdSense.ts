@@ -2,7 +2,20 @@ import { useEffect } from 'react';
 
 export function useAdSense(isPaid: boolean) {
   useEffect(() => {
+    // Master switch to disable Google Ads across the site without removing code
+    const ENABLE_ADSENSE = false;
+
     const checkAndManageAds = () => {
+      const scriptId = 'google-adsense';
+      const existingScript = document.getElementById(scriptId);
+
+      if (!ENABLE_ADSENSE) {
+        if (existingScript) {
+          existingScript.remove();
+        }
+        return;
+      }
+
       let adsConsent = false;
       const consentRegistered = localStorage.getItem('cefr_cookie_consent');
       if (consentRegistered) {
@@ -17,8 +30,6 @@ export function useAdSense(isPaid: boolean) {
       }
 
       const shouldShowAds = !isPaid && adsConsent;
-      const scriptId = 'google-adsense';
-      const existingScript = document.getElementById(scriptId);
 
       if (shouldShowAds) {
         if (!existingScript) {
