@@ -3,7 +3,6 @@ import {
   Bookmark,
   BookmarkCheck,
   BookOpenText,
-  ChevronDown,
   Cloud,
   Flag,
   Lock,
@@ -162,6 +161,18 @@ export default function StoryCard({
     };
   }, [showDescription]);
 
+  // Close modal on Escape key press
+  React.useEffect(() => {
+    if (!showDescription) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowDescription(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showDescription]);
+
   const handleToggleIntro = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!showDescription && !loadedDescription && !loadingDescription) {
@@ -285,11 +296,11 @@ export default function StoryCard({
             }`}
           >
             {hasCoverImage ? null : (
-              // Original behavior for gradient cards
+              // Clean typography for gradient cards
               <div className="transition-all duration-500 ease-out rounded-xl px-1.5 py-1.5 sm:px-2.5 sm:py-2.5">
                 <h3
                   lang={getLanguageCodeFromName(story.language)}
-                  className="text-xs sm:text-sm md:text-base font-serif font-extrabold tracking-tight leading-tight line-clamp-2 mb-0.5 hyphens-auto"
+                  className="text-xs sm:text-sm md:text-base font-serif font-extrabold tracking-tight leading-tight line-clamp-3 mb-1 hyphens-auto"
                 >
                   {story.title}
                 </h3>
@@ -298,13 +309,6 @@ export default function StoryCard({
                 >
                   Theme: {resolvedGenreLabel}
                 </p>
-                {loadedDescription && (
-                  <p
-                    className={`text-[9px] sm:text-[10px] ${textMutedClass} leading-relaxed font-sans italic opacity-90 px-0.5 text-left line-clamp-4 sm:line-clamp-6 mt-1.5 sm:mt-2.5`}
-                  >
-                    "{loadedDescription}"
-                  </p>
-                )}
               </div>
             )}
           </div>
@@ -315,6 +319,8 @@ export default function StoryCard({
       {showDescription &&
         typeof document !== 'undefined' &&
         createPortal(
+          // biome-ignore lint/a11y/useKeyWithClickEvents: Backdrop click closes modal
+          // biome-ignore lint/a11y/noStaticElementInteractions: Backdrop click closes modal
           <div
             className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6"
             onClick={(e) => {
@@ -575,6 +581,21 @@ export default function StoryCard({
           ) : null}
         </div>
       </div>
+
+      {/* Intro text preview (up to 3 lines) below book */}
+      {loadedDescription ? (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: Click triggers viewing intro modal
+        // biome-ignore lint/a11y/noStaticElementInteractions: Click triggers viewing intro modal
+        <div
+          onClick={handleToggleIntro}
+          className="mt-1.5 px-1 cursor-pointer text-left group/intro select-none"
+          title="Click to view full intro"
+        >
+          <p className="text-[11px] sm:text-xs text-tj-text-muted leading-snug font-sans line-clamp-3 group-hover/intro:text-tj-text-main transition-colors">
+            {loadedDescription}
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }
