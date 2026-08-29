@@ -29,6 +29,63 @@ export const getModelDisplayName = (modelId?: string): string => {
 
 import { pb } from '../services/pocketbase';
 
+export type ModelThinkingType = 'none' | 'simple' | 'level' | 'budget';
+
+export interface ModelThinkingSupport {
+  supportsThinking: boolean;
+  type: ModelThinkingType;
+  defaultOption: string;
+  defaultBudget?: number;
+}
+
+/**
+ * Returns reasoning/thinking capabilities and sensible defaults for a model.
+ */
+export const getModelThinkingSupport = (modelId?: string): ModelThinkingSupport => {
+  if (!modelId) {
+    return { supportsThinking: true, type: 'simple', defaultOption: 'low', defaultBudget: 2048 };
+  }
+  const id = modelId.toLowerCase();
+
+  // Non-reasoning models
+  if (id.includes('hermes') || id.includes('llama')) {
+    return { supportsThinking: false, type: 'none', defaultOption: 'disabled' };
+  }
+
+  // Check explicit model list definitions if present
+  const modelObj = AI_MODELS.find((m) => m.id === modelId);
+  if (modelObj) {
+    if (modelObj.supportsThinkingBudget) {
+      return { supportsThinking: true, type: 'budget', defaultOption: 'low', defaultBudget: 2048 };
+    }
+    if (modelObj.supportsThinkingLevel) {
+      const isSimple = id.includes('deepseek') || id.includes('kimi') || id.includes('moonshot');
+      return {
+        supportsThinking: true,
+        type: isSimple ? 'simple' : 'level',
+        defaultOption: 'low',
+        defaultBudget: 2048,
+      };
+    }
+    if (!modelObj.supportsThinkingLevel && !modelObj.supportsThinkingBudget) {
+      return { supportsThinking: false, type: 'none', defaultOption: 'disabled' };
+    }
+  }
+
+  // Simple On/Off models
+  if (id.includes('deepseek') || id.includes('kimi') || id.includes('moonshot')) {
+    return { supportsThinking: true, type: 'simple', defaultOption: 'low', defaultBudget: 2048 };
+  }
+
+  // Token budget models
+  if (id.includes('gemini-2.5')) {
+    return { supportsThinking: true, type: 'budget', defaultOption: 'low', defaultBudget: 2048 };
+  }
+
+  // Level / effort models (GLM, Gemini 3, GPT, Claude, Grok, etc.)
+  return { supportsThinking: true, type: 'level', defaultOption: 'low', defaultBudget: 2048 };
+};
+
 /**
  * Builds the Authorization / API-key request headers for a generation call.
  * Automatically attaches the active PocketBase user JWT token when logged in.
@@ -50,3 +107,4 @@ export const buildApiHeaders = (
 
   return headers;
 };
+

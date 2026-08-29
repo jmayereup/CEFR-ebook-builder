@@ -31,7 +31,7 @@ import {
   SUPPORTED_LANGUAGES,
   WRITING_TYPE_GENRES,
 } from '../types';
-import { buildApiHeaders } from '../utils/modelUtils';
+import { buildApiHeaders, getModelThinkingSupport } from '../utils/modelUtils';
 import { checkGenerationPermission } from '../utils/permissionUtils';
 import {
   calculateEstimatedUsage,
@@ -158,7 +158,10 @@ export default function StoryConfigForm({
   const [selectedModel, setSelectedModel] = useState(
     defaultStoryModel || 'deepseek/deepseek-v4-pro',
   );
-  const [thinkingOption, setThinkingOption] = useState('medium');
+  const [thinkingOption, setThinkingOption] = useState(() => {
+    const support = getModelThinkingSupport(defaultStoryModel || 'deepseek/deepseek-v4-pro');
+    return support.defaultOption;
+  });
   const [temperature, setTemperature] = useState(0.8);
   const [isPublic, setIsPublic] = useState(true);
   const [showDefaultModelInfo, setShowDefaultModelInfo] = useState(false);
@@ -201,12 +204,8 @@ export default function StoryConfigForm({
   useEffect(() => {
     if (isByokActive && defaultStoryModel) {
       setSelectedModel(defaultStoryModel);
-      const modelObj = AI_MODELS.find((m) => m.id === defaultStoryModel);
-      if (modelObj?.supportsThinkingLevel || modelObj?.supportsThinkingBudget) {
-        setThinkingOption('medium');
-      } else {
-        setThinkingOption('disabled');
-      }
+      const support = getModelThinkingSupport(defaultStoryModel);
+      setThinkingOption(support.defaultOption);
     }
   }, [isByokActive, defaultStoryModel]);
 
@@ -226,12 +225,8 @@ export default function StoryConfigForm({
       setSelectedModel(newModel);
 
       // Auto-update thinkingOption for the new model
-      const modelObj = AI_MODELS.find((m) => m.id === newModel);
-      if (modelObj?.supportsThinkingLevel || modelObj?.supportsThinkingBudget) {
-        setThinkingOption('medium');
-      } else {
-        setThinkingOption('disabled');
-      }
+      const support = getModelThinkingSupport(newModel);
+      setThinkingOption(support.defaultOption);
     }
   };
 
@@ -358,25 +353,41 @@ export default function StoryConfigForm({
     let finalThinkingLevel: string | undefined;
     let finalThinkingBudget: number | undefined;
 
-    const currentModelObj = AI_MODELS.find((m) => m.id === selectedModel);
-    if (currentModelObj?.supportsThinkingLevel) {
+    const thinkingSupport = getModelThinkingSupport(selectedModel);
+    if (thinkingSupport.type === 'simple') {
       if (thinkingOption !== 'disabled') {
-        finalThinkingLevel = thinkingOption;
+        finalThinkingLevel = 'low';
+        finalThinkingBudget = 2048;
+      } else {
+        finalThinkingLevel = 'disabled';
+        finalThinkingBudget = 0;
       }
-    } else if (currentModelObj?.supportsThinkingBudget) {
+    } else if (thinkingSupport.type === 'level') {
+      finalThinkingLevel = thinkingOption;
+      if (thinkingOption !== 'disabled') {
+        finalThinkingBudget = 2048;
+      } else {
+        finalThinkingBudget = 0;
+      }
+    } else if (thinkingSupport.type === 'budget') {
       if (thinkingOption === 'disabled') {
         finalThinkingBudget = 0;
+        finalThinkingLevel = 'disabled';
       } else if (thinkingOption === 'low') {
-        finalThinkingBudget = 1024;
+        finalThinkingBudget = 2048;
+        finalThinkingLevel = 'low';
       } else if (thinkingOption === 'medium') {
         finalThinkingBudget = 2048;
+        finalThinkingLevel = 'medium';
       } else if (thinkingOption === 'high') {
         finalThinkingBudget = 4096;
+        finalThinkingLevel = 'high';
       } else if (thinkingOption === 'dynamic') {
         finalThinkingBudget = -1;
       }
     }
 
+    const currentModelObj = AI_MODELS.find((m) => m.id === selectedModel);
     const supportsTemp = currentModelObj?.supportsTemperature ?? true;
     const isThinkingActive = thinkingOption !== 'disabled';
     const finalTemperature =
@@ -517,25 +528,41 @@ export default function StoryConfigForm({
     let finalThinkingLevel: string | undefined;
     let finalThinkingBudget: number | undefined;
 
-    const currentModelObj = AI_MODELS.find((m) => m.id === selectedModel);
-    if (currentModelObj?.supportsThinkingLevel) {
+    const thinkingSupport = getModelThinkingSupport(selectedModel);
+    if (thinkingSupport.type === 'simple') {
       if (thinkingOption !== 'disabled') {
-        finalThinkingLevel = thinkingOption;
+        finalThinkingLevel = 'low';
+        finalThinkingBudget = 2048;
+      } else {
+        finalThinkingLevel = 'disabled';
+        finalThinkingBudget = 0;
       }
-    } else if (currentModelObj?.supportsThinkingBudget) {
+    } else if (thinkingSupport.type === 'level') {
+      finalThinkingLevel = thinkingOption;
+      if (thinkingOption !== 'disabled') {
+        finalThinkingBudget = 2048;
+      } else {
+        finalThinkingBudget = 0;
+      }
+    } else if (thinkingSupport.type === 'budget') {
       if (thinkingOption === 'disabled') {
         finalThinkingBudget = 0;
+        finalThinkingLevel = 'disabled';
       } else if (thinkingOption === 'low') {
-        finalThinkingBudget = 1024;
+        finalThinkingBudget = 2048;
+        finalThinkingLevel = 'low';
       } else if (thinkingOption === 'medium') {
         finalThinkingBudget = 2048;
+        finalThinkingLevel = 'medium';
       } else if (thinkingOption === 'high') {
         finalThinkingBudget = 4096;
+        finalThinkingLevel = 'high';
       } else if (thinkingOption === 'dynamic') {
         finalThinkingBudget = -1;
       }
     }
 
+    const currentModelObj = AI_MODELS.find((m) => m.id === selectedModel);
     const supportsTemp = currentModelObj?.supportsTemperature ?? true;
     const isThinkingActive = thinkingOption !== 'disabled';
     const finalTemperature =
@@ -1120,17 +1147,8 @@ export default function StoryConfigForm({
                       disabled={!currentUser || isByokActive}
                       onChange={(e) => {
                         setSelectedModel(e.target.value);
-                        const model = AI_MODELS.find(
-                          (m) => m.id === e.target.value,
-                        );
-                        if (
-                          model?.supportsThinkingLevel ||
-                          model?.supportsThinkingBudget
-                        ) {
-                          setThinkingOption('medium');
-                        } else {
-                          setThinkingOption('disabled');
-                        }
+                        const support = getModelThinkingSupport(e.target.value);
+                        setThinkingOption(support.defaultOption);
                       }}
                       className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-tj-bg-recessed"
                     >
@@ -1279,15 +1297,10 @@ export default function StoryConfigForm({
                               Reasoning / Thinking Level
                             </label>
                             {(() => {
-                              const currentModelObj = AI_MODELS.find(
-                                (m) => m.id === selectedModel,
-                              );
-                              const isSimpleThinking =
-                                selectedModel.includes('deepseek') ||
-                                selectedModel.includes('kimi') ||
-                                selectedModel.includes('moonshot');
+                              const thinkingSupport =
+                                getModelThinkingSupport(selectedModel);
 
-                              if (isSimpleThinking) {
+                              if (thinkingSupport.type === 'simple') {
                                 return (
                                   <select
                                     value={thinkingOption}
@@ -1299,13 +1312,13 @@ export default function StoryConfigForm({
                                     <option value="disabled">
                                       Disabled (No Thinking)
                                     </option>
-                                    <option value="medium">
-                                      Enabled (Thinking Mode)
+                                    <option value="low">
+                                      Enabled (Low Reasoning Budget - 2,048 tokens)
                                     </option>
                                   </select>
                                 );
                               } else if (
-                                currentModelObj?.supportsThinkingLevel
+                                thinkingSupport.type === 'level'
                               ) {
                                 return (
                                   <select
@@ -1321,9 +1334,11 @@ export default function StoryConfigForm({
                                     <option value="minimal">
                                       Minimal Depth
                                     </option>
-                                    <option value="low">Low Depth</option>
+                                    <option value="low">
+                                      Low Depth (Recommended - 2,048 tokens)
+                                    </option>
                                     <option value="medium">
-                                      Medium Depth (Recommended)
+                                      Medium Depth
                                     </option>
                                     <option value="high">
                                       High Depth (Nuanced)
@@ -1331,7 +1346,7 @@ export default function StoryConfigForm({
                                   </select>
                                 );
                               } else if (
-                                currentModelObj?.supportsThinkingBudget
+                                thinkingSupport.type === 'budget'
                               ) {
                                 return (
                                   <select
@@ -1345,7 +1360,7 @@ export default function StoryConfigForm({
                                       Disabled (No Thinking)
                                     </option>
                                     <option value="low">
-                                      Low Budget (1,024 tokens)
+                                      Low Budget (2,048 tokens - Recommended)
                                     </option>
                                     <option value="medium">
                                       Medium Budget (2,048 tokens)

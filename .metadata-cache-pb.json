@@ -1,6 +1,29 @@
 {
-  "lastFetchTime": 1787918877071,
+  "lastFetchTime": 1788007063112,
   "stories": [
+    {
+      "id": "scvnp5jr261emb8",
+      "cover": "scvnp5jr261emb8_707iswoto7.jpg",
+      "title": "ควายเพชรกับขุนเก็บทรัพย์",
+      "language": "Thai",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "folklore",
+      "totalChapters": 10,
+      "createdAt": "2026-08-29T12:25:40.300Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "~z-ai/glm-latest",
+      "ratings": null,
+      "totalReads": 0,
+      "completedBy": {},
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 7241,
+      "description": "In a rice-farming village beside a long canal, a corrupt provincial tax collector demands that a clever farmer settle his debts with 'the strongest, most tireless worker on the farm.' The farmer cheerfully delivers his enormous water buffalo—along with a legally binding contract obliging the nobleman to rise at 4:00 AM, bathe the beast in mud daily, and graze it for miles along the canal. A warm, humorous Thai trickster tale about wit, patience, and the law triumphing over greed.",
+      "updated": "2026-08-29 12:34:21.582Z"
+    },
     {
       "id": "s0hz3q2wx7w09cg",
       "cover": "s0hz3q2wx7w09cg_v958wz1z9k.jpg",
@@ -164,7 +187,7 @@
       "chaptersCount": 10,
       "wordCount": 4185,
       "description": "Set in a rural Isan village, this moving story follows Khamkaew, a gifted young weaver who spends six months crafting a magnificent silk cloth for her wedding dowry. When the village chief demands it as tribute for an influential district official, she secretly weaves the subtle sorrows of her community into the border, transforming an act of sacrifice into a poignant message that changes the official's heart.",
-      "updated": "2026-08-27 12:04:19.053Z"
+      "updated": "2026-08-28 14:13:58.415Z"
     },
     {
       "id": "s1lgajqfv536xv6",
@@ -319,15 +342,19 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "totalReads": 0,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 3
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 4250,
       "description": "A devoted son working in a Bangkok auto repair shop steals a dropped gold amulet necklace from a wealthy customer to pay off his mother’s medical debts. He mails it home, only to discover that his mother has pawned it to the village temple—where the original owner arrives on a merit-making pilgrimage. A moving slice-of-life story about karma, filial piety, and the true weight of a desperate choice.",
-      "updated": "2026-08-25 09:44:22.632Z"
+      "updated": "2026-08-29 11:46:20.074Z"
     },
     {
       "id": "s4hp5wvpvklqx5o",
@@ -997,15 +1024,19 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "totalReads": 0,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 10,
       "wordCount": 3731,
       "description": "A non-fiction exploration of global philosophies that promote balance, resilience, and genuine contentment over endless growth. Drawing from Swedish lagom, Danish hygge, Thai sufficiency economy, Costa Rican pura vida, and more, this book provides a practical guide to designing a life of enough, backed by psychology and cultural wisdom.",
-      "updated": "2026-08-09 07:19:54.698Z"
+      "updated": "2026-08-29 02:20:33.972Z"
     },
     {
       "id": "stkmsadu8ler19m",
