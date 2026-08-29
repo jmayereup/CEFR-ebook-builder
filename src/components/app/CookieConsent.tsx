@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 export default function CookieConsent() {
   // Master switch to disable cookie consent banner when no cookies are active
   const ENABLE_COOKIE_CONSENT = false;
-  if (!ENABLE_COOKIE_CONSENT) return null;
 
   const [showBanner, setShowBanner] = useState<boolean>(false);
   const [showPreferences, setShowPreferences] = useState<boolean>(false);
@@ -18,6 +17,7 @@ export default function CookieConsent() {
   });
 
   useEffect(() => {
+    if (!ENABLE_COOKIE_CONSENT) return;
     const consentRegistered = localStorage.getItem('cefr_cookie_consent');
     if (!consentRegistered) {
       // Show banner after a short delay for smooth loading
@@ -25,6 +25,8 @@ export default function CookieConsent() {
       return () => clearTimeout(timer);
     }
   }, []);
+
+  if (!ENABLE_COOKIE_CONSENT) return null;
 
   const handleAcceptAll = () => {
     const preference = {

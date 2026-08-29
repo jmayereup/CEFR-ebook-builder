@@ -53,7 +53,6 @@ import {
   syncUserProfile,
 } from './services/auth';
 import {
-  createStory,
   decrementStoryCompletion,
   fetchAllUserHighlights,
   fetchPendingDeletionFlags,
@@ -63,6 +62,10 @@ import {
   saveUserLookupLimitDebounced,
 } from './services/db';
 import {
+  persistStory,
+  triggerStoryCoverGeneration,
+} from './services/storyPersistence';
+import {
   getStory,
   removeStory as removeStoryFromOffline,
   saveStory as saveStoryToOffline,
@@ -71,7 +74,6 @@ import { useAuthStore } from './store/authStore';
 import { useUIStore } from './store/uiStore';
 import type { DeletionFlag, Story } from './types';
 import { buildApiHeaders } from './utils/modelUtils';
-import { cleanCompletedStory } from './utils/storyCleanup';
 
 interface AppProps {
   ssrPath?: string;
@@ -365,105 +367,26 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     story: Story,
     isNewStory: boolean = false,
   ) => {
-    const cleaned = cleanCompletedStory(story);
-    let sanitizedId = cleaned.id;
-    const isValidPocketBaseId = /^[a-z0-9]{15,50}$/.test(sanitizedId);
-    if (!isValidPocketBaseId) {
-      const alphanumeric = sanitizedId.toLowerCase().replace(/[^a-z0-9]/g, '');
-      sanitizedId = alphanumeric;
-      if (alphanumeric.length > 50) {
-        sanitizedId = alphanumeric.substring(0, 50);
-      } else if (alphanumeric.length < 15) {
-        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        while (sanitizedId.length < 15) {
-          sanitizedId += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-      }
-    }
+    const result = await persistStory({
+      story,
+      currentUser,
+      onStoryUpdated: setSelectedStory,
+      onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
+      generatingCoverIds,
+      setGeneratingCoverIds,
+    });
 
-    const { isUnsaved, ...cleanedStory } = cleaned;
-    const storyToSave = {
-      ...cleanedStory,
-      id: sanitizedId,
-      creatorId: currentUser?.uid || cleanedStory.creatorId,
-      creatorEmail: currentUser?.email || cleanedStory.creatorEmail,
-    } as Story;
-
-    // Immediately reflect changes in UI and offline storage cache
-    const localStory = {
-      ...storyToSave,
-      isUnsaved: false,
-    };
-    setSelectedStory(localStory);
     if (isNewStory) {
       setActiveChapterIdx(0);
       setActiveTab('browse');
     }
-    await saveStoryToOffline(localStory);
+
     setCachedStoryIds((prev) => {
-      if (prev.includes(sanitizedId)) return prev;
-      return [...prev, sanitizedId];
+      const filtered = prev.filter((id) => id !== result.oldId);
+      return filtered.includes(result.sanitizedId)
+        ? filtered
+        : [...filtered, result.sanitizedId];
     });
-
-    try {
-      await createStory(storyToSave);
-      loadStoriesMetadata({ refresh: true, storyId: sanitizedId });
-
-      if (storyToSave.isCompleted && !generatingCoverIds.has(sanitizedId)) {
-        setGeneratingCoverIds((prev) => new Set(prev).add(sanitizedId));
-        fetch('/api/stories/generate-cover/generate', {
-          method: 'POST',
-          headers: buildApiHeaders(),
-          body: JSON.stringify({ storyId: sanitizedId, force: false }),
-        })
-          .then(async (res) => {
-            if (res.ok) {
-              const data = await res.json();
-              const updatedTime = data.updated || new Date().toISOString();
-              setSelectedStory((prev) =>
-                prev && prev.id === sanitizedId
-                  ? {
-                      ...prev,
-                      cover: data.cover || prev.cover,
-                      updated: updatedTime,
-                    }
-                  : prev,
-              );
-              const cachedObj = await getStory(sanitizedId);
-              if (cachedObj) {
-                if (data.cover) cachedObj.cover = data.cover;
-                cachedObj.updated = updatedTime;
-                await saveStoryToOffline(cachedObj);
-              }
-              await loadStoriesMetadata({
-                refresh: true,
-                storyId: sanitizedId,
-              });
-            }
-          })
-          .catch((err) => {
-            console.error(
-              'Failed to trigger cover generation on autosave:',
-              err,
-            );
-          })
-          .finally(() => {
-            setGeneratingCoverIds((prev) => {
-              const next = new Set(prev);
-              next.delete(sanitizedId);
-              return next;
-            });
-          });
-      }
-    } catch (err) {
-      console.warn(
-        '[Autosave] PocketBase autosave failed, preserving unsaved local draft:',
-        err,
-      );
-      const fallbackStory = { ...cleaned, isUnsaved: true };
-      setSelectedStory(fallbackStory);
-      await saveStoryToOffline(fallbackStory);
-    }
   };
 
   // Story generation — all state and handlers live in the hook
@@ -549,98 +472,21 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     if (!storyToSave && !targetStory.isUnsaved) return;
     setIsSavingStory(true);
     try {
-      const oldId = targetStory.id;
-      // PocketBase custom IDs must consist of a-z0-9 and be 15 to 50 characters.
-      // If oldId is already a valid PocketBase ID format, keep it exactly as-is.
-      let sanitizedId = oldId;
-      const isValidPocketBaseId = /^[a-z0-9]{15,50}$/.test(oldId);
-      if (!isValidPocketBaseId) {
-        const alphanumeric = oldId.toLowerCase().replace(/[^a-z0-9]/g, '');
-        sanitizedId = alphanumeric;
-        if (alphanumeric.length > 50) {
-          sanitizedId = alphanumeric.substring(0, 50);
-        } else if (alphanumeric.length < 15) {
-          const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-          while (sanitizedId.length < 15) {
-            sanitizedId += chars.charAt(
-              Math.floor(Math.random() * chars.length),
-            );
-          }
-        }
-      }
+      const result = await persistStory({
+        story: targetStory,
+        currentUser,
+        onStoryUpdated: setSelectedStory,
+        onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
+        generatingCoverIds,
+        setGeneratingCoverIds,
+      });
 
-      const { isUnsaved, ...cleanedStory } = targetStory;
-      const savedStory = {
-        ...cleanedStory,
-        id: sanitizedId,
-        creatorId: currentUser?.uid || cleanedStory.creatorId,
-        creatorEmail: currentUser?.email || cleanedStory.creatorEmail,
-      } as Story;
-
-      await createStory(savedStory);
-
-      if (savedStory.isCompleted && !generatingCoverIds.has(sanitizedId)) {
-        // Trigger cover generation in the background
-        setGeneratingCoverIds((prev) => new Set(prev).add(sanitizedId));
-        fetch('/api/stories/generate-cover/generate', {
-          method: 'POST',
-          headers: buildApiHeaders(),
-          body: JSON.stringify({ storyId: sanitizedId, force: false }),
-        })
-          .then(async (res) => {
-            if (res.ok) {
-              const data = await res.json();
-              const updatedTime = data.updated || new Date().toISOString();
-              setSelectedStory((prev) =>
-                prev && prev.id === sanitizedId
-                  ? { ...prev, updated: updatedTime }
-                  : prev,
-              );
-              const cachedObj = await getStory(sanitizedId);
-              if (cachedObj) {
-                cachedObj.updated = updatedTime;
-                await saveStoryToOffline(cachedObj);
-              }
-              await loadStoriesMetadata({
-                refresh: true,
-                storyId: sanitizedId,
-              });
-            }
-          })
-          .catch((err) => {
-            console.error('Failed to trigger cover generation on save:', err);
-          })
-          .finally(() => {
-            setGeneratingCoverIds((prev) => {
-              const next = new Set(prev);
-              next.delete(sanitizedId);
-              return next;
-            });
-          });
-      }
-
-      const finalizedStory = {
-        ...targetStory,
-        id: sanitizedId,
-        isUnsaved: false,
-        creatorId: currentUser?.uid || targetStory.creatorId,
-        creatorEmail: currentUser?.email || targetStory.creatorEmail,
-      };
-      setSelectedStory(finalizedStory);
-
-      // Clean up old ID cache keys if they differ
-      if (oldId !== sanitizedId) {
-        await removeStoryFromOffline(oldId);
-        setCachedStoryIds((prev) => {
-          const filtered = prev.filter((id) => id !== oldId);
-          return filtered.includes(sanitizedId)
-            ? filtered
-            : [...filtered, sanitizedId];
-        });
-      }
-
-      await saveStoryToOffline(finalizedStory);
-      loadStoriesMetadata({ refresh: true, storyId: sanitizedId });
+      setCachedStoryIds((prev) => {
+        const filtered = prev.filter((id) => id !== result.oldId);
+        return filtered.includes(result.sanitizedId)
+          ? filtered
+          : [...filtered, result.sanitizedId];
+      });
 
       // Sync any pending user changes (like recentlyRead) to prevent beforeunload prompts
       try {
@@ -649,12 +495,15 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         console.error('Failed to sync user profile after story save:', syncErr);
       }
 
-      showAlert(
-        'Story Saved Successfully',
-        `"${targetStory.title}" is saved to database.`,
-        'info',
-      );
-      return finalizedStory;
+      if (result.success) {
+        showAlert(
+          'Story Saved Successfully',
+          `"${targetStory.title}" is saved to database.`,
+          'info',
+        );
+        return result.story;
+      }
+      throw result.error || new Error('Failed to save to database');
     } catch (err: any) {
       console.error('Failed to save story to database:', err);
       showAlert(
@@ -673,36 +522,24 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   ) => {
     setGeneratingCoverIds((prev) => new Set(prev).add(storyId));
     try {
-      const response = await fetch('/api/stories/generate-cover/generate', {
-        method: 'POST',
-        headers: buildApiHeaders(),
-        body: JSON.stringify({ storyId, force }),
+      const res = await triggerStoryCoverGeneration({
+        storyId,
+        force,
+        onCoverUpdated: (cover, updated) => {
+          if (selectedStory && selectedStory.id === storyId) {
+            setSelectedStory({
+              ...selectedStory,
+              cover: cover || selectedStory.cover,
+              updated,
+            });
+          }
+        },
+        onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
       });
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || 'Failed to generate cover.');
-      }
-      const data = await response.json();
-      const updatedTime = data.updated || new Date().toISOString();
 
-      // Bump updated timestamp to trigger cover URL cache-bust
-      if (selectedStory && selectedStory.id === storyId) {
-        setSelectedStory({
-          ...selectedStory,
-          cover: data.cover || selectedStory.cover,
-          updated: updatedTime,
-        });
+      if (!res.success) {
+        throw new Error(res.error || 'Failed to generate cover.');
       }
-
-      const cachedObj = await getStory(storyId);
-      if (cachedObj) {
-        if (data.cover) cachedObj.cover = data.cover;
-        cachedObj.updated = updatedTime;
-        await saveStoryToOffline(cachedObj);
-      }
-
-      // Refresh stories metadata in the library list
-      await loadStoriesMetadata({ refresh: true, storyId });
 
       showAlert(
         'Cover Generated Successfully',
