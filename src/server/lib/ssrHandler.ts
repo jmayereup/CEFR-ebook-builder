@@ -8,6 +8,16 @@ import {
   getStoriesMetadataSync,
 } from './database';
 
+function escapeHtmlAttr(str: string): string {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 export function createSSRHandler(getVite: () => any): express.RequestHandler {
   return async (req, res, next) => {
     const url = req.originalUrl;
@@ -44,7 +54,13 @@ export function createSSRHandler(getVite: () => any): express.RequestHandler {
 
       const preloadedData: any = { stories: getStoriesMetadataSync() };
 
-      const bookMatch = url.match(/^\/book\/([^/]+)/);
+      const bookMatch = url.match(/^\/book\/([^/?#]+)/);
+      let chapterNum: number | undefined;
+      const chapterMatch = url.match(/\/chapter\/(\d+)/);
+      if (chapterMatch) {
+        chapterNum = Number.parseInt(chapterMatch[1], 10);
+      }
+
       if (bookMatch) {
         const segment = bookMatch[1];
         const storyId = getStoryIdFromSegment(segment);
@@ -56,30 +72,47 @@ export function createSSRHandler(getVite: () => any): express.RequestHandler {
 
       if (preloadedData.story) {
         const story = preloadedData.story;
-        const title = `${story.title} - Graded ${story.language} Reader (${story.cefrLevel})`;
-        const description = `Read "${story.title}" graded for ${story.language} at CEFR ${story.cefrLevel} difficulty. Includes interactive dictionary lookups and custom eBook downloads.`;
+        const proto = req.get('x-forwarded-proto') || req.protocol || 'https';
+        const host = req.get('host') || 'books.teacherjake.com';
+        const origin = `${proto}://${host}`;
 
-        const coverUrl = getStoryCoverUrl(story);
+        const activeChapter =
+          chapterNum && story.chapters
+            ? story.chapters.find((c: any) => c.chapterNumber === chapterNum)
+            : undefined;
+        const chapterLabel = activeChapter
+          ? ` | Ch ${activeChapter.chapterNumber}: ${activeChapter.title}`
+          : '';
+        const cefrLabel = story.cefrLevel ? ` (CEFR ${story.cefrLevel})` : '';
+
+        const title = `${story.title}${chapterLabel} - Graded ${story.language} Reader${cefrLabel}`;
+        const description = story.description
+          ? `${story.description} Graded for ${story.language} at CEFR ${story.cefrLevel} difficulty.`
+          : `Read "${story.title}" graded for ${story.language} at CEFR ${story.cefrLevel} difficulty. Includes interactive dictionary lookups and custom eBook downloads.`;
+
+        let coverUrl = getStoryCoverUrl(story, { absolute: true });
+        if (coverUrl.startsWith('/')) {
+          coverUrl = `${origin}${coverUrl}`;
+        } else if (coverUrl.startsWith('//')) {
+          coverUrl = `https:${coverUrl}`;
+        }
+
+        const canonicalPath = activeChapter
+          ? `/book/${slugify(story.title)}-${story.id}/chapter/${activeChapter.chapterNumber}`
+          : `/book/${slugify(story.title)}-${story.id}`;
+        const canonicalUrl = `${origin}${canonicalPath}`;
 
         template = template.replace(
           /<title>.*?<\/title>/,
-          `<title>${title}</title>`,
+          `<title>${escapeHtmlAttr(title)}</title>`,
         );
 
         template = template
-          .replace(/<meta name="description" content=".*?"\s*\/?>/gi, '')
-          .replace(/<meta property="og:title" content=".*?"\s*\/?>/gi, '')
-          .replace(/<meta property="og:description" content=".*?"\s*\/?>/gi, '')
-          .replace(/<meta property="og:image" content=".*?"\s*\/?>/gi, '')
-          .replace(/<meta name="twitter:title" content=".*?"\s*\/?>/gi, '')
-          .replace(
-            /<meta name="twitter:description" content=".*?"\s*\/?>/gi,
-            '',
-          )
-          .replace(/<meta name="twitter:image" content=".*?"\s*\/?>/gi, '')
-          .replace(/<meta name="twitter:card" content=".*?"\s*\/?>/gi, '');
+          .replace(/<meta name="description"[^>]*\/?>/gi, '')
+          .replace(/<meta property="og:[^"]*"[^>]*\/?>/gi, '')
+          .replace(/<meta name="twitter:[^"]*"[^>]*\/?>/gi, '')
+          .replace(/<link rel="canonical"[^>]*\/?>/gi, '');
 
-        const origin = `${req.protocol}://${req.get('host')}`;
         const jsonLd = {
           '@context': 'https://schema.org',
           '@type': 'Book',
@@ -96,21 +129,29 @@ export function createSSRHandler(getVite: () => any): express.RequestHandler {
             name: 'CEFR Stories',
             logo: {
               '@type': 'ImageObject',
-              url: `${origin}/tj-logo.svg`,
+              url: `${origin}/tj-logo-512.png`,
             },
           },
         };
 
         const dynamicMeta = `
-          <meta name="description" content="${description}" />
-          <meta property="og:title" content="${title}" />
-          <meta property="og:description" content="${description}" />
-          <meta property="og:url" content="${origin}${req.originalUrl}" />
-          <meta property="og:image" content="${coverUrl}" />
-          <meta name="twitter:title" content="${title}" />
-          <meta name="twitter:description" content="${description}" />
-          <meta name="twitter:image" content="${coverUrl}" />
+          <meta name="description" content="${escapeHtmlAttr(description)}" />
+          <meta property="og:site_name" content="CEFR Stories" />
+          <meta property="og:type" content="book" />
+          <meta property="og:title" content="${escapeHtmlAttr(title)}" />
+          <meta property="og:description" content="${escapeHtmlAttr(description)}" />
+          <meta property="og:url" content="${escapeHtmlAttr(canonicalUrl)}" />
+          <meta property="og:image" content="${escapeHtmlAttr(coverUrl)}" />
+          <meta property="og:image:secure_url" content="${escapeHtmlAttr(coverUrl)}" />
+          <meta property="og:image:type" content="image/jpeg" />
+          <meta property="og:image:width" content="480" />
+          <meta property="og:image:height" content="672" />
+          <meta property="og:image:alt" content="${escapeHtmlAttr(story.title)}" />
           <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="${escapeHtmlAttr(title)}" />
+          <meta name="twitter:description" content="${escapeHtmlAttr(description)}" />
+          <meta name="twitter:image" content="${escapeHtmlAttr(coverUrl)}" />
+          <link rel="canonical" href="${escapeHtmlAttr(canonicalUrl)}" />
           <script id="story-schema-jsonld" type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>
         `;
         template = template.replace('</head>', `${dynamicMeta}</head>`);

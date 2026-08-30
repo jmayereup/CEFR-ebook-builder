@@ -15,17 +15,27 @@ export function useDocumentMetadata(
     if (!story) {
       document.title = defaultTitle;
       updateMetaTag('name', 'description', defaultDesc);
+      updateMetaTag('property', 'og:site_name', 'CEFR Stories');
+      updateMetaTag('property', 'og:type', 'website');
       updateMetaTag('property', 'og:title', defaultTitle);
       updateMetaTag('property', 'og:description', defaultDesc);
       updateMetaTag(
         'property',
         'og:image',
-        `${window.location.origin}/tj-logo.svg`,
+        `${window.location.origin}/tj-logo-512.png`,
       );
+      updateMetaTag(
+        'property',
+        'og:image:secure_url',
+        `${window.location.origin}/tj-logo-512.png`,
+      );
+      updateMetaTag('property', 'og:image:type', 'image/png');
+      updateMetaTag('property', 'og:image:width', '512');
+      updateMetaTag('property', 'og:image:height', '512');
       updateMetaTag(
         'name',
         'twitter:image',
-        `${window.location.origin}/tj-logo.svg`,
+        `${window.location.origin}/tj-logo-512.png`,
       );
       updateMetaTag('name', 'twitter:card', 'summary_large_image');
       removeJsonLdSchema();
@@ -41,15 +51,24 @@ export function useDocumentMetadata(
     const cefrLabel = story.cefrLevel ? ` (CEFR ${story.cefrLevel})` : '';
 
     const newTitle = `${story.title}${chapterLabel}${cefrLabel} - Graded ${story.language}`;
-    const newDesc = `Read "${story.title}" graded for ${story.language} at CEFR ${story.cefrLevel} difficulty. ${story.description || 'Includes interactive translations, Text-to-Speech audio, and EPUB downloads.'}`;
+    const newDesc = story.description
+      ? `${story.description} Graded for ${story.language} at CEFR ${story.cefrLevel} difficulty.`
+      : `Read "${story.title}" graded for ${story.language} at CEFR ${story.cefrLevel} difficulty. Includes interactive translations, Text-to-Speech audio, and EPUB downloads.`;
 
     document.title = newTitle;
     updateMetaTag('name', 'description', newDesc);
+    updateMetaTag('property', 'og:site_name', 'CEFR Stories');
+    updateMetaTag('property', 'og:type', 'book');
     updateMetaTag('property', 'og:title', newTitle);
     updateMetaTag('property', 'og:description', newDesc);
 
     const coverUrl = getStoryCoverUrl(story, { absolute: true });
     updateMetaTag('property', 'og:image', coverUrl);
+    updateMetaTag('property', 'og:image:secure_url', coverUrl);
+    updateMetaTag('property', 'og:image:type', 'image/jpeg');
+    updateMetaTag('property', 'og:image:width', '480');
+    updateMetaTag('property', 'og:image:height', '672');
+    updateMetaTag('property', 'og:image:alt', story.title);
     updateMetaTag('name', 'twitter:image', coverUrl);
     updateMetaTag('name', 'twitter:card', 'summary_large_image');
 
@@ -70,7 +89,7 @@ export function useDocumentMetadata(
         name: 'CEFR Stories',
         logo: {
           '@type': 'ImageObject',
-          url: `${window.location.origin}/tj-logo.svg`,
+          url: `${window.location.origin}/tj-logo-512.png`,
         },
       },
     });
