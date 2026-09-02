@@ -14,6 +14,8 @@ import {
   Settings2,
   Square,
   Trash2,
+  Volume2,
+  VolumeX,
   X,
   ZoomIn,
   ZoomOut,
@@ -56,6 +58,8 @@ interface TTSToolbarProps {
   translationLanguage?: string;
   isReaderSettingsOpen?: boolean;
   onReaderSettingsOpenChange?: (open: boolean) => void;
+  autoPlayWord?: boolean;
+  setAutoPlayWord?: (enabled: boolean) => void;
 }
 
 export default function TTSToolbar({
@@ -93,6 +97,8 @@ export default function TTSToolbar({
   translationLanguage,
   isReaderSettingsOpen,
   onReaderSettingsOpenChange,
+  autoPlayWord = true,
+  setAutoPlayWord,
 }: TTSToolbarProps) {
   const [internalSettingsOpen, setInternalSettingsOpen] =
     useState<boolean>(false);
@@ -154,6 +160,30 @@ export default function TTSToolbar({
             title="Stop TTS Playback"
           >
             <Square className="w-4 h-4" />
+          </button>
+        )}
+
+        {/* AUTO-PRONOUNCE WORD TOGGLE */}
+        {setAutoPlayWord && (
+          <button
+            type="button"
+            onClick={() => setAutoPlayWord(!autoPlayWord)}
+            className={`h-8 w-8 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
+              autoPlayWord
+                ? 'bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover border-tj-primary-border'
+                : 'border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 bg-transparent hover:text-tj-primary hover:border-slate-300'
+            }`}
+            title={
+              autoPlayWord
+                ? 'Auto-pronounce clicked words: ON'
+                : 'Auto-pronounce clicked words: OFF'
+            }
+          >
+            {autoPlayWord ? (
+              <Volume2 className="w-3.5 h-3.5" />
+            ) : (
+              <VolumeX className="w-3.5 h-3.5" />
+            )}
           </button>
         )}
 
@@ -313,6 +343,41 @@ export default function TTSToolbar({
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-tj-text-muted pointer-events-none" />
                     </div>
                   </div>
+
+                  {/* Auto-pronounce clicked words toggle */}
+                  {setAutoPlayWord && (
+                    <div className="flex items-center justify-between gap-3 pt-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Volume2 className="w-3.5 h-3.5 text-tj-text-muted shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-tj-text-main">
+                            Auto-Pronounce Words
+                          </p>
+                          <p className="text-[10px] text-tj-text-muted leading-tight">
+                            Speak words automatically when clicked or selected
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={autoPlayWord}
+                        onClick={() => setAutoPlayWord(!autoPlayWord)}
+                        className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer border shrink-0 ${
+                          autoPlayWord
+                            ? 'bg-tj-primary border-tj-primary'
+                            : 'bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600'
+                        }`}
+                      >
+                        <span
+                          className={`absolute top-0.5 h-4.5 w-4.5 rounded-full bg-white shadow-sm transition-all duration-200 ${
+                            autoPlayWord ? 'left-[22px]' : 'left-0.5'
+                          }`}
+                          style={{ width: '1.125rem', height: '1.125rem' }}
+                        />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* READING SECTION */}

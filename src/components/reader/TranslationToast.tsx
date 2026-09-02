@@ -10,6 +10,7 @@ import {
   MessageSquare,
   Trash2,
   Volume2,
+  VolumeX,
   X,
 } from 'lucide-react';
 import { AnimatePresence, motion, useDragControls } from 'motion/react';
@@ -63,6 +64,8 @@ interface TranslationToastProps {
   onSelectHighlightColor?: (color: HighlightColor) => void;
   onSaveHighlightNote?: (note: string) => void;
   onDeleteHighlight?: () => void;
+  autoPlayWord?: boolean;
+  setAutoPlayWord?: (enabled: boolean) => void;
 }
 
 export default function TranslationToast({
@@ -98,6 +101,8 @@ export default function TranslationToast({
   onSelectHighlightColor,
   onSaveHighlightNote,
   onDeleteHighlight,
+  autoPlayWord = true,
+  setAutoPlayWord,
 }: TranslationToastProps) {
   const dragControls = useDragControls();
   const [isEditingNote, setIsEditingNote] = useState<boolean>(false);
@@ -174,7 +179,7 @@ export default function TranslationToast({
               {/* SECTION 1: WORD INFO with nav arrows & HIGHLIGHT CONTROLS */}
               <div className="flex flex-col gap-3 min-w-[200px] lg:max-w-[320px]">
                 <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <h4
                       lang={getLanguageCodeFromName(story.language)}
                       translate="no"
@@ -182,14 +187,44 @@ export default function TranslationToast({
                     >
                       {selectedWord.word}
                     </h4>
-                    <button
-                      type="button"
-                      onClick={() => handlePlayWord(selectedWord.word)}
-                      className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center shrink-0"
-                      title="Pronounce again"
-                    >
-                      <Volume2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => handlePlayWord(selectedWord.word)}
+                        className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center shrink-0"
+                        title="Pronounce word"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
+                      {setAutoPlayWord && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAutoPlayWord(!autoPlayWord);
+                          }}
+                          className={`p-1.5 rounded-xl border cursor-pointer shadow-sm flex items-center justify-center shrink-0 transition-colors text-xs gap-1 ${
+                            autoPlayWord
+                              ? 'bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover border-tj-primary-border'
+                              : 'bg-tj-bg-card hover:bg-tj-bg-recessed text-slate-400 dark:text-slate-500 border-tj-border-main hover:text-tj-text-main'
+                          }`}
+                          title={
+                            autoPlayWord
+                              ? 'Auto-pronounce on word click: ON (Click to toggle OFF)'
+                              : 'Auto-pronounce on word click: OFF (Click to toggle ON)'
+                          }
+                        >
+                          {autoPlayWord ? (
+                            <Volume2 className="w-3.5 h-3.5" />
+                          ) : (
+                            <VolumeX className="w-3.5 h-3.5" />
+                          )}
+                          <span className="text-[10px] font-bold tracking-tight">
+                            Auto
+                          </span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <button

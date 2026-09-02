@@ -93,6 +93,23 @@ export function useSpeechSynthesis(language: string) {
     return 0.75;
   });
 
+  const [autoPlayWord, setAutoPlayWordState] = useState<boolean>(() => {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem('reader-autoplay-word');
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    }
+    return true;
+  });
+
+  const setAutoPlayWord = useCallback((enabled: boolean) => {
+    setAutoPlayWordState(enabled);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('reader-autoplay-word', enabled ? 'true' : 'false');
+    }
+  }, []);
+
   const setSpeechRate = useCallback((rate: number) => {
     setSpeechRateState(rate);
     if (typeof localStorage !== 'undefined') {
@@ -252,6 +269,8 @@ export function useSpeechSynthesis(language: string) {
     setSelectedVoiceName: setSelectedVoice,
     speechRate,
     setSpeechRate,
+    autoPlayWord,
+    setAutoPlayWord,
     isSpeaking,
     isPaused,
     speak,

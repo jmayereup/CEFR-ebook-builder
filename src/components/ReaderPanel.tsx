@@ -507,6 +507,8 @@ export default function ReaderPanel({
     setSelectedVoiceName,
     speechRate,
     setSpeechRate,
+    autoPlayWord,
+    setAutoPlayWord,
     isSpeaking,
     isPaused,
     speak,
@@ -629,7 +631,9 @@ export default function ReaderPanel({
     const phrase = getPhraseFromRange(startFlatIdx, endFlatIdx);
     if (!phrase) return;
 
-    handlePlayWord(phrase);
+    if (autoPlayWord) {
+      handlePlayWord(phrase);
+    }
 
     const lookupWord = phrase.toLowerCase().trim();
     const savedMatch = (savedVocab || []).find(
@@ -1076,6 +1080,9 @@ export default function ReaderPanel({
       setSelectedWordRange(newRange);
       updateSelectedWordForRange(firstFlatIdx, lastFlatIdx);
     } else {
+      if (autoPlayWord) {
+        handlePlayWord(highlight.text);
+      }
       setSelectedWord({
         word: highlight.text,
         context: dp.original,
@@ -1154,6 +1161,9 @@ export default function ReaderPanel({
       setSelectedWordRange([firstFlatIdx, lastFlatIdx]);
       updateSelectedWordForRange(firstFlatIdx, lastFlatIdx);
     } else {
+      if (autoPlayWord) {
+        handlePlayWord(text);
+      }
       setSelectedWord({
         word: text,
         context: dp.original,
@@ -1664,6 +1674,8 @@ export default function ReaderPanel({
                       translationLanguage={story.translationLanguage}
                       isReaderSettingsOpen={isReaderSettingsOpen}
                       onReaderSettingsOpenChange={setIsReaderSettingsOpen}
+                      autoPlayWord={autoPlayWord}
+                      setAutoPlayWord={setAutoPlayWord}
                     />
                   ) : null
                 ) : (
@@ -2234,6 +2246,8 @@ export default function ReaderPanel({
         onSelectHighlightColor={handleToastHighlightColor}
         onSaveHighlightNote={handleToastHighlightNote}
         onDeleteHighlight={handleToastDeleteHighlight}
+        autoPlayWord={autoPlayWord}
+        setAutoPlayWord={setAutoPlayWord}
       />
 
       {/* FLOATING HIGHLIGHT & NOTE TOOLBAR */}
