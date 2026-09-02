@@ -93,6 +93,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
     Math.random().toString(36).substring(2, 15) +
     '-' +
     Date.now().toString(36);
+  const isoDate = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
   const isBilingual =
     !!story.translationLanguage ||
     (story.chapters ?? []).some((ch) => ch.content.includes('Translation:'));
@@ -100,8 +101,8 @@ export async function generateEpub(story: Story): Promise<Blob> {
 
   // Attempt to load the cover image from candidate URLs (CDN R2 -> PB API proxy -> tj-gen static fallback)
   let coverBlob: Blob | null = null;
-  let coverMediaType = 'image/jpeg';
-  let coverExtension = 'jpg';
+  const coverMediaType = 'image/jpeg';
+  const coverExtension = 'jpg';
 
   const candidateUrls = getStoryCoverUrls(story);
   for (const coverUrl of candidateUrls) {
@@ -130,8 +131,6 @@ export async function generateEpub(story: Story): Promise<Blob> {
         );
       }
     }
-    coverMediaType = 'image/jpeg';
-    coverExtension = 'jpg';
   } else {
     console.warn(
       'Could not fetch story cover image from any candidate URL, generating EPUB without cover.',
@@ -144,7 +143,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
   // 2. META-INF/container.xml
   zip.file(
     'META-INF/container.xml',
-    `<?xml version="1.0"?>
+    `<?xml version="1.0" encoding="UTF-8"?>
 <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
   <rootfiles>
     <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
@@ -156,6 +155,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
   let chaptersManifest = '';
   let chaptersSpine = '';
   let chaptersToc = '';
+  let chaptersNavList = '';
   const coverOffset = coverBlob ? 1 : 0;
 
   (story.chapters ?? []).forEach((chapter, index) => {
@@ -167,49 +167,49 @@ export async function generateEpub(story: Story): Promise<Blob> {
       <navLabel><text>Chapter ${idx}: ${escapeXml(chapter.title)}</text></navLabel>
       <content src="chapter_${idx}.html"/>
     </navPoint>\n`;
+    chaptersNavList += `      <li style="margin-bottom: 8px;"><a href="chapter_${idx}.html" class="vocab-link">Chapter ${idx}: ${escapeXml(chapter.title)}</a></li>\n`;
   });
 
   const endingPlayOrder = (story.chapters?.length ?? 0) + 2 + coverOffset;
-  chaptersManifest += `    <item id="ending" href="ending.html" media-type="application/xhtml+xml"/>
-`;
-  chaptersSpine += `    <itemref idref="ending"/>
-`;
-  chaptersToc += `    <navPoint id="navpoint-${endingPlayOrder}" playOrder="${endingPlayOrder}">
-      <navLabel><text>Thank You</text></navLabel>
-      <content src="ending.html"/>
-    </navPoint>
-`;
+  chaptersManifest += `    <item id="ending" href="ending.html" media-type="application/xhtml+xml"/>\n`;
+  chaptersSpine += `    <itemref idref="ending"/>\n`;
 
   // Setup cover manifests and structures
   let metadataCover = '';
   let manifestCover = '';
   let spineCover = '';
   let ncxCoverPoint = '';
+  let guideCover = '';
+  let coverLandmark = '';
 
   if (coverBlob) {
     metadataCover = `\n    <meta name="cover" content="cover-image"/>`;
-    manifestCover = `\n    <item id="cover-image" href="cover.${coverExtension}" media-type="${coverMediaType}" properties="cover"/>
+    manifestCover = `\n    <item id="cover-image" href="cover.${coverExtension}" media-type="${coverMediaType}" properties="cover-image"/>
     <item id="cover-html" href="cover.html" media-type="application/xhtml+xml"/>`;
     spineCover = `\n    <itemref idref="cover-html"/>`;
     ncxCoverPoint = `\n    <navPoint id="navpoint-cover" playOrder="1">
       <navLabel><text>Cover Image</text></navLabel>
       <content src="cover.html"/>
     </navPoint>`;
+    guideCover = `\n    <reference type="cover" title="Cover" href="cover.html"/>`;
+    coverLandmark = `\n      <li><a epub:type="cover" href="cover.html">Cover</a></li>`;
   }
 
-  // 3. OEBPS/content.opf
+  // 3. OEBPS/content.opf (EPUB 3.0 package with EPUB 2 NCX and guide fallback)
   zip.file(
     'OEBPS/content.opf',
     `<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
-  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="3.0" prefix="rendition: http://www.idpf.org/vocab/rendition/#">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:title>${escapeXml(story.title)}</dc:title>
     <dc:language>${languageCode}</dc:language>
     <dc:identifier id="BookId">urn:uuid:${uuid}</dc:identifier>
     <dc:creator>${stripBranding ? escapeXml(story.title || 'Anonymous') : 'CEFR Short Story Graded Reader'}</dc:creator>
-    <dc:description>${escapeXml(story.description || `Bilingual CEFR Graded reader for learning ${story.language} at ${story.cefrLevel} proficiency level.`)}</dc:description>${metadataCover}
+    <dc:description>${escapeXml(story.description || `Bilingual CEFR Graded reader for learning ${story.language} at ${story.cefrLevel} proficiency level.`)}</dc:description>
+    <meta property="dcterms:modified">${isoDate}</meta>${metadataCover}
   </metadata>
   <manifest>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
     <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
     <item id="style" href="style.css" media-type="text/css"/>
     <item id="title" href="title.html" media-type="application/xhtml+xml"/>${manifestCover}
@@ -217,10 +217,43 @@ ${chaptersManifest}  </manifest>
   <spine toc="ncx">${spineCover}
     <itemref idref="title"/>
 ${chaptersSpine}  </spine>
+  <guide>${guideCover}
+    <reference type="toc" title="Table of Contents" href="nav.xhtml"/>
+    <reference type="text" title="Beginning" href="chapter_1.html"/>
+  </guide>
 </package>`,
   );
 
-  // 4. OEBPS/toc.ncx
+  // 4. OEBPS/nav.xhtml (EPUB 3 Navigation Document)
+  zip.file(
+    'OEBPS/nav.xhtml',
+    `<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="${languageCode}" xml:lang="${languageCode}">
+<head>
+  <title>Table of Contents</title>
+  <link rel="stylesheet" href="style.css" type="text/css"/>
+</head>
+<body>
+  <nav epub:type="toc" id="toc">
+    <h1 class="chapter-title">Table of Contents</h1>
+    <ol class="toc-list" style="list-style-type: none; padding-left: 0;">
+      <li style="margin-bottom: 8px;"><a href="title.html" class="vocab-link">Cover &amp; Information</a></li>
+${chaptersNavList}      <li style="margin-bottom: 8px;"><a href="ending.html" class="vocab-link">Thank You</a></li>
+    </ol>
+  </nav>
+  <nav epub:type="landmarks" hidden="" style="display: none;">
+    <h2>Landmarks</h2>
+    <ol>
+${coverLandmark}      <li><a epub:type="toc" href="nav.xhtml">Table of Contents</a></li>
+      <li><a epub:type="bodymatter" href="chapter_1.html">Start Reading</a></li>
+    </ol>
+  </nav>
+</body>
+</html>`,
+  );
+
+  // 5. OEBPS/toc.ncx (EPUB 2 NCX for backward-compatibility)
   zip.file(
     'OEBPS/toc.ncx',
     `<?xml version="1.0" encoding="utf-8"?>
@@ -240,11 +273,15 @@ ${chaptersSpine}  </spine>
       <navLabel><text>Cover &amp; Information</text></navLabel>
       <content src="title.html"/>
     </navPoint>
-${chaptersToc}  </navMap>
+${chaptersToc}    <navPoint id="navpoint-${endingPlayOrder}" playOrder="${endingPlayOrder}">
+      <navLabel><text>Thank You</text></navLabel>
+      <content src="ending.html"/>
+    </navPoint>
+  </navMap>
 </ncx>`,
   );
 
-  // 5. OEBPS/style.css
+  // 6. OEBPS/style.css
   zip.file(
     'OEBPS/style.css',
     `body {
@@ -402,12 +439,12 @@ a.glossary-backlink {
 }`,
   );
 
-  // 6. OEBPS/title.html
+  // 7. OEBPS/title.html
   zip.file(
     'OEBPS/title.html',
     `<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="${languageCode}" xml:lang="${languageCode}">
 <head>
   <title>${escapeXml(story.title)}</title>
   <link rel="stylesheet" href="style.css" type="text/css"/>
@@ -437,7 +474,7 @@ a.glossary-backlink {
 </html>`,
   );
 
-  // 7. Core individual chapter files
+  // 8. Core individual chapter files
   (story.chapters ?? []).forEach((chapter, index) => {
     const idx = index + 1;
     const occurrenceTracker: { [key: string]: number } = {};
@@ -512,8 +549,8 @@ ${itemsHtml}
     zip.file(
       `OEBPS/chapter_${idx}.html`,
       `<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="${languageCode}" xml:lang="${languageCode}">
 <head>
   <title>${escapeXml(chapter.title)}</title>
   <link rel="stylesheet" href="style.css" type="text/css"/>
@@ -532,11 +569,12 @@ ${glossaryHtml}
     );
   });
 
+  // 9. OEBPS/ending.html
   zip.file(
     `OEBPS/ending.html`,
     `<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="${languageCode}" xml:lang="${languageCode}">
 <head>
   <title>Thank You</title>
   <link rel="stylesheet" href="style.css" type="text/css"/>
@@ -554,14 +592,14 @@ ${glossaryHtml}
 </html>`,
   );
 
-  // Write cover page and image if fetched successfully
+  // 10. Write cover page and image if fetched successfully
   if (coverBlob) {
     zip.file(`OEBPS/cover.${coverExtension}`, coverBlob);
     zip.file(
       'OEBPS/cover.html',
       `<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="${languageCode}" xml:lang="${languageCode}">
 <head>
   <title>Cover</title>
   <style type="text/css">
