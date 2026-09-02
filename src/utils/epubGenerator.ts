@@ -181,6 +181,7 @@ export async function generateEpub(story: Story): Promise<Blob> {
   let ncxCoverPoint = '';
   let guideCover = '';
   let coverLandmark = '';
+  let coverTocNavEntry = '';
 
   if (coverBlob) {
     metadataCover = `\n    <meta name="cover" content="cover-image"/>`;
@@ -188,11 +189,12 @@ export async function generateEpub(story: Story): Promise<Blob> {
     <item id="cover-html" href="cover.html" media-type="application/xhtml+xml"/>`;
     spineCover = `\n    <itemref idref="cover-html"/>`;
     ncxCoverPoint = `\n    <navPoint id="navpoint-cover" playOrder="1">
-      <navLabel><text>Cover Image</text></navLabel>
+      <navLabel><text>Cover</text></navLabel>
       <content src="cover.html"/>
     </navPoint>`;
     guideCover = `\n    <reference type="cover" title="Cover" href="cover.html"/>`;
     coverLandmark = `\n      <li><a epub:type="cover" href="cover.html">Cover</a></li>`;
+    coverTocNavEntry = `      <li style="margin-bottom: 8px;"><a href="cover.html" class="vocab-link">Cover</a></li>\n`;
   }
 
   // 3. OEBPS/content.opf (EPUB 3.0 package with EPUB 2 NCX and guide fallback)
@@ -219,7 +221,7 @@ ${chaptersManifest}  </manifest>
 ${chaptersSpine}  </spine>
   <guide>${guideCover}
     <reference type="toc" title="Table of Contents" href="nav.xhtml"/>
-    <reference type="text" title="Beginning" href="chapter_1.html"/>
+    <reference type="text" title="Beginning" href="${coverBlob ? 'cover.html' : 'title.html'}"/>
   </guide>
 </package>`,
   );
@@ -238,7 +240,7 @@ ${chaptersSpine}  </spine>
   <nav epub:type="toc" id="toc">
     <h1 class="chapter-title">Table of Contents</h1>
     <ol class="toc-list" style="list-style-type: none; padding-left: 0;">
-      <li style="margin-bottom: 8px;"><a href="title.html" class="vocab-link">Cover &amp; Information</a></li>
+${coverTocNavEntry}      <li style="margin-bottom: 8px;"><a href="title.html" class="vocab-link">Book Information</a></li>
 ${chaptersNavList}      <li style="margin-bottom: 8px;"><a href="ending.html" class="vocab-link">Thank You</a></li>
     </ol>
   </nav>
@@ -246,7 +248,7 @@ ${chaptersNavList}      <li style="margin-bottom: 8px;"><a href="ending.html" cl
     <h2>Landmarks</h2>
     <ol>
 ${coverLandmark}      <li><a epub:type="toc" href="nav.xhtml">Table of Contents</a></li>
-      <li><a epub:type="bodymatter" href="chapter_1.html">Start Reading</a></li>
+      <li><a epub:type="bodymatter" href="${coverBlob ? 'cover.html' : 'title.html'}">Start Reading</a></li>
     </ol>
   </nav>
 </body>
@@ -270,7 +272,7 @@ ${coverLandmark}      <li><a epub:type="toc" href="nav.xhtml">Table of Contents<
   </docTitle>
   <navMap>${ncxCoverPoint}
     <navPoint id="navpoint-1" playOrder="${1 + coverOffset}">
-      <navLabel><text>Cover &amp; Information</text></navLabel>
+      <navLabel><text>${coverBlob ? 'Book Information' : 'Cover &amp; Information'}</text></navLabel>
       <content src="title.html"/>
     </navPoint>
 ${chaptersToc}    <navPoint id="navpoint-${endingPlayOrder}" playOrder="${endingPlayOrder}">
@@ -292,7 +294,19 @@ ${chaptersToc}    <navPoint id="navpoint-${endingPlayOrder}" playOrder="${ending
 }
 .title-container {
   text-align: center;
-  padding: 50px 10px;
+  padding: 40px 10px;
+}
+.cover-thumb-wrap {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.cover-thumb {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  margin: 0 auto;
 }
 .book-title {
   font-size: 2em;
@@ -440,6 +454,12 @@ a.glossary-backlink {
   );
 
   // 7. OEBPS/title.html
+  const titleCoverHtml = coverBlob
+    ? `<div class="cover-thumb-wrap">
+      <img class="cover-thumb" src="cover.${coverExtension}" alt="${escapeXml(story.title)} Cover" />
+    </div>`
+    : '';
+
   zip.file(
     'OEBPS/title.html',
     `<?xml version="1.0" encoding="utf-8"?>
@@ -451,6 +471,7 @@ a.glossary-backlink {
 </head>
 <body>
   <div class="title-container">
+    ${titleCoverHtml}
     <h1 class="book-title">${escapeXml(story.title)}</h1>
     <h2 class="book-language">${story.language} Learner Edition</h2>
     <div class="book-meta">
@@ -604,9 +625,11 @@ ${glossaryHtml}
   <title>Cover</title>
   <style type="text/css">
     @page { padding: 0; margin: 0; }
-    body {
+    html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
+      height: 100%;
       text-align: center;
       background-color: #ffffff;
     }
@@ -614,10 +637,14 @@ ${glossaryHtml}
       text-align: center;
       padding: 0;
       margin: 0;
+      width: 100%;
+      height: 100%;
     }
     img.cover-image {
       max-width: 100%;
+      max-height: 100vh;
       height: auto;
+      width: auto;
       display: block;
       margin: 0 auto;
     }
