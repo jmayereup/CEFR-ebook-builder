@@ -20,6 +20,17 @@ export type GeminiModelOption = AIModelOption;
 
 export const AI_MODELS: AIModelOption[] = [
   {
+    id: 'z-ai/glm-5.3-flash',
+    name: 'GLM 5.3 Flash',
+    inputCost1M: 0.15,
+    outputCost1M: 0.5,
+    category: 'flash',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 16384,
+  },
+  {
     id: 'deepseek/deepseek-v4-pro',
     name: 'DeepSeek V4 Pro',
     inputCost1M: 0.435,
@@ -44,10 +55,15 @@ export const AI_MODELS: AIModelOption[] = [
 ];
 
 /** IDs of models that are always free to use (no contributor approval needed). */
-export const FREE_MODEL_IDS = new Set<string>();
+export const FREE_MODEL_IDS = new Set<string>(['z-ai/glm-5.3-flash']);
 
 /** Curated frontier & latest models for BYOK story generation selection */
 export const FRONTIER_LATEST_MODELS = [
+  {
+    id: 'z-ai/glm-5.3-flash',
+    name: 'Z-AI: GLM 5.3 Flash',
+    category: 'flash' as const,
+  },
   {
     id: 'deepseek/deepseek-v4-pro',
     name: 'DeepSeek V4 Pro',

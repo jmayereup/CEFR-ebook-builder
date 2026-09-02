@@ -16,6 +16,11 @@ const MODEL_DETAILS: Record<
     languages: string;
   }
 > = {
+  'z-ai/glm-5.3-flash': {
+    verdict:
+      'Free high-speed multimodal reasoning model from Z.ai. Delivers efficient generation, rich multilingual prose, and responsive chapter creation.',
+    languages: 'All supported languages',
+  },
   'deepseek/deepseek-v4-pro': {
     verdict:
       'Default flagship story model. High-capacity reasoning model delivering superior prose, character voice, and plot consistency.',
