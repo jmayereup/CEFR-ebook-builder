@@ -933,7 +933,7 @@ export default function StoryConfigForm({
                     </div>
                     <select
                       value={selectedModel}
-                      disabled={!currentUser || isByokActive}
+                      disabled={!currentUser}
                       onChange={(e) => {
                         setSelectedModel(e.target.value);
                         const support = getModelThinkingSupport(e.target.value);
@@ -941,67 +941,78 @@ export default function StoryConfigForm({
                       }}
                       className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-tj-bg-recessed"
                     >
-                      {isByokActive &&
-                        !AI_MODELS.some((m) => m.id === selectedModel) && (
-                          <option value={selectedModel}>
-                            {byokModelName} (BYOK Default Model)
-                          </option>
-                        )}
-                      {(() => {
-                        const isFreeModelLocal = (id: string) =>
-                          FREE_MODEL_IDS.has(id) || id.endsWith(':free');
-                        const sortedModels = [...AI_MODELS].sort(
-                          (a, b) => a.outputCost1M - b.outputCost1M,
-                        );
-                        const renderOption = (model: (typeof AI_MODELS)[0]) => {
-                          let isModelRestricted = false;
-                          let restrictionLabel = '';
+                      {isByokActive ? (
+                        <>
+                          {!FRONTIER_LATEST_MODELS.some(
+                            (m) => m.id === selectedModel,
+                          ) && (
+                            <option value={selectedModel}>
+                              {byokModelName} (Custom Model)
+                            </option>
+                          )}
+                          {FRONTIER_LATEST_MODELS.map((m) => (
+                            <option key={m.id} value={m.id}>
+                              {m.name} ({m.id})
+                            </option>
+                          ))}
+                        </>
+                      ) : (
+                        (() => {
+                          const isFreeModelLocal = (id: string) =>
+                            FREE_MODEL_IDS.has(id) || id.endsWith(':free');
+                          const renderOption = (
+                            model: (typeof AI_MODELS)[0],
+                          ) => {
+                            let isModelRestricted = false;
+                            let restrictionLabel = '';
 
-                          if (!isAdmin && !isByokActive) {
-                            if (!isPaid) {
-                              if (!isFreeModelLocal(model.id)) {
-                                isModelRestricted = true;
-                                restrictionLabel = ' 🔒 (Paid Tier Required)';
+                            if (!isAdmin && !isByokActive) {
+                              if (!isPaid) {
+                                if (!isFreeModelLocal(model.id)) {
+                                  isModelRestricted = true;
+                                  restrictionLabel =
+                                    ' 🔒 (Paid Tier Required)';
+                                }
                               }
                             }
-                          }
 
-                          const isFree = isFreeModelLocal(model.id);
-                          let costLabel = '';
-                          if (isFree) {
-                            costLabel = ' (0 credits)';
-                          } else {
-                            const estForModel = calculateEstimatedUsage(
-                              totalChapters,
-                              chapterLength,
-                              model.id,
-                            );
-                            const creds = Math.max(
-                              1,
-                              Math.ceil(estForModel.totalCost * 100),
-                            );
-                            costLabel = ` (${creds} ${creds === 1 ? 'credit' : 'credits'})`;
-                          }
+                            const isFree = isFreeModelLocal(model.id);
+                            let costLabel = '';
+                            if (isFree) {
+                              costLabel = ' (0 credits)';
+                            } else {
+                              const estForModel = calculateEstimatedUsage(
+                                totalChapters,
+                                chapterLength,
+                                model.id,
+                              );
+                              const creds = Math.max(
+                                1,
+                                Math.ceil(estForModel.totalCost * 100),
+                              );
+                              costLabel = ` (${creds} ${creds === 1 ? 'credit' : 'credits'})`;
+                            }
 
-                          return (
-                            <option
-                              key={model.id}
-                              value={model.id}
-                              disabled={isModelRestricted}
-                            >
-                              {model.name}
-                              {costLabel}
-                              {restrictionLabel}
-                            </option>
+                            return (
+                              <option
+                                key={model.id}
+                                value={model.id}
+                                disabled={isModelRestricted}
+                              >
+                                {model.name}
+                                {costLabel}
+                                {restrictionLabel}
+                              </option>
+                            );
+                          };
+
+                          const allSortedModels = [...AI_MODELS].sort((a, b) =>
+                            a.name.localeCompare(b.name),
                           );
-                        };
 
-                        const allSortedModels = [...AI_MODELS].sort((a, b) =>
-                          a.name.localeCompare(b.name),
-                        );
-
-                        return allSortedModels.map(renderOption);
-                      })()}
+                          return allSortedModels.map(renderOption);
+                        })()
+                      )}
                     </select>
                     {!currentUser ? (
                       <div className="p-3 mt-2 rounded-xl bg-tj-primary-light/60 dark:bg-slate-800/60 border border-tj-primary-border/60 text-tj-text-main flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
@@ -1038,12 +1049,7 @@ export default function StoryConfigForm({
                       </div>
                     ) : isByokActive ? (
                       <p className="text-[11px] text-tj-text-muted mt-1.5 leading-normal bg-tj-primary/5 p-2 rounded-lg border border-tj-primary/20 font-medium">
-                        🔒 AI Model selection is locked for BYOK accounts. Using
-                        custom model{' '}
-                        <strong className="text-tj-primary font-semibold">
-                          {byokModelName}
-                        </strong>{' '}
-                        set in Settings.
+                        ✨ <strong>BYOK Active:</strong> You can select any model above or customize your default in Settings. Generations bypass system credits and use your OpenRouter key.
                       </p>
                     ) : null}
                     <p className="text-[10px] text-slate-400 mt-1">
