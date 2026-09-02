@@ -346,7 +346,9 @@ export default function AdminUsersDashboard({
 
     return () => {
       try {
-        pb.collection('users').unsubscribe('*').catch(() => {});
+        pb.collection('users')
+          .unsubscribe('*')
+          .catch(() => {});
       } catch {}
     };
   }, [isAdmin]);

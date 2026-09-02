@@ -307,7 +307,7 @@ export default function ReaderPage({
                 </p>
               )}
             </div>
-            <aside aria-label="Story export options">
+            <aside aria-label="Story download options">
               <ExportPanel
                 selectedStory={selectedStory}
                 showExportMenu={showExportMenu}

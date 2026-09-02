@@ -93,7 +93,10 @@ async function bootstrap() {
   }
 
   // Unified dynamic SSR page rendering and metadata preload catch-all route
-  app.get('*', createSSRHandler(() => vite));
+  app.get(
+    '*',
+    createSSRHandler(() => vite),
+  );
 
   app.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`Server is running at http://localhost:${PORT}`);

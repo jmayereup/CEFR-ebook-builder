@@ -161,7 +161,9 @@ export default function StoryConfigForm({
     defaultStoryModel || 'deepseek/deepseek-v4-pro',
   );
   const [thinkingOption, setThinkingOption] = useState(() => {
-    const support = getModelThinkingSupport(defaultStoryModel || 'deepseek/deepseek-v4-pro');
+    const support = getModelThinkingSupport(
+      defaultStoryModel || 'deepseek/deepseek-v4-pro',
+    );
     return support.defaultOption;
   });
   const [temperature, setTemperature] = useState(0.8);
@@ -970,8 +972,7 @@ export default function StoryConfigForm({
                               if (!isPaid) {
                                 if (!isFreeModelLocal(model.id)) {
                                   isModelRestricted = true;
-                                  restrictionLabel =
-                                    ' 🔒 (Paid Tier Required)';
+                                  restrictionLabel = ' 🔒 (Paid Tier Required)';
                                 }
                               }
                             }
@@ -1049,7 +1050,10 @@ export default function StoryConfigForm({
                       </div>
                     ) : isByokActive ? (
                       <p className="text-[11px] text-tj-text-muted mt-1.5 leading-normal bg-tj-primary/5 p-2 rounded-lg border border-tj-primary/20 font-medium">
-                        ✨ <strong>BYOK Active:</strong> You can select any model above or customize your default in Settings. Generations bypass system credits and use your OpenRouter key.
+                        ✨ <strong>BYOK Active:</strong> You can select any
+                        model above or customize your default in Settings.
+                        Generations bypass system credits and use your
+                        OpenRouter key.
                       </p>
                     ) : null}
                     <p className="text-[10px] text-slate-400 mt-1">
@@ -1108,13 +1112,12 @@ export default function StoryConfigForm({
                                       Disabled (No Thinking)
                                     </option>
                                     <option value="low">
-                                      Enabled (Low Reasoning Budget - 2,048 tokens)
+                                      Enabled (Low Reasoning Budget - 2,048
+                                      tokens)
                                     </option>
                                   </select>
                                 );
-                              } else if (
-                                thinkingSupport.type === 'level'
-                              ) {
+                              } else if (thinkingSupport.type === 'level') {
                                 return (
                                   <select
                                     value={thinkingOption}
@@ -1132,17 +1135,13 @@ export default function StoryConfigForm({
                                     <option value="low">
                                       Low Depth (Recommended - 2,048 tokens)
                                     </option>
-                                    <option value="medium">
-                                      Medium Depth
-                                    </option>
+                                    <option value="medium">Medium Depth</option>
                                     <option value="high">
                                       High Depth (Nuanced)
                                     </option>
                                   </select>
                                 );
-                              } else if (
-                                thinkingSupport.type === 'budget'
-                              ) {
+                              } else if (thinkingSupport.type === 'budget') {
                                 return (
                                   <select
                                     value={thinkingOption}

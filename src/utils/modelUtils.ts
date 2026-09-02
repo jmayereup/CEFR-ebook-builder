@@ -41,9 +41,16 @@ export interface ModelThinkingSupport {
 /**
  * Returns reasoning/thinking capabilities and sensible defaults for a model.
  */
-export const getModelThinkingSupport = (modelId?: string): ModelThinkingSupport => {
+export const getModelThinkingSupport = (
+  modelId?: string,
+): ModelThinkingSupport => {
   if (!modelId) {
-    return { supportsThinking: true, type: 'simple', defaultOption: 'low', defaultBudget: 2048 };
+    return {
+      supportsThinking: true,
+      type: 'simple',
+      defaultOption: 'low',
+      defaultBudget: 2048,
+    };
   }
   const id = modelId.toLowerCase();
 
@@ -56,10 +63,18 @@ export const getModelThinkingSupport = (modelId?: string): ModelThinkingSupport 
   const modelObj = AI_MODELS.find((m) => m.id === modelId);
   if (modelObj) {
     if (modelObj.supportsThinkingBudget) {
-      return { supportsThinking: true, type: 'budget', defaultOption: 'low', defaultBudget: 2048 };
+      return {
+        supportsThinking: true,
+        type: 'budget',
+        defaultOption: 'low',
+        defaultBudget: 2048,
+      };
     }
     if (modelObj.supportsThinkingLevel) {
-      const isSimple = id.includes('deepseek') || id.includes('kimi') || id.includes('moonshot');
+      const isSimple =
+        id.includes('deepseek') ||
+        id.includes('kimi') ||
+        id.includes('moonshot');
       return {
         supportsThinking: true,
         type: isSimple ? 'simple' : 'level',
@@ -68,22 +83,45 @@ export const getModelThinkingSupport = (modelId?: string): ModelThinkingSupport 
       };
     }
     if (!modelObj.supportsThinkingLevel && !modelObj.supportsThinkingBudget) {
-      return { supportsThinking: false, type: 'none', defaultOption: 'disabled' };
+      return {
+        supportsThinking: false,
+        type: 'none',
+        defaultOption: 'disabled',
+      };
     }
   }
 
   // Simple On/Off models
-  if (id.includes('deepseek') || id.includes('kimi') || id.includes('moonshot')) {
-    return { supportsThinking: true, type: 'simple', defaultOption: 'low', defaultBudget: 2048 };
+  if (
+    id.includes('deepseek') ||
+    id.includes('kimi') ||
+    id.includes('moonshot')
+  ) {
+    return {
+      supportsThinking: true,
+      type: 'simple',
+      defaultOption: 'low',
+      defaultBudget: 2048,
+    };
   }
 
   // Token budget models
   if (id.includes('gemini-2.5')) {
-    return { supportsThinking: true, type: 'budget', defaultOption: 'low', defaultBudget: 2048 };
+    return {
+      supportsThinking: true,
+      type: 'budget',
+      defaultOption: 'low',
+      defaultBudget: 2048,
+    };
   }
 
   // Level / effort models (GLM, Gemini 3, GPT, Claude, Grok, etc.)
-  return { supportsThinking: true, type: 'level', defaultOption: 'low', defaultBudget: 2048 };
+  return {
+    supportsThinking: true,
+    type: 'level',
+    defaultOption: 'low',
+    defaultBudget: 2048,
+  };
 };
 
 /**
@@ -107,4 +145,3 @@ export const buildApiHeaders = (
 
   return headers;
 };
-

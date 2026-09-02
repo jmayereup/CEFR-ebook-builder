@@ -1,5 +1,4 @@
 import {
-  BookOpen,
   ClipboardCheck,
   Copy,
   Download,
@@ -46,16 +45,16 @@ export default function ExportPanel({
     setShowEpubLinks(false);
   };
 
-  // Always render the compact "Export" banner in the page flow
+  // Always render the compact "Download" banner in the page flow
   const triggerBanner = (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-slate-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800 gap-3 w-full md:w-auto md:min-w-[320px]">
       <div className="flex items-center gap-3">
         <div className="p-2 bg-tj-primary-light dark:bg-tj-primary-light/10 rounded-xl text-tj-primary dark:text-tj-primary-hover shrink-0">
-          <BookOpen className="w-5 h-5" />
+          <Download className="w-5 h-5" />
         </div>
         <div className="text-left select-none">
           <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
-            Export
+            Download
           </p>
           <p className="text-[10px] text-slate-450 dark:text-slate-500 leading-normal font-medium">
             Download eBook or copy text.
@@ -68,7 +67,7 @@ export default function ExportPanel({
         onClick={() => setShowExportMenu(true)}
         className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-tj-primary hover:bg-tj-primary-hover dark:bg-tj-primary dark:hover:bg-tj-primary-hover text-tj-bg-main dark:text-tj-bg-main py-2 px-4 rounded-xl text-xs font-semibold select-none transition-all cursor-pointer active:scale-98"
       >
-        <span>Export</span>
+        <span>Download</span>
       </button>
     </div>
   );
@@ -95,7 +94,7 @@ export default function ExportPanel({
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: 'spring', duration: 0.35 }}
-              className="relative bg-tj-bg-card rounded-2xl border border-tj-border-main shadow-2xl max-w-md w-full p-6 space-y-4 overflow-hidden z-10 flex flex-col"
+              className="relative bg-tj-bg-card rounded-2xl border border-tj-border-main shadow-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto z-10 flex flex-col"
             >
               {/* Close Button */}
               <button
@@ -109,7 +108,7 @@ export default function ExportPanel({
 
               <div className="space-y-1 pr-6">
                 <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                  Export Book
+                  Download Book
                 </h3>
                 <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-relaxed">
                   Choose a format to download as an eBook or copy story text.
@@ -235,9 +234,33 @@ export default function ExportPanel({
                       transition={{ duration: 0.15 }}
                       className="flex flex-col gap-3 bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200/50 dark:border-slate-800/80 w-full"
                     >
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                        <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 tracking-wider transition truncate uppercase">
+                          EPUB file downloaded to device
+                        </span>
+                      </div>
+
+                      <div className="bg-slate-100/80 dark:bg-slate-800/70 p-3 rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-left space-y-1.5">
+                        <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                          How to send this book to your Kindle:
+                        </p>
+                        <ol className="text-[11px] text-slate-600 dark:text-slate-300 space-y-1 list-decimal list-inside leading-relaxed">
+                          <li>Download the EPUB file (above).</li>
+                          <li>Open Amazon's uploader via the button below.</li>
+                          <li>
+                            Upload your downloaded{' '}
+                            <span className="font-mono text-[10px] font-semibold text-slate-800 dark:text-slate-200 bg-slate-200/80 dark:bg-slate-900 px-1 py-0.5 rounded">
+                              .epub
+                            </span>{' '}
+                            file to send it to your Kindle eReader or app.
+                          </li>
+                        </ol>
+                      </div>
+
                       <div className="flex flex-col gap-2">
                         <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">
-                          Upload EPUB File:
+                          Upload Downloaded File:
                         </span>
 
                         <div className="flex flex-wrap gap-1.5 w-full justify-start">
@@ -245,18 +268,18 @@ export default function ExportPanel({
                             href="https://www.amazon.com/sendtokindle"
                             target="_blank"
                             rel="noreferrer"
-                            className="flex items-center gap-1.5 py-1 px-2.5 bg-tj-bg-card hover:bg-tj-bg-recessed select-none text-slate-650 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400 text-[11px] font-bold rounded-lg transition-colors cursor-pointer border border-slate-200/60 dark:border-slate-800 shrink-0 whitespace-nowrap"
-                            title="Official Kindle desktop uploader portal"
+                            className="flex items-center gap-1.5 py-1.5 px-3 bg-tj-primary hover:bg-tj-primary-hover select-none text-tj-bg-main text-[11px] font-bold rounded-lg transition-colors cursor-pointer shadow-sm shrink-0 whitespace-nowrap"
+                            title="Official Amazon Send to Kindle uploader portal"
                           >
-                            <span>Send to Kindle</span>
-                            <ExternalLink className="w-2.5 h-2.5 shrink-0 text-amber-500" />
+                            <span>Open Amazon Send to Kindle</span>
+                            <ExternalLink className="w-2.5 h-2.5 shrink-0" />
                           </a>
 
                           <a
                             href="https://play.google.com/books"
                             target="_blank"
                             rel="noreferrer"
-                            className="flex items-center gap-1.5 py-1 px-2.5 bg-tj-bg-card hover:bg-tj-bg-recessed select-none text-slate-650 hover:text-tj-primary dark:text-slate-400 dark:hover:text-tj-primary-hover text-[11px] font-bold rounded-lg transition-colors cursor-pointer border border-slate-200/60 dark:border-slate-800 shrink-0 whitespace-nowrap"
+                            className="flex items-center gap-1.5 py-1.5 px-3 bg-tj-bg-card hover:bg-tj-bg-recessed select-none text-slate-650 hover:text-tj-primary dark:text-slate-400 dark:hover:text-tj-primary-hover text-[11px] font-bold rounded-lg transition-colors cursor-pointer border border-slate-200/60 dark:border-slate-800 shrink-0 whitespace-nowrap"
                             title="Google Play Books web library uploader portal"
                           >
                             <span>Google Library</span>

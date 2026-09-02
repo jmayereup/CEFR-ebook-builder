@@ -47,11 +47,7 @@ const CreatePage = lazy(() => import('./pages/CreatePage'));
 const NotesPage = lazy(() => import('./pages/NotesPage'));
 const PracticePage = lazy(() => import('./pages/PracticePage'));
 
-import {
-  initAuth,
-  logout,
-  syncUserProfile,
-} from './services/auth';
+import { initAuth, logout, syncUserProfile } from './services/auth';
 import {
   decrementStoryCompletion,
   fetchAllUserHighlights,
@@ -62,14 +58,14 @@ import {
   saveUserLookupLimitDebounced,
 } from './services/db';
 import {
-  persistStory,
-  triggerStoryCoverGeneration,
-} from './services/storyPersistence';
-import {
   getStory,
   removeStory as removeStoryFromOffline,
   saveStory as saveStoryToOffline,
 } from './services/storage/offlineStorage';
+import {
+  persistStory,
+  triggerStoryCoverGeneration,
+} from './services/storyPersistence';
 import { useAuthStore } from './store/authStore';
 import { useUIStore } from './store/uiStore';
 import type { DeletionFlag, Story } from './types';

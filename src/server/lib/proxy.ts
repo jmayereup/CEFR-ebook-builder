@@ -44,7 +44,10 @@ export const translationLimiter = rateLimit({
 // Generation Proxy Handler
 // Forward generation requests from tj-books to tj-gen microservice
 // ---------------------------------------------------------------------------
-export async function proxyToTJGen(req: express.Request, res: express.Response) {
+export async function proxyToTJGen(
+  req: express.Request,
+  res: express.Response,
+) {
   try {
     const targetUrl = `${TJ_GEN_URL}${req.originalUrl}`;
     const headers: Record<string, string> = {

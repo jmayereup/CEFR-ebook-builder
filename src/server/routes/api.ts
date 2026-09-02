@@ -1,8 +1,5 @@
 import express, { Router } from 'express';
-import {
-  getStoriesMetadata,
-  syncUserProfileServer,
-} from '../lib/database';
+import { getStoriesMetadata, syncUserProfileServer } from '../lib/database';
 import {
   generationLimiter,
   metadataLimiter,
@@ -38,7 +35,11 @@ apiRouter.get('/api/stories/metadata', metadataLimiter, async (req, res) => {
 apiRouter.use('/api/stories/generate-outline', generationLimiter, proxyToTJGen);
 apiRouter.use('/api/stories/generate-chapter', generationLimiter, proxyToTJGen);
 apiRouter.use('/api/stories/generate-batch', generationLimiter, proxyToTJGen);
-apiRouter.use('/api/stories/generate-glossary', generationLimiter, proxyToTJGen);
+apiRouter.use(
+  '/api/stories/generate-glossary',
+  generationLimiter,
+  proxyToTJGen,
+);
 apiRouter.use('/api/stories/generate-cover', generationLimiter, proxyToTJGen);
 apiRouter.use('/api/stories/maintenance', generationLimiter, proxyToTJGen);
 apiRouter.use('/api/stories/classify-ip', generationLimiter, proxyToTJGen);

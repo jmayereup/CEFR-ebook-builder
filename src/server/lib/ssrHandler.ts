@@ -3,10 +3,7 @@ import path from 'node:path';
 import type express from 'express';
 import { getStoryCoverUrl } from '../../utils/coverUtils';
 import { getStoryIdFromSegment, slugify } from '../../utils/slugify';
-import {
-  fetchStoryServer,
-  getStoriesMetadataSync,
-} from './database';
+import { fetchStoryServer, getStoriesMetadataSync } from './database';
 
 function escapeHtmlAttr(str: string): string {
   if (!str) return '';

@@ -103,7 +103,12 @@ export function useUserData(options: UseUserDataOptions) {
   );
 
   const [isUserDataLoaded, setIsUserDataLoaded] = useState<boolean>(false);
-  const isSyncingFromServer = useRef(false);
+  const lastSyncedSettingsRef = useRef<{
+    userId: string;
+    translationTargetLanguage: string | null;
+    readerFontSize: number;
+    readerUseSerif: boolean;
+  } | null>(null);
 
   const translationTargetLanguage = useUIStore(
     (state) => state.translationTargetLanguage,
@@ -111,24 +116,36 @@ export function useUserData(options: UseUserDataOptions) {
   const readerFontSize = useUIStore((state) => state.readerFontSize);
   const readerUseSerif = useUIStore((state) => state.readerUseSerif);
 
-  const firstRender = useRef(true);
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
+    if (!currentUser?.uid) return;
+
+    const synced = lastSyncedSettingsRef.current;
+    // Do not sync UI settings to server if profile for this user has not finished loading
+    if (!synced || synced.userId !== currentUser.uid) {
       return;
     }
-    if (isSyncingFromServer.current) {
+
+    const langChanged =
+      synced.translationTargetLanguage !== translationTargetLanguage;
+    const fontChanged = synced.readerFontSize !== readerFontSize;
+    const serifChanged = synced.readerUseSerif !== readerUseSerif;
+
+    if (!langChanged && !fontChanged && !serifChanged) {
       return;
     }
-    if (currentUser) {
-      saveUserProfileData(currentUser.uid, {
-        translationTargetLanguage,
-        readerFontSize,
-        readerUseSerif,
-      }).catch((err) =>
-        console.error('[useUserData] Failed to sync UI settings:', err),
-      );
-    }
+
+    // Update synced reference immediately to prevent race conditions or circular sync
+    synced.translationTargetLanguage = translationTargetLanguage;
+    synced.readerFontSize = readerFontSize;
+    synced.readerUseSerif = readerUseSerif;
+
+    saveUserProfileData(currentUser.uid, {
+      translationTargetLanguage,
+      readerFontSize,
+      readerUseSerif,
+    }).catch((err) =>
+      console.error('[useUserData] Failed to sync UI settings:', err),
+    );
   }, [translationTargetLanguage, readerFontSize, readerUseSerif, currentUser]);
 
   const savedVocabRef = useRef(savedVocab);
@@ -378,6 +395,11 @@ export function useUserData(options: UseUserDataOptions) {
   useEffect(() => {
     if (authChecking) return;
 
+    if (currentUser?.uid !== prevUserRef.current?.uid) {
+      lastSyncedSettingsRef.current = null;
+      setIsUserDataLoaded(false);
+    }
+
     const todayStr = new Date().toISOString().split('T')[0];
     const thisMonthStr = todayStr.substring(0, 7);
     const lastFetchTimeRef = { current: 0 };
@@ -593,7 +615,28 @@ export function useUserData(options: UseUserDataOptions) {
             }
 
             // Load and update target language, font size, serif choice
-            isSyncingFromServer.current = true;
+            const targetLang =
+              profile.translationTargetLanguage !== undefined
+                ? profile.translationTargetLanguage
+                : null;
+            const dbSize = profile.readerFontSize;
+            const validFontSize =
+              typeof dbSize === 'number' && dbSize >= 14 && dbSize <= 26
+                ? dbSize
+                : 18;
+            const validUseSerif =
+              typeof profile.readerUseSerif === 'boolean'
+                ? profile.readerUseSerif
+                : true;
+
+            // Set synced state FIRST so React renders won't trigger a write to server
+            lastSyncedSettingsRef.current = {
+              userId: currentUser.uid,
+              translationTargetLanguage: targetLang,
+              readerFontSize: validFontSize,
+              readerUseSerif: validUseSerif,
+            };
+
             if (profile.translationTargetLanguage !== undefined) {
               useUIStore
                 .getState()
@@ -605,12 +648,7 @@ export function useUserData(options: UseUserDataOptions) {
               profile.readerFontSize !== undefined &&
               profile.readerFontSize !== null
             ) {
-              const dbSize = profile.readerFontSize;
-              if (typeof dbSize === 'number' && dbSize >= 14 && dbSize <= 26) {
-                useUIStore.getState().setReaderFontSize(dbSize);
-              } else {
-                useUIStore.getState().setReaderFontSize(18);
-              }
+              useUIStore.getState().setReaderFontSize(validFontSize);
             }
             if (
               profile.readerUseSerif !== undefined &&
@@ -618,7 +656,6 @@ export function useUserData(options: UseUserDataOptions) {
             ) {
               useUIStore.getState().setReaderUseSerif(profile.readerUseSerif);
             }
-            isSyncingFromServer.current = false;
           }
         } catch (err) {
           console.error('Error fetching user profile: ', err);
@@ -646,6 +683,11 @@ export function useUserData(options: UseUserDataOptions) {
             monthlyCreditsMonth: thisMonthStr,
             date: todayStr,
           });
+
+          lastSyncedSettingsRef.current = null;
+          useUIStore.getState().setReaderFontSize(18);
+          useUIStore.getState().setReaderUseSerif(true);
+          useUIStore.getState().setTranslationTargetLanguage(null);
         } else {
           // Initial guest hydration from localStorage
           const guestBookshelfRaw = localStorage.getItem('bookshelf');
@@ -771,29 +813,34 @@ export function useUserData(options: UseUserDataOptions) {
           }
 
           // 5. Sync Reader UI Preferences without circular save
-          isSyncingFromServer.current = true;
-          if (updatedRecord.translationTargetLanguage !== undefined) {
-            useUIStore
-              .getState()
-              .setTranslationTargetLanguage(
-                updatedRecord.translationTargetLanguage,
-              );
+          const synced = lastSyncedSettingsRef.current;
+          if (synced && synced.userId === currentUser.uid) {
+            if (updatedRecord.translationTargetLanguage !== undefined) {
+              synced.translationTargetLanguage =
+                updatedRecord.translationTargetLanguage;
+              useUIStore
+                .getState()
+                .setTranslationTargetLanguage(
+                  updatedRecord.translationTargetLanguage,
+                );
+            }
+            if (
+              typeof updatedRecord.readerFontSize === 'number' &&
+              updatedRecord.readerFontSize >= 14 &&
+              updatedRecord.readerFontSize <= 26
+            ) {
+              synced.readerFontSize = updatedRecord.readerFontSize;
+              useUIStore
+                .getState()
+                .setReaderFontSize(updatedRecord.readerFontSize);
+            }
+            if (typeof updatedRecord.readerUseSerif === 'boolean') {
+              synced.readerUseSerif = updatedRecord.readerUseSerif;
+              useUIStore
+                .getState()
+                .setReaderUseSerif(updatedRecord.readerUseSerif);
+            }
           }
-          if (
-            typeof updatedRecord.readerFontSize === 'number' &&
-            updatedRecord.readerFontSize >= 14 &&
-            updatedRecord.readerFontSize <= 26
-          ) {
-            useUIStore
-              .getState()
-              .setReaderFontSize(updatedRecord.readerFontSize);
-          }
-          if (typeof updatedRecord.readerUseSerif === 'boolean') {
-            useUIStore
-              .getState()
-              .setReaderUseSerif(updatedRecord.readerUseSerif);
-          }
-          isSyncingFromServer.current = false;
         })
         .then((unsub) => {
           if (typeof unsub === 'function') {
@@ -818,7 +865,9 @@ export function useUserData(options: UseUserDataOptions) {
         } catch {}
       } else {
         try {
-          pb.collection('users').unsubscribe(currentUser.uid).catch(() => {});
+          pb.collection('users')
+            .unsubscribe(currentUser.uid)
+            .catch(() => {});
         } catch {}
       }
     };

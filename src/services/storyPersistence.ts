@@ -1,3 +1,4 @@
+import type { Story } from '../types';
 import { buildApiHeaders } from '../utils/modelUtils';
 import { cleanCompletedStory } from '../utils/storyCleanup';
 import { createStory } from './db';
@@ -7,7 +8,6 @@ import {
   saveStory as saveStoryToOffline,
 } from './storage/offlineStorage';
 import type { IUser } from './types';
-import type { Story } from '../types';
 
 /**
  * Ensures an ID conforms to PocketBase custom ID requirements:
@@ -33,7 +33,10 @@ export interface TriggerCoverOptions {
   storyId: string;
   force?: boolean;
   onCoverUpdated?: (cover: string, updated: string) => void;
-  onRefreshMetadata?: (options: { refresh: boolean; storyId: string }) => void | Promise<void>;
+  onRefreshMetadata?: (options: {
+    refresh: boolean;
+    storyId: string;
+  }) => void | Promise<void>;
 }
 
 /**
@@ -82,9 +85,7 @@ export interface PersistStoryOptions {
   onRefreshMetadata?: (options: { refresh: boolean; storyId: string }) => void;
   triggerCoverGen?: boolean;
   generatingCoverIds?: Set<string>;
-  setGeneratingCoverIds?: (
-    setter: (prev: Set<string>) => Set<string>,
-  ) => void;
+  setGeneratingCoverIds?: (setter: (prev: Set<string>) => Set<string>) => void;
 }
 
 export interface PersistStoryResult {

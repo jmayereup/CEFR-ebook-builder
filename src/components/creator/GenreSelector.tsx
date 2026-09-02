@@ -138,8 +138,8 @@ export default function GenreSelector({
           <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-2 text-xs text-amber-700 dark:text-amber-300">
             <Info className="w-4 h-4 mt-0.5 shrink-0" />
             <p>
-              Non-fiction narratives automatically use grounded factual temperature
-              settings to maintain accuracy.
+              Non-fiction narratives automatically use grounded factual
+              temperature settings to maintain accuracy.
             </p>
           </div>
         )}

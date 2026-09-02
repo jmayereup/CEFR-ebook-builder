@@ -1,10 +1,6 @@
 import { Globe, Sparkles } from 'lucide-react';
 import type React from 'react';
-import {
-  CEFR_LEVELS,
-  GENRES,
-  type SUPPORTED_LANGUAGES,
-} from '../../types';
+import { CEFR_LEVELS, GENRES, type SUPPORTED_LANGUAGES } from '../../types';
 
 interface EmbedStoryFormProps {
   embedUrl: string;
