@@ -17,6 +17,7 @@ import {
   AI_MODELS,
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
+  MODEL_PRICES_LAST_UPDATED,
   formatModelPriceIndicator,
 } from '../../constants/models';
 import { updateStoryModel } from '../../services/db';
@@ -431,10 +432,17 @@ export default function ChapterSidebar({
           <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
             {isCreator && (
               <div className="space-y-1">
-                <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider flex items-center gap-1">
-                  <Cpu className="w-3.5 h-3.5 text-tj-primary" />
-                  Writing Model
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                    <Cpu className="w-3.5 h-3.5 text-tj-primary" />
+                    Writing Model
+                  </label>
+                  {(!!customOpenRouterKey || currentUser?.isAdmin) && (
+                    <span className="text-[9px] text-tj-text-muted">
+                      Rates: {MODEL_PRICES_LAST_UPDATED}
+                    </span>
+                  )}
+                </div>
                 <select
                   disabled={
                     !isOnline || isLoadingNext || isAutoGeneratingRemaining

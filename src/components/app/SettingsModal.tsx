@@ -14,6 +14,7 @@ import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import {
   FRONTIER_LATEST_MODELS,
+  MODEL_PRICES_LAST_UPDATED,
   formatModelPriceIndicator,
 } from '../../constants/models';
 import {
@@ -328,11 +329,14 @@ export default function SettingsModal({
 
           {/* BYOK Model Selection Settings */}
           <div className="space-y-4 pt-3 border-t border-tj-border-main">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-1">
               <label className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold flex items-center gap-1.5">
                 <Cpu className="w-3.5 h-3.5 text-tj-primary" />
                 BYOK AI Model Configurations
               </label>
+              <span className="text-[10px] text-tj-text-muted">
+                Rates verified: {MODEL_PRICES_LAST_UPDATED}
+              </span>
             </div>
 
             {!hasApiKey ? (

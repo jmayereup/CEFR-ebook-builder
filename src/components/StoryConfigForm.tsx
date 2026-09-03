@@ -22,6 +22,7 @@ import {
   AI_MODELS,
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
+  MODEL_PRICES_LAST_UPDATED,
   formatModelPriceIndicator,
 } from '../constants/models';
 import { useAuthStore } from '../store/authStore';
@@ -929,10 +930,17 @@ export default function StoryConfigForm({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-tj-bg-recessed/50 border border-tj-border-main rounded-2xl animate-fade-in">
                   <div className="md:col-span-2">
                     <div className="flex items-center justify-between mb-2">
-                      <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-                        <Cpu className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />
-                        AI Writing Model
-                      </label>
+                      <div className="flex items-center gap-2">
+                        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                          <Cpu className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />
+                          AI Writing Model
+                        </label>
+                        {isByokActive && (
+                          <span className="text-[10px] text-tj-text-muted font-normal">
+                            (Rates verified: {MODEL_PRICES_LAST_UPDATED})
+                          </span>
+                        )}
+                      </div>
                       <button
                         type="button"
                         onClick={() => setShowDefaultModelInfo(true)}
@@ -1404,7 +1412,8 @@ export default function StoryConfigForm({
                         (AI_MODELS.find((m) => m.id === selectedModel)
                           ?.outputCost1M || 0) * 100
                       ).toFixed(1)}{' '}
-                      credits/1M output tokens). Full-text context is
+                      credits/1M output tokens; rates verified{' '}
+                      {MODEL_PRICES_LAST_UPDATED}). Full-text context is
                       dynamically preserved across chapters.
                     </span>
                   </div>
