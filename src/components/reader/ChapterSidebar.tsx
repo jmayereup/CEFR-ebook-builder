@@ -22,6 +22,7 @@ import {
 } from '../../constants/models';
 import { updateStoryModel } from '../../services/db';
 import { useUIStore } from '../../store/uiStore';
+import { getModelDisplayName } from '../../utils/modelUtils';
 import {
   getAverageRating,
   getLanguageCodeFromName,
@@ -907,6 +908,15 @@ export default function ChapterSidebar({
               nextChapterNumber={(story.chapters?.length ?? 0) + 1}
             />
           )}
+          {/* AI Model Imprint */}
+          <div className="pt-3 mt-1 border-t border-slate-100 dark:border-slate-800/80 text-center select-none">
+            <p className="text-[10px] text-tj-text-muted/75 font-sans">
+              Generated with{' '}
+              <span className="font-semibold text-tj-text-main">
+                {getModelDisplayName(story.model)}
+              </span>
+            </p>
+          </div>
         </>
       )}
     </div>

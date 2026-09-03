@@ -1,6 +1,7 @@
 import JSZip from 'jszip';
 import type { Story } from '../types';
 import { getStoryCoverUrls } from './coverUtils';
+import { getModelDisplayName } from './modelUtils';
 import { segmentText } from './segmenter';
 
 function escapeXml(unsafe: string): string {
@@ -477,6 +478,7 @@ a.glossary-backlink {
     <div class="book-meta">
       <p><strong>Level:</strong> CEFR ${story.cefrLevel}</p>
       <p><strong>Total Chapters:</strong> ${story.chapters?.length ?? 0} of ${story.totalChapters}</p>
+      <p><strong>Model:</strong> ${escapeXml(getModelDisplayName(story.model))}</p>
     </div>
     <div class="book-divider"></div>
     ${story.description ? `<p class="book-intro">${escapeXml(story.description)}</p>` : ''}

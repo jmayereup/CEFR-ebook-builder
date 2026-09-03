@@ -23,6 +23,7 @@ import {
   type Story,
 } from '../../types';
 import { getStoryCoverUrl } from '../../utils/coverUtils';
+import { getModelDisplayName } from '../../utils/modelUtils';
 import { countWords } from '../../utils/wordCounter';
 
 const cleanGenreLabel = (label: string) => {
@@ -356,6 +357,10 @@ export default function StoryCard({
                     <span className="text-tj-text-muted/60">•</span>
                     <span className="text-tj-text-muted uppercase">
                       Theme: {resolvedGenreLabel}
+                    </span>
+                    <span className="text-tj-text-muted/60">•</span>
+                    <span className="text-tj-text-muted uppercase">
+                      Model: {getModelDisplayName(story.model)}
                     </span>
                   </div>
                 </div>

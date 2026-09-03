@@ -23,6 +23,7 @@ import {
   type RecentlyReadItem,
   type Story,
 } from '../../types';
+import { getModelDisplayName } from '../../utils/modelUtils';
 import { countWords } from '../../utils/wordCounter';
 
 const cleanGenreLabel = (label: string) => {
@@ -227,6 +228,8 @@ export default function StoryCondensedRow({
             )}
             <span className="opacity-40">•</span>
             <span>Theme: {resolvedGenreLabel}</span>
+            <span className="opacity-40">•</span>
+            <span>Model: {getModelDisplayName(story.model)}</span>
             {totalReads > 0 && (
               <>
                 <span className="opacity-40">•</span>
