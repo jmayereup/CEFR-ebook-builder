@@ -22,6 +22,7 @@ import {
   AI_MODELS,
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
+  formatModelPriceIndicator,
 } from '../constants/models';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
@@ -127,6 +128,7 @@ interface StoryConfigFormProps {
   freeModelCount?: number;
   monthlyCreditsUsed?: number;
   dailyCreditsUsed?: number;
+  dailyStoriesCreated?: number;
   onLogin?: (mode?: 'signin' | 'signup') => void;
 }
 
@@ -138,6 +140,7 @@ export default function StoryConfigForm({
   freeModelCount = 0,
   monthlyCreditsUsed = 0,
   dailyCreditsUsed = 0,
+  dailyStoriesCreated = 0,
   onLogin,
 }: StoryConfigFormProps) {
   const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
@@ -157,13 +160,18 @@ export default function StoryConfigForm({
   const [totalChapters, setTotalChapters] = useState(5);
   const [chapterLength, setChapterLength] = useState(350);
   const [promptNotes, setPromptNotes] = useState('');
-  const [selectedModel, setSelectedModel] = useState(
-    defaultStoryModel || 'deepseek/deepseek-v4-pro',
-  );
+  const [selectedModel, setSelectedModel] = useState(() => {
+    if (isByokActive || isAdmin) {
+      return defaultStoryModel || 'deepseek/deepseek-v4-pro';
+    }
+    return 'z-ai/glm-5.3-flash';
+  });
   const [thinkingOption, setThinkingOption] = useState(() => {
-    const support = getModelThinkingSupport(
-      defaultStoryModel || 'deepseek/deepseek-v4-pro',
-    );
+    const initialModel =
+      isByokActive || isAdmin
+        ? defaultStoryModel || 'deepseek/deepseek-v4-pro'
+        : 'z-ai/glm-5.3-flash';
+    const support = getModelThinkingSupport(initialModel);
     return support.defaultOption;
   });
   const [temperature, setTemperature] = useState(0.8);
@@ -223,9 +231,8 @@ export default function StoryConfigForm({
     } catch (e) {
       console.error(e);
     }
-    if (!isByokActive) {
-      const newModel =
-        DEFAULT_MODEL_FOR_LANGUAGE[langCode] || 'deepseek/deepseek-v4-pro';
+    if (!isByokActive && !isAdmin) {
+      const newModel = 'z-ai/glm-5.3-flash';
       setSelectedModel(newModel);
 
       // Auto-update thinkingOption for the new model
@@ -332,6 +339,8 @@ export default function StoryConfigForm({
       estimatedCreditsCost,
       1,
       currentUser?.emailVerified ?? true,
+      dailyStoriesCreated,
+      true,
     );
 
     if (denied) {
@@ -340,11 +349,11 @@ export default function StoryConfigForm({
       return;
     }
 
-    if (!isPaid && !isAdmin) {
+    if (!isPaid && !isAdmin && !isByokActive) {
       const isLongStory = totalChapters > 10;
       if (isLongStory) {
         setDraftError(
-          `Generating stories longer than 10 chapters is reserved for Paid Tier accounts. Please upgrade to the Paid Tier to unlock stories up to 30 chapters.`,
+          `Free tier stories are limited to 10 chapters. Add your own OpenRouter API key in Settings to unlock stories up to 30 chapters.`,
         );
         setIsDraftingOutline(false);
         return;
@@ -601,7 +610,7 @@ export default function StoryConfigForm({
     chapterLength,
     selectedModel,
   );
-  const maxChapters = isPaid || isAdmin ? 30 : 10;
+  const maxChapters = isPaid || isAdmin || isByokActive ? 30 : 10;
 
   return (
     <>
@@ -952,31 +961,32 @@ export default function StoryConfigForm({
                               {byokModelName} (Custom Model)
                             </option>
                           )}
-                          {FRONTIER_LATEST_MODELS.map((m) => (
-                            <option key={m.id} value={m.id}>
-                              {m.name} ({m.id})
-                            </option>
-                          ))}
+                          {FRONTIER_LATEST_MODELS.map((m) => {
+                            const priceLabel = formatModelPriceIndicator(
+                              m.inputCost1M,
+                              m.outputCost1M,
+                            );
+                            return (
+                              <option key={m.id} value={m.id}>
+                                {m.name} {priceLabel}
+                              </option>
+                            );
+                          })}
                         </>
                       ) : (
                         (() => {
                           const isFreeModelLocal = (id: string) =>
                             FREE_MODEL_IDS.has(id) || id.endsWith(':free');
+
+                          // Don't show other models unless the user has a key (or is admin)
+                          const modelsToDisplay =
+                            !isAdmin && !isByokActive
+                              ? AI_MODELS.filter((m) => isFreeModelLocal(m.id))
+                              : AI_MODELS;
+
                           const renderOption = (
                             model: (typeof AI_MODELS)[0],
                           ) => {
-                            let isModelRestricted = false;
-                            let restrictionLabel = '';
-
-                            if (!isAdmin && !isByokActive) {
-                              if (!isPaid) {
-                                if (!isFreeModelLocal(model.id)) {
-                                  isModelRestricted = true;
-                                  restrictionLabel = ' 🔒 (Paid Tier Required)';
-                                }
-                              }
-                            }
-
                             const isFree = isFreeModelLocal(model.id);
                             let costLabel = '';
                             if (isFree) {
@@ -998,16 +1008,14 @@ export default function StoryConfigForm({
                               <option
                                 key={model.id}
                                 value={model.id}
-                                disabled={isModelRestricted}
                               >
                                 {model.name}
                                 {costLabel}
-                                {restrictionLabel}
                               </option>
                             );
                           };
 
-                          const allSortedModels = [...AI_MODELS].sort((a, b) =>
+                          const allSortedModels = [...modelsToDisplay].sort((a, b) =>
                             a.name.localeCompare(b.name),
                           );
 
@@ -1408,13 +1416,21 @@ export default function StoryConfigForm({
                     <div className="flex items-center justify-between text-slate-700 dark:text-slate-350 font-semibold text-xs uppercase tracking-wider">
                       <div className="flex items-center gap-2">
                         <Layers className="w-4 h-4 shrink-0 text-tj-primary" />
-                        <span>Daily Allocation (Community Drive)</span>
+                        <span>Daily Free Tier Allowance</span>
                       </div>
-                      <span className="text-[10px] bg-tj-primary/10 text-tj-primary px-2 py-0.5 rounded font-bold">
-                        Limited Time
-                      </span>
                     </div>
                     <div className="grid grid-cols-2 gap-3 text-center">
+                      <div className="p-2.5 bg-tj-bg-card border border-tj-border-main rounded-xl">
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                          Daily Books
+                        </p>
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">
+                          {Math.max(0, 2 - dailyStoriesCreated)} / 2
+                        </p>
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5">
+                          books remaining (up to 10 ch)
+                        </p>
+                      </div>
                       <div className="p-2.5 bg-tj-bg-card border border-tj-border-main rounded-xl">
                         <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
                           Daily Credits
@@ -1423,24 +1439,12 @@ export default function StoryConfigForm({
                           {Math.max(0, 25 - dailyCreditsUsed)} / 25
                         </p>
                         <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5">
-                          credits remaining today
-                        </p>
-                      </div>
-                      <div className="p-2.5 bg-tj-bg-card border border-tj-border-main rounded-xl">
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                          Lookups Allowance
-                        </p>
-                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">
-                          100 / day
-                        </p>
-                        <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5">
-                          lookups cost 0 credits
+                          credits for regenerations (0.5/ch)
                         </p>
                       </div>
                     </div>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center italic">
-                      Note: Chapter regenerations cost 0.5 credits. BYOK users
-                      get unlimited access using their own API key.
+                      Note: Configure your own OpenRouter key in Settings for unlimited books and all frontier models.
                     </p>
                   </div>
                 )}

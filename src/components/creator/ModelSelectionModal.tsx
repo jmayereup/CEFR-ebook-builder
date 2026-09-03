@@ -1,6 +1,8 @@
-import { Brain, Check, Cpu, Sparkles, X, Zap } from 'lucide-react';
+import { Brain, Check, Cpu, Key, Sparkles, X, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
-import { AI_MODELS } from '../../constants/models';
+import { AI_MODELS, FREE_MODEL_IDS } from '../../constants/models';
+import { useAuthStore } from '../../store/authStore';
+import { useUIStore } from '../../store/uiStore';
 
 interface ModelSelectionModalProps {
   isOpen: boolean;
@@ -43,7 +45,20 @@ export default function ModelSelectionModal({
   onClose,
   selectedModel,
 }: ModelSelectionModalProps) {
+  const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
+  const currentUser = useAuthStore((state) => state.currentUser);
+  const isAdmin = currentUser?.isAdmin === true;
+  const hasKey = !!customOpenRouterKey;
+
   if (!isOpen) return null;
+
+  const isFreeModelLocal = (id: string) =>
+    FREE_MODEL_IDS.has(id) || id.endsWith(':free');
+
+  const modelsToDisplay =
+    !isAdmin && !hasKey
+      ? AI_MODELS.filter((m) => isFreeModelLocal(m.id))
+      : AI_MODELS;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm">
@@ -72,14 +87,13 @@ export default function ModelSelectionModal({
         {/* Content Area */}
         <div className="space-y-4 text-xs font-sans text-tj-text-main overflow-y-auto pr-1 flex-1">
           <p className="leading-relaxed text-tj-text-muted">
-            Select an AI model for story generation. Standard
-            &ldquo;Flash&rdquo; models are cost-efficient and fast, while
-            &ldquo;Pro&rdquo; models offer deep narrative nuances and high
-            structural complexity.
+            {!isAdmin && !hasKey
+              ? 'GLM 5.3 Flash is the dedicated free AI model for story generation on the free tier. To unlock all frontier models (DeepSeek V4 Pro, Hermes 3, Claude, Gemini, GPT), configure your own OpenRouter API key in Settings.'
+              : 'Select an AI model for story generation. Standard Flash models are cost-efficient and fast, while Pro models offer deep narrative nuances and high structural complexity.'}
           </p>
 
           <div className="space-y-3">
-            {AI_MODELS.map((model) => {
+            {modelsToDisplay.map((model) => {
               const details = MODEL_DETAILS[model.id] || {
                 verdict: `A capable ${model.category === 'pro' ? 'professional-grade' : 'fast and economical'} model.`,
                 languages: 'All supported languages',

@@ -153,10 +153,11 @@ export async function persistStory(
       onRefreshMetadata({ refresh: true, storyId: sanitizedId });
     }
 
-    // 4. Background cover generation for completed stories
+    // 4. Background cover generation for completed public stories
     if (
       triggerCoverGen &&
       storyToSave.isCompleted &&
+      storyToSave.isPublic !== false &&
       (!generatingCoverIds || !generatingCoverIds.has(sanitizedId))
     ) {
       if (setGeneratingCoverIds) {

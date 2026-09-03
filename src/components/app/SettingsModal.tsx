@@ -12,7 +12,10 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
-import { FRONTIER_LATEST_MODELS } from '../../constants/models';
+import {
+  FRONTIER_LATEST_MODELS,
+  formatModelPriceIndicator,
+} from '../../constants/models';
 import {
   calculateBaselineStoryCost,
   fetchOpenRouterModels,
@@ -363,11 +366,17 @@ export default function SettingsModal({
                       }
                       className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
                     >
-                      {FRONTIER_LATEST_MODELS.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name} ({m.id})
-                        </option>
-                      ))}
+                      {FRONTIER_LATEST_MODELS.map((m) => {
+                        const priceLabel = formatModelPriceIndicator(
+                          m.inputCost1M,
+                          m.outputCost1M,
+                        );
+                        return (
+                          <option key={m.id} value={m.id}>
+                            {m.name} {priceLabel}
+                          </option>
+                        );
+                      })}
                       <option value="custom">
                         ⚙️ Enter Custom OpenRouter Model ID...
                       </option>
@@ -405,11 +414,17 @@ export default function SettingsModal({
                       }
                       className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
                     >
-                      {FRONTIER_LATEST_MODELS.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name} ({m.id})
-                        </option>
-                      ))}
+                      {FRONTIER_LATEST_MODELS.map((m) => {
+                        const priceLabel = formatModelPriceIndicator(
+                          m.inputCost1M,
+                          m.outputCost1M,
+                        );
+                        return (
+                          <option key={m.id} value={m.id}>
+                            {m.name} {priceLabel}
+                          </option>
+                        );
+                      })}
                       <option value="custom">
                         ⚙️ Enter Custom OpenRouter Model ID...
                       </option>
@@ -447,11 +462,17 @@ export default function SettingsModal({
                       }
                       className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
                     >
-                      {FRONTIER_LATEST_MODELS.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name} ({m.id})
-                        </option>
-                      ))}
+                      {FRONTIER_LATEST_MODELS.map((m) => {
+                        const priceLabel = formatModelPriceIndicator(
+                          m.inputCost1M,
+                          m.outputCost1M,
+                        );
+                        return (
+                          <option key={m.id} value={m.id}>
+                            {m.name} {priceLabel}
+                          </option>
+                        );
+                      })}
                       <option value="custom">
                         ⚙️ Enter Custom OpenRouter Model ID...
                       </option>

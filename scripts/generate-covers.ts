@@ -75,7 +75,7 @@ async function main() {
 
     console.log('Fetching completed stories...');
     const stories = await pb.collection('stories').getFullList({
-      filter: 'isCompleted = true',
+      filter: 'isCompleted = true && isPublic != false',
       sort: '-created',
     });
 
@@ -85,6 +85,13 @@ async function main() {
 
     for (const story of stories) {
       if (targetStoryId && story.id !== targetStoryId) {
+        continue;
+      }
+
+      if (story.isPublic === false) {
+        console.log(
+          `[SKIP] "${story.title}" (ID: ${story.id}) - Private story (covers disabled).`,
+        );
         continue;
       }
 

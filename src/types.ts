@@ -257,6 +257,7 @@ export interface LookupLimitData {
 export interface GenerationLimitData {
   dailyCreditsUsed?: number;
   dailyCreditsDate?: string;
+  dailyStoriesCreated?: number;
   freeModelCount: number;
   monthlyCreditsUsed: number;
   monthlyCreditsMonth: string;

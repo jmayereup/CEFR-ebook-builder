@@ -175,6 +175,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       const todayStr = new Date().toISOString().split('T')[0];
       const thisMonthStr = todayStr.substring(0, 7);
       return {
+        dailyStoriesCreated: 0,
         freeModelCount: 0,
         monthlyCreditsUsed: 0,
         monthlyCreditsMonth: thisMonthStr,
@@ -409,6 +410,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     freeModelCount: generationLimitData.freeModelCount ?? 0,
     monthlyCreditsUsed: generationLimitData.monthlyCreditsUsed ?? 0,
     dailyCreditsUsed: generationLimitData.dailyCreditsUsed ?? 0,
+    dailyStoriesCreated: generationLimitData.dailyStoriesCreated ?? 0,
     onGenerationSuccess: handleIncrementGenerationCount,
     selectedStory,
     stories,
@@ -516,6 +518,20 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     storyId: string,
     force: boolean = false,
   ) => {
+    const targetStory =
+      selectedStory && selectedStory.id === storyId
+        ? selectedStory
+        : stories.find((s) => s.id === storyId);
+
+    if (targetStory && targetStory.isPublic === false) {
+      showAlert(
+        'Cover Generation Disabled',
+        'Cover images cannot be generated for private stories.',
+        'info',
+      );
+      return;
+    }
+
     setGeneratingCoverIds((prev) => new Set(prev).add(storyId));
     try {
       const res = await triggerStoryCoverGeneration({

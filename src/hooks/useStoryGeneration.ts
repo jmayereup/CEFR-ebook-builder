@@ -70,7 +70,12 @@ export interface GenerationOptions {
   freeModelCount: number;
   monthlyCreditsUsed: number;
   dailyCreditsUsed?: number;
-  onGenerationSuccess?: (modelId: string, creditsCost: number) => void;
+  dailyStoriesCreated?: number;
+  onGenerationSuccess?: (
+    modelId: string,
+    creditsCost: number,
+    isNewStory?: boolean,
+  ) => void;
   /** Currently open story (needed for next-chapter / auto-generate). */
   selectedStory: Story | null;
   stories: Story[];
@@ -146,6 +151,7 @@ export const useStoryGeneration = (
     freeModelCount,
     monthlyCreditsUsed,
     dailyCreditsUsed = 0,
+    dailyStoriesCreated = 0,
     onGenerationSuccess,
     selectedStory,
     stories,
@@ -247,10 +253,10 @@ export const useStoryGeneration = (
     }
 
     const isAdmin = currentUser?.isAdmin === true;
-    if (!isPaid && !isAdmin && config.totalChapters > 10) {
+    if (!isPaid && !isAdmin && !customOpenRouterKey && config.totalChapters > 10) {
       showAlert(
         'Chapter Limit Reached',
-        'Free tier members are limited to a maximum of 10 chapters per story. Upgrade to the Paid Tier to write longer stories.',
+        'Free tier members are limited to a maximum of 10 chapters per story. Configure your own OpenRouter API key in Settings for longer stories.',
         'warning',
       );
       return;
@@ -291,6 +297,8 @@ export const useStoryGeneration = (
       estimatedCreditsCost,
       batchCount,
       currentUser?.emailVerified ?? true,
+      dailyStoriesCreated,
+      true,
     );
     if (denied) {
       showAlert(denied.title, denied.message, 'warning');
@@ -474,8 +482,9 @@ export const useStoryGeneration = (
 
       if (onGenerationSuccess) {
         onGenerationSuccess(
-          config.model || 'deepseek/deepseek-v4-pro',
+          config.model || 'z-ai/glm-5.3-flash',
           estimatedCreditsCost,
+          true,
         );
       }
       setIsGenerating(false);
@@ -524,10 +533,10 @@ export const useStoryGeneration = (
     const currentChapters = selectedStory.chapters?.length ?? 0;
     const nextChapterNumber = currentChapters + 1;
 
-    if (!isPaid && !isAdmin && nextChapterNumber > 10) {
+    if (!isPaid && !isAdmin && !customOpenRouterKey && nextChapterNumber > 10) {
       showAlert(
         'Chapter Limit Reached',
-        'Free tier members are limited to a maximum of 10 chapters per story. Upgrade to the Paid Tier to add more chapters.',
+        'Free tier members are limited to a maximum of 10 chapters per story. Configure your own OpenRouter API key in Settings to add more chapters.',
         'warning',
       );
       return;
@@ -554,6 +563,8 @@ export const useStoryGeneration = (
       actualCharge,
       1,
       currentUser?.emailVerified ?? true,
+      dailyStoriesCreated,
+      false,
     );
     if (denied) {
       showAlert(denied.title, denied.message, 'warning');
@@ -728,6 +739,8 @@ export const useStoryGeneration = (
       actualCharge,
       1,
       currentUser?.emailVerified ?? true,
+      dailyStoriesCreated,
+      false,
     );
     if (denied) {
       showAlert(denied.title, denied.message, 'warning');
@@ -869,10 +882,10 @@ export const useStoryGeneration = (
     const currentChapters = selectedStory.chapters?.length ?? 0;
     const isAdmin = currentUser?.isAdmin === true;
 
-    if (!isPaid && !isAdmin && selectedStory.totalChapters > 10) {
+    if (!isPaid && !isAdmin && !customOpenRouterKey && selectedStory.totalChapters > 10) {
       showAlert(
         'Chapter Limit Reached',
-        'Free tier members are limited to a maximum of 10 chapters per story. Upgrade to the Paid Tier to auto-write longer stories.',
+        'Free tier members are limited to a maximum of 10 chapters per story. Configure your own OpenRouter API key in Settings to auto-write longer stories.',
         'warning',
       );
       return;
@@ -899,6 +912,8 @@ export const useStoryGeneration = (
       actualCreditsCost,
       remainingChapters,
       currentUser?.emailVerified ?? true,
+      dailyStoriesCreated,
+      false,
     );
     if (denied) {
       showAlert(denied.title, denied.message, 'warning');

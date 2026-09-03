@@ -74,6 +74,7 @@ export default function CreatePage({
           freeModelCount={generationLimitData.freeModelCount ?? 0}
           monthlyCreditsUsed={generationLimitData.monthlyCreditsUsed ?? 0}
           dailyCreditsUsed={generationLimitData.dailyCreditsUsed ?? 0}
+          dailyStoriesCreated={generationLimitData.dailyStoriesCreated ?? 0}
           onLogin={onLogin}
         />
       )}

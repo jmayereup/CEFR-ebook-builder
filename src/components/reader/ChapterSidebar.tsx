@@ -13,7 +13,12 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { AI_MODELS, FREE_MODEL_IDS } from '../../constants/models';
+import {
+  AI_MODELS,
+  FREE_MODEL_IDS,
+  FRONTIER_LATEST_MODELS,
+  formatModelPriceIndicator,
+} from '../../constants/models';
 import { updateStoryModel } from '../../services/db';
 import { useUIStore } from '../../store/uiStore';
 import {
@@ -442,29 +447,31 @@ export default function ChapterSidebar({
                     const isFreeModelLocal = (id: string) =>
                       FREE_MODEL_IDS.has(id) || id.endsWith(':free');
 
-                    const renderOption = (model: (typeof AI_MODELS)[0]) => {
-                      let isModelRestricted = false;
-                      let restrictionLabel = '';
+                    const isAdmin = currentUser?.isAdmin === true;
+                    const hasKey = !!customOpenRouterKey;
 
-                      const isAdmin = currentUser?.isAdmin === true;
-                      if (!isAdmin && !isPaid && !isFreeModelLocal(model.id)) {
-                        isModelRestricted = true;
-                        restrictionLabel = ' 🔒 (Paid Tier Required)';
-                      }
+                    if (!isAdmin && !hasKey) {
+                      const freeModels = AI_MODELS.filter((m) =>
+                        isFreeModelLocal(m.id),
+                      );
+                      return freeModels.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name}
+                        </option>
+                      ));
+                    }
 
+                    return FRONTIER_LATEST_MODELS.map((m) => {
+                      const priceLabel = formatModelPriceIndicator(
+                        m.inputCost1M,
+                        m.outputCost1M,
+                      );
                       return (
-                        <option
-                          key={model.id}
-                          value={model.id}
-                          disabled={isModelRestricted}
-                        >
-                          {model.name}
-                          {restrictionLabel}
+                        <option key={m.id} value={m.id}>
+                          {m.name} {priceLabel}
                         </option>
                       );
-                    };
-
-                    return AI_MODELS.map(renderOption);
+                    });
                   })()}
                 </select>
               </div>
@@ -645,34 +652,40 @@ export default function ChapterSidebar({
                       <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
                         Story Cover
                       </label>
-                      <button
-                        type="button"
-                        disabled={
-                          isLoadingNext ||
-                          isAutoGeneratingRemaining ||
-                          isGeneratingCover
-                        }
-                        onClick={async () => {
-                          setIsGeneratingCover(true);
-                          try {
-                            await onGenerateCover(story.id, true);
-                          } finally {
-                            setIsGeneratingCover(false);
+                      {story.isPublic === false ? (
+                        <p className="text-[10px] text-tj-text-muted italic">
+                          Cover generation is disabled for private stories.
+                        </p>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={
+                            isLoadingNext ||
+                            isAutoGeneratingRemaining ||
+                            isGeneratingCover
                           }
-                        }}
-                        className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
-                      >
-                        {isGeneratingCover ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
-                        ) : (
-                          <Sparkles className="w-3.5 h-3.5 text-white" />
-                        )}
-                        <span>
-                          {isGeneratingCover
-                            ? 'Generating...'
-                            : 'Regenerate Cover'}
-                        </span>
-                      </button>
+                          onClick={async () => {
+                            setIsGeneratingCover(true);
+                            try {
+                              await onGenerateCover(story.id, true);
+                            } finally {
+                              setIsGeneratingCover(false);
+                            }
+                          }}
+                          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
+                        >
+                          {isGeneratingCover ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                          ) : (
+                            <Sparkles className="w-3.5 h-3.5 text-white" />
+                          )}
+                          <span>
+                            {isGeneratingCover
+                              ? 'Generating...'
+                              : 'Regenerate Cover'}
+                          </span>
+                        </button>
+                      )}
                     </div>
                   )}
               </div>

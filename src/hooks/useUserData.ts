@@ -13,6 +13,7 @@ import {
 import { pb } from '../services/pocketbase';
 import { useUIStore } from '../store/uiStore';
 import type { VocabularyTerm } from '../types';
+import { isFreeModel } from '../utils/creditCalculation';
 import { calculateNextSRS } from '../utils/srs';
 
 interface LookupLimitData {
@@ -188,20 +189,13 @@ export function useUserData(options: UseUserDataOptions) {
 
   const handleIncrementGenerationCount = (
     modelId: string,
-    creditsCost: number,
+    creditsCost: number = 0,
+    isNewStory: boolean = false,
   ) => {
     const todayStr = new Date().toISOString().split('T')[0];
     const thisMonthStr = todayStr.substring(0, 7);
     setGenerationLimitData((prev) => {
-      const isFreeModel =
-        modelId.endsWith(':free') ||
-        modelId === 'openrouter/free' ||
-        modelId ===
-          'cognitivecomputations/dolphin-mistral-24b-venice-edition:free' ||
-        modelId === 'meta-llama/llama-3.3-70b-instruct:free' ||
-        modelId === 'google/gemma-4-31b-it:free' ||
-        modelId === 'openai/gpt-oss-20b:free' ||
-        modelId === 'openai/gpt-oss-120b:free';
+      const isFree = isFreeModel(modelId);
 
       const prevDateIsToday = prev.date === todayStr;
       const prevMonthIsThisMonth = prev.monthlyCreditsMonth === thisMonthStr;
@@ -210,6 +204,9 @@ export function useUserData(options: UseUserDataOptions) {
       const prevDailyCredits = prevDateIsToday
         ? (prev.dailyCreditsUsed ?? 0)
         : 0;
+      const prevDailyStories = prevDateIsToday
+        ? (prev.dailyStoriesCreated ?? 0)
+        : 0;
       const prevCreditsUsed = prevMonthIsThisMonth
         ? (prev.monthlyCreditsUsed ?? 0)
         : 0;
@@ -217,8 +214,11 @@ export function useUserData(options: UseUserDataOptions) {
       const updated: GenerationLimitData = {
         dailyCreditsUsed: prevDailyCredits + creditsCost,
         dailyCreditsDate: todayStr,
-        freeModelCount: isFreeModel ? prevFreeCount + 1 : prevFreeCount,
-        monthlyCreditsUsed: !isFreeModel
+        dailyStoriesCreated: isNewStory
+          ? prevDailyStories + 1
+          : prevDailyStories,
+        freeModelCount: isFree ? prevFreeCount + 1 : prevFreeCount,
+        monthlyCreditsUsed: !isFree
           ? prevCreditsUsed + creditsCost
           : prevCreditsUsed,
         monthlyCreditsMonth: thisMonthStr,
@@ -577,6 +577,10 @@ export function useUserData(options: UseUserDataOptions) {
                     ? (profile.generationLimitData.dailyCreditsUsed ?? 0)
                     : 0,
                 dailyCreditsDate: todayStr,
+                dailyStoriesCreated:
+                  profile.generationLimitData.date === todayStr
+                    ? (profile.generationLimitData.dailyStoriesCreated ?? 0)
+                    : 0,
                 freeModelCount:
                   profile.generationLimitData.date === todayStr
                     ? (profile.generationLimitData.freeModelCount ??
@@ -602,6 +606,7 @@ export function useUserData(options: UseUserDataOptions) {
               const resetData = {
                 dailyCreditsUsed: 0,
                 dailyCreditsDate: todayStr,
+                dailyStoriesCreated: 0,
                 freeModelCount: 0,
                 monthlyCreditsUsed: 0,
                 monthlyCreditsMonth: thisMonthStr,
