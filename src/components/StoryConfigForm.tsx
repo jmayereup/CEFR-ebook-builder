@@ -23,6 +23,7 @@ import {
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
   formatModelPriceIndicator,
+  isMuseModel,
   MODEL_PRICES_LAST_UPDATED,
 } from '../constants/models';
 import { useAuthStore } from '../store/authStore';
@@ -40,6 +41,7 @@ import {
   getRecommendedWordCount,
 } from '../utils/storyEstimation';
 import { generatePocketBaseId } from '../utils/storyFactory';
+import AgeVerificationModal from './creator/AgeVerificationModal';
 import EmbedStoryForm from './creator/EmbedStoryForm';
 import LanguageSelector from './creator/LanguageSelector';
 import ModelSelectionModal from './creator/ModelSelectionModal';
@@ -154,6 +156,14 @@ export default function StoryConfigForm({
   );
   const currentUser = useAuthStore((state) => state.currentUser);
   const isByokActive = !!currentUser && !!customOpenRouterKey;
+  const isAgeVerified = useUIStore((state) => state.isAgeVerified);
+  const setIsAgeVerified = useUIStore((state) => state.setIsAgeVerified);
+  const [showAgeVerificationModal, setShowAgeVerificationModal] =
+    useState(false);
+  const [pendingModelForAge, setPendingModelForAge] = useState<string | null>(
+    null,
+  );
+
   // Config state
   const [language, setLanguage] = useState('es');
   const [cefrLevel, setCefrLevel] = useState('B1');
@@ -163,7 +173,11 @@ export default function StoryConfigForm({
   const [promptNotes, setPromptNotes] = useState('');
   const [selectedModel, setSelectedModel] = useState(() => {
     if (isByokActive || isAdmin) {
-      return defaultStoryModel || 'deepseek/deepseek-v4-pro';
+      const preferred = defaultStoryModel || 'deepseek/deepseek-v4-pro';
+      if (isMuseModel(preferred) && !isAgeVerified) {
+        return 'deepseek/deepseek-v4-pro';
+      }
+      return preferred;
     }
     return 'z-ai/glm-5.3-flash';
   });
@@ -216,11 +230,41 @@ export default function StoryConfigForm({
   // Sync selectedModel with defaultStoryModel when BYOK is active or when defaultStoryModel changes
   useEffect(() => {
     if (isByokActive && defaultStoryModel) {
+      if (isMuseModel(defaultStoryModel) && !isAgeVerified) {
+        return;
+      }
       setSelectedModel(defaultStoryModel);
       const support = getModelThinkingSupport(defaultStoryModel);
       setThinkingOption(support.defaultOption);
     }
-  }, [isByokActive, defaultStoryModel]);
+  }, [isByokActive, defaultStoryModel, isAgeVerified]);
+
+  const handleModelSelectChange = (newModel: string) => {
+    if (isMuseModel(newModel) && !isAgeVerified) {
+      setPendingModelForAge(newModel);
+      setShowAgeVerificationModal(true);
+      return;
+    }
+    setSelectedModel(newModel);
+    const support = getModelThinkingSupport(newModel);
+    setThinkingOption(support.defaultOption);
+  };
+
+  const handleAgeVerificationConfirm = () => {
+    setIsAgeVerified(true);
+    setShowAgeVerificationModal(false);
+    if (pendingModelForAge) {
+      setSelectedModel(pendingModelForAge);
+      const support = getModelThinkingSupport(pendingModelForAge);
+      setThinkingOption(support.defaultOption);
+      setPendingModelForAge(null);
+    }
+  };
+
+  const handleAgeVerificationCancel = () => {
+    setShowAgeVerificationModal(false);
+    setPendingModelForAge(null);
+  };
 
   const handleLanguageChange = (langCode: string) => {
     setLanguage(langCode);
@@ -352,6 +396,13 @@ export default function StoryConfigForm({
       return;
     }
 
+    if (isMuseModel(selectedModel) && !isAgeVerified) {
+      setPendingModelForAge(selectedModel);
+      setShowAgeVerificationModal(true);
+      setIsDraftingOutline(false);
+      return;
+    }
+
     if (!isPaid && !isAdmin && !isByokActive) {
       const isLongStory = totalChapters > 10;
       if (isLongStory) {
@@ -471,17 +522,27 @@ export default function StoryConfigForm({
           }),
         });
         if (classifyRes.ok) {
-          const ipData = await classifyRes.json();
-          setCopyrightFlag(ipData.ipRisk === true);
-          setCopyrightFlagReason(
-            typeof ipData.ipRiskReason === 'string' ? ipData.ipRiskReason : '',
-          );
+          const classData = await classifyRes.json();
+          const isFlagged =
+            classData.flagged === true ||
+            classData.ipRisk === true ||
+            classData.adultRisk === true;
+          setCopyrightFlag(isFlagged);
+          const reason =
+            (typeof classData.flagReason === 'string' &&
+              classData.flagReason) ||
+            (typeof classData.adultRiskReason === 'string' &&
+              classData.adultRiskReason) ||
+            (typeof classData.ipRiskReason === 'string' &&
+              classData.ipRiskReason) ||
+            '';
+          setCopyrightFlagReason(reason);
         } else {
           setCopyrightFlag(false);
           setCopyrightFlagReason('');
         }
       } catch (classifyErr) {
-        console.warn('IP classification call failed:', classifyErr);
+        console.warn('Content classification call failed:', classifyErr);
         setCopyrightFlag(false);
         setCopyrightFlagReason('');
       }
@@ -499,11 +560,17 @@ export default function StoryConfigForm({
   };
 
   const handleApproveAndGenerate = async () => {
+    if (isMuseModel(selectedModel) && !isAgeVerified) {
+      setPendingModelForAge(selectedModel);
+      setShowAgeVerificationModal(true);
+      return;
+    }
+
     const selectedLanguageName =
       SUPPORTED_LANGUAGES.find((l) => l.code === language)?.name || 'Spanish';
 
     // Scratch-mode stories bypass the outline API, so they were never
-    // classified. Run the lightweight IP classifier on the manually
+    // classified. Run the lightweight classifier on the manually
     // written title/outline/description before creating the story.
     let finalCopyrightFlag = copyrightFlag;
     let finalCopyrightFlagReason = copyrightFlagReason;
@@ -525,17 +592,25 @@ export default function StoryConfigForm({
         });
         if (response.ok) {
           const data = await response.json();
-          if (data.ipRisk === true) {
+          const isFlagged =
+            data.flagged === true ||
+            data.ipRisk === true ||
+            data.adultRisk === true;
+          if (isFlagged) {
             finalCopyrightFlag = true;
             finalCopyrightFlagReason =
-              typeof data.ipRiskReason === 'string' ? data.ipRiskReason : '';
+              (typeof data.flagReason === 'string' && data.flagReason) ||
+              (typeof data.adultRiskReason === 'string' &&
+                data.adultRiskReason) ||
+              (typeof data.ipRiskReason === 'string' && data.ipRiskReason) ||
+              '';
             setCopyrightFlag(true);
             setCopyrightFlagReason(finalCopyrightFlagReason);
           }
         }
       } catch (err) {
         // Fail-open: never block story creation on a classifier outage.
-        console.warn('IP classification failed, proceeding unflagged:', err);
+        console.warn('Content classification failed, proceeding unflagged:', err);
       } finally {
         setIsClassifying(false);
       }
@@ -955,11 +1030,7 @@ export default function StoryConfigForm({
                     <select
                       value={selectedModel}
                       disabled={!currentUser}
-                      onChange={(e) => {
-                        setSelectedModel(e.target.value);
-                        const support = getModelThinkingSupport(e.target.value);
-                        setThinkingOption(support.defaultOption);
-                      }}
+                      onChange={(e) => handleModelSelectChange(e.target.value)}
                       className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-tj-bg-recessed"
                     >
                       {isByokActive ? (
@@ -976,9 +1047,10 @@ export default function StoryConfigForm({
                               m.inputCost1M,
                               m.outputCost1M,
                             );
+                            const ageBadge = isMuseModel(m.id) ? ' [18+]' : '';
                             return (
                               <option key={m.id} value={m.id}>
-                                {m.name} {priceLabel}
+                                {m.name}{ageBadge} {priceLabel}
                               </option>
                             );
                           })}
@@ -998,6 +1070,9 @@ export default function StoryConfigForm({
                             model: (typeof AI_MODELS)[0],
                           ) => {
                             const isFree = isFreeModelLocal(model.id);
+                            const ageBadge = isMuseModel(model.id)
+                              ? ' [18+]'
+                              : '';
                             let costLabel = '';
                             if (isFree) {
                               costLabel = ' (0 credits)';
@@ -1017,6 +1092,7 @@ export default function StoryConfigForm({
                             return (
                               <option key={model.id} value={model.id}>
                                 {model.name}
+                                {ageBadge}
                                 {costLabel}
                               </option>
                             );
@@ -1046,7 +1122,7 @@ export default function StoryConfigForm({
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
                           <button
                             type="button"
                             onClick={() => onLogin && onLogin('signup')}
@@ -1071,13 +1147,29 @@ export default function StoryConfigForm({
                         OpenRouter key.
                       </p>
                     ) : null}
-                    {selectedModel === 'meta/muse-spark-1.3-contributor' && (
-                      <p className="text-[11px] text-amber-800 dark:text-amber-200 mt-1.5 leading-normal bg-amber-500/10 p-2 rounded-lg border border-amber-500/30 font-medium">
-                        ℹ️ <strong>Contributor Tier:</strong> Prompts and
-                        outputs sent to this model may be retained by Meta to
-                        improve future models. No personal user names or email
-                        addresses are sent.
-                      </p>
+                    {isMuseModel(selectedModel) && (
+                      <div className="text-[11px] text-amber-800 dark:text-amber-200 mt-1.5 leading-normal bg-amber-500/10 p-2.5 rounded-lg border border-amber-500/30 font-medium space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold">
+                          <span className="text-[9px] bg-amber-500/25 px-1.5 py-0.5 rounded text-amber-900 dark:text-amber-200 uppercase">
+                            18+ Required
+                          </span>
+                          <span>Meta Muse Model</span>
+                        </div>
+                        {selectedModel === 'meta/muse-spark-1.3-contributor' ? (
+                          <p>
+                            ℹ️ <strong>Contributor Tier:</strong> Prompts and
+                            outputs sent to this model may be retained by Meta to
+                            improve future models. No personal user names or email
+                            addresses are sent.
+                          </p>
+                        ) : (
+                          <p>
+                            ℹ️ <strong>Standard Tier:</strong> Zero data
+                            retention under commercial terms. Basic age
+                            verification applies.
+                          </p>
+                        )}
+                      </div>
                     )}
                     <p className="text-[10px] text-slate-400 mt-1">
                       Choose the AI model. Flash is fast and economical, Pro
@@ -1564,15 +1656,18 @@ export default function StoryConfigForm({
                 <ShieldAlert className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div className="flex-1 text-xs text-amber-800 dark:text-amber-200 leading-relaxed">
                   <p className="font-bold mb-1">
-                    Copyright-restricted story — this will be saved as private.
+                    {copyrightFlagReason?.toLowerCase().includes('explicit') ||
+                    copyrightFlagReason?.toLowerCase().includes('adult')
+                      ? 'Adult content policy restriction — this story will be saved as private.'
+                      : 'Copyright-restricted story — this will be saved as private.'}
                   </p>
                   <p>
                     {copyrightFlagReason
                       ? `Our classifier identified this as: ${copyrightFlagReason}.`
-                      : 'Our classifier identified this as referencing copyrighted material.'}{' '}
-                    Fan fiction for personal use is fine, but it cannot be
-                    shared publicly. This story will not appear in the public
-                    library, exports will not include site branding, and only
+                      : 'Our classifier identified this as referencing restricted or copyrighted material.'}{' '}
+                    Personal stories for your own language learning practice are
+                    welcome, but restricted content cannot be shared publicly.
+                    This story will not appear in the public library, and only
                     you (and admins) will be able to read it. Contact{' '}
                     <a
                       href="mailto:admin@teacherjake.com"
@@ -1609,6 +1704,19 @@ export default function StoryConfigForm({
         onClose={() => setShowDefaultModelInfo(false)}
         selectedModel={selectedModel}
         language={language}
+      />
+
+      <AgeVerificationModal
+        isOpen={showAgeVerificationModal}
+        modelName={
+          FRONTIER_LATEST_MODELS.find((m) => m.id === pendingModelForAge)
+            ?.name ||
+          AI_MODELS.find((m) => m.id === pendingModelForAge)?.name ||
+          pendingModelForAge ||
+          'Meta Muse'
+        }
+        onConfirm={handleAgeVerificationConfirm}
+        onCancel={handleAgeVerificationCancel}
       />
     </>
   );

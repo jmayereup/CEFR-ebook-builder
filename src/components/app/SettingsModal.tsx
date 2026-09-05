@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import {
   FRONTIER_LATEST_MODELS,
   formatModelPriceIndicator,
+  isMuseModel,
   MODEL_PRICES_LAST_UPDATED,
 } from '../../constants/models';
 import {
@@ -26,6 +27,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
 import { SUPPORTED_LANGUAGES } from '../../types';
 import { buildApiHeaders } from '../../utils/modelUtils';
+import AgeVerificationModal from '../creator/AgeVerificationModal';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -50,6 +52,8 @@ export default function SettingsModal({
     setDefaultGlossaryModel,
     defaultTranslationModel,
     setDefaultTranslationModel,
+    isAgeVerified,
+    setIsAgeVerified,
   } = useUIStore();
   const { currentUser } = useAuthStore();
   const [isTestingKey, setIsTestingKey] = useState<boolean>(false);
@@ -57,6 +61,11 @@ export default function SettingsModal({
     success: boolean;
     message: string;
   } | null>(null);
+  const [showAgeVerificationModal, setShowAgeVerificationModal] =
+    useState<boolean>(false);
+  const [pendingStoryModelOption, setPendingStoryModelOption] = useState<
+    string | null
+  >(null);
 
   const [apiKeyInput, setApiKeyInput] = useState<string>(
     customOpenRouterKey || '',
@@ -76,6 +85,29 @@ export default function SettingsModal({
     useState<string>(isStoryPreset ? defaultStoryModel : 'custom');
   const [customStoryModelIdInput, setCustomStoryModelIdInput] =
     useState<string>(isStoryPreset ? '' : defaultStoryModel);
+
+  const handleStoryModelSelectChange = (val: string) => {
+    if (isMuseModel(val) && !isAgeVerified) {
+      setPendingStoryModelOption(val);
+      setShowAgeVerificationModal(true);
+      return;
+    }
+    setSelectedStoryModelOption(val);
+  };
+
+  const handleAgeVerificationConfirm = () => {
+    setIsAgeVerified(true);
+    setShowAgeVerificationModal(false);
+    if (pendingStoryModelOption) {
+      setSelectedStoryModelOption(pendingStoryModelOption);
+      setPendingStoryModelOption(null);
+    }
+  };
+
+  const handleAgeVerificationCancel = () => {
+    setShowAgeVerificationModal(false);
+    setPendingStoryModelOption(null);
+  };
 
   // Default Glossary Model selection state
   const isGlossaryPreset = FRONTIER_LATEST_MODELS.some(
@@ -366,7 +398,7 @@ export default function SettingsModal({
                     <select
                       value={selectedStoryModelOption}
                       onChange={(e) =>
-                        setSelectedStoryModelOption(e.target.value)
+                        handleStoryModelSelectChange(e.target.value)
                       }
                       className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
                     >
@@ -375,9 +407,10 @@ export default function SettingsModal({
                           m.inputCost1M,
                           m.outputCost1M,
                         );
+                        const ageBadge = isMuseModel(m.id) ? ' [18+]' : '';
                         return (
                           <option key={m.id} value={m.id}>
-                            {m.name} {priceLabel}
+                            {m.name}{ageBadge} {priceLabel}
                           </option>
                         );
                       })}
@@ -642,6 +675,18 @@ export default function SettingsModal({
           </div>
         </div>
       </motion.div>
+
+      <AgeVerificationModal
+        isOpen={showAgeVerificationModal}
+        modelName={
+          FRONTIER_LATEST_MODELS.find((m) => m.id === pendingStoryModelOption)
+            ?.name ||
+          pendingStoryModelOption ||
+          'Meta Muse'
+        }
+        onConfirm={handleAgeVerificationConfirm}
+        onCancel={handleAgeVerificationCancel}
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import {
   AI_MODELS,
   FREE_MODEL_IDS,
+  isMuseModel,
   MODEL_PRICES_LAST_UPDATED,
 } from '../../constants/models';
 import { useAuthStore } from '../../store/authStore';
@@ -149,6 +150,12 @@ export default function ModelSelectionModal({
                         >
                           {model.category}
                         </span>
+                        {(model.requiresAgeVerification ||
+                          isMuseModel(model.id)) && (
+                          <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                            18+ Required
+                          </span>
+                        )}
                       </div>
                       <p className="text-[10px] text-tj-text-muted mt-0.5 font-mono">
                         ID: {model.id}

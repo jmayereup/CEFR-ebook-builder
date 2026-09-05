@@ -1,6 +1,9 @@
 /**
- * One-time backfill: scan existing PUBLIC stories for copyrighted / fan-fiction
- * content and force-flag them private.
+ * One-time backfill / scanner: scan existing PUBLIC stories for copyrighted / fan-fiction
+ * or explicit adult content and force-flag them private.
+ *
+ * Automatically keeps explicit adult content private while strictly protecting
+ * non-explicit LGBT+ friendly stories and romance.
  *
  * Usage:
  *   npm run flag-copyright:dry   # dry run — prints a report, writes nothing
@@ -35,7 +38,7 @@ const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
 const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
 const openrouterApiKey = process.env.OPENROUTER_API_KEY;
 const classifierModel =
-  process.env.IP_CLASSIFIER_MODEL || 'google/gemini-2.5-flash';
+  process.env.IP_CLASSIFIER_MODEL || 'google/gemini-2.5-flash-lite';
 
 if (!url || !adminEmail || !adminPassword) {
   console.error('Missing required environment variables in .env file.');
@@ -62,37 +65,68 @@ interface ClassificationResult {
   storyId: string;
   title: string;
   creatorId: string;
+  flagged: boolean;
+  flagReason: string;
   ipRisk: boolean;
   ipRiskReason: string;
+  adultRisk: boolean;
+  adultRiskReason: string;
   error?: string;
 }
 
 async function classifyStory(story: any): Promise<ClassificationResult> {
-  const firstChapterContent = (story.chapters?.[0]?.content || '').slice(
-    0,
-    2000,
-  );
+  const chs = Array.isArray(story.chapters) ? story.chapters : [];
+  const firstChapterExcerpt = (chs[0]?.content || '').slice(0, 2000);
+  const middleChapterExcerpt =
+    chs.length > 2
+      ? (chs[Math.floor(chs.length / 2)]?.content || '').slice(0, 1500)
+      : '';
+  const lastChapterExcerpt =
+    chs.length > 1 ? (chs[chs.length - 1]?.content || '').slice(0, 1000) : '';
+
   const contentToClassify = [
     story.title ? `Title: ${story.title}` : '',
     story.description ? `Description: ${story.description}` : '',
-    story.outline ? `Outline: ${String(story.outline).slice(0, 3000)}` : '',
+    story.outline ? `Outline: ${String(story.outline).slice(0, 2500)}` : '',
     story.promptNotes
-      ? `Author concept notes: ${String(story.promptNotes).slice(0, 1500)}`
+      ? `Author concept notes: ${String(story.promptNotes).slice(0, 1000)}`
       : '',
-    firstChapterContent ? `Opening excerpt: ${firstChapterContent}` : '',
+    firstChapterExcerpt
+      ? `Opening chapter excerpt: ${firstChapterExcerpt}`
+      : '',
+    middleChapterExcerpt
+      ? `Middle chapter excerpt: ${middleChapterExcerpt}`
+      : '',
+    lastChapterExcerpt ? `Later chapter excerpt: ${lastChapterExcerpt}` : '',
   ]
     .filter(Boolean)
     .join('\n\n')
     .trim();
 
-  const base: Omit<ClassificationResult, 'ipRisk' | 'ipRiskReason'> = {
+  const base: Omit<
+    ClassificationResult,
+    | 'flagged'
+    | 'flagReason'
+    | 'ipRisk'
+    | 'ipRiskReason'
+    | 'adultRisk'
+    | 'adultRiskReason'
+  > = {
     storyId: story.id,
     title: story.title || '(untitled)',
     creatorId: story.creatorId || '',
   };
 
   if (!contentToClassify) {
-    return { ...base, ipRisk: false, ipRiskReason: '' };
+    return {
+      ...base,
+      flagged: false,
+      flagReason: '',
+      ipRisk: false,
+      ipRiskReason: '',
+      adultRisk: false,
+      adultRiskReason: '',
+    };
   }
 
   try {
@@ -115,17 +149,38 @@ async function classifyStory(story: any): Promise<ClassificationResult> {
       }),
     });
     const parsed = await res.json();
+    const ipRisk = parsed.ipRisk === true;
+    const ipRiskReason =
+      typeof parsed.ipRiskReason === 'string' ? parsed.ipRiskReason : '';
+    const adultRisk = parsed.adultRisk === true;
+    const adultRiskReason =
+      typeof parsed.adultRiskReason === 'string' ? parsed.adultRiskReason : '';
+    const flagged = parsed.flagged === true || ipRisk || adultRisk;
+    const flagReason =
+      (typeof parsed.flagReason === 'string' && parsed.flagReason) ||
+      (adultRisk
+        ? `[Explicit Content] ${adultRiskReason || 'Explicit adult content'}`
+        : '') ||
+      (ipRisk ? `[Copyright] ${ipRiskReason || 'Copyrighted material'}` : '');
+
     return {
       ...base,
-      ipRisk: parsed.ipRisk === true,
-      ipRiskReason:
-        typeof parsed.ipRiskReason === 'string' ? parsed.ipRiskReason : '',
+      flagged,
+      flagReason,
+      ipRisk,
+      ipRiskReason,
+      adultRisk,
+      adultRiskReason,
     };
   } catch (err: any) {
     return {
       ...base,
+      flagged: false,
+      flagReason: '',
       ipRisk: false,
       ipRiskReason: '',
+      adultRisk: false,
+      adultRiskReason: '',
       error: err?.message || String(err),
     };
   }
@@ -152,7 +207,7 @@ async function runWithConcurrency<T, R>(
 
 async function main() {
   console.log('==================================================');
-  console.log('Copyright Backfill Scanner');
+  console.log('Content & Copyright Backfill Scanner');
   console.log(`Mode: ${isDryRun ? 'DRY RUN (no writes)' : 'LIVE RUN'}`);
   console.log(`Classifier model: ${classifierModel}`);
   console.log(`Concurrency: ${concurrency}`);
@@ -190,23 +245,29 @@ async function main() {
       done++;
       const marker = result.error
         ? 'ERROR'
-        : result.ipRisk
-          ? 'FLAGGED'
-          : 'clean';
+        : result.adultRisk && result.ipRisk
+          ? 'FLAGGED (IP + ADULT)'
+          : result.adultRisk
+            ? 'FLAGGED (ADULT)'
+            : result.ipRisk
+              ? 'FLAGGED (IP)'
+              : 'clean';
       console.log(
-        `[${done}/${toScan.length}] ${marker} — "${result.title}" (${result.storyId})${result.ipRiskReason ? ` :: ${result.ipRiskReason}` : ''}`,
+        `[${done}/${toScan.length}] ${marker} — "${result.title}" (${result.storyId})${result.flagReason ? ` :: ${result.flagReason}` : ''}`,
       );
       return result;
     },
     concurrency,
   );
 
-  const flagged = results.filter((r) => r.ipRisk);
+  const flagged = results.filter((r) => r.flagged);
+  const ipFlagged = results.filter((r) => r.ipRisk);
+  const adultFlagged = results.filter((r) => r.adultRisk);
   const errored = results.filter((r) => r.error);
 
   console.log('==================================================');
   console.log(
-    `Scan complete: ${results.length} scanned, ${flagged.length} flagged, ${errored.length} classifier errors.`,
+    `Scan complete: ${results.length} scanned, ${flagged.length} flagged (${ipFlagged.length} IP, ${adultFlagged.length} adult content), ${errored.length} classifier errors.`,
   );
 
   const reportPath = resolve(
@@ -227,7 +288,7 @@ async function main() {
       'DRY RUN — the following stories WOULD be flagged & privatized:',
     );
     for (const f of flagged) {
-      console.log(`  - "${f.title}" (${f.storyId}): ${f.ipRiskReason}`);
+      console.log(`  - "${f.title}" (${f.storyId}): ${f.flagReason}`);
     }
     console.log('');
     console.log('Re-run without --dry to apply.');
@@ -241,7 +302,8 @@ async function main() {
     try {
       await pb.collection('stories').update(f.storyId, {
         copyrightFlag: true,
-        copyrightFlagReason: f.ipRiskReason || null,
+        copyrightFlagReason:
+          f.flagReason || f.adultRiskReason || f.ipRiskReason || null,
         copyrightFlagSource: 'backfill',
         copyrightFlaggedAt: new Date().toISOString(),
         isPublic: false,

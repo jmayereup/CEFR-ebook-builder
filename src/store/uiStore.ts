@@ -17,6 +17,7 @@ interface UIState {
   readerTextAlignment: 'left' | 'center' | 'right' | 'justify';
   readerColumnWidth: 'narrow' | 'medium' | 'wide' | 'full';
   guestCompletedStoryIds: string[];
+  isAgeVerified: boolean;
   setIsOnline: (isOnline: boolean) => void;
   setCustomOpenRouterKey: (key: string) => void;
   setTranslationTargetLanguage: (lang: string | null) => void;
@@ -34,6 +35,7 @@ interface UIState {
   setGuestCompletedStoryIds: (ids: string[]) => void;
   addGuestCompletedStoryId: (id: string) => void;
   removeGuestCompletedStoryId: (id: string) => void;
+  setIsAgeVerified: (verified: boolean) => void;
   initializeClientState: () => void;
 }
 
@@ -52,7 +54,14 @@ export const useUIStore = create<UIState>((set, get) => ({
   readerTextAlignment: 'justify',
   readerColumnWidth: 'medium',
   guestCompletedStoryIds: [],
+  isAgeVerified: false,
   setIsOnline: (isOnline) => set({ isOnline }),
+  setIsAgeVerified: (verified) => {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('tj_age_verified', verified ? 'true' : 'false');
+    }
+    set({ isAgeVerified: verified });
+  },
   setCustomOpenRouterKey: (key) => {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('custom_openrouter_api_key', key);
@@ -179,6 +188,8 @@ export const useUIStore = create<UIState>((set, get) => ({
         widthVal === 'full'
           ? widthVal
           : 'medium';
+      const ageVerified =
+        localStorage.getItem('tj_age_verified') === 'true';
       set({
         customOpenRouterKey: key,
         translationTargetLanguage: lang,
@@ -189,6 +200,7 @@ export const useUIStore = create<UIState>((set, get) => ({
         readerUseSerif: serif,
         readerTextAlignment: align,
         readerColumnWidth: width,
+        isAgeVerified: ageVerified,
       });
 
       // Background migration and guest completed story IDs load

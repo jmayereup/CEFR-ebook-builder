@@ -13,10 +13,17 @@ export interface AIModelOption {
   supportsThinkingBudget: boolean;
   supportsTemperature: boolean;
   maxOutputTokens?: number;
+  requiresAgeVerification?: boolean;
 }
 
 /** Legacy alias */
 export type GeminiModelOption = AIModelOption;
+
+/** Check if a model is a Meta Muse model that requires basic age verification */
+export function isMuseModel(modelId?: string | null): boolean {
+  if (!modelId) return false;
+  return modelId.toLowerCase().includes('muse');
+}
 
 export const AI_MODELS: AIModelOption[] = [
   {
@@ -40,6 +47,7 @@ export const AI_MODELS: AIModelOption[] = [
     supportsThinkingBudget: false,
     supportsTemperature: true,
     maxOutputTokens: 16384,
+    requiresAgeVerification: true,
   },
   {
     id: 'meta/muse-spark-1.3',
@@ -51,6 +59,7 @@ export const AI_MODELS: AIModelOption[] = [
     supportsThinkingBudget: false,
     supportsTemperature: true,
     maxOutputTokens: 16384,
+    requiresAgeVerification: true,
   },
   {
     id: 'deepseek/deepseek-v4-pro',
@@ -91,6 +100,7 @@ export interface FrontierModelOption {
   category: 'pro' | 'flash';
   inputCost1M: number;
   outputCost1M: number;
+  requiresAgeVerification?: boolean;
 }
 
 /** Formats a concise input/output rate indicator per 1M tokens based on OpenRouter rates */
@@ -115,6 +125,7 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     category: 'pro',
     inputCost1M: 1.25,
     outputCost1M: 4.25,
+    requiresAgeVerification: true,
   },
   {
     id: 'meta/muse-spark-1.3-contributor',
@@ -122,6 +133,7 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     category: 'flash',
     inputCost1M: 0.1,
     outputCost1M: 0.2,
+    requiresAgeVerification: true,
   },
   {
     id: 'z-ai/glm-5.3-flash',

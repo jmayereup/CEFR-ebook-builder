@@ -487,8 +487,11 @@ export default function StoryCard({
             <span
               title={
                 story.copyrightFlagReason
-                  ? `Copyright-restricted: ${story.copyrightFlagReason}`
-                  : 'Copyright-restricted — private only'
+                  ? story.copyrightFlagReason.toLowerCase().includes('explicit') ||
+                    story.copyrightFlagReason.toLowerCase().includes('adult')
+                    ? `Adult content policy restricted: ${story.copyrightFlagReason}`
+                    : `Copyright-restricted: ${story.copyrightFlagReason}`
+                  : 'Restricted content — private only'
               }
               className="text-amber-600 dark:text-amber-400"
             >
