@@ -153,6 +153,10 @@ export const checkAndSyncStreakState = (userId: string) =>
   dbService.checkAndSyncStreakState(userId);
 export const recordDailyActivity = (userId: string) =>
   dbService.recordDailyActivity(userId);
+export const syncStreakWithOfflineDates = (
+  userId: string,
+  offlineDates: string[],
+) => dbService.syncStreakWithOfflineDates(userId, offlineDates);
 export const updateStreak = (userId: string, streak: UserStreakData) =>
   dbService.updateStreak(userId, streak);
 

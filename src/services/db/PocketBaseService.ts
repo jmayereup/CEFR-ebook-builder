@@ -740,12 +740,74 @@ export class PocketBaseService implements IDatabaseService {
     }
   }
 
+  calculateStreakFromHistory(
+    history: string[],
+    previousMaxStreak = 0,
+  ): { currentStreak: number; maxStreak: number; lastActiveDate: string } {
+    const pruned = this.pruneActivityHistory(history);
+    const uniqueSorted = Array.from(new Set(pruned)).sort();
+    if (uniqueSorted.length === 0) {
+      return {
+        currentStreak: 0,
+        maxStreak: previousMaxStreak,
+        lastActiveDate: '',
+      };
+    }
+
+    const todayStr = this.getLocalTodayStr();
+    const yesterdayStr = this.getLocalYesterdayStr();
+    const lastActiveDate = uniqueSorted[uniqueSorted.length - 1];
+
+    // If last active date is neither today nor yesterday, active streak is broken
+    if (lastActiveDate !== todayStr && lastActiveDate !== yesterdayStr) {
+      return {
+        currentStreak: 0,
+        maxStreak: previousMaxStreak,
+        lastActiveDate,
+      };
+    }
+
+    // Count consecutive days ending at lastActiveDate
+    const dateSet = new Set(uniqueSorted);
+    let streakCount = 0;
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // Start cursor at noon to avoid DST edge cases
+    const cursor = new Date(`${lastActiveDate}T12:00:00`);
+    while (true) {
+      let dateStr = '';
+      try {
+        const formatter = new Intl.DateTimeFormat('en-CA', {
+          timeZone: tz,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        });
+        dateStr = formatter.format(cursor);
+      } catch (_e) {
+        dateStr = cursor.toISOString().split('T')[0];
+      }
+
+      if (dateSet.has(dateStr)) {
+        streakCount++;
+        cursor.setDate(cursor.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    const maxStreak = Math.max(previousMaxStreak, streakCount);
+    return {
+      currentStreak: streakCount,
+      maxStreak,
+      lastActiveDate,
+    };
+  }
+
   async checkAndSyncStreakState(userId: string): Promise<UserStreakData> {
     const record = await pb
       .collection('users')
       .getOne<AppUsersResponse>(userId);
-    const todayStr = this.getLocalTodayStr();
-    const yesterdayStr = this.getLocalYesterdayStr();
 
     const currentStreakData: UserStreakData = record.streak || {
       currentStreak: 0,
@@ -754,22 +816,27 @@ export class PocketBaseService implements IDatabaseService {
       activityHistory: [],
     };
 
-    const updated = { ...currentStreakData };
-    updated.activityHistory = this.pruneActivityHistory(
-      updated.activityHistory ?? [],
-    );
-    const lastActive = updated.lastActiveDate;
+    const { currentStreak, maxStreak, lastActiveDate } =
+      this.calculateStreakFromHistory(
+        currentStreakData.activityHistory || [],
+        currentStreakData.maxStreak,
+      );
 
-    if (!lastActive) {
-      return currentStreakData;
-    }
+    const updated: UserStreakData = {
+      currentStreak,
+      maxStreak,
+      lastActiveDate,
+      activityHistory: this.pruneActivityHistory(
+        currentStreakData.activityHistory || [],
+      ),
+    };
 
-    if (lastActive === todayStr || lastActive === yesterdayStr) {
-      return updated;
-    }
-
-    if (updated.currentStreak > 0) {
-      updated.currentStreak = 0;
+    if (
+      updated.currentStreak !== currentStreakData.currentStreak ||
+      updated.lastActiveDate !== currentStreakData.lastActiveDate ||
+      (updated.activityHistory?.length ?? 0) !==
+        (currentStreakData.activityHistory?.length ?? 0)
+    ) {
       await pb.collection('users').update(userId, { streak: updated });
     }
     return updated;
@@ -780,7 +847,6 @@ export class PocketBaseService implements IDatabaseService {
       .collection('users')
       .getOne<AppUsersResponse>(userId);
     const todayStr = this.getLocalTodayStr();
-    const yesterdayStr = this.getLocalYesterdayStr();
 
     const currentStreakData: UserStreakData = record.streak || {
       currentStreak: 0,
@@ -789,33 +855,57 @@ export class PocketBaseService implements IDatabaseService {
       activityHistory: [],
     };
 
-    const updated = { ...currentStreakData };
-
-    if (!updated.activityHistory.includes(todayStr)) {
-      updated.activityHistory.push(todayStr);
-    }
-    updated.activityHistory = this.pruneActivityHistory(
-      updated.activityHistory,
-    );
-
-    if (updated.lastActiveDate === todayStr) {
-      return updated;
+    const history = [...(currentStreakData.activityHistory || [])];
+    if (!history.includes(todayStr)) {
+      history.push(todayStr);
     }
 
-    if (
-      updated.lastActiveDate === yesterdayStr ||
-      updated.currentStreak === 0
-    ) {
-      updated.currentStreak += 1;
-      updated.lastActiveDate = todayStr;
-    } else {
-      updated.currentStreak = 1;
-      updated.lastActiveDate = todayStr;
-    }
+    const { currentStreak, maxStreak, lastActiveDate } =
+      this.calculateStreakFromHistory(history, currentStreakData.maxStreak);
 
-    if (updated.currentStreak > updated.maxStreak) {
-      updated.maxStreak = updated.currentStreak;
-    }
+    const updated: UserStreakData = {
+      currentStreak,
+      maxStreak,
+      lastActiveDate,
+      activityHistory: this.pruneActivityHistory(history),
+    };
+
+    await pb.collection('users').update(userId, { streak: updated });
+    return updated;
+  }
+
+  async syncStreakWithOfflineDates(
+    userId: string,
+    offlineDates: string[],
+  ): Promise<UserStreakData> {
+    const record = await pb
+      .collection('users')
+      .getOne<AppUsersResponse>(userId);
+
+    const currentStreakData: UserStreakData = record.streak || {
+      currentStreak: 0,
+      maxStreak: 0,
+      lastActiveDate: '',
+      activityHistory: [],
+    };
+
+    const combinedHistory = [
+      ...(currentStreakData.activityHistory || []),
+      ...offlineDates,
+    ];
+
+    const { currentStreak, maxStreak, lastActiveDate } =
+      this.calculateStreakFromHistory(
+        combinedHistory,
+        currentStreakData.maxStreak,
+      );
+
+    const updated: UserStreakData = {
+      currentStreak,
+      maxStreak,
+      lastActiveDate,
+      activityHistory: this.pruneActivityHistory(combinedHistory),
+    };
 
     await pb.collection('users').update(userId, { streak: updated });
     return updated;

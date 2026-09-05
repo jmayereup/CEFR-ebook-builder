@@ -199,6 +199,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     handleRecordDailyActivity,
   } = useStreak({
     currentUser,
+    authChecking,
   });
 
   // User data — extracted to useUserData hook
@@ -754,6 +755,9 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   const handleStoryFinished = useCallback(
     async (storyId: string) => {
+      // 0. Record daily streak activity upon finishing a book
+      handleRecordDailyActivityRef.current();
+
       // 1. Mark in guest state if unauthenticated
       if (!currentUser) {
         useUIStore.getState().addGuestCompletedStoryId(storyId);
@@ -1167,6 +1171,9 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   setSelectedStory={handleRequestClearStory}
                   activeChapterIdx={activeChapterIdx}
                   onSelectChapter={(idx) => {
+                    if (idx !== activeChapterIdx) {
+                      handleChapterFinished();
+                    }
                     setActiveChapterIdx(idx);
                     updateRecentlyRead(selectedStory.id, idx);
                   }}

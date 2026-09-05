@@ -206,6 +206,12 @@ export interface IDatabaseService {
   /** Record daily reading activity and extend the active streak. */
   recordDailyActivity(userId: string): Promise<UserStreakData>;
 
+  /** Sync offline activity dates and reconcile streak history. */
+  syncStreakWithOfflineDates(
+    userId: string,
+    offlineDates: string[],
+  ): Promise<UserStreakData>;
+
   /** Directly update the user streak data. */
   updateStreak(userId: string, streak: UserStreakData): Promise<void>;
 

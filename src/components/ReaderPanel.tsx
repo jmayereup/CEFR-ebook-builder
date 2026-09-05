@@ -172,7 +172,6 @@ export default function ReaderPanel({
   isGeneratingCover = false,
 }: ReaderPanelProps) {
   const readerRef = useRef<HTMLDivElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   const translationTargetLanguage = useUIStore(
     (state) => state.translationTargetLanguage,
   );
@@ -193,8 +192,6 @@ export default function ReaderPanel({
     setSelectedGlossaryLanguage(translationTargetLanguage || 'English');
   }, [translationTargetLanguage]);
 
-  const [hasFinishedChapter, setHasFinishedChapter] = useState(false);
-  const hasFinishedRef = useRef(false);
   const [sessionFinished, setSessionFinished] = useState(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
   const [coverImgError, setCoverImgError] = useState(false);
@@ -202,45 +199,13 @@ export default function ReaderPanel({
   // Reset coverImgError when cover is generated, story updates, or story.id/cover changes
   useEffect(() => {
     setCoverImgError(false);
-  }, [story.id, story.cover, story.updated, isGeneratingCover]);
-
-  // Reset hasFinishedChapter when chapter or story changes, and set up scroll observer
-  useEffect(() => {
-    // Reference activeChapterIndex and story.id to ensure effect re-runs when they change
-    const _chapterRef = activeChapterIndex;
-    const _storyIdRef = story.id;
-
-    hasFinishedRef.current = false;
-    setHasFinishedChapter(false);
-    setCoverImgError(false);
-
-    if (!sentinelRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry?.isIntersecting) {
-          if (hasFinishedRef.current) return;
-          hasFinishedRef.current = true;
-          setHasFinishedChapter(true);
-          if (onChapterFinished) {
-            onChapterFinished();
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: '0px 0px 50px 0px',
-        threshold: 0.1,
-      },
-    );
-
-    observer.observe(sentinelRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [activeChapterIndex, story.id, onChapterFinished]);
+  }, [
+    story.id,
+    story.cover,
+    story.updated,
+    isGeneratingCover,
+    activeChapterIndex,
+  ]);
 
   // Deep-link scrolling when arriving with target highlight paragraph from NotesPage
   useEffect(() => {
@@ -1864,9 +1829,6 @@ export default function ReaderPanel({
                         );
                       })}
                     </section>
-
-                    {/* Sentinel element to detect when user has scrolled to the bottom of the chapter */}
-                    <div ref={sentinelRef} className="h-2 w-full" />
 
                     {/* Explicit book completion section */}
                     {activeChapterIndex ===
