@@ -31,6 +31,28 @@ export const AI_MODELS: AIModelOption[] = [
     maxOutputTokens: 16384,
   },
   {
+    id: 'meta/muse-spark-1.3-contributor',
+    name: 'Muse Spark 1.3 (Contributor)',
+    inputCost1M: 0.1,
+    outputCost1M: 0.2,
+    category: 'flash',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 16384,
+  },
+  {
+    id: 'meta/muse-spark-1.3',
+    name: 'Muse Spark 1.3',
+    inputCost1M: 1.25,
+    outputCost1M: 4.25,
+    category: 'pro',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 16384,
+  },
+  {
     id: 'deepseek/deepseek-v4-pro',
     name: 'DeepSeek V4 Pro',
     inputCost1M: 1.042,
@@ -55,10 +77,13 @@ export const AI_MODELS: AIModelOption[] = [
 ];
 
 /** IDs of models that are always free to use (no contributor approval needed). */
-export const FREE_MODEL_IDS = new Set<string>(['z-ai/glm-5.3-flash']);
+export const FREE_MODEL_IDS = new Set<string>([
+  'z-ai/glm-5.3-flash',
+  'meta/muse-spark-1.3-contributor',
+]);
 
 /** Date when OpenRouter token rates were last verified/updated */
-export const MODEL_PRICES_LAST_UPDATED = 'September 3, 2026';
+export const MODEL_PRICES_LAST_UPDATED = 'September 5, 2026';
 
 export interface FrontierModelOption {
   id: string;
@@ -84,6 +109,20 @@ export const formatModelPriceIndicator = (
 
 /** Curated frontier & latest models for BYOK story generation selection with OpenRouter rates */
 export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
+  {
+    id: 'meta/muse-spark-1.3',
+    name: 'Meta: Muse Spark 1.3',
+    category: 'pro',
+    inputCost1M: 1.25,
+    outputCost1M: 4.25,
+  },
+  {
+    id: 'meta/muse-spark-1.3-contributor',
+    name: 'Meta: Muse Spark 1.3 (Contributor)',
+    category: 'flash',
+    inputCost1M: 0.1,
+    outputCost1M: 0.2,
+  },
   {
     id: 'z-ai/glm-5.3-flash',
     name: 'Z-AI: GLM 5.3 Flash',

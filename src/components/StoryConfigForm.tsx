@@ -233,12 +233,14 @@ export default function StoryConfigForm({
       console.error(e);
     }
     if (!isByokActive && !isAdmin) {
-      const newModel = 'z-ai/glm-5.3-flash';
-      setSelectedModel(newModel);
+      if (!FREE_MODEL_IDS.has(selectedModel)) {
+        const newModel = 'z-ai/glm-5.3-flash';
+        setSelectedModel(newModel);
 
-      // Auto-update thinkingOption for the new model
-      const support = getModelThinkingSupport(newModel);
-      setThinkingOption(support.defaultOption);
+        // Auto-update thinkingOption for the new model
+        const support = getModelThinkingSupport(newModel);
+        setThinkingOption(support.defaultOption);
+      }
     }
   };
 
@@ -1069,6 +1071,14 @@ export default function StoryConfigForm({
                         OpenRouter key.
                       </p>
                     ) : null}
+                    {selectedModel === 'meta/muse-spark-1.3-contributor' && (
+                      <p className="text-[11px] text-amber-800 dark:text-amber-200 mt-1.5 leading-normal bg-amber-500/10 p-2 rounded-lg border border-amber-500/30 font-medium">
+                        ℹ️ <strong>Contributor Tier:</strong> Prompts and
+                        outputs sent to this model may be retained by Meta to
+                        improve future models. No personal user names or email
+                        addresses are sent.
+                      </p>
+                    )}
                     <p className="text-[10px] text-slate-400 mt-1">
                       Choose the AI model. Flash is fast and economical, Pro
                       offers deep narrative quality.
