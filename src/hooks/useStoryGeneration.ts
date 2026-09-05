@@ -253,7 +253,12 @@ export const useStoryGeneration = (
     }
 
     const isAdmin = currentUser?.isAdmin === true;
-    if (!isPaid && !isAdmin && !customOpenRouterKey && config.totalChapters > 10) {
+    if (
+      !isPaid &&
+      !isAdmin &&
+      !customOpenRouterKey &&
+      config.totalChapters > 10
+    ) {
       showAlert(
         'Chapter Limit Reached',
         'Free tier members are limited to a maximum of 10 chapters per story. Configure your own OpenRouter API key in Settings for longer stories.',
@@ -882,7 +887,12 @@ export const useStoryGeneration = (
     const currentChapters = selectedStory.chapters?.length ?? 0;
     const isAdmin = currentUser?.isAdmin === true;
 
-    if (!isPaid && !isAdmin && !customOpenRouterKey && selectedStory.totalChapters > 10) {
+    if (
+      !isPaid &&
+      !isAdmin &&
+      !customOpenRouterKey &&
+      selectedStory.totalChapters > 10
+    ) {
       showAlert(
         'Chapter Limit Reached',
         'Free tier members are limited to a maximum of 10 chapters per story. Configure your own OpenRouter API key in Settings to auto-write longer stories.',

@@ -17,12 +17,11 @@ import {
   AI_MODELS,
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
-  MODEL_PRICES_LAST_UPDATED,
   formatModelPriceIndicator,
+  MODEL_PRICES_LAST_UPDATED,
 } from '../../constants/models';
 import { updateStoryModel } from '../../services/db';
 import { useUIStore } from '../../store/uiStore';
-import { getModelDisplayName } from '../../utils/modelUtils';
 import {
   getAverageRating,
   getLanguageCodeFromName,
@@ -31,6 +30,7 @@ import {
   SUPPORTED_LANGUAGES,
   type VocabularyTerm,
 } from '../../types';
+import { getModelDisplayName } from '../../utils/modelUtils';
 import { extractChapterOutline } from '../../utils/outlineParser';
 import { calculateEstimatedUsage } from '../../utils/storyEstimation';
 import AddChapterModal from './AddChapterModal';

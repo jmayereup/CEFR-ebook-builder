@@ -165,6 +165,11 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     getAllCachedStoryIds().then(setCachedStoryIds);
   }, []);
 
+  const loadingStoryIdRef = useRef(loadingStoryId);
+  useEffect(() => {
+    loadingStoryIdRef.current = loadingStoryId;
+  }, [loadingStoryId]);
+
   const handleSelectStory = async (
     story: Story,
     overrideChapterIdx?: number,
@@ -172,8 +177,13 @@ export function useActiveStory(options: UseActiveStoryOptions) {
   ) => {
     setLoadingStory(story);
     setLoadingStoryId(story.id);
+    loadingStoryIdRef.current = story.id;
     try {
       const fullStory = await libHandleSelectStory(story);
+      // Abort if user navigated away or cleared selection while fetching
+      if (loadingStoryIdRef.current !== story.id) {
+        return;
+      }
       if (!fullStory) {
         setLoadingStory(null);
         setLoadingStoryId(null);
@@ -211,8 +221,10 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       setActiveChapterIdx(validIdx);
       hasRestoredChapterRef.current = story.id;
     } catch (err) {
-      setLoadingStory(null);
-      setLoadingStoryId(null);
+      if (loadingStoryIdRef.current === story.id) {
+        setLoadingStory(null);
+        setLoadingStoryId(null);
+      }
       throw err;
     }
   };

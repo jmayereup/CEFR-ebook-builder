@@ -22,8 +22,8 @@ import {
   AI_MODELS,
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
-  MODEL_PRICES_LAST_UPDATED,
   formatModelPriceIndicator,
+  MODEL_PRICES_LAST_UPDATED,
 } from '../constants/models';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
@@ -1013,18 +1013,15 @@ export default function StoryConfigForm({
                             }
 
                             return (
-                              <option
-                                key={model.id}
-                                value={model.id}
-                              >
+                              <option key={model.id} value={model.id}>
                                 {model.name}
                                 {costLabel}
                               </option>
                             );
                           };
 
-                          const allSortedModels = [...modelsToDisplay].sort((a, b) =>
-                            a.name.localeCompare(b.name),
+                          const allSortedModels = [...modelsToDisplay].sort(
+                            (a, b) => a.name.localeCompare(b.name),
                           );
 
                           return allSortedModels.map(renderOption);
@@ -1453,7 +1450,8 @@ export default function StoryConfigForm({
                       </div>
                     </div>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center italic">
-                      Note: Configure your own OpenRouter key in Settings for unlimited books and all frontier models.
+                      Note: Configure your own OpenRouter key in Settings for
+                      unlimited books and all frontier models.
                     </p>
                   </div>
                 )}

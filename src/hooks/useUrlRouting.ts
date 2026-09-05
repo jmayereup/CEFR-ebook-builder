@@ -56,6 +56,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
   const {
     selectedStory,
     setSelectedStory,
+    loadingStoryId,
     setLoadingStoryId,
     activeChapterIdx,
     setActiveChapterIdx,
@@ -102,6 +103,17 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
   });
 
   const isFirstRender = useRef(true);
+  const loadingStoryIdRef = useRef(loadingStoryId);
+  useEffect(() => {
+    loadingStoryIdRef.current = loadingStoryId;
+  }, [loadingStoryId]);
+
+  // Cancel pending deep-link navigation if loadingStoryId is cleared (e.g. user navigated to a tab)
+  useEffect(() => {
+    if (!loadingStoryId && pendingNavigation) {
+      setPendingNavigation(null);
+    }
+  }, [loadingStoryId, pendingNavigation]);
 
   // Helper to parse current URL and update states accordingly
   const handleUrlRouting = useCallback(() => {
@@ -192,10 +204,12 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         | 'admin'
         | 'about';
       setLoadingStoryId?.(null);
+      setPendingNavigation(null);
       setActiveTab(tab);
       setSelectedStory(null);
     } else {
       setLoadingStoryId?.(null);
+      setPendingNavigation(null);
       setActiveTab('browse');
       setSelectedStory(null);
     }
@@ -240,6 +254,12 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     if (!pendingNavigation) return;
     const { storyId, chapterNum } = pendingNavigation;
 
+    // Abort if loading was cancelled or loadingStoryId no longer matches
+    if (!loadingStoryId || loadingStoryId !== storyId) {
+      setPendingNavigation(null);
+      return;
+    }
+
     let active = true;
     (async () => {
       // Check offline storage first
@@ -261,7 +281,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         }
       }
 
-      if (!active) return;
+      if (!active || loadingStoryIdRef.current !== storyId) return;
 
       if (directStory && !directStory.cover) {
         const meta = stories.find((s) => s.id === storyId);
@@ -281,6 +301,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
           (directStory.isPublic !== false || isOwner || isAdmin || !isOnline);
 
         if (isAllowed) {
+          if (!active || loadingStoryIdRef.current !== storyId) return;
           setSelectedStory(directStory);
           setLoadingStoryId?.(null);
           if (chapterNum !== null) {
@@ -301,6 +322,8 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
           return;
         }
       }
+
+      if (!active || loadingStoryIdRef.current !== storyId) return;
 
       // If story is not found or user is not allowed to read it
       if (!isOnline) {
@@ -328,6 +351,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     };
   }, [
     pendingNavigation,
+    loadingStoryId,
     currentUser,
     isOnline,
     showAlert,
@@ -350,8 +374,9 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
 
   // 4. Synchronize React state changes back to the browser URL
   useEffect(() => {
-    // Avoid updating the URL while navigating a deep link
-    if (pendingNavigation) return;
+    // Avoid updating the URL while actively navigating a deep link for this story
+    if (pendingNavigation && loadingStoryId === pendingNavigation.storyId)
+      return;
 
     let targetPath = '/';
     const queryParams = new URLSearchParams();
@@ -399,6 +424,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     activeChapterIdx,
     activeTab,
     pendingNavigation,
+    loadingStoryId,
     searchQuery,
     filterLanguage,
     filterCefrLevel,

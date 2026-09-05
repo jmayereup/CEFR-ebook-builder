@@ -577,6 +577,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
   const executePendingNavigation = (customPending = pendingNavigation) => {
     if (!customPending) return;
+    setLoadingStory(null);
+    setLoadingStoryId(null);
     if (customPending.clearStory) {
       setSelectedStory(null);
     }

@@ -14,8 +14,8 @@ import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import {
   FRONTIER_LATEST_MODELS,
-  MODEL_PRICES_LAST_UPDATED,
   formatModelPriceIndicator,
+  MODEL_PRICES_LAST_UPDATED,
 } from '../../constants/models';
 import {
   calculateBaselineStoryCost,
