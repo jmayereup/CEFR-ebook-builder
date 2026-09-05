@@ -458,16 +458,27 @@ export default function ChapterSidebar({
 
                     const isAdmin = currentUser?.isAdmin === true;
                     const hasKey = !!customOpenRouterKey;
+                    const isFreeTier = !isAdmin && !hasKey;
 
-                    if (!isAdmin && !hasKey) {
+                    if (isFreeTier) {
                       const freeModels = AI_MODELS.filter((m) =>
                         isFreeModelLocal(m.id),
                       );
-                      return freeModels.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name}
-                        </option>
-                      ));
+                      return (
+                        <>
+                          {story.model &&
+                            !freeModels.some((m) => m.id === story.model) && (
+                              <option value={story.model} disabled>
+                                {getModelDisplayName(story.model)} (BYOK Key Required)
+                              </option>
+                            )}
+                          {freeModels.map((m) => (
+                            <option key={m.id} value={m.id}>
+                              {m.name}
+                            </option>
+                          ))}
+                        </>
+                      );
                     }
 
                     return FRONTIER_LATEST_MODELS.map((m) => {

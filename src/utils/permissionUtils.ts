@@ -31,8 +31,8 @@ export interface PermissionDenied {
  * @returns `null` if permitted, or a `PermissionDenied` reason if blocked.
  */
 export const checkGenerationPermission = (
-  _modelId: string | undefined,
-  isPaid: boolean,
+  modelId: string | undefined,
+  _isPaid: boolean,
   isAdmin: boolean,
   customOpenRouterKey: string,
   _freeModelCount: number,
@@ -49,8 +49,20 @@ export const checkGenerationPermission = (
     return null;
   }
 
-  // 2. Free non-BYOK tier: allow up to 2 books per day
-  if (isNewStory && !isPaid && dailyStoriesCreated >= 2) {
+  // 2. Free non-BYOK tier: restrict to free tier models only (GLM 5.3 Flash & Muse Spark 1.3 Contributor)
+  const isFreeModel =
+    !!modelId && (FREE_MODEL_IDS.has(modelId) || modelId.endsWith(':free'));
+
+  if (!isFreeModel) {
+    return {
+      title: 'Frontier Model Locked',
+      message:
+        'Free tier accounts can only generate stories using Free Tier models (GLM 5.3 Flash or Muse Spark 1.3 Contributor). Configure your own OpenRouter API key in Settings to use frontier models.',
+    };
+  }
+
+  // 3. Free non-BYOK tier: allow up to 2 books per day
+  if (isNewStory && dailyStoriesCreated >= 2) {
     return {
       title: 'Daily Book Limit Reached',
       message:
@@ -58,7 +70,7 @@ export const checkGenerationPermission = (
     };
   }
 
-  // 3. Regular users using system key get 25 daily credits across all models
+  // 4. Regular users using system key get 25 daily credits across all models
   if (dailyCreditsUsed + estimatedCreditsCost > 25) {
     const remaining = Math.max(0, 25 - dailyCreditsUsed);
     return {

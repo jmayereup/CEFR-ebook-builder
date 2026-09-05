@@ -317,8 +317,8 @@ export default function AppHeader({
                         <p className="text-[10px] text-tj-text-muted font-mono leading-tight">
                           {currentUser.isAdmin === true
                             ? 'Super Admin'
-                            : isPaid
-                              ? 'Paid Tier'
+                            : customOpenRouterKey
+                              ? 'BYOK Active'
                               : 'Free Tier'}
                         </p>
                       </>

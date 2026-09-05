@@ -403,7 +403,17 @@ export default function StoryConfigForm({
       return;
     }
 
-    if (!isPaid && !isAdmin && !isByokActive) {
+    if (!isAdmin && !isByokActive) {
+      if (
+        !FREE_MODEL_IDS.has(selectedModel) &&
+        !selectedModel.endsWith(':free')
+      ) {
+        setDraftError(
+          'Free tier accounts can only generate stories using Free Tier models (GLM 5.3 Flash or Muse Spark 1.3 Contributor). Configure your own OpenRouter API key in Settings to use frontier models.',
+        );
+        setIsDraftingOutline(false);
+        return;
+      }
       const isLongStory = totalChapters > 10;
       if (isLongStory) {
         setDraftError(
@@ -1060,11 +1070,10 @@ export default function StoryConfigForm({
                           const isFreeModelLocal = (id: string) =>
                             FREE_MODEL_IDS.has(id) || id.endsWith(':free');
 
-                          // Don't show other models unless the user has a key (or is admin)
-                          const modelsToDisplay =
-                            !isAdmin && !isByokActive
-                              ? AI_MODELS.filter((m) => isFreeModelLocal(m.id))
-                              : AI_MODELS;
+                          // Free tier non-BYOK users only see free models (Muse Spark 1.3 Contributor and GLM 5.3 Flash)
+                          const modelsToDisplay = !isAdmin
+                            ? AI_MODELS.filter((m) => isFreeModelLocal(m.id))
+                            : AI_MODELS;
 
                           const renderOption = (
                             model: (typeof AI_MODELS)[0],
@@ -1073,21 +1082,7 @@ export default function StoryConfigForm({
                             const ageBadge = isMuseModel(model.id)
                               ? ' [18+]'
                               : '';
-                            let costLabel = '';
-                            if (isFree) {
-                              costLabel = ' (0 credits)';
-                            } else {
-                              const estForModel = calculateEstimatedUsage(
-                                totalChapters,
-                                chapterLength,
-                                model.id,
-                              );
-                              const creds = Math.max(
-                                1,
-                                Math.ceil(estForModel.totalCost * 100),
-                              );
-                              costLabel = ` (${creds} ${creds === 1 ? 'credit' : 'credits'})`;
-                            }
+                            const costLabel = isFree ? ' (Free)' : '';
 
                             return (
                               <option key={model.id} value={model.id}>
@@ -1519,7 +1514,7 @@ export default function StoryConfigForm({
                 </div>
 
                 {/* Daily Quota Remaining card */}
-                {!isByokActive && !isAdmin && (
+                {!isByokActive && !isAdmin && !isPaid && (
                   <div className="p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl space-y-3">
                     <div className="flex items-center justify-between text-slate-700 dark:text-slate-350 font-semibold text-xs uppercase tracking-wider">
                       <div className="flex items-center gap-2">

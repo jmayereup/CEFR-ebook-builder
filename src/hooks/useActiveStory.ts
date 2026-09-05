@@ -322,7 +322,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       if (!isPaid && !isAdmin && nextChapterNumber > 10) {
         showAlert(
           'Chapter Limit Reached',
-          'Free members are limited to a maximum of 10 chapters per story. Upgrade to the Paid Tier to add more chapters.',
+          'Free members are limited to a maximum of 10 chapters per story. Configure your own OpenRouter API key in Settings to add more chapters.',
           'warning',
         );
         throw new Error('Chapter limit exceeded');
