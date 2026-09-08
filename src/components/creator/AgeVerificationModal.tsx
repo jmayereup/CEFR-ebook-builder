@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 interface AgeVerificationModalProps {
   isOpen: boolean;
   modelName?: string;
+  modelId?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -11,6 +12,7 @@ interface AgeVerificationModalProps {
 export default function AgeVerificationModal({
   isOpen,
   modelName = 'Meta Muse',
+  modelId,
   onConfirm,
   onCancel,
 }: AgeVerificationModalProps) {
@@ -68,6 +70,13 @@ export default function AgeVerificationModal({
               using this model.
             </p>
           </div>
+          {modelId === 'meta/muse-spark-1.3-contributor' && (
+            <div className="p-2.5 bg-blue-500/10 border border-blue-500/25 rounded-xl text-blue-900 dark:text-blue-200 text-[11px] leading-relaxed">
+              ℹ️ <strong>Contributor Tier:</strong> Prompts and outputs sent to
+              this model may be retained by Meta to improve future models. No
+              personal user names or email addresses are sent.
+            </div>
+          )}
           <p className="text-[11px]">
             Your verification will be remembered in this browser so you will not
             be asked again for future story generations.

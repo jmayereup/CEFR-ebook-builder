@@ -1187,30 +1187,6 @@ export default function StoryConfigForm({
                         OpenRouter key.
                       </p>
                     ) : null}
-                    {isMuseModel(selectedModel) && (
-                      <div className="text-[11px] text-amber-800 dark:text-amber-200 mt-1.5 leading-normal bg-amber-500/10 p-2.5 rounded-lg border border-amber-500/30 font-medium space-y-1">
-                        <div className="flex items-center gap-1.5 font-bold">
-                          <span className="text-[9px] bg-amber-500/25 px-1.5 py-0.5 rounded text-amber-900 dark:text-amber-200 uppercase">
-                            18+ Required
-                          </span>
-                          <span>Meta Muse Model</span>
-                        </div>
-                        {selectedModel === 'meta/muse-spark-1.3-contributor' ? (
-                          <p>
-                            ℹ️ <strong>Contributor Tier:</strong> Prompts and
-                            outputs sent to this model may be retained by Meta to
-                            improve future models. No personal user names or email
-                            addresses are sent.
-                          </p>
-                        ) : (
-                          <p>
-                            ℹ️ <strong>Standard Tier:</strong> Zero data
-                            retention under commercial terms. Basic age
-                            verification applies.
-                          </p>
-                        )}
-                      </div>
-                    )}
                     <p className="text-[10px] text-slate-400 mt-1">
                       Choose the AI model. Flash is fast and economical, Pro
                       offers deep narrative quality.
@@ -1279,19 +1255,6 @@ export default function StoryConfigForm({
                         </>
                       )}
                     </select>
-                    {isMuseModel(selectedCoverModel) && (
-                      <div className="text-[11px] text-amber-800 dark:text-amber-200 mt-1.5 leading-normal bg-amber-500/10 p-2.5 rounded-lg border border-amber-500/30 font-medium space-y-1">
-                        <div className="flex items-center gap-1.5 font-bold">
-                          <span className="text-[9px] bg-amber-500/25 px-1.5 py-0.5 rounded text-amber-900 dark:text-amber-200 uppercase">
-                            18+ Required
-                          </span>
-                          <span>Meta Muse Model</span>
-                        </div>
-                        <p>
-                          ℹ️ Basic age verification applies to Meta Muse image generation.
-                        </p>
-                      </div>
-                    )}
                     <p className="text-[10px] text-slate-400 mt-1">
                       {selectedCoverModel === 'generic'
                         ? 'Uses curated genre artwork instantly without running AI image generation.'
@@ -1563,24 +1526,9 @@ export default function StoryConfigForm({
                     }
                     value={promptNotes}
                     onChange={(e) => setPromptNotes(e.target.value)}
-                    rows={3}
-                    className="w-full p-3 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm placeholder:text-tj-text-muted/50 focus:border-tj-primary focus:outline-none focus:ring-1 focus:ring-tj-primary"
+                    rows={6}
+                    className="w-full p-3 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm placeholder:text-tj-text-muted/50 focus:border-tj-primary focus:outline-none focus:ring-1 focus:ring-tj-primary resize-y"
                   />
-                </div>
-
-                {/* eBook Export Tip Card */}
-                <div className="p-4 bg-emerald-50 dark:bg-emerald-950/15 border border-emerald-250/60 dark:border-emerald-900/30 rounded-2xl space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider">
-                    <BookOpen className="w-4 h-4 shrink-0 text-emerald-500" />
-                    <span>eBook Ready Output</span>
-                  </div>
-                  <p className="text-[10px] text-emerald-600/90 dark:text-emerald-400/90 leading-relaxed font-medium">
-                    Every story generated in this app automatically compiles
-                    into an offline-ready EPUB eBook. You can download and read
-                    it on your{' '}
-                    <strong>Kindle, iPad, or Android e-reader</strong>, complete
-                    with vocabulary glossaries!
-                  </p>
                 </div>
 
                 {/* Token & Cost Estimator */}
@@ -1842,6 +1790,7 @@ export default function StoryConfigForm({
           pendingCoverModelForAge ||
           'Meta Muse'
         }
+        modelId={pendingModelForAge || pendingCoverModelForAge || undefined}
         onConfirm={handleAgeVerificationConfirm}
         onCancel={handleAgeVerificationCancel}
       />
