@@ -50,6 +50,7 @@ export interface StoryConfig {
   outline?: string;
   description?: string;
   model?: string;
+  coverModel?: string;
   thinkingLevel?: string;
   thinkingBudget?: number;
   temperature?: number;

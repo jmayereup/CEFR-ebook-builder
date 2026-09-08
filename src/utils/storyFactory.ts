@@ -71,6 +71,7 @@ export const buildStory = (params: StoryCreationParams): Story => {
   if (config.description != null) newStory.description = config.description;
   if (config.promptNotes != null) newStory.promptNotes = config.promptNotes;
   if (config.model != null) newStory.model = config.model;
+  if (config.coverModel != null) newStory.coverModel = config.coverModel;
   if (config.thinkingLevel != null)
     newStory.thinkingLevel = config.thinkingLevel;
   if (config.thinkingBudget != null)

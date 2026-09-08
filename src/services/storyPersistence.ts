@@ -166,13 +166,14 @@ export async function persistStory(
       onRefreshMetadata({ refresh: true, storyId: sanitizedId });
     }
 
-    // 4. Background cover generation for completed public stories (Admin and BYOK users only)
+    // 4. Background cover generation for completed stories (Admin and BYOK users only)
     const canGenerateCover = !!currentUser?.isAdmin || !!customOpenRouterKey;
+    const effectiveCoverModel = coverModel || storyToSave.coverModel;
     if (
       triggerCoverGen &&
       canGenerateCover &&
+      effectiveCoverModel !== 'generic' &&
       storyToSave.isCompleted &&
-      storyToSave.isPublic !== false &&
       (!generatingCoverIds || !generatingCoverIds.has(sanitizedId))
     ) {
       if (setGeneratingCoverIds) {
@@ -181,7 +182,7 @@ export async function persistStory(
       triggerStoryCoverGeneration({
         storyId: sanitizedId,
         customOpenRouterKey,
-        model: coverModel,
+        model: effectiveCoverModel,
         onCoverUpdated: (cover, updated) => {
           if (onStoryUpdated) {
             onStoryUpdated({

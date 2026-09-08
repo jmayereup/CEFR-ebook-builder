@@ -369,7 +369,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       story,
       currentUser,
       customOpenRouterKey,
-      coverModel: useUIStore.getState().defaultCoverModel,
+      coverModel:
+        story.coverModel || useUIStore.getState().defaultCoverModel,
       onStoryUpdated: setSelectedStory,
       onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
       generatingCoverIds,
@@ -477,7 +478,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         story: targetStory,
         currentUser,
         customOpenRouterKey,
-        coverModel: useUIStore.getState().defaultCoverModel,
+        coverModel:
+          targetStory.coverModel || useUIStore.getState().defaultCoverModel,
         onStoryUpdated: setSelectedStory,
         onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
         generatingCoverIds,
@@ -528,15 +530,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       selectedStory && selectedStory.id === storyId
         ? selectedStory
         : stories.find((s) => s.id === storyId);
-
-    if (targetStory && targetStory.isPublic === false) {
-      showAlert(
-        'Cover Generation Disabled',
-        'Cover images cannot be generated for private stories.',
-        'info',
-      );
-      return;
-    }
 
     if (!currentUser?.isAdmin && !customOpenRouterKey) {
       showAlert(

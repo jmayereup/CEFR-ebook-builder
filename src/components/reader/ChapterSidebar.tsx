@@ -705,11 +705,7 @@ export default function ChapterSidebar({
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
                       Story Cover
                     </label>
-                    {story.isPublic === false ? (
-                      <p className="text-[10px] text-tj-text-muted italic">
-                        Cover generation is disabled for private stories.
-                      </p>
-                    ) : currentUser?.isAdmin === true || !!customOpenRouterKey ? (
+                    {currentUser?.isAdmin === true || !!customOpenRouterKey ? (
                       <div className="space-y-2">
                         <div>
                           <label className="block text-[9px] uppercase tracking-wider text-tj-text-muted font-medium mb-1">

@@ -8,6 +8,7 @@ import {
   FileSignature,
   Globe,
   HelpCircle,
+  Image as ImageIcon,
   Info,
   Layers,
   Lock,
@@ -20,6 +21,8 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import {
   AI_MODELS,
+  COVER_IMAGE_MODELS,
+  formatCoverModelPriceIndicator,
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
   formatModelPriceIndicator,
@@ -114,6 +117,7 @@ interface StoryConfigFormProps {
     outline?: string;
     description?: string;
     model?: string;
+    coverModel?: string;
     thinkingLevel?: string;
     thinkingBudget?: number;
     temperature?: number;
@@ -148,6 +152,7 @@ export default function StoryConfigForm({
 }: StoryConfigFormProps) {
   const customOpenRouterKey = useUIStore((state) => state.customOpenRouterKey);
   const defaultStoryModel = useUIStore((state) => state.defaultStoryModel);
+  const defaultCoverModel = useUIStore((state) => state.defaultCoverModel);
   const translationTargetLanguage = useUIStore(
     (state) => state.translationTargetLanguage,
   );
@@ -163,6 +168,9 @@ export default function StoryConfigForm({
   const [pendingModelForAge, setPendingModelForAge] = useState<string | null>(
     null,
   );
+  const [pendingCoverModelForAge, setPendingCoverModelForAge] = useState<
+    string | null
+  >(null);
 
   // Config state
   const [language, setLanguage] = useState('es');
@@ -171,6 +179,17 @@ export default function StoryConfigForm({
   const [totalChapters, setTotalChapters] = useState(5);
   const [chapterLength, setChapterLength] = useState(350);
   const [promptNotes, setPromptNotes] = useState('');
+  const [selectedCoverModel, setSelectedCoverModel] = useState<string>(() => {
+    if (isByokActive || isAdmin) {
+      const preferred =
+        defaultCoverModel || 'google/gemini-3.1-flash-lite-image';
+      if (isMuseModel(preferred) && !isAgeVerified) {
+        return 'google/gemini-3.1-flash-lite-image';
+      }
+      return preferred;
+    }
+    return 'generic';
+  });
   const [selectedModel, setSelectedModel] = useState(() => {
     if (isByokActive || isAdmin) {
       const preferred = defaultStoryModel || 'deepseek/deepseek-v4-pro';
@@ -239,6 +258,16 @@ export default function StoryConfigForm({
     }
   }, [isByokActive, defaultStoryModel, isAgeVerified]);
 
+  // Sync selectedCoverModel with defaultCoverModel when BYOK or Admin is active
+  useEffect(() => {
+    if ((isByokActive || isAdmin) && defaultCoverModel) {
+      if (isMuseModel(defaultCoverModel) && !isAgeVerified) {
+        return;
+      }
+      setSelectedCoverModel(defaultCoverModel);
+    }
+  }, [isByokActive, isAdmin, defaultCoverModel, isAgeVerified]);
+
   const handleModelSelectChange = (newModel: string) => {
     if (isMuseModel(newModel) && !isAgeVerified) {
       setPendingModelForAge(newModel);
@@ -250,6 +279,15 @@ export default function StoryConfigForm({
     setThinkingOption(support.defaultOption);
   };
 
+  const handleCoverModelSelectChange = (newCoverModel: string) => {
+    if (isMuseModel(newCoverModel) && !isAgeVerified) {
+      setPendingCoverModelForAge(newCoverModel);
+      setShowAgeVerificationModal(true);
+      return;
+    }
+    setSelectedCoverModel(newCoverModel);
+  };
+
   const handleAgeVerificationConfirm = () => {
     setIsAgeVerified(true);
     setShowAgeVerificationModal(false);
@@ -259,11 +297,16 @@ export default function StoryConfigForm({
       setThinkingOption(support.defaultOption);
       setPendingModelForAge(null);
     }
+    if (pendingCoverModelForAge) {
+      setSelectedCoverModel(pendingCoverModelForAge);
+      setPendingCoverModelForAge(null);
+    }
   };
 
   const handleAgeVerificationCancel = () => {
     setShowAgeVerificationModal(false);
     setPendingModelForAge(null);
+    setPendingCoverModelForAge(null);
   };
 
   const handleLanguageChange = (langCode: string) => {
@@ -356,6 +399,7 @@ export default function StoryConfigForm({
       isPublic,
       embedUrl: trimmedUrl,
       sourceType: 'gemini_storybook',
+      coverModel: selectedCoverModel,
     });
   };
 
@@ -681,6 +725,7 @@ export default function StoryConfigForm({
       outline: draftOutline,
       description: draftDescription,
       model: selectedModel,
+      coverModel: selectedCoverModel,
       thinkingLevel: finalThinkingLevel,
       thinkingBudget: finalThinkingBudget,
       temperature: finalTemperature,
@@ -1169,6 +1214,90 @@ export default function StoryConfigForm({
                     <p className="text-[10px] text-slate-400 mt-1">
                       Choose the AI model. Flash is fast and economical, Pro
                       offers deep narrative quality.
+                    </p>
+                  </div>
+
+                  {/* Cover Artwork Generator */}
+                  <div className="md:col-span-2 pt-4 border-t border-slate-200/50 dark:border-slate-800/80">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <ImageIcon className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />
+                        Book Cover Artwork
+                      </label>
+                      {selectedCoverModel !== 'generic' && isByokActive && (
+                        <span className="text-[10px] text-tj-text-muted font-normal">
+                          (Billed to your OpenRouter key)
+                        </span>
+                      )}
+                    </div>
+                    <select
+                      value={selectedCoverModel}
+                      disabled={!currentUser}
+                      onChange={(e) =>
+                        handleCoverModelSelectChange(e.target.value)
+                      }
+                      className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none disabled:opacity-80 disabled:cursor-not-allowed disabled:bg-tj-bg-recessed cursor-pointer"
+                    >
+                      <option value="generic">
+                        🎨 Generic (Curated Genre Artwork - No AI)
+                      </option>
+                      {isByokActive || isAdmin ? (
+                        <>
+                          {COVER_IMAGE_MODELS.map((m) => {
+                            const priceLabel =
+                              formatCoverModelPriceIndicator(m);
+                            const ageBadge = isMuseModel(m.id)
+                              ? ' [18+]'
+                              : '';
+                            return (
+                              <option key={m.id} value={m.id}>
+                                {m.name}{ageBadge} {priceLabel}
+                              </option>
+                            );
+                          })}
+                          {!COVER_IMAGE_MODELS.some(
+                            (m) => m.id === selectedCoverModel,
+                          ) &&
+                            selectedCoverModel !== 'generic' && (
+                              <option value={selectedCoverModel}>
+                                {selectedCoverModel} (Custom Model)
+                              </option>
+                            )}
+                        </>
+                      ) : (
+                        <>
+                          {COVER_IMAGE_MODELS.map((m) => {
+                            const ageBadge = isMuseModel(m.id)
+                              ? ' [18+]'
+                              : '';
+                            return (
+                              <option key={m.id} value={m.id} disabled>
+                                {m.name}{ageBadge} (Requires BYOK)
+                              </option>
+                            );
+                          })}
+                        </>
+                      )}
+                    </select>
+                    {isMuseModel(selectedCoverModel) && (
+                      <div className="text-[11px] text-amber-800 dark:text-amber-200 mt-1.5 leading-normal bg-amber-500/10 p-2.5 rounded-lg border border-amber-500/30 font-medium space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold">
+                          <span className="text-[9px] bg-amber-500/25 px-1.5 py-0.5 rounded text-amber-900 dark:text-amber-200 uppercase">
+                            18+ Required
+                          </span>
+                          <span>Meta Muse Model</span>
+                        </div>
+                        <p>
+                          ℹ️ Basic age verification applies to Meta Muse image generation.
+                        </p>
+                      </div>
+                    )}
+                    <p className="text-[10px] text-slate-400 mt-1">
+                      {selectedCoverModel === 'generic'
+                        ? 'Uses curated genre artwork instantly without running AI image generation.'
+                        : !isByokActive && !isAdmin
+                          ? 'AI cover generation requires an Admin account or your OpenRouter key (BYOK in Settings).'
+                          : 'A bespoke cover image will be generated automatically upon story completion.'}
                     </p>
                   </div>
 
@@ -1704,10 +1833,13 @@ export default function StoryConfigForm({
       <AgeVerificationModal
         isOpen={showAgeVerificationModal}
         modelName={
+          COVER_IMAGE_MODELS.find((m) => m.id === pendingCoverModelForAge)
+            ?.name ||
           FRONTIER_LATEST_MODELS.find((m) => m.id === pendingModelForAge)
             ?.name ||
           AI_MODELS.find((m) => m.id === pendingModelForAge)?.name ||
           pendingModelForAge ||
+          pendingCoverModelForAge ||
           'Meta Muse'
         }
         onConfirm={handleAgeVerificationConfirm}

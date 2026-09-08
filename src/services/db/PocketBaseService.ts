@@ -64,6 +64,7 @@ export class PocketBaseService implements IDatabaseService {
     if (pbStory.temperature == null) delete pbStory.temperature;
     if (pbStory.storyBible == null) delete pbStory.storyBible;
     if (pbStory.consistencyAudits == null) delete pbStory.consistencyAudits;
+    delete pbStory.coverModel;
 
     try {
       const { id, ...updateData } = pbStory;
