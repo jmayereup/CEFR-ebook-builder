@@ -1,33 +1,7 @@
-import { FileSignature, Info, Sparkles } from 'lucide-react';
+import { FileSignature, Info, Layers } from 'lucide-react';
 import type React from 'react';
-import { WRITING_TYPE_GENRES } from '../../types';
-
-export const WRITING_TYPES = [
-  {
-    id: 'narrative',
-    label: 'Narrative',
-    emoji: '📖',
-    desc: 'Storytelling, plot-driven, fictional or personal account.',
-  },
-  {
-    id: 'expository',
-    label: 'Expository',
-    emoji: '💡',
-    desc: 'Explaining, informing, or describing a specific topic with facts.',
-  },
-  {
-    id: 'analytical',
-    label: 'Analytical',
-    emoji: '🔍',
-    desc: 'Breaking down concepts, examining relationships or arguments.',
-  },
-  {
-    id: 'descriptive',
-    label: 'Descriptive',
-    emoji: '🎨',
-    desc: 'Focusing on vivid sensory details, imagery, and mood.',
-  },
-];
+import { GENRES, WRITING_TYPE_GENRES } from '../../types';
+import { WRITING_TYPES } from './storyConfigConstants';
 
 interface GenreSelectorProps {
   writingType: string;
@@ -42,9 +16,7 @@ export default function GenreSelector({
   genre,
   onGenreChange,
 }: GenreSelectorProps) {
-  const currentGenres = WRITING_TYPE_GENRES[writingType] || [];
-
-  const handleTypeSelect = (typeId: string) => {
+  const handleWritingTypeClick = (typeId: string) => {
     onWritingTypeChange(typeId);
     const available = WRITING_TYPE_GENRES[typeId];
     if (available && available.length > 0) {
@@ -55,8 +27,8 @@ export default function GenreSelector({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Writing Style / Type */}
+    <>
+      {/* Writing Style / Type (Selected First) */}
       <div className="space-y-3">
         <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
           <FileSignature className="w-4 h-4 text-tj-primary" />
@@ -69,47 +41,35 @@ export default function GenreSelector({
               <button
                 key={wt.id}
                 type="button"
-                onClick={() => handleTypeSelect(wt.id)}
-                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
+                onClick={() => handleWritingTypeClick(wt.id)}
+                className={`p-3.5 border rounded-xl text-left transition-all duration-200 flex flex-col items-start gap-1 cursor-pointer bg-tj-bg-card hover:border-tj-primary ${
                   isSelected
-                    ? 'border-tj-primary bg-tj-primary-light/50 dark:bg-tj-primary-light/10 text-slate-900 dark:text-white ring-2 ring-tj-primary/30 shadow-xs'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800/50 text-slate-700 dark:text-slate-300'
+                    ? 'border-tj-primary bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover ring-2 ring-tj-primary/20'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-transparent text-slate-700 dark:text-slate-300'
                 }`}
               >
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xl">{wt.emoji}</span>
-                    <span className="font-bold text-sm leading-tight">
-                      {wt.label}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
-                    {wt.desc}
-                  </p>
-                </div>
-                {isSelected && (
-                  <div className="absolute top-2 right-2 text-tj-primary">
-                    <Sparkles className="w-3.5 h-3.5" />
-                  </div>
-                )}
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                  <span>{wt.emoji}</span> {wt.label}
+                </span>
+                <p className="text-[10px] text-slate-600 dark:text-slate-300 leading-snug mt-0.5 font-sans">
+                  {wt.desc}
+                </p>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Genre Picker */}
+      {/* Genre / Theme (Filtered by Writing Type) */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-            Genre / Category
-          </label>
-          <span className="text-[11px] text-slate-400 dark:text-slate-500">
-            Filtered by {writingType}
-          </span>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          {currentGenres.map((g) => {
+        <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <Layers className="w-4 h-4 text-tj-primary" />
+          {writingType === 'expository' || writingType === 'analytical'
+            ? 'Topic / Focus Area'
+            : 'Genre / Theme'}
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {(WRITING_TYPE_GENRES[writingType] || GENRES).map((g) => {
             const isSelected = genre === g.id;
             const emojiMatch = g.label.match(
               /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F000}-\u{1F9FF}]/u,
@@ -121,29 +81,29 @@ export default function GenreSelector({
                 key={g.id}
                 type="button"
                 onClick={() => onGenreChange(g.id)}
-                className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-tj-primary bg-tj-primary text-white shadow-sm font-semibold'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800/50 text-slate-700 dark:text-slate-300'
+                    ? 'border-tj-primary bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover ring-2 ring-tj-primary/20'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-transparent text-slate-700 dark:text-slate-300'
                 }`}
               >
-                {emoji && <span className="text-base">{emoji}</span>}
-                <span className="text-xs">{text}</span>
+                <span className="text-2xl mb-1">{emoji}</span>
+                <span className="text-xs font-semibold">{text}</span>
               </button>
             );
           })}
         </div>
-
-        {genre === 'nonfiction' && (
-          <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-2 text-xs text-amber-700 dark:text-amber-300">
-            <Info className="w-4 h-4 mt-0.5 shrink-0" />
-            <p>
-              Non-fiction narratives automatically use grounded factual
-              temperature settings to maintain accuracy.
-            </p>
+        {(genre === 'nonfiction' || writingType === 'expository') && (
+          <div className="mt-2.5 p-3 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 text-xs rounded-xl border border-amber-100 dark:border-amber-950/30 flex items-start gap-2 animate-fade-in">
+            <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-500 dark:text-amber-400" />
+            <span>
+              <strong>Hallucination Warning:</strong> Factual and informational
+              topics generated by AI may contain inaccuracies or
+              hallucinations, especially when simplified for language learning.
+            </span>
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }

@@ -47,6 +47,23 @@ export default function StoryOutlineReview({
       exit={{ opacity: 0, y: -15 }}
       className="bg-tj-bg-card p-6 rounded-2xl shadow-xl border border-tj-border-main space-y-6"
     >
+      {/* Step Progress Stepper */}
+      <div className="flex items-center gap-2.5 mb-5 px-3.5 py-2 bg-tj-bg-recessed/60 rounded-xl border border-tj-border-main text-xs select-none">
+        <div className="flex items-center gap-2 font-medium text-emerald-600 dark:text-emerald-400">
+          <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold flex items-center justify-center shrink-0">
+            ✓
+          </span>
+          <span>Concept & Settings</span>
+        </div>
+        <div className="flex-1 h-[1px] bg-slate-200 dark:bg-slate-700 mx-1" />
+        <div className="flex items-center gap-2 font-bold text-tj-primary dark:text-tj-primary-hover">
+          <span className="w-5 h-5 rounded-full bg-tj-primary text-tj-bg-main text-[10px] font-extrabold flex items-center justify-center shrink-0">
+            2
+          </span>
+          <span>Review & Refine Outline</span>
+        </div>
+      </div>
+
       <div className="flex items-center gap-3">
         <button
           onClick={onBack}

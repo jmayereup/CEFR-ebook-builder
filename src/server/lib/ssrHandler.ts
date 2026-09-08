@@ -154,7 +154,7 @@ export function createSSRHandler(getVite: () => any): express.RequestHandler {
         template = template.replace('</head>', `${dynamicMeta}</head>`);
       }
 
-      const { html, head = '' } = render(url, preloadedData);
+      const { html, head = '' } = await render(url, preloadedData);
 
       const dataScript = `<script>window.__PRELOADED_DATA__ = ${JSON.stringify(preloadedData).replace(/</g, '\\u003c')};</script>`;
       const appHtml = template
