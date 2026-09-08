@@ -665,49 +665,53 @@ export default function ChapterSidebar({
                     </>
                   )}
 
-                {isEditing &&
-                  currentUser?.isAdmin === true &&
-                  onGenerateCover && (
-                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
-                        Story Cover
-                      </label>
-                      {story.isPublic === false ? (
-                        <p className="text-[10px] text-tj-text-muted italic">
-                          Cover generation is disabled for private stories.
-                        </p>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled={
-                            isLoadingNext ||
-                            isAutoGeneratingRemaining ||
-                            isGeneratingCover
+                {isEditing && onGenerateCover && (
+                  <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
+                      Story Cover
+                    </label>
+                    {story.isPublic === false ? (
+                      <p className="text-[10px] text-tj-text-muted italic">
+                        Cover generation is disabled for private stories.
+                      </p>
+                    ) : currentUser?.isAdmin === true || !!customOpenRouterKey ? (
+                      <button
+                        type="button"
+                        disabled={
+                          isLoadingNext ||
+                          isAutoGeneratingRemaining ||
+                          isGeneratingCover
+                        }
+                        onClick={async () => {
+                          setIsGeneratingCover(true);
+                          try {
+                            await onGenerateCover(story.id, true);
+                          } finally {
+                            setIsGeneratingCover(false);
                           }
-                          onClick={async () => {
-                            setIsGeneratingCover(true);
-                            try {
-                              await onGenerateCover(story.id, true);
-                            } finally {
-                              setIsGeneratingCover(false);
-                            }
-                          }}
-                          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
-                        >
-                          {isGeneratingCover ? (
-                            <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
-                          ) : (
-                            <Sparkles className="w-3.5 h-3.5 text-white" />
-                          )}
-                          <span>
-                            {isGeneratingCover
-                              ? 'Generating...'
-                              : 'Regenerate Cover'}
-                          </span>
-                        </button>
-                      )}
-                    </div>
-                  )}
+                        }}
+                        className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
+                      >
+                        {isGeneratingCover ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                        ) : (
+                          <Sparkles className="w-3.5 h-3.5 text-white" />
+                        )}
+                        <span>
+                          {isGeneratingCover
+                            ? 'Generating...'
+                            : 'Regenerate Cover'}
+                        </span>
+                      </button>
+                    ) : (
+                      <div className="p-2.5 rounded-xl bg-tj-primary-light/40 dark:bg-white/5 border border-tj-border-main/60 text-center">
+                        <p className="text-[10px] text-tj-text-muted leading-relaxed">
+                          Custom AI covers are available for BYOK users. Add your OpenRouter key in Settings to generate custom covers.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

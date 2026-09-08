@@ -10,8 +10,8 @@ import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
-import { GENRES, getLanguageCodeFromName, type Story } from '../../types';
-import { getStoryCoverUrl } from '../../utils/coverUtils';
+import { GENRES, type Story } from '../../types';
+import StoryBookCover from './StoryBookCover';
 
 interface RecentlyReadSectionProps {
   items: {
@@ -28,36 +28,12 @@ const cleanGenreLabel = (label: string) => {
     .trim();
 };
 
-const getCefrCoverStyles = (cefrLevel: string) => {
-  const lvl = cefrLevel.toUpperCase();
-  if (lvl.startsWith('A')) {
-    return {
-      card: 'bg-gradient-to-br from-[#FAF6EE] to-[#EBE4D5] dark:from-[#2D2B28] dark:to-[#1C1A18] text-[#2D2A26] dark:text-[#EBE4D5] border-[#D0C7B2]/40 dark:border-[#5A5348]/40',
-      textMuted: 'text-[#615C54] dark:text-[#9B9384]',
-      line: 'border-[#D0C7B2]/30 dark:border-[#5A5348]/30',
-    };
-  }
-  if (lvl.startsWith('B')) {
-    return {
-      card: 'bg-gradient-to-br from-[#F0F2E8] to-[#DCE0CC] dark:from-[#20231D] dark:to-[#131612] text-[#20291D] dark:text-[#DCE0CC] border-[#C1C9A9]/40 dark:border-[#4C5340]/40',
-      textMuted: 'text-[#535F4F] dark:text-[#8F9983]',
-      line: 'border-[#C1C9A9]/30 dark:border-[#4C5340]/30',
-    };
-  }
-  return {
-    card: 'bg-gradient-to-br from-[#FAF0E3] to-[#EBD7BE] dark:from-[#312318] dark:to-[#1C130D] text-[#3B250D] dark:text-[#EBD7BE] border-[#D9BD9C]/40 dark:border-[#624A35]/40',
-    textMuted: 'text-[#7A5A39] dark:text-[#AB9074]',
-    line: 'border-[#D9BD9C]/30 dark:border-[#624A35]/30',
-  };
-};
-
 export default function RecentlyReadSection({
   items,
   onSelectStory,
   generatingCoverIds,
 }: RecentlyReadSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [imgErrorMap, setImgErrorMap] = useState<Record<string, boolean>>({});
   const [isMounted, setIsMounted] = useState(false);
   const currentUser = useAuthStore((state) => state.currentUser);
   const guestCompletedStoryIds = useUIStore(
@@ -67,29 +43,6 @@ export default function RecentlyReadSection({
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const handleImgError = (storyId: string) => {
-    setImgErrorMap((prev) => ({ ...prev, [storyId]: true }));
-  };
-
-  // Reset image error map entry for any story when its updated timestamp changes or generation status updates
-  const generatingKey = Array.from(generatingCoverIds || []).join(',');
-  const updatedTimestamps = items
-    .map((item) => `${item.story.id}-${item.story.updated}`)
-    .join(',');
-  useEffect(() => {
-    setImgErrorMap((prev) => {
-      let changed = false;
-      const next = { ...prev };
-      for (const item of items) {
-        if (item.story.id && next[item.story.id]) {
-          delete next[item.story.id];
-          changed = true;
-        }
-      }
-      return changed ? next : prev;
-    });
-  }, [updatedTimestamps, generatingKey, items]);
 
   if (!isMounted || !items || items.length === 0) return null;
 
@@ -123,13 +76,11 @@ export default function RecentlyReadSection({
             ? 100
             : Math.round((chapterIdx / story.totalChapters) * 100);
 
-          const coverStyle = getCefrCoverStyles(story.cefrLevel);
           const resolvedGenreLabel = cleanGenreLabel(
             GENRES.find((g) => g.id === story.genre)?.label || story.genre,
           );
 
           const isGeneratingCover = generatingCoverIds?.has(story.id);
-          const hasCoverImage = !imgErrorMap[story.id] && !isGeneratingCover;
 
           return (
             <motion.div
@@ -139,50 +90,12 @@ export default function RecentlyReadSection({
               className="flex gap-4 p-4 bg-tj-bg-card border border-tj-border-main hover:border-tj-primary-border rounded-2xl shadow-xs transition-all cursor-pointer relative overflow-hidden group select-none"
             >
               {/* Cover Art Miniature */}
-              <div className="relative w-16 h-24 shrink-0 aspect-[3/4.2] overflow-hidden rounded-md shadow-xs">
-                <div
-                  className={`absolute inset-0 ${
-                    hasCoverImage
-                      ? 'bg-stone-100 dark:bg-stone-900 text-[#F9F6F0] dark:text-[#EBE4D5] border-black/10 dark:border-white/10'
-                      : coverStyle.card
-                  } border flex flex-col justify-between ${hasCoverImage ? 'p-0' : 'p-2'} text-center`}
-                >
-                  {isGeneratingCover && (
-                    <div className="absolute inset-0 z-20 bg-black/45 backdrop-blur-xs flex flex-col items-center justify-center p-1 text-center text-white">
-                      <div className="w-5 h-5 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
-                    </div>
-                  )}
-
-                  {hasCoverImage && (
-                    <img
-                      src={getStoryCoverUrl(story)}
-                      onError={() => handleImgError(story.id)}
-                      className="absolute inset-0 w-full h-full object-cover z-0"
-                      alt=""
-                    />
-                  )}
-
-                  {/* Left Spine Fold / Crease (for text covers) */}
-                  {!hasCoverImage && (
-                    <>
-                      <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
-                      <div className="absolute left-2 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
-                    </>
-                  )}
-
-                  {/* Title Mini - only rendered if there is no cover image */}
-                  {!hasCoverImage && (
-                    <h4
-                      lang={getLanguageCodeFromName(story.language)}
-                      className="text-[9px] font-serif font-black leading-tight line-clamp-3 my-auto z-10 relative px-0.5"
-                    >
-                      {story.title}
-                    </h4>
-                  )}
-
-                  {/* Empty footer spacing for spine */}
-                  {!hasCoverImage && <div className="h-1" />}
-                </div>
+              <div className="relative w-16 h-24 shrink-0 aspect-[3/4.2] overflow-hidden rounded-md shadow-xs border border-black/10 dark:border-white/10">
+                <StoryBookCover
+                  story={story}
+                  size="compact"
+                  isGeneratingCover={isGeneratingCover}
+                />
               </div>
 
               {/* Info Column */}

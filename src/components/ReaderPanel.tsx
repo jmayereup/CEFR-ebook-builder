@@ -36,7 +36,7 @@ import {
   SUPPORTED_LANGUAGES,
   type VocabularyTerm,
 } from '../types';
-import { getStoryCoverUrl } from '../utils/coverUtils';
+import StoryBookCover from './library/StoryBookCover';
 import { buildApiHeaders } from '../utils/modelUtils';
 import {
   limitContextToTenWords,
@@ -194,18 +194,6 @@ export default function ReaderPanel({
 
   const [sessionFinished, setSessionFinished] = useState(false);
   const [hoverRating, setHoverRating] = useState<number>(0);
-  const [coverImgError, setCoverImgError] = useState(false);
-
-  // Reset coverImgError when cover is generated, story updates, or story.id/cover changes
-  useEffect(() => {
-    setCoverImgError(false);
-  }, [
-    story.id,
-    story.cover,
-    story.updated,
-    isGeneratingCover,
-    activeChapterIndex,
-  ]);
 
   // Deep-link scrolling when arriving with target highlight paragraph from NotesPage
   useEffect(() => {
@@ -1657,37 +1645,22 @@ export default function ReaderPanel({
                 )}
 
                 {/* Chapter Cover Image (for Chapter 1) */}
-                {activeChapterIndex === 0 &&
-                  activeChapter &&
-                  (isGeneratingCover || !coverImgError) && (
-                    <div className="flex justify-center mb-8 mt-2 select-none">
-                      <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, ease: 'easeOut' }}
-                        className="relative w-full max-w-[240px] sm:max-w-[280px] aspect-[3/4.2] rounded-lg overflow-hidden shadow-[0_8px_24px_-4px_rgba(0,0,0,0.15),_0_2px_8px_-2px_rgba(0,0,0,0.1)] border border-slate-200/60 dark:border-white/10"
-                      >
-                        {isGeneratingCover ? (
-                          <div className="absolute inset-0 bg-tj-bg-card border flex flex-col items-center justify-center p-4 text-center">
-                            <div className="w-8 h-8 border-2 border-tj-primary border-t-transparent rounded-full animate-spin mb-2" />
-                            <span className="text-xs font-bold text-tj-text-main">
-                              Generating Cover...
-                            </span>
-                          </div>
-                        ) : (
-                          <>
-                            <img
-                              src={getStoryCoverUrl(story)}
-                              onError={() => setCoverImgError(true)}
-                              className="w-full h-full object-cover"
-                              alt={`${story.title} Cover`}
-                              loading="eager"
-                            />
-                          </>
-                        )}
-                      </motion.div>
-                    </div>
-                  )}
+                {activeChapterIndex === 0 && activeChapter && (
+                  <div className="flex justify-center mb-8 mt-2 select-none">
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className="relative w-full max-w-[240px] sm:max-w-[280px] aspect-[3/4.2] rounded-lg overflow-hidden shadow-[0_8px_24px_-4px_rgba(0,0,0,0.15),_0_2px_8px_-2px_rgba(0,0,0,0.1)] border border-slate-200/60 dark:border-white/10"
+                    >
+                      <StoryBookCover
+                        story={story}
+                        size="hero"
+                        isGeneratingCover={isGeneratingCover}
+                      />
+                    </motion.div>
+                  </div>
+                )}
 
                 {/* Chapter header titles */}
                 {activeChapter && (

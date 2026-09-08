@@ -368,6 +368,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     const result = await persistStory({
       story,
       currentUser,
+      customOpenRouterKey,
       onStoryUpdated: setSelectedStory,
       onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
       generatingCoverIds,
@@ -474,6 +475,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       const result = await persistStory({
         story: targetStory,
         currentUser,
+        customOpenRouterKey,
         onStoryUpdated: setSelectedStory,
         onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
         generatingCoverIds,
@@ -533,11 +535,21 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       return;
     }
 
+    if (!currentUser?.isAdmin && !customOpenRouterKey) {
+      showAlert(
+        'BYOK Required',
+        'Custom AI cover generation is available for BYOK users. Add your own OpenRouter API key in Settings to generate custom covers.',
+        'info',
+      );
+      return;
+    }
+
     setGeneratingCoverIds((prev) => new Set(prev).add(storyId));
     try {
       const res = await triggerStoryCoverGeneration({
         storyId,
         force,
+        customOpenRouterKey,
         onCoverUpdated: (cover, updated) => {
           if (selectedStory && selectedStory.id === storyId) {
             setSelectedStory({

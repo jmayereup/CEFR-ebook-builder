@@ -32,6 +32,7 @@ export function sanitizePocketBaseId(rawId: string): string {
 export interface TriggerCoverOptions {
   storyId: string;
   force?: boolean;
+  customOpenRouterKey?: string;
   onCoverUpdated?: (cover: string, updated: string) => void;
   onRefreshMetadata?: (options: {
     refresh: boolean;
@@ -45,11 +46,17 @@ export interface TriggerCoverOptions {
 export async function triggerStoryCoverGeneration(
   options: TriggerCoverOptions,
 ): Promise<{ success: boolean; data?: any; error?: string }> {
-  const { storyId, force = false, onCoverUpdated, onRefreshMetadata } = options;
+  const {
+    storyId,
+    force = false,
+    customOpenRouterKey,
+    onCoverUpdated,
+    onRefreshMetadata,
+  } = options;
   try {
     const res = await fetch('/api/stories/generate-cover/generate', {
       method: 'POST',
-      headers: buildApiHeaders(),
+      headers: buildApiHeaders(customOpenRouterKey),
       body: JSON.stringify({ storyId, force }),
     });
     if (!res.ok) {
@@ -81,6 +88,7 @@ export async function triggerStoryCoverGeneration(
 export interface PersistStoryOptions {
   story: Story;
   currentUser?: IUser | null;
+  customOpenRouterKey?: string;
   onStoryUpdated?: (updatedStory: Story) => void;
   onRefreshMetadata?: (options: { refresh: boolean; storyId: string }) => void;
   triggerCoverGen?: boolean;
@@ -111,6 +119,7 @@ export async function persistStory(
   const {
     story,
     currentUser,
+    customOpenRouterKey,
     onStoryUpdated,
     onRefreshMetadata,
     triggerCoverGen = true,
@@ -153,9 +162,11 @@ export async function persistStory(
       onRefreshMetadata({ refresh: true, storyId: sanitizedId });
     }
 
-    // 4. Background cover generation for completed public stories
+    // 4. Background cover generation for completed public stories (Admin and BYOK users only)
+    const canGenerateCover = !!currentUser?.isAdmin || !!customOpenRouterKey;
     if (
       triggerCoverGen &&
+      canGenerateCover &&
       storyToSave.isCompleted &&
       storyToSave.isPublic !== false &&
       (!generatingCoverIds || !generatingCoverIds.has(sanitizedId))
@@ -165,6 +176,7 @@ export async function persistStory(
       }
       triggerStoryCoverGeneration({
         storyId: sanitizedId,
+        customOpenRouterKey,
         onCoverUpdated: (cover, updated) => {
           if (onStoryUpdated) {
             onStoryUpdated({

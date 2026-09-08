@@ -22,40 +22,15 @@ import {
   type RecentlyReadItem,
   type Story,
 } from '../../types';
-import { getStoryCoverUrl } from '../../utils/coverUtils';
+import { hasCustomCover } from '../../utils/coverUtils';
 import { getModelDisplayName } from '../../utils/modelUtils';
 import { countWords } from '../../utils/wordCounter';
+import StoryBookCover from './StoryBookCover';
 
 const cleanGenreLabel = (label: string) => {
   return label
     .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
     .trim();
-};
-
-const getCefrCoverStyles = (cefrLevel: string) => {
-  const lvl = cefrLevel.toUpperCase();
-  if (lvl.startsWith('A')) {
-    // Birch / Parchment / Pale Linen (soft natural paper colors)
-    return {
-      card: 'bg-gradient-to-br from-[#FAF6EE] to-[#EBE4D5] dark:from-[#2D2B28] dark:to-[#1C1A18] text-[#2D2A26] dark:text-[#EBE4D5] border-[#D0C7B2]/40 dark:border-[#5A5348]/40',
-      textMuted: 'text-[#615C54] dark:text-[#9B9384]',
-      line: 'border-[#D0C7B2]/30 dark:border-[#5A5348]/30',
-    };
-  }
-  if (lvl.startsWith('B')) {
-    // Sage / Soft Green Pine / Olive Wood (soft natural green woods)
-    return {
-      card: 'bg-gradient-to-br from-[#F0F2E8] to-[#DCE0CC] dark:from-[#20231D] dark:to-[#131612] text-[#20291D] dark:text-[#DCE0CC] border-[#C1C9A9]/40 dark:border-[#4C5340]/40',
-      textMuted: 'text-[#535F4F] dark:text-[#8F9983]',
-      line: 'border-[#C1C9A9]/30 dark:border-[#4C5340]/30',
-    };
-  }
-  // Warm Cedar / Oak / Sandalwood / Terracotta (C levels - Advanced)
-  return {
-    card: 'bg-gradient-to-br from-[#FAF0E3] to-[#EBD7BE] dark:from-[#312318] dark:to-[#1C130D] text-[#3B250D] dark:text-[#EBD7BE] border-[#D9BD9C]/40 dark:border-[#624A35]/40',
-    textMuted: 'text-[#7A5A39] dark:text-[#AB9074]',
-    line: 'border-[#D9BD9C]/30 dark:border-[#624A35]/30',
-  };
 };
 
 export interface StoryCardProps {
@@ -113,20 +88,11 @@ export default function StoryCard({
   const resolvedGenreLabel = cleanGenreLabel(
     GENRES.find((g) => g.id === story.genre)?.label || story.genre,
   );
-  const coverStyle = getCefrCoverStyles(story.cefrLevel);
-  const [imgError, setImgError] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [loadedDescription, setLoadedDescription] = useState<string | null>(
     story.description || null,
   );
   const [loadingDescription, setLoadingDescription] = useState(false);
-  const hasCoverImage = !imgError && !isGeneratingCover;
-  const cardThemeClass = hasCoverImage
-    ? 'bg-stone-100 dark:bg-stone-900 text-[#F9F6F0] dark:text-[#EBE4D5] border-black/15 dark:border-white/10'
-    : coverStyle.card;
-  const textMutedClass = hasCoverImage
-    ? 'text-[#F9F6F0]/70 dark:text-[#EBE4D5]/70'
-    : coverStyle.textMuted;
 
   // Sync loadedDescription if story object gets updated
   React.useEffect(() => {
@@ -134,11 +100,6 @@ export default function StoryCard({
       setLoadedDescription(story.description);
     }
   }, [story.description]);
-
-  // Reset image error state when story is updated or cover finishes generating
-  React.useEffect(() => {
-    setImgError(false);
-  }, [story.updated, isGeneratingCover]);
 
   // Close details overlay when card is scrolled completely out of view
   React.useEffect(() => {
@@ -243,7 +204,7 @@ export default function StoryCard({
       {/* 3D Book Cover Wrapper */}
       <div className="relative w-full aspect-[3/4.2] flex-shrink-0">
         {/* 3D Pages Stack Effects (behind card, moves slightly less on hover to look like book cover lifting) */}
-        {!hasCoverImage && (
+        {!hasCustomCover(story) && (
           <>
             <div className="absolute right-[-3px] top-1.5 bottom-1.5 w-1.5 bg-[#faf9f6] dark:bg-[#323330] border-y border-r border-[#e3dfd3] dark:border-[#424546] rounded-r-md z-0 shadow-xs transition-all duration-300 group-hover:translate-x-[0.5px]" />
             <div className="absolute right-[-6px] top-3 bottom-3 w-1.5 bg-[#f4ebd9] dark:bg-[#282927] border-y border-r border-[#dacfae]/70 dark:border-[#383a3b] rounded-r-md z-[-1] shadow-xs transition-all duration-300 group-hover:translate-x-[1px]" />
@@ -258,61 +219,13 @@ export default function StoryCard({
               '4px 12px 24px -5px rgba(0,0,0,0.18), 1px 4px 8px -1px rgba(0,0,0,0.06)',
           }}
           transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-          className={`relative ${cardThemeClass} border ${
-            hasCoverImage ? 'rounded-xl' : 'rounded-l-md rounded-r-lg'
-          } flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 ${
-            hasCoverImage ? 'p-0' : 'p-3 sm:p-4'
-          }`}
+          className="relative border rounded-xl flex flex-col justify-between h-full w-full select-none shadow-[4px_6px_12px_-5px_rgba(0,0,0,0.12),_1px_2px_4px_-1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300 p-0 border-black/15 dark:border-white/10"
         >
-          {isGeneratingCover && (
-            <div className="absolute inset-0 z-20 bg-black/45 backdrop-blur-xs flex flex-col items-center justify-center p-3 text-center text-white">
-              <div className="w-6 h-6 border-2 border-white/80 border-t-transparent rounded-full animate-spin mb-1.5" />
-              <span className="text-[10px] font-bold tracking-wide font-sans drop-shadow-xs">
-                Generating Cover...
-              </span>
-            </div>
-          )}
-
-          {hasCoverImage && (
-            <img
-              src={getStoryCoverUrl(story)}
-              onError={() => setImgError(true)}
-              className="absolute inset-0 w-full h-full object-cover z-0"
-              alt=""
-            />
-          )}
-
-          {/* Left Spine Fold / Crease (adds beautiful book texture for text covers) */}
-          {!hasCoverImage && (
-            <>
-              <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/10 via-black/[0.02] to-transparent pointer-events-none rounded-l-md z-20" />
-              <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-black/[0.06] dark:bg-white/[0.05] pointer-events-none z-20" />
-            </>
-          )}
-
-          {/* Centerpiece Cover Art / Title Block */}
-          <div
-            className={`flex-1 flex flex-col text-center z-10 relative rounded-xl transition-all duration-300 ${
-              hasCoverImage ? 'justify-end mt-2 mb-0.5' : 'justify-start my-0.5'
-            }`}
-          >
-            {hasCoverImage ? null : (
-              // Clean typography for gradient cards
-              <div className="transition-all duration-500 ease-out rounded-xl px-1.5 py-1.5 sm:px-2.5 sm:py-2.5">
-                <h3
-                  lang={getLanguageCodeFromName(story.language)}
-                  className="text-xs sm:text-sm md:text-base font-serif font-extrabold tracking-tight leading-tight line-clamp-3 mb-1 hyphens-auto"
-                >
-                  {story.title}
-                </h3>
-                <p
-                  className={`text-[8px] sm:text-[9px] uppercase tracking-wider font-mono font-bold ${textMutedClass}`}
-                >
-                  Theme: {resolvedGenreLabel}
-                </p>
-              </div>
-            )}
-          </div>
+          <StoryBookCover
+            story={story}
+            size="card"
+            isGeneratingCover={isGeneratingCover}
+          />
         </motion.div>
       </div>
 
@@ -487,7 +400,9 @@ export default function StoryCard({
             <span
               title={
                 story.copyrightFlagReason
-                  ? story.copyrightFlagReason.toLowerCase().includes('explicit') ||
+                  ? story.copyrightFlagReason
+                      .toLowerCase()
+                      .includes('explicit') ||
                     story.copyrightFlagReason.toLowerCase().includes('adult')
                     ? `Adult content policy restricted: ${story.copyrightFlagReason}`
                     : `Copyright-restricted: ${story.copyrightFlagReason}`
