@@ -118,7 +118,11 @@ interface ReaderPanelProps {
     forceRegenerate?: boolean,
   ) => Promise<void>;
   onSaveStory?: (story?: Story) => Promise<any>;
-  onGenerateCover?: (storyId: string, force?: boolean) => Promise<void>;
+  onGenerateCover?: (
+    storyId: string,
+    force?: boolean,
+    modelId?: string,
+  ) => Promise<void>;
   onChapterFinished?: () => void;
   onStoryFinished?: (storyId: string) => void;
   onStoryUnfinished?: (storyId: string) => void;

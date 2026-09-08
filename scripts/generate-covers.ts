@@ -19,8 +19,6 @@ const url = process.env.VITE_POCKETBASE_URL;
 const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL;
 const adminPassword = process.env.POCKETBASE_ADMIN_PASSWORD;
 const openrouterApiKey = process.env.OPENROUTER_API_KEY;
-const modelId =
-  process.env.COVER_IMAGE_MODEL || 'google/gemini-3.1-flash-lite-image';
 
 if (!url || !adminEmail || !adminPassword) {
   console.error('Missing required environment variables in .env file.');
@@ -45,6 +43,13 @@ const limitIndex = args.findIndex((arg) => arg.startsWith('--limit='));
 const limitVal =
   limitIndex !== -1 ? parseInt(args[limitIndex].split('=')[1], 10) : undefined;
 const maxToGenerate = isTestRun ? 2 : limitVal;
+const modelIndex = args.findIndex((arg) => arg.startsWith('--model='));
+const cliModelId =
+  modelIndex !== -1 ? args[modelIndex].split('=')[1] : undefined;
+const modelId =
+  cliModelId ||
+  process.env.COVER_IMAGE_MODEL ||
+  'google/gemini-3.1-flash-lite-image';
 
 // Ensure output directory exists
 if (!fs.existsSync(COVERS_DIR)) {
@@ -56,6 +61,7 @@ async function main() {
   try {
     console.log(`==================================================`);
     console.log(`Starting Cover Generator CLI`);
+    console.log(`Cover Model: ${modelId}`);
     if (isTestRun) console.log(`Mode: TEST RUN (Limit: 2 new covers max)`);
     else if (maxToGenerate)
       console.log(`Mode: LIMITED RUN (Limit: ${maxToGenerate} new covers max)`);
@@ -166,6 +172,7 @@ async function main() {
             body: JSON.stringify({
               storyId: story.id,
               force: isForce,
+              model: modelId,
             }),
           },
         );

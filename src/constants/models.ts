@@ -244,3 +244,38 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
 
 /** Legacy alias for backward compatibility */
 export const GEMINI_MODELS = AI_MODELS;
+
+export interface CoverModelOption {
+  id: string;
+  name: string;
+  costPerImage?: number;
+  inputCost1M?: number;
+  outputCost1M?: number;
+  requiresAgeVerification?: boolean;
+}
+
+export const COVER_IMAGE_MODELS: CoverModelOption[] = [
+  {
+    id: 'google/gemini-3.1-flash-lite-image',
+    name: 'Gemini 3.1 Flash Lite Image',
+    inputCost1M: 0.25,
+    outputCost1M: 1.5,
+  },
+  {
+    id: 'meta/muse-image',
+    name: 'Meta: Muse Image',
+    costPerImage: 0.01,
+    requiresAgeVerification: true,
+  },
+];
+
+export const DEFAULT_COVER_IMAGE_MODEL = 'google/gemini-3.1-flash-lite-image';
+
+export const formatCoverModelPriceIndicator = (
+  model: CoverModelOption,
+): string => {
+  if (model.costPerImage !== undefined) {
+    return `($${model.costPerImage.toFixed(2)} / img)`;
+  }
+  return formatModelPriceIndicator(model.inputCost1M, model.outputCost1M);
+};

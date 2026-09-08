@@ -13,6 +13,8 @@ import {
 import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import {
+  COVER_IMAGE_MODELS,
+  formatCoverModelPriceIndicator,
   FRONTIER_LATEST_MODELS,
   formatModelPriceIndicator,
   isMuseModel,
@@ -52,6 +54,8 @@ export default function SettingsModal({
     setDefaultGlossaryModel,
     defaultTranslationModel,
     setDefaultTranslationModel,
+    defaultCoverModel,
+    setDefaultCoverModel,
     isAgeVerified,
     setIsAgeVerified,
   } = useUIStore();
@@ -66,16 +70,13 @@ export default function SettingsModal({
   const [pendingStoryModelOption, setPendingStoryModelOption] = useState<
     string | null
   >(null);
+  const [pendingCoverModelOption, setPendingCoverModelOption] = useState<
+    string | null
+  >(null);
 
   const [apiKeyInput, setApiKeyInput] = useState<string>(
     customOpenRouterKey || '',
   );
-
-  useEffect(() => {
-    setApiKeyInput(customOpenRouterKey || '');
-  }, [customOpenRouterKey, isOpen]);
-
-  const hasApiKey = Boolean(apiKeyInput.trim());
 
   // Default Story Model selection state
   const isStoryPreset = FRONTIER_LATEST_MODELS.some(
@@ -86,6 +87,28 @@ export default function SettingsModal({
   const [customStoryModelIdInput, setCustomStoryModelIdInput] =
     useState<string>(isStoryPreset ? '' : defaultStoryModel);
 
+  // Default Cover Model selection state
+  const isCoverPreset = COVER_IMAGE_MODELS.some(
+    (m) => m.id === defaultCoverModel,
+  );
+  const [selectedCoverModelOption, setSelectedCoverModelOption] =
+    useState<string>(isCoverPreset ? defaultCoverModel : 'custom');
+  const [customCoverModelIdInput, setCustomCoverModelIdInput] =
+    useState<string>(isCoverPreset ? '' : defaultCoverModel);
+
+  useEffect(() => {
+    setApiKeyInput(customOpenRouterKey || '');
+    const isCoverPresetMatch = COVER_IMAGE_MODELS.some(
+      (m) => m.id === defaultCoverModel,
+    );
+    setSelectedCoverModelOption(
+      isCoverPresetMatch ? defaultCoverModel : 'custom',
+    );
+    setCustomCoverModelIdInput(isCoverPresetMatch ? '' : defaultCoverModel);
+  }, [customOpenRouterKey, defaultCoverModel, isOpen]);
+
+  const hasApiKey = Boolean(apiKeyInput.trim());
+
   const handleStoryModelSelectChange = (val: string) => {
     if (isMuseModel(val) && !isAgeVerified) {
       setPendingStoryModelOption(val);
@@ -95,6 +118,15 @@ export default function SettingsModal({
     setSelectedStoryModelOption(val);
   };
 
+  const handleCoverModelSelectChange = (val: string) => {
+    if (isMuseModel(val) && !isAgeVerified) {
+      setPendingCoverModelOption(val);
+      setShowAgeVerificationModal(true);
+      return;
+    }
+    setSelectedCoverModelOption(val);
+  };
+
   const handleAgeVerificationConfirm = () => {
     setIsAgeVerified(true);
     setShowAgeVerificationModal(false);
@@ -102,11 +134,16 @@ export default function SettingsModal({
       setSelectedStoryModelOption(pendingStoryModelOption);
       setPendingStoryModelOption(null);
     }
+    if (pendingCoverModelOption) {
+      setSelectedCoverModelOption(pendingCoverModelOption);
+      setPendingCoverModelOption(null);
+    }
   };
 
   const handleAgeVerificationCancel = () => {
     setShowAgeVerificationModal(false);
     setPendingStoryModelOption(null);
+    setPendingCoverModelOption(null);
   };
 
   // Default Glossary Model selection state
@@ -149,6 +186,11 @@ export default function SettingsModal({
     selectedTranslationModelOption === 'custom'
       ? customTranslationModelIdInput.trim()
       : selectedTranslationModelOption;
+
+  const activeCoverModelId =
+    selectedCoverModelOption === 'custom'
+      ? customCoverModelIdInput.trim()
+      : selectedCoverModelOption;
 
   const currentPricing = activeStoryModelId
     ? pricingMap.get(activeStoryModelId)
@@ -371,12 +413,12 @@ export default function SettingsModal({
               </span>
             </div>
 
-            {!hasApiKey ? (
+            {!hasApiKey && !currentUser?.isAdmin ? (
               <div className="p-3 bg-tj-bg-recessed border border-tj-border-main rounded-lg text-xs text-tj-text-muted flex items-center gap-2">
                 <Lock className="w-4 h-4 text-tj-primary shrink-0" />
                 <span>
                   Connect a custom OpenRouter API Key above to configure custom
-                  models for story generation, glossaries, and word lookups.
+                  models for story generation, glossaries, covers, and word lookups.
                 </span>
               </div>
             ) : (
@@ -534,6 +576,54 @@ export default function SettingsModal({
                   )}
                 </div>
 
+                {/* 4. Cover Image Generation Model */}
+                <div className="space-y-1.5 pt-1 border-t border-tj-border-main/50">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[11px] font-semibold text-tj-text-main">
+                      Cover Image Generation Model
+                    </label>
+                  </div>
+                  <div className="relative">
+                    <select
+                      value={selectedCoverModelOption}
+                      onChange={(e) =>
+                        handleCoverModelSelectChange(e.target.value)
+                      }
+                      className="w-full pl-3 pr-10 py-2.5 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-semibold focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors cursor-pointer appearance-none rounded-none"
+                    >
+                      {COVER_IMAGE_MODELS.map((m) => {
+                        const priceLabel = formatCoverModelPriceIndicator(m);
+                        const ageBadge = isMuseModel(m.id) ? ' [18+]' : '';
+                        return (
+                          <option key={m.id} value={m.id}>
+                            {m.name}{ageBadge} {priceLabel}
+                          </option>
+                        );
+                      })}
+                      <option value="custom">
+                        ⚙️ Enter Custom OpenRouter Model ID...
+                      </option>
+                    </select>
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-tj-text-muted pointer-events-none" />
+                  </div>
+                  {selectedCoverModelOption === 'custom' && (
+                    <div className="space-y-1 pt-1">
+                      <input
+                        type="text"
+                        placeholder="e.g. meta/muse-image"
+                        value={customCoverModelIdInput}
+                        onChange={(e) =>
+                          setCustomCoverModelIdInput(e.target.value)
+                        }
+                        className="w-full px-3 py-2 bg-transparent border-t-0 border-l-0 border-r-0 border-b border-tj-border-main hover:border-b-tj-text-muted text-tj-text-main text-xs font-mono focus:border-b-tj-primary focus:ring-0 focus:outline-none transition-colors rounded-none"
+                      />
+                      <p className="text-[10px] text-tj-text-muted">
+                        Specify any valid OpenRouter image model ID slug.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
                 {/* JSON Support & Credit Loss Warning */}
                 <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-700 dark:text-amber-300 text-[11px] space-y-1">
                   <div className="flex items-center gap-1.5 font-bold">
@@ -620,6 +710,9 @@ export default function SettingsModal({
                   if (activeTranslationModelId) {
                     setDefaultTranslationModel(activeTranslationModelId);
                   }
+                  if (activeCoverModelId) {
+                    setDefaultCoverModel(activeCoverModelId);
+                  }
                   onClose();
                 }}
                 className="px-5 py-2.5 text-xs text-tj-bg-main bg-tj-primary hover:bg-tj-primary-hover font-bold rounded cursor-pointer transition-all shadow-none"
@@ -679,10 +772,12 @@ export default function SettingsModal({
       <AgeVerificationModal
         isOpen={showAgeVerificationModal}
         modelName={
-          FRONTIER_LATEST_MODELS.find((m) => m.id === pendingStoryModelOption)
-            ?.name ||
-          pendingStoryModelOption ||
-          'Meta Muse'
+          pendingCoverModelOption
+            ? COVER_IMAGE_MODELS.find((m) => m.id === pendingCoverModelOption)?.name ||
+              pendingCoverModelOption
+            : FRONTIER_LATEST_MODELS.find((m) => m.id === pendingStoryModelOption)?.name ||
+              pendingStoryModelOption ||
+              'Meta Muse'
         }
         onConfirm={handleAgeVerificationConfirm}
         onCancel={handleAgeVerificationCancel}
@@ -690,3 +785,4 @@ export default function SettingsModal({
     </div>
   );
 }
+

@@ -15,9 +15,12 @@ import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   AI_MODELS,
+  COVER_IMAGE_MODELS,
+  formatCoverModelPriceIndicator,
+  formatModelPriceIndicator,
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
-  formatModelPriceIndicator,
+  isMuseModel,
   MODEL_PRICES_LAST_UPDATED,
 } from '../../constants/models';
 import { updateStoryModel } from '../../services/db';
@@ -34,6 +37,7 @@ import { getModelDisplayName } from '../../utils/modelUtils';
 import { extractChapterOutline } from '../../utils/outlineParser';
 import { calculateEstimatedUsage } from '../../utils/storyEstimation';
 import AddChapterModal from './AddChapterModal';
+import AgeVerificationModal from '../creator/AgeVerificationModal';
 import StoryNotesSidebarTab from './StoryNotesSidebarTab';
 
 interface ChapterSidebarProps {
@@ -69,7 +73,11 @@ interface ChapterSidebarProps {
     forceRegenerate?: boolean,
   ) => Promise<void>;
   onStoryUpdated?: (story: Story) => void;
-  onGenerateCover?: (storyId: string, force?: boolean) => Promise<void>;
+  onGenerateCover?: (
+    storyId: string,
+    force?: boolean,
+    modelId?: string,
+  ) => Promise<void>;
   highlights?: StoryHighlight[];
   onJumpToHighlight?: (highlight: StoryHighlight) => void;
   onDeleteHighlight?: (id: string) => void;
@@ -107,10 +115,37 @@ export default function ChapterSidebar({
   const [sidebarTab, setSidebarTab] = useState<'chapters' | 'notes'>(
     'chapters',
   );
-  const { translationTargetLanguage } = useUIStore();
+  const {
+    translationTargetLanguage,
+    defaultCoverModel,
+    isAgeVerified,
+    setIsAgeVerified,
+  } = useUIStore();
   const [isGeneratingCover, setIsGeneratingCover] = useState<boolean>(false);
   const [selectedGlossaryLanguage, setSelectedGlossaryLanguage] =
     useState<string>(translationTargetLanguage || 'English');
+  const [selectedCoverModel, setSelectedCoverModel] = useState<string>(
+    defaultCoverModel || 'google/gemini-3.1-flash-lite-image',
+  );
+  const [showCoverAgeModal, setShowCoverAgeModal] = useState<boolean>(false);
+  const [pendingCoverModel, setPendingCoverModel] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (defaultCoverModel) {
+      setSelectedCoverModel(defaultCoverModel);
+    }
+  }, [defaultCoverModel]);
+
+  const handleCoverModelChange = (modelId: string) => {
+    if (isMuseModel(modelId) && !isAgeVerified) {
+      setPendingCoverModel(modelId);
+      setShowCoverAgeModal(true);
+      return;
+    }
+    setSelectedCoverModel(modelId);
+  };
 
   useEffect(() => {
     setSelectedGlossaryLanguage(translationTargetLanguage || 'English');
@@ -675,34 +710,74 @@ export default function ChapterSidebar({
                         Cover generation is disabled for private stories.
                       </p>
                     ) : currentUser?.isAdmin === true || !!customOpenRouterKey ? (
-                      <button
-                        type="button"
-                        disabled={
-                          isLoadingNext ||
-                          isAutoGeneratingRemaining ||
-                          isGeneratingCover
-                        }
-                        onClick={async () => {
-                          setIsGeneratingCover(true);
-                          try {
-                            await onGenerateCover(story.id, true);
-                          } finally {
-                            setIsGeneratingCover(false);
+                      <div className="space-y-2">
+                        <div>
+                          <label className="block text-[9px] uppercase tracking-wider text-tj-text-muted font-medium mb-1">
+                            Cover Model
+                          </label>
+                          <select
+                            value={selectedCoverModel}
+                            onChange={(e) =>
+                              handleCoverModelChange(e.target.value)
+                            }
+                            disabled={
+                              isLoadingNext ||
+                              isAutoGeneratingRemaining ||
+                              isGeneratingCover
+                            }
+                            className="w-full text-xs font-semibold py-1.5 px-2 bg-tj-bg-recessed dark:bg-slate-800 border border-tj-border-main rounded-lg text-tj-text-main focus:outline-none focus:border-tj-primary cursor-pointer disabled:opacity-50"
+                          >
+                            {COVER_IMAGE_MODELS.map((m) => {
+                              const price = formatCoverModelPriceIndicator(m);
+                              const badge = isMuseModel(m.id) ? ' [18+]' : '';
+                              return (
+                                <option key={m.id} value={m.id}>
+                                  {m.name}{badge} {price}
+                                </option>
+                              );
+                            })}
+                            {!COVER_IMAGE_MODELS.some(
+                              (m) => m.id === selectedCoverModel,
+                            ) && (
+                              <option value={selectedCoverModel}>
+                                {selectedCoverModel}
+                              </option>
+                            )}
+                          </select>
+                        </div>
+                        <button
+                          type="button"
+                          disabled={
+                            isLoadingNext ||
+                            isAutoGeneratingRemaining ||
+                            isGeneratingCover
                           }
-                        }}
-                        className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
-                      >
-                        {isGeneratingCover ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
-                        ) : (
-                          <Sparkles className="w-3.5 h-3.5 text-white" />
-                        )}
-                        <span>
-                          {isGeneratingCover
-                            ? 'Generating...'
-                            : 'Regenerate Cover'}
-                        </span>
-                      </button>
+                          onClick={async () => {
+                            setIsGeneratingCover(true);
+                            try {
+                              await onGenerateCover(
+                                story.id,
+                                true,
+                                selectedCoverModel,
+                              );
+                            } finally {
+                              setIsGeneratingCover(false);
+                            }
+                          }}
+                          className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border-0"
+                        >
+                          {isGeneratingCover ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                          ) : (
+                            <Sparkles className="w-3.5 h-3.5 text-white" />
+                          )}
+                          <span>
+                            {isGeneratingCover
+                              ? 'Generating...'
+                              : 'Regenerate Cover'}
+                          </span>
+                        </button>
+                      </div>
                     ) : (
                       <div className="p-2.5 rounded-xl bg-tj-primary-light/40 dark:bg-white/5 border border-tj-border-main/60 text-center">
                         <p className="text-[10px] text-tj-text-muted leading-relaxed">
@@ -934,6 +1009,27 @@ export default function ChapterSidebar({
           </div>
         </>
       )}
+      {/* Age Verification Modal for Muse Cover Model */}
+      <AgeVerificationModal
+        isOpen={showCoverAgeModal}
+        modelName={
+          COVER_IMAGE_MODELS.find((m) => m.id === pendingCoverModel)?.name ||
+          pendingCoverModel ||
+          'Meta Muse'
+        }
+        onConfirm={() => {
+          setIsAgeVerified(true);
+          setShowCoverAgeModal(false);
+          if (pendingCoverModel) {
+            setSelectedCoverModel(pendingCoverModel);
+            setPendingCoverModel(null);
+          }
+        }}
+        onCancel={() => {
+          setShowCoverAgeModal(false);
+          setPendingCoverModel(null);
+        }}
+      />
     </div>
   );
 }

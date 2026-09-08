@@ -10,7 +10,7 @@ import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
-import { GENRES, type Story } from '../../types';
+import { GENRES, getLanguageCodeFromName, type Story } from '../../types';
 import StoryBookCover from './StoryBookCover';
 
 interface RecentlyReadSectionProps {

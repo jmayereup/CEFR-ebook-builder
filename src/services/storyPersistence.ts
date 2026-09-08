@@ -32,6 +32,7 @@ export function sanitizePocketBaseId(rawId: string): string {
 export interface TriggerCoverOptions {
   storyId: string;
   force?: boolean;
+  model?: string;
   customOpenRouterKey?: string;
   onCoverUpdated?: (cover: string, updated: string) => void;
   onRefreshMetadata?: (options: {
@@ -49,6 +50,7 @@ export async function triggerStoryCoverGeneration(
   const {
     storyId,
     force = false,
+    model,
     customOpenRouterKey,
     onCoverUpdated,
     onRefreshMetadata,
@@ -57,7 +59,7 @@ export async function triggerStoryCoverGeneration(
     const res = await fetch('/api/stories/generate-cover/generate', {
       method: 'POST',
       headers: buildApiHeaders(customOpenRouterKey),
-      body: JSON.stringify({ storyId, force }),
+      body: JSON.stringify({ storyId, force, model }),
     });
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
@@ -89,6 +91,7 @@ export interface PersistStoryOptions {
   story: Story;
   currentUser?: IUser | null;
   customOpenRouterKey?: string;
+  coverModel?: string;
   onStoryUpdated?: (updatedStory: Story) => void;
   onRefreshMetadata?: (options: { refresh: boolean; storyId: string }) => void;
   triggerCoverGen?: boolean;
@@ -120,6 +123,7 @@ export async function persistStory(
     story,
     currentUser,
     customOpenRouterKey,
+    coverModel,
     onStoryUpdated,
     onRefreshMetadata,
     triggerCoverGen = true,
@@ -177,6 +181,7 @@ export async function persistStory(
       triggerStoryCoverGeneration({
         storyId: sanitizedId,
         customOpenRouterKey,
+        model: coverModel,
         onCoverUpdated: (cover, updated) => {
           if (onStoryUpdated) {
             onStoryUpdated({

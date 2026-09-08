@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { DEFAULT_COVER_IMAGE_MODEL } from '../constants/models';
 import {
   getGuestCompletedStoryIds,
   migrateFromLocalStorage,
@@ -12,6 +13,7 @@ interface UIState {
   defaultStoryModel: string;
   defaultGlossaryModel: string;
   defaultTranslationModel: string;
+  defaultCoverModel: string;
   readerFontSize: number;
   readerUseSerif: boolean;
   readerTextAlignment: 'left' | 'center' | 'right' | 'justify';
@@ -24,6 +26,7 @@ interface UIState {
   setDefaultStoryModel: (model: string) => void;
   setDefaultGlossaryModel: (model: string) => void;
   setDefaultTranslationModel: (model: string) => void;
+  setDefaultCoverModel: (model: string) => void;
   setReaderFontSize: (size: number) => void;
   setReaderUseSerif: (useSerif: boolean) => void;
   setReaderTextAlignment: (
@@ -49,6 +52,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   defaultStoryModel: 'deepseek/deepseek-v4-pro',
   defaultGlossaryModel: 'google/gemini-2.5-flash-lite',
   defaultTranslationModel: 'google/gemini-2.5-flash-lite',
+  defaultCoverModel: DEFAULT_COVER_IMAGE_MODEL,
   readerFontSize: 18,
   readerUseSerif: true,
   readerTextAlignment: 'justify',
@@ -108,6 +112,16 @@ export const useUIStore = create<UIState>((set, get) => ({
     }
     set({ defaultTranslationModel: model || 'google/gemini-2.5-flash-lite' });
   },
+  setDefaultCoverModel: (model) => {
+    if (typeof localStorage !== 'undefined') {
+      if (model) {
+        localStorage.setItem('custom_default_cover_model', model);
+      } else {
+        localStorage.removeItem('custom_default_cover_model');
+      }
+    }
+    set({ defaultCoverModel: model || DEFAULT_COVER_IMAGE_MODEL });
+  },
   setReaderFontSize: (size) => {
     const validatedSize =
       typeof size === 'number' && size >= 14 && size <= 26 ? size : 18;
@@ -165,6 +179,9 @@ export const useUIStore = create<UIState>((set, get) => ({
       const translationModel =
         localStorage.getItem('custom_default_translation_model') ||
         'google/gemini-2.5-flash-lite';
+      const coverModel =
+        localStorage.getItem('custom_default_cover_model') ||
+        DEFAULT_COVER_IMAGE_MODEL;
       const sizeVal = localStorage.getItem('reader-font-size');
       let size = sizeVal ? Number.parseInt(sizeVal, 10) : 18;
       if (Number.isNaN(size) || size < 14 || size > 26) {
@@ -196,6 +213,7 @@ export const useUIStore = create<UIState>((set, get) => ({
         defaultStoryModel: storyModel,
         defaultGlossaryModel: glossaryModel,
         defaultTranslationModel: translationModel,
+        defaultCoverModel: coverModel,
         readerFontSize: size,
         readerUseSerif: serif,
         readerTextAlignment: align,

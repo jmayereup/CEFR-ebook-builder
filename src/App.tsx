@@ -369,6 +369,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       story,
       currentUser,
       customOpenRouterKey,
+      coverModel: useUIStore.getState().defaultCoverModel,
       onStoryUpdated: setSelectedStory,
       onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
       generatingCoverIds,
@@ -476,6 +477,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         story: targetStory,
         currentUser,
         customOpenRouterKey,
+        coverModel: useUIStore.getState().defaultCoverModel,
         onStoryUpdated: setSelectedStory,
         onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
         generatingCoverIds,
@@ -520,6 +522,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   const handleGenerateCover = async (
     storyId: string,
     force: boolean = false,
+    modelId?: string,
   ) => {
     const targetStory =
       selectedStory && selectedStory.id === storyId
@@ -546,9 +549,12 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
 
     setGeneratingCoverIds((prev) => new Set(prev).add(storyId));
     try {
+      const activeCoverModel =
+        modelId || useUIStore.getState().defaultCoverModel;
       const res = await triggerStoryCoverGeneration({
         storyId,
         force,
+        model: activeCoverModel,
         customOpenRouterKey,
         onCoverUpdated: (cover, updated) => {
           if (selectedStory && selectedStory.id === storyId) {
