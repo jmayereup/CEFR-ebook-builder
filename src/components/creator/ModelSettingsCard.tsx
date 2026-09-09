@@ -17,7 +17,6 @@ import {
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
   isMuseModel,
-  MODEL_PRICES_LAST_UPDATED,
 } from '../../constants/models';
 import { getModelThinkingSupport } from '../../utils/modelUtils';
 
@@ -64,17 +63,10 @@ export default function ModelSettingsCard({
       {/* AI Writing Model */}
       <div className="col-span-1">
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-              <Cpu className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />
-              AI Writing Model
-            </label>
-            {isByokActive && (
-              <span className="text-[10px] text-tj-text-muted font-normal">
-                (Verified: {MODEL_PRICES_LAST_UPDATED})
-              </span>
-            )}
-          </div>
+          <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+            <Cpu className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />
+            AI Writing Model
+          </label>
           <button
             type="button"
             onClick={onShowDefaultModelInfo}
