@@ -127,9 +127,9 @@ export default function StoryConfigForm({
   });
   const [selectedModel, setSelectedModel] = useState(() => {
     if (isByokActive || isAdmin) {
-      const preferred = defaultStoryModel || 'deepseek/deepseek-v4-pro';
+      const preferred = defaultStoryModel || 'deepseek/deepseek-v4.1-flash';
       if (isMuseModel(preferred) && !isAgeVerified) {
-        return 'deepseek/deepseek-v4-pro';
+        return 'deepseek/deepseek-v4.1-flash';
       }
       return preferred;
     }
@@ -138,7 +138,7 @@ export default function StoryConfigForm({
   const [thinkingOption, setThinkingOption] = useState(() => {
     const initialModel =
       isByokActive || isAdmin
-        ? defaultStoryModel || 'deepseek/deepseek-v4-pro'
+        ? defaultStoryModel || 'deepseek/deepseek-v4.1-flash'
         : 'z-ai/glm-5.3-flash';
     const support = getModelThinkingSupport(initialModel);
     return support.defaultOption;

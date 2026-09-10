@@ -419,12 +419,12 @@ export default function ReaderPanel({
     const estBefore = calculateEstimatedUsage(
       nextChapterNum - 1,
       story.chapterLength || 300,
-      story.model || 'deepseek/deepseek-v4-pro',
+      story.model || 'deepseek/deepseek-v4.1-flash',
     );
     const estAfter = calculateEstimatedUsage(
       nextChapterNum,
       story.chapterLength || 300,
-      story.model || 'deepseek/deepseek-v4-pro',
+      story.model || 'deepseek/deepseek-v4.1-flash',
     );
     const estCost = Math.max(
       1,

@@ -20,7 +20,7 @@ export const getModelBaseName = (modelId?: string): string => {
 
 /** Returns the short, user-facing display name for a given model ID. */
 export const getModelDisplayName = (modelId?: string): string => {
-  if (!modelId) return 'DeepSeek V4 Pro';
+  if (!modelId) return 'DeepSeek V4.1 Flash';
   const found =
     AI_MODELS.find((m) => m.id === modelId) ||
     FRONTIER_LATEST_MODELS.find((m) => m.id === modelId);

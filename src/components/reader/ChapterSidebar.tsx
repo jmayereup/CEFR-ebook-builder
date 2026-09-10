@@ -202,12 +202,12 @@ export default function ChapterSidebar({
     const estBefore = calculateEstimatedUsage(
       nextChapterNum - 1,
       story.chapterLength || 300,
-      story.model || 'deepseek/deepseek-v4-pro',
+      story.model || 'deepseek/deepseek-v4.1-flash',
     );
     const estAfter = calculateEstimatedUsage(
       nextChapterNum,
       story.chapterLength || 300,
-      story.model || 'deepseek/deepseek-v4-pro',
+      story.model || 'deepseek/deepseek-v4.1-flash',
     );
     const estCost = Math.max(
       1,
@@ -243,12 +243,12 @@ export default function ChapterSidebar({
       const estBefore = calculateEstimatedUsage(
         ch - 1,
         story.chapterLength || 300,
-        story.model || 'deepseek/deepseek-v4-pro',
+        story.model || 'deepseek/deepseek-v4.1-flash',
       );
       const estAfter = calculateEstimatedUsage(
         ch,
         story.chapterLength || 300,
-        story.model || 'deepseek/deepseek-v4-pro',
+        story.model || 'deepseek/deepseek-v4.1-flash',
       );
       const estCost = Math.max(
         1,
@@ -284,12 +284,12 @@ export default function ChapterSidebar({
     const estBefore = calculateEstimatedUsage(
       currentChapterNum - 1,
       story.chapterLength || 300,
-      story.model || 'deepseek/deepseek-v4-pro',
+      story.model || 'deepseek/deepseek-v4.1-flash',
     );
     const estAfter = calculateEstimatedUsage(
       currentChapterNum,
       story.chapterLength || 300,
-      story.model || 'deepseek/deepseek-v4-pro',
+      story.model || 'deepseek/deepseek-v4.1-flash',
     );
     return Math.max(
       1,

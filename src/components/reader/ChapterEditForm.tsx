@@ -59,7 +59,7 @@ export default function ChapterEditForm({
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
   const { translationTargetLanguage, defaultStoryModel } = useUIStore();
   const [selectedModel, setSelectedModel] = useState<string>(
-    defaultStoryModel || 'deepseek/deepseek-v4-pro',
+    defaultStoryModel || 'deepseek/deepseek-v4.1-flash',
   );
   const [selectedGlossaryLanguage, setSelectedGlossaryLanguage] =
     useState<string>(translationTargetLanguage || 'English');
@@ -359,8 +359,8 @@ export default function ChapterEditForm({
                   <option value="deepseek/deepseek-v4-flash">
                     DeepSeek V4 Flash
                   </option>
-                  <option value="deepseek/deepseek-v4-pro">
-                    DeepSeek V4 Pro
+                  <option value="deepseek/deepseek-v4.1-flash">
+                    DeepSeek V4.1 Flash
                   </option>
                   <option value="nousresearch/hermes-3-llama-3.1-405b">
                     Hermes 3 405B

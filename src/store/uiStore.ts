@@ -49,7 +49,7 @@ export const useUIStore = create<UIState>((set, get) => ({
       : true,
   customOpenRouterKey: '',
   translationTargetLanguage: null,
-  defaultStoryModel: 'deepseek/deepseek-v4-pro',
+  defaultStoryModel: 'deepseek/deepseek-v4.1-flash',
   defaultGlossaryModel: 'google/gemini-2.5-flash-lite',
   defaultTranslationModel: 'google/gemini-2.5-flash-lite',
   defaultCoverModel: DEFAULT_COVER_IMAGE_MODEL,
@@ -90,7 +90,7 @@ export const useUIStore = create<UIState>((set, get) => ({
         localStorage.removeItem('custom_default_story_model');
       }
     }
-    set({ defaultStoryModel: model || 'deepseek/deepseek-v4-pro' });
+    set({ defaultStoryModel: model || 'deepseek/deepseek-v4.1-flash' });
   },
   setDefaultGlossaryModel: (model) => {
     if (typeof localStorage !== 'undefined') {
@@ -172,7 +172,7 @@ export const useUIStore = create<UIState>((set, get) => ({
       const lang = localStorage.getItem('translation_target_language') || null;
       const storyModel =
         localStorage.getItem('custom_default_story_model') ||
-        'deepseek/deepseek-v4-pro';
+        'deepseek/deepseek-v4.1-flash';
       const glossaryModel =
         localStorage.getItem('custom_default_glossary_model') ||
         'google/gemini-2.5-flash-lite';

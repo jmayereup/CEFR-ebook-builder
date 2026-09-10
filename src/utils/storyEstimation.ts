@@ -62,10 +62,10 @@ export const calculateEstimatedUsage = (
       return cleanMId.includes(cleanId) || cleanId.includes(cleanMId);
     });
   }
-  // Default to DeepSeek V4 Flash instead of a free model if not found
+  // Default to DeepSeek V4.1 Flash instead of a free model if not found
   if (!model) {
     model =
-      AI_MODELS.find((m) => m.id === 'deepseek/deepseek-v4-pro') ||
+      AI_MODELS.find((m) => m.id === 'deepseek/deepseek-v4.1-flash') ||
       AI_MODELS[0];
   }
 

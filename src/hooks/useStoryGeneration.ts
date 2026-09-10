@@ -666,7 +666,7 @@ export const useStoryGeneration = (
         (maintenanceStory.creditsCharged ?? 0) + actualCharge;
       if (onGenerationSuccess) {
         onGenerationSuccess(
-          maintenanceStory.model || 'deepseek/deepseek-v4-pro',
+          maintenanceStory.model || 'deepseek/deepseek-v4.1-flash',
           actualCharge,
         );
       }
@@ -838,7 +838,7 @@ export const useStoryGeneration = (
         chapterNumber === 1 && data.storyTitle ? data.storyTitle : undefined;
       if (onGenerationSuccess) {
         onGenerationSuccess(
-          selectedStory.model || 'deepseek/deepseek-v4-pro',
+          selectedStory.model || 'deepseek/deepseek-v4.1-flash',
           actualCharge,
         );
       }
@@ -1082,7 +1082,7 @@ export const useStoryGeneration = (
 
         if (onGenerationSuccess) {
           onGenerationSuccess(
-            activeStory.model || 'deepseek/deepseek-v4-pro',
+            activeStory.model || 'deepseek/deepseek-v4.1-flash',
             batchCreditsCost,
           );
         }

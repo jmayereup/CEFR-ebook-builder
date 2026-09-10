@@ -38,9 +38,9 @@ const MODEL_DETAILS: Record<
       'Meta flagship frontier reasoning model for BYOK users. Superior long-horizon coherence, complex narrative pacing, character voice, and zero data training retention.',
     languages: 'All supported languages',
   },
-  'deepseek/deepseek-v4-pro': {
+  'deepseek/deepseek-v4.1-flash': {
     verdict:
-      'Default flagship story model. High-capacity reasoning model delivering superior prose, character voice, and plot consistency.',
+      'High-speed reasoning model delivering superior prose, character voice, and plot consistency with native multimodal capabilities.',
     languages: 'All supported languages',
   },
   'nousresearch/hermes-3-llama-3.1-405b': {
@@ -108,7 +108,7 @@ export default function ModelSelectionModal({
         <div className="space-y-4 text-xs font-sans text-tj-text-main overflow-y-auto pr-1 flex-1">
           <p className="leading-relaxed text-tj-text-muted">
             {!isAdmin && !hasKey
-              ? 'Choose between free AI models (GLM 5.3 Flash and Muse Spark 1.3 Contributor) for story generation on the free tier. To unlock all frontier models (Muse Spark 1.3, DeepSeek V4 Pro, Hermes 3, Claude, Gemini, GPT), configure your own OpenRouter API key in Settings.'
+              ? 'Choose between free AI models (GLM 5.3 Flash and Muse Spark 1.3 Contributor) for story generation on the free tier. To unlock all frontier models (Muse Spark 1.3, DeepSeek V4.1 Flash, Hermes 3, Claude, Gemini, GPT), configure your own OpenRouter API key in Settings.'
               : 'Select an AI model for story generation. Standard Flash models are cost-efficient and fast, while Pro models offer deep narrative nuances and high structural complexity.'}
           </p>
 
