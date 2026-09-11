@@ -36,7 +36,6 @@ import {
   SUPPORTED_LANGUAGES,
   type VocabularyTerm,
 } from '../types';
-import StoryBookCover from './library/StoryBookCover';
 import { buildApiHeaders } from '../utils/modelUtils';
 import {
   limitContextToTenWords,
@@ -45,10 +44,12 @@ import {
 } from '../utils/segmenter';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
+import StoryBookCover from './library/StoryBookCover';
 import BilingualSwapNotification from './reader/BilingualSwapNotification';
 import ChapterEditForm from './reader/ChapterEditForm';
 import ChapterNavigationBar from './reader/ChapterNavigationBar';
 import ChapterSidebar from './reader/ChapterSidebar';
+import FloatingMediaControls from './reader/FloatingMediaControls';
 import HighlightToolbar from './reader/HighlightToolbar';
 import InteractiveParagraph from './reader/InteractiveParagraph';
 import NarrativeMaintenancePanel from './reader/NarrativeMaintenancePanel';
@@ -56,6 +57,60 @@ import PreferredLanguageModal from './reader/PreferredLanguageModal';
 import TranslationToast from './reader/TranslationToast';
 import TTSToolbar from './reader/TTSToolbar';
 import VocabGlossary from './reader/VocabGlossary';
+
+/**
+ * Slices chapter text starting precisely at the clicked word, preserving natural flow.
+ * For space-less Asian languages (Thai, Japanese, Chinese, Lao, Khmer, Burmese), joining
+ * segments without injected spaces preserves phonetics and tone rules. For space-separated
+ * languages (English, Spanish, etc.), original inter-word spaces and punctuation are preserved.
+ */
+function getChapterTextFromWord(
+  startFlatIdx: number,
+  chapterWords: {
+    word: string;
+    paragraphText: string;
+    pIdx: number;
+    indexInPara: number;
+  }[],
+  effectiveDisplayParagraphs: { original: string; translation?: string }[],
+  effectivePrimaryLanguage: string,
+  segmentMatchingSet?: Set<string>,
+): string {
+  if (startFlatIdx < 0 || startFlatIdx >= chapterWords.length) return '';
+  const selectedWordItem = chapterWords[startFlatIdx];
+  if (!selectedWordItem) return '';
+
+  const { pIdx, indexInPara } = selectedWordItem;
+  if (pIdx < 0 || pIdx >= effectiveDisplayParagraphs.length) return '';
+
+  const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
+  const cleanPara = stripMarkdown(effectiveDisplayParagraphs[pIdx].original);
+  const segments = segmentText(cleanPara, targetLangCode, segmentMatchingSet);
+
+  let wordCount = 0;
+  let targetSegIdx = 0;
+  for (let i = 0; i < segments.length; i++) {
+    if (segments[i].isWordLike) {
+      if (wordCount === indexInPara) {
+        targetSegIdx = i;
+        break;
+      }
+      wordCount++;
+    }
+  }
+
+  const currentParaRemainder = segments
+    .slice(targetSegIdx)
+    .map((s) => s.segment)
+    .join('');
+
+  const subsequentParas = effectiveDisplayParagraphs
+    .slice(pIdx + 1)
+    .map((dp) => stripMarkdown(dp.original))
+    .filter(Boolean);
+
+  return [currentParaRemainder, ...subsequentParas].filter(Boolean).join('\n');
+}
 
 // A helper component to trigger scrolling back to the top of the reader panel
 // only after the previous chapter card has fully faded out and the new card has mounted.
@@ -486,6 +541,17 @@ export default function ReaderPanel({
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [isScrolledPastToolbar, setIsScrolledPastToolbar] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolledPastToolbar(window.scrollY > 250);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isCreator = currentUser && story.creatorId === currentUser.uid;
   const userRating = (currentUser && story.ratings?.[currentUser.uid]) || 0;
@@ -531,6 +597,33 @@ export default function ReaderPanel({
 
   const handleStopSpeech = stop;
   const handlePlayWord = playWord;
+
+  // Resume chapter narration starting from the exact clicked word (respecting Asian and space-separated languages)
+  const handleResumeChapterFromWord = () => {
+    if (selectedWordRange === null || !activeChapter) return;
+    const startFlatIdx = selectedWordRange[0];
+    const textToSpeak = getChapterTextFromWord(
+      startFlatIdx,
+      chapterWords,
+      effectiveDisplayParagraphs,
+      effectivePrimaryLanguage,
+      segmentMatchingSet,
+    );
+    if (!textToSpeak) return;
+
+    handleStopSpeech();
+    setTimeout(() => {
+      speak(textToSpeak);
+    }, 60);
+  };
+
+  const handleFloatingPlayPause = () => {
+    if (isSpeaking) {
+      speak('');
+    } else {
+      handleReadChapter();
+    }
+  };
 
   const getPhraseFromRange = (
     startFlatIdx: number,
@@ -645,6 +738,11 @@ export default function ReaderPanel({
     pIdx: number,
     indexInPara: number,
   ) => {
+    // If chapter narration was currently active, stop it cleanly
+    if (isSpeaking) {
+      handleStopSpeech();
+    }
+
     const clickedFlatIdx = chapterWords.findIndex(
       (w) => w.pIdx === pIdx && w.indexInPara === indexInPara,
     );
@@ -2187,6 +2285,24 @@ export default function ReaderPanel({
         onDeleteHighlight={handleToastDeleteHighlight}
         autoPlayWord={autoPlayWord}
         setAutoPlayWord={setAutoPlayWord}
+        onResumeChapterFromWord={handleResumeChapterFromWord}
+      />
+
+      {/* FLOATING COMPACT MEDIA CONTROLS */}
+      <FloatingMediaControls
+        isSpeaking={isSpeaking}
+        isPaused={isPaused}
+        onPlayPause={handleFloatingPlayPause}
+        onStop={handleStopSpeech}
+        speechRate={speechRate}
+        setSpeechRate={setSpeechRate}
+        isVisible={
+          !isEditing &&
+          Boolean(activeChapter) &&
+          (isSpeaking || isPaused) &&
+          (isZenMode || isScrolledPastToolbar)
+        }
+        isZenMode={isZenMode}
       />
 
       {/* FLOATING HIGHLIGHT & NOTE TOOLBAR */}

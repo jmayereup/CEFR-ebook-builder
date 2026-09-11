@@ -8,6 +8,7 @@ import {
   Languages,
   Loader2,
   MessageSquare,
+  Play,
   Trash2,
   Volume2,
   VolumeX,
@@ -66,6 +67,7 @@ interface TranslationToastProps {
   onDeleteHighlight?: () => void;
   autoPlayWord?: boolean;
   setAutoPlayWord?: (enabled: boolean) => void;
+  onResumeChapterFromWord?: () => void;
 }
 
 export default function TranslationToast({
@@ -103,6 +105,7 @@ export default function TranslationToast({
   onDeleteHighlight,
   autoPlayWord = true,
   setAutoPlayWord,
+  onResumeChapterFromWord,
 }: TranslationToastProps) {
   const dragControls = useDragControls();
   const [isEditingNote, setIsEditingNote] = useState<boolean>(false);
@@ -177,61 +180,33 @@ export default function TranslationToast({
           ) : (
             <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-stretch lg:items-start gap-6">
               {/* SECTION 1: WORD INFO with nav arrows & HIGHLIGHT CONTROLS */}
-              <div className="flex flex-col gap-3 min-w-[200px] lg:max-w-[320px]">
+              <div className="flex flex-col gap-3 min-w-[240px] lg:w-96 lg:max-w-md">
+                {/* Row 1: Word Heading + Pronounce & Word Navigation */}
                 <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <h4
                       lang={getLanguageCodeFromName(story.language)}
                       translate="no"
-                      className="text-xl font-serif font-black text-tj-primary dark:text-tj-primary-hover tracking-tight"
+                      className="text-xl font-serif font-black text-tj-primary dark:text-tj-primary-hover tracking-tight truncate"
+                      title={selectedWord.word}
                     >
                       {selectedWord.word}
                     </h4>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => handlePlayWord(selectedWord.word)}
-                        className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center shrink-0"
-                        title="Pronounce word"
-                      >
-                        <Volume2 className="w-4 h-4" />
-                      </button>
-                      {setAutoPlayWord && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setAutoPlayWord(!autoPlayWord);
-                          }}
-                          className={`p-1.5 rounded-xl border cursor-pointer shadow-sm flex items-center justify-center shrink-0 transition-colors text-xs gap-1 ${
-                            autoPlayWord
-                              ? 'bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover border-tj-primary-border'
-                              : 'bg-tj-bg-card hover:bg-tj-bg-recessed text-slate-400 dark:text-slate-500 border-tj-border-main hover:text-tj-text-main'
-                          }`}
-                          title={
-                            autoPlayWord
-                              ? 'Auto-pronounce on word click: ON (Click to toggle OFF)'
-                              : 'Auto-pronounce on word click: OFF (Click to toggle ON)'
-                          }
-                        >
-                          {autoPlayWord ? (
-                            <Volume2 className="w-3.5 h-3.5" />
-                          ) : (
-                            <VolumeX className="w-3.5 h-3.5" />
-                          )}
-                          <span className="text-[10px] font-bold tracking-tight">
-                            Auto
-                          </span>
-                        </button>
-                      )}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handlePlayWord(selectedWord.word)}
+                      className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-2xs flex items-center justify-center shrink-0"
+                      title="Pronounce word"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                    </button>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       type="button"
                       onClick={onNavigatePrev}
                       disabled={!hasPrev}
-                      className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center"
+                      className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-2xs flex items-center justify-center"
                       title="Previous word (Left Arrow)"
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -240,7 +215,7 @@ export default function TranslationToast({
                       type="button"
                       onClick={onNavigateNext}
                       disabled={!hasNext}
-                      className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-sm flex items-center justify-center"
+                      className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-2xs flex items-center justify-center"
                       title="Next word (Right Arrow)"
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -248,16 +223,61 @@ export default function TranslationToast({
                   </div>
                 </div>
 
-                {/* Range adjustment controls: intuitive 2-button stepper (+ More / - Less) */}
-                {selectedWordRange && (
-                  <div className="flex items-center justify-between gap-2 text-xs font-sans">
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium select-none">
-                      Phrase:{' '}
-                      <strong className="text-tj-text-main font-bold font-mono">
-                        {selectedWordRange[1] - selectedWordRange[0] + 1} words
-                      </strong>
-                    </span>
-                    <div className="flex items-center gap-1 bg-tj-bg-recessed p-0.5 rounded-lg border border-tj-border-main/60">
+                {/* Row 2: Chapter Audio Resumption, Auto Toggle, and Phrase Stepper */}
+                <div className="flex items-center justify-between gap-2 flex-wrap text-xs">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {onResumeChapterFromWord && (
+                      <button
+                        type="button"
+                        onClick={onResumeChapterFromWord}
+                        className="flex items-center gap-1.5 px-2.5 py-1 bg-tj-primary-light hover:bg-tj-primary-light/80 dark:bg-tj-primary-light/10 dark:hover:bg-tj-primary-light/20 text-tj-primary dark:text-tj-primary-hover border border-tj-primary-border rounded-xl text-xs font-bold cursor-pointer shadow-2xs transition-all shrink-0"
+                        title="Resume chapter narration from this word"
+                      >
+                        <Play className="w-3.5 h-3.5 fill-current" />
+                        <span>Listen from here</span>
+                      </button>
+                    )}
+                    {setAutoPlayWord && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAutoPlayWord(!autoPlayWord);
+                        }}
+                        className={`px-2 py-1 rounded-xl border cursor-pointer shadow-2xs flex items-center justify-center shrink-0 transition-colors text-xs gap-1 ${
+                          autoPlayWord
+                            ? 'bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover border-tj-primary-border'
+                            : 'bg-tj-bg-card hover:bg-tj-bg-recessed text-slate-400 dark:text-slate-500 border-tj-border-main hover:text-tj-text-main'
+                        }`}
+                        title={
+                          autoPlayWord
+                            ? 'Auto-pronounce on word click: ON (Click to toggle OFF)'
+                            : 'Auto-pronounce on word click: OFF (Click to toggle ON)'
+                        }
+                      >
+                        {autoPlayWord ? (
+                          <Volume2 className="w-3.5 h-3.5" />
+                        ) : (
+                          <VolumeX className="w-3.5 h-3.5" />
+                        )}
+                        <span className="text-[10px] font-bold tracking-tight">
+                          Auto
+                        </span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Range adjustment controls: intuitive 2-button stepper (+ More / - Less) */}
+                  {selectedWordRange && (
+                    <div className="flex items-center gap-1 bg-tj-bg-recessed p-0.5 rounded-lg border border-tj-border-main/60 shrink-0">
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium px-1 select-none">
+                        Phrase:{' '}
+                        <strong className="text-tj-text-main font-bold font-mono">
+                          {selectedWordRange[1] - selectedWordRange[0] + 1 === 1
+                            ? '1 word'
+                            : `${selectedWordRange[1] - selectedWordRange[0] + 1} words`}
+                        </strong>
+                      </span>
                       <button
                         type="button"
                         onClick={(e) => {
@@ -265,7 +285,7 @@ export default function TranslationToast({
                           onShrinkRight?.();
                         }}
                         disabled={!canShrinkRight}
-                        className="px-2.5 py-1 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed text-tj-text-main border border-tj-border-main/50 rounded-md cursor-pointer transition-colors shadow-2xs text-xs font-semibold select-none flex items-center gap-1"
+                        className="px-2 py-0.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed text-tj-text-main border border-tj-border-main/50 rounded-md cursor-pointer transition-colors shadow-2xs text-[11px] font-semibold select-none flex items-center gap-0.5"
                         title="Remove last word (- Less)"
                       >
                         <span>− Less</span>
@@ -277,14 +297,14 @@ export default function TranslationToast({
                           onExtendRight?.();
                         }}
                         disabled={!canExtendRight}
-                        className="px-2.5 py-1 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed text-tj-text-main border border-tj-border-main/50 rounded-md cursor-pointer transition-colors shadow-2xs text-xs font-semibold select-none flex items-center gap-1"
+                        className="px-2 py-0.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed text-tj-text-main border border-tj-border-main/50 rounded-md cursor-pointer transition-colors shadow-2xs text-[11px] font-semibold select-none flex items-center gap-0.5"
                         title="Add next word (+ More)"
                       >
                         <span>+ More</span>
                       </button>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* 1-TAP HIGHLIGHTING & STUDY NOTES BAR */}
                 {onSelectHighlightColor && (
