@@ -1987,56 +1987,24 @@ export default function ReaderPanel({
                               </div>
                             )}
 
-                            <div className="flex items-start gap-3">
-                              <div className="flex-1">
-                                <InteractiveParagraph
-                                  paragraphText={dp.original}
-                                  pIdx={idx}
-                                  language={effectivePrimaryLanguage}
-                                  handleWordClick={handleWordClick}
-                                  isBilingual={showBilingual}
-                                  glossaryWordsSet={glossaryWordsSet}
-                                  savedWordsSet={savedWordsSet}
-                                  activeWordRangeInPara={activeWordRangeInPara}
-                                  activeSentenceRange={activeSentenceRange}
-                                  alignment={alignment}
-                                  highlights={paraHighlights}
-                                  onHighlightClick={handleHighlightClick}
-                                />
-                              </div>
-                              {showBilingual && (
-                                <button
-                                  type="button"
-                                  onClick={() => handlePlayParagraph(idx)}
-                                  className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-colors shrink-0 ${
-                                    isSpeakingThisPara && !isPaused
-                                      ? 'text-tj-success bg-[#e2ece3] dark:bg-[#28362b]'
-                                      : 'text-slate-400 hover:text-tj-success hover:bg-tj-primary-light dark:hover:bg-slate-800'
-                                  }`}
-                                  title="Read from this line"
-                                >
-                                  <Volume2 className="w-3.5 h-3.5" />
-                                </button>
-                              )}
-                              {!showBilingual && (
-                                <button
-                                  type="button"
-                                  onClick={() => handlePlayParagraph(idx)}
-                                  className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-all shrink-0 ${
-                                    isSpeakingThisPara
-                                      ? 'opacity-100 text-tj-success bg-[#e2ece3] dark:bg-[#28362b]'
-                                      : 'opacity-0 group-hover/para:opacity-60 hover:!opacity-100 text-slate-400 hover:text-tj-success hover:bg-tj-primary-light dark:hover:bg-slate-800'
-                                  }`}
-                                  title="Read from this paragraph"
-                                >
-                                  <Volume2 className="w-3.5 h-3.5" />
-                                </button>
-                              )}
-                            </div>
+                            <InteractiveParagraph
+                              paragraphText={dp.original}
+                              pIdx={idx}
+                              language={effectivePrimaryLanguage}
+                              handleWordClick={handleWordClick}
+                              isBilingual={showBilingual}
+                              glossaryWordsSet={glossaryWordsSet}
+                              savedWordsSet={savedWordsSet}
+                              activeWordRangeInPara={activeWordRangeInPara}
+                              activeSentenceRange={activeSentenceRange}
+                              alignment={alignment}
+                              highlights={paraHighlights}
+                              onHighlightClick={handleHighlightClick}
+                            />
                             {showBilingual && dp.translation && (
                               <p
                                 translate="yes"
-                                className="text-sm text-tj-text-muted font-sans italic pl-4 border-l-2 border-tj-border-main select-text leading-[1.6] pr-8"
+                                className="text-sm text-tj-text-muted font-sans italic pl-4 border-l-2 border-tj-border-main select-text leading-[1.6]"
                               >
                                 {dp.translation}
                               </p>
