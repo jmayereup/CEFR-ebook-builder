@@ -90,6 +90,7 @@ interface InteractiveParagraphProps {
   glossaryWordsSet?: Set<string>;
   savedWordsSet?: Set<string>;
   activeWordRangeInPara?: [number, number] | null;
+  activeSentenceRange?: { startChar: number; endChar: number } | null;
   alignment?: 'left' | 'center' | 'right' | 'justify';
   highlights?: StoryHighlight[];
   onHighlightClick?: (
@@ -107,6 +108,7 @@ export default function InteractiveParagraph({
   glossaryWordsSet,
   savedWordsSet,
   activeWordRangeInPara = null,
+  activeSentenceRange = null,
   alignment = 'justify',
   highlights,
   onHighlightClick,
@@ -148,6 +150,7 @@ export default function InteractiveParagraph({
 
   const segmentsWithPositions = useMemo(() => {
     let currPos = 0;
+    let wordCount = 0;
     const rawSegments = segments.map((seg, idx) => {
       const startPos = currPos;
       const endPos = currPos + seg.segment.length;
@@ -165,11 +168,14 @@ export default function InteractiveParagraph({
         );
       });
 
+      const wordIndexInPara = seg.isWordLike ? wordCount++ : -1;
+
       return {
         ...seg,
         index: idx,
         startPos,
         endPos,
+        wordIndexInPara,
         isBold: matchingRange?.isBold,
         isItalic: matchingRange?.isItalic,
         highlight: matchingHighlight,
@@ -281,8 +287,6 @@ export default function InteractiveParagraph({
     return `hover:text-tj-primary px-1 -mx-1 cursor-pointer transition ${weightClass} underline decoration-transparent hover:decoration-tj-primary-border select-text`;
   };
 
-  let wordIndexInPara = 0;
-
   let startSegIdx = -1;
   let endSegIdx = -1;
 
@@ -320,6 +324,142 @@ export default function InteractiveParagraph({
       ? 'font-bold text-lg text-slate-800 dark:text-slate-100 my-3'
       : `${isBilingual ? '' : 'indent-4 md:indent-6'} ${getAlignmentClass()} leading-relaxed mb-4`;
 
+  // Partition segments into before, active sentence, and after so the active sentence
+  // can be wrapped in a single continuous mark tag without awkward gaps in whitespace.
+  const { beforeSegments, sentenceSegments, afterSegments } = useMemo(() => {
+    if (!activeSentenceRange) {
+      return {
+        beforeSegments: segmentsWithPositions,
+        sentenceSegments: [],
+        afterSegments: [],
+      };
+    }
+
+    const before: typeof segmentsWithPositions = [];
+    const active: typeof segmentsWithPositions = [];
+    const after: typeof segmentsWithPositions = [];
+
+    for (const seg of segmentsWithPositions) {
+      if (seg.endPos <= activeSentenceRange.startChar) {
+        before.push(seg);
+      } else if (seg.startPos >= activeSentenceRange.endChar) {
+        after.push(seg);
+      } else {
+        active.push(seg);
+      }
+    }
+
+    return {
+      beforeSegments: before,
+      sentenceSegments: active,
+      afterSegments: after,
+    };
+  }, [segmentsWithPositions, activeSentenceRange]);
+
+  const renderSegment = (seg: (typeof segmentsWithPositions)[0]) => {
+    const isActive =
+      startSegIdx !== -1 &&
+      endSegIdx !== -1 &&
+      seg.index >= startSegIdx &&
+      seg.index <= endSegIdx;
+
+    const handleClick = (e: React.MouseEvent) => {
+      if (seg.highlight && onHighlightClick) {
+        e.stopPropagation();
+        onHighlightClick(seg.highlight, {
+          x: e.clientX,
+          y: e.clientY,
+        });
+        return;
+      }
+      if (seg.isWordLike) {
+        e.stopPropagation();
+        handleWordClick(seg.segment, paragraphText, pIdx, seg.index);
+      }
+    };
+
+    if (seg.isWordLike) {
+      return (
+        // biome-ignore lint/a11y/noStaticElementInteractions: inline text span with dictionary lookup and highlight listener
+        // biome-ignore lint/a11y/useKeyWithClickEvents: inline text span with dictionary lookup and highlight listener
+        <span
+          key={seg.key}
+          data-active-word={isActive ? 'true' : undefined}
+          data-paragraph-index={pIdx}
+          onClick={(e) => {
+            if (seg.highlight && onHighlightClick) {
+              e.stopPropagation();
+              onHighlightClick(seg.highlight, {
+                x: e.clientX,
+                y: e.clientY,
+              });
+              return;
+            }
+            e.stopPropagation();
+            handleWordClick(
+              seg.segment,
+              paragraphText,
+              pIdx,
+              seg.wordIndexInPara,
+            );
+          }}
+          className={getWordStyle(
+            seg.segment,
+            isActive,
+            seg.isBold,
+            seg.isItalic,
+            seg.highlight,
+            seg.isHighlightStart,
+            seg.isHighlightEnd,
+          )}
+        >
+          {seg.segment}
+        </span>
+      );
+    }
+
+    if (isActive) {
+      return (
+        <span
+          key={seg.key}
+          className={`text-tj-primary dark:text-tj-primary-hover underline decoration-2 decoration-black dark:decoration-white underline-offset-4 cursor-pointer font-bold ${seg.isItalic ? 'italic' : ''} select-text`}
+        >
+          {seg.segment}
+        </span>
+      );
+    }
+
+    if (seg.highlight) {
+      const highlightClasses = getHighlightClassNames(
+        seg.highlight,
+        seg.isHighlightStart,
+        seg.isHighlightEnd,
+        seg.isBold,
+        seg.isItalic,
+      );
+      return (
+        // biome-ignore lint/a11y/noStaticElementInteractions: highlight segment click listener
+        // biome-ignore lint/a11y/useKeyWithClickEvents: highlight segment click listener
+        <span key={seg.key} onClick={handleClick} className={highlightClasses}>
+          {seg.segment}
+        </span>
+      );
+    }
+
+    if (/^\s+$/.test(seg.segment)) {
+      return <Fragment key={seg.key}>{seg.segment}</Fragment>;
+    }
+
+    return (
+      <span
+        key={seg.key}
+        className={`select-text ${seg.isItalic ? 'italic' : ''} ${seg.isBold ? 'font-bold' : ''}`}
+      >
+        {seg.segment}
+      </span>
+    );
+  };
+
   return (
     <p
       key={pIdx}
@@ -331,114 +471,19 @@ export default function InteractiveParagraph({
       lang={langCode}
       className={`${blockClass} transition-colors duration-500`}
     >
-      {segmentsWithPositions.map((seg) => {
-        const isActive =
-          startSegIdx !== -1 &&
-          endSegIdx !== -1 &&
-          seg.index >= startSegIdx &&
-          seg.index <= endSegIdx;
-
-        const handleClick = (e: React.MouseEvent) => {
-          if (seg.highlight && onHighlightClick) {
-            e.stopPropagation();
-            onHighlightClick(seg.highlight, {
-              x: e.clientX,
-              y: e.clientY,
-            });
-            return;
-          }
-          if (seg.isWordLike) {
-            e.stopPropagation();
-            handleWordClick(seg.segment, paragraphText, pIdx, seg.index);
-          }
-        };
-
-        if (seg.isWordLike) {
-          const currentWordIndex = wordIndexInPara++;
-          return (
-            // biome-ignore lint/a11y/noStaticElementInteractions: inline text span with dictionary lookup and highlight listener
-            // biome-ignore lint/a11y/useKeyWithClickEvents: inline text span with dictionary lookup and highlight listener
-            <span
-              key={seg.key}
-              data-active-word={isActive ? 'true' : undefined}
-              data-paragraph-index={pIdx}
-              onClick={(e) => {
-                if (seg.highlight && onHighlightClick) {
-                  e.stopPropagation();
-                  onHighlightClick(seg.highlight, {
-                    x: e.clientX,
-                    y: e.clientY,
-                  });
-                  return;
-                }
-                e.stopPropagation();
-                handleWordClick(
-                  seg.segment,
-                  paragraphText,
-                  pIdx,
-                  currentWordIndex,
-                );
-              }}
-              className={getWordStyle(
-                seg.segment,
-                isActive,
-                seg.isBold,
-                seg.isItalic,
-                seg.highlight,
-                seg.isHighlightStart,
-                seg.isHighlightEnd,
-              )}
-            >
-              {seg.segment}
-            </span>
-          );
-        }
-
-        if (isActive) {
-          return (
-            <span
-              key={seg.key}
-              className={`text-tj-primary dark:text-tj-primary-hover underline decoration-2 decoration-black dark:decoration-white underline-offset-4 cursor-pointer font-bold ${seg.isItalic ? 'italic' : ''} select-text`}
-            >
-              {seg.segment}
-            </span>
-          );
-        }
-
-        if (seg.highlight) {
-          const highlightClasses = getHighlightClassNames(
-            seg.highlight,
-            seg.isHighlightStart,
-            seg.isHighlightEnd,
-            seg.isBold,
-            seg.isItalic,
-          );
-          return (
-            // biome-ignore lint/a11y/noStaticElementInteractions: highlight segment click listener
-            // biome-ignore lint/a11y/useKeyWithClickEvents: highlight segment click listener
-            <span
-              key={seg.key}
-              onClick={handleClick}
-              className={highlightClasses}
-            >
-              {seg.segment}
-            </span>
-          );
-        }
-
-        if (/^\s+$/.test(seg.segment)) {
-          return <Fragment key={seg.key}>{seg.segment}</Fragment>;
-        }
-
-        return (
-          <span
-            key={seg.key}
-            className={`select-text ${seg.isItalic ? 'italic' : ''} ${seg.isBold ? 'font-bold' : ''}`}
-          >
-            {seg.segment}
-          </span>
-        );
-      })}
+      {beforeSegments.map(renderSegment)}
+      {sentenceSegments.length > 0 && (
+        <mark
+          className="bg-[#e2ece3] dark:bg-[#28362b] text-inherit rounded-md px-1 py-0.5 transition-colors duration-300 inline"
+          style={{
+            boxDecorationBreak: 'clone',
+            WebkitBoxDecorationBreak: 'clone',
+          }}
+        >
+          {sentenceSegments.map(renderSegment)}
+        </mark>
+      )}
+      {afterSegments.map(renderSegment)}
     </p>
   );
 }

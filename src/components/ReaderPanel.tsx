@@ -11,6 +11,7 @@ import {
   Star,
   Trash2,
   Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
@@ -23,6 +24,7 @@ import {
 } from 'react';
 import { FREE_MODEL_IDS } from '../constants/models';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
+import { buildChapterSentences } from '../utils/sentenceChunker';
 import { useStoryHighlights } from '../hooks/useStoryHighlights';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
@@ -526,6 +528,15 @@ export default function ReaderPanel({
     speak,
     stop,
     playWord,
+    currentSentenceIndex,
+    activeSentenceId,
+    activeParagraphIndex,
+    playSentenceQueue,
+    pauseSentenceQueue,
+    resumeSentenceQueue,
+    stopSentenceQueue,
+    ttsError,
+    clearTtsError,
   } = useSpeechSynthesis(effectivePrimaryLanguage);
 
   // Clicked word translation toast state
@@ -584,42 +595,98 @@ export default function ReaderPanel({
 
   // Unified keyboard navigation is now registered below handleWordClick
 
-  // Core TTS executors using custom hook actions
-  const handleReadChapter = () => {
-    if (!activeChapter) return;
-    // When swapped, the effective primary text is the translation, so read that
-    // from the display paragraphs instead of the raw chapter content.
-    const textToSpeak = stripMarkdown(
-      effectiveDisplayParagraphs.map((dp) => dp.original).join('\n'),
+  // Build sequential sentence chunks for resilient chapter TTS reading
+  const chapterSentences = useMemo(() => {
+    const langCode = getLanguageCodeFromName(effectivePrimaryLanguage);
+    return buildChapterSentences(effectiveDisplayParagraphs, langCode);
+  }, [effectiveDisplayParagraphs, effectivePrimaryLanguage]);
+
+  const activeSentence = useMemo(() => {
+    if (
+      currentSentenceIndex === null ||
+      !chapterSentences[currentSentenceIndex]
+    ) {
+      return null;
+    }
+    return chapterSentences[currentSentenceIndex];
+  }, [currentSentenceIndex, chapterSentences]);
+
+  // Gently auto-scroll to the active paragraph / sentence during narration
+  useEffect(() => {
+    if (!isSpeaking || activeParagraphIndex === null) return;
+    const el = document.getElementById(
+      `para-container-${activeParagraphIndex}`,
     );
-    speak(textToSpeak);
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      if (
+        rect.top < viewportHeight * 0.15 ||
+        rect.bottom > viewportHeight * 0.82
+      ) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [activeParagraphIndex, isSpeaking]);
+
+  // Stop narration on chapter changes
+  useEffect(() => {
+    stopSentenceQueue();
+  }, [activeChapterIndex, stopSentenceQueue]);
+
+  // Core TTS executors using sentence queue stepper
+  const handleReadChapter = () => {
+    if (!activeChapter || chapterSentences.length === 0) return;
+    if (isSpeaking) {
+      if (isPaused) {
+        resumeSentenceQueue();
+      } else {
+        pauseSentenceQueue();
+      }
+    } else {
+      const startIdx = currentSentenceIndex ?? 0;
+      playSentenceQueue(chapterSentences, startIdx);
+    }
   };
 
-  const handleStopSpeech = stop;
+  const handleStopSpeech = () => {
+    stopSentenceQueue();
+  };
   const handlePlayWord = playWord;
 
-  // Resume chapter narration starting from the exact clicked word (respecting Asian and space-separated languages)
+  const handlePlayParagraph = (pIdx: number) => {
+    const startSentence = chapterSentences.find((s) => s.pIdx === pIdx);
+    if (startSentence) {
+      playSentenceQueue(chapterSentences, startSentence.globalIndex);
+    }
+  };
+
+  // Resume chapter narration starting from the exact clicked word sentence chunk
   const handleResumeChapterFromWord = () => {
     if (selectedWordRange === null || !activeChapter) return;
     const startFlatIdx = selectedWordRange[0];
-    const textToSpeak = getChapterTextFromWord(
-      startFlatIdx,
-      chapterWords,
-      effectiveDisplayParagraphs,
-      effectivePrimaryLanguage,
-      segmentMatchingSet,
-    );
-    if (!textToSpeak) return;
+    const clickedWord = chapterWords[startFlatIdx];
+    if (!clickedWord) return;
 
-    handleStopSpeech();
-    setTimeout(() => {
-      speak(textToSpeak);
-    }, 60);
+    const candidateSentences = chapterSentences.filter(
+      (s) => s.pIdx === clickedWord.pIdx,
+    );
+    const matchingSentence = candidateSentences.find((s) =>
+      s.rawText.toLowerCase().includes(clickedWord.word.toLowerCase()),
+    );
+    const target = matchingSentence || candidateSentences[0];
+    if (target) {
+      playSentenceQueue(chapterSentences, target.globalIndex);
+    }
   };
 
   const handleFloatingPlayPause = () => {
     if (isSpeaking) {
-      speak('');
+      if (isPaused) {
+        resumeSentenceQueue();
+      } else {
+        pauseSentenceQueue();
+      }
     } else {
       handleReadChapter();
     }
@@ -1746,6 +1813,30 @@ export default function ReaderPanel({
                   </div>
                 )}
 
+                {/* TTS Diagnostic Alert if device TTS engine fails */}
+                {ttsError && (
+                  <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-955/20 border border-amber-200 dark:border-amber-800/60 rounded-xl flex items-center justify-between text-xs text-amber-800 dark:text-amber-300 animate-fade-in">
+                    <div className="flex items-center gap-2">
+                      <VolumeX className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                      <span>
+                        {ttsError} <span className="font-semibold">Tip:</span>{' '}
+                        On Samsung devices, switch to{' '}
+                        <em>Speech Recognition and Synthesis from Google</em> in
+                        Android Settings &gt; General management &gt;
+                        Text-to-speech.
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={clearTtsError}
+                      className="p-1 hover:bg-amber-100 dark:hover:bg-amber-900/40 rounded-lg cursor-pointer shrink-0 ml-2 text-amber-700 dark:text-amber-400"
+                      title="Dismiss alert"
+                    >
+                      <CloseIcon className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
                 {/* Chapter Cover Image (for Chapter 1) */}
                 {activeChapterIndex === 0 && activeChapter && (
                   <div className="flex justify-center mb-8 mt-2 select-none">
@@ -1860,11 +1951,42 @@ export default function ReaderPanel({
                           activeChapterIndex,
                           idx,
                         );
+
+                        // Check if this paragraph contains the currently spoken sentence chunk
+                        const isSpeakingThisPara =
+                          (isSpeaking || isPaused) &&
+                          activeParagraphIndex === idx;
+
+                        const activeSentenceRange =
+                          isSpeakingThisPara && activeSentence
+                            ? {
+                                startChar: activeSentence.startChar,
+                                endChar: activeSentence.endChar,
+                              }
+                            : null;
+
                         return (
                           <div
                             key={idx}
+                            id={`para-container-${idx}`}
                             className="space-y-2 mb-6 group/para relative"
                           >
+                            {/* Subtle Margin Marker for active narration */}
+                            {isSpeakingThisPara && (
+                              <div
+                                className="absolute -left-3.5 sm:-left-5 md:-left-6 top-1.5 bottom-1 flex items-start justify-center pointer-events-none"
+                                aria-hidden="true"
+                              >
+                                <div
+                                  className={`w-1 sm:w-1.5 rounded-full transition-all duration-300 ${
+                                    isPaused
+                                      ? 'h-4 bg-amber-400 dark:bg-amber-500'
+                                      : 'h-7 sm:h-8 bg-tj-success dark:bg-tj-success animate-pulse shadow-sm shadow-tj-success/30'
+                                  }`}
+                                />
+                              </div>
+                            )}
+
                             <div className="flex items-start gap-3">
                               <div className="flex-1">
                                 <InteractiveParagraph
@@ -1876,6 +1998,7 @@ export default function ReaderPanel({
                                   glossaryWordsSet={glossaryWordsSet}
                                   savedWordsSet={savedWordsSet}
                                   activeWordRangeInPara={activeWordRangeInPara}
+                                  activeSentenceRange={activeSentenceRange}
                                   alignment={alignment}
                                   highlights={paraHighlights}
                                   onHighlightClick={handleHighlightClick}
@@ -1884,9 +2007,27 @@ export default function ReaderPanel({
                               {showBilingual && (
                                 <button
                                   type="button"
-                                  onClick={() => handlePlayWord(dp.original)}
-                                  className="mt-1 p-1.5 text-slate-400 hover:text-tj-primary hover:bg-tj-primary-light dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors shrink-0"
-                                  title="Play line narration"
+                                  onClick={() => handlePlayParagraph(idx)}
+                                  className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-colors shrink-0 ${
+                                    isSpeakingThisPara && !isPaused
+                                      ? 'text-tj-success bg-[#e2ece3] dark:bg-[#28362b]'
+                                      : 'text-slate-400 hover:text-tj-success hover:bg-tj-primary-light dark:hover:bg-slate-800'
+                                  }`}
+                                  title="Read from this line"
+                                >
+                                  <Volume2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {!showBilingual && (
+                                <button
+                                  type="button"
+                                  onClick={() => handlePlayParagraph(idx)}
+                                  className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-all shrink-0 ${
+                                    isSpeakingThisPara
+                                      ? 'opacity-100 text-tj-success bg-[#e2ece3] dark:bg-[#28362b]'
+                                      : 'opacity-0 group-hover/para:opacity-60 hover:!opacity-100 text-slate-400 hover:text-tj-success hover:bg-tj-primary-light dark:hover:bg-slate-800'
+                                  }`}
+                                  title="Read from this paragraph"
                                 >
                                   <Volume2 className="w-3.5 h-3.5" />
                                 </button>
