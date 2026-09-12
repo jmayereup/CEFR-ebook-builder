@@ -22,6 +22,7 @@ export default function FlagStoryModal({
 }: FlagStoryModalProps) {
   const [reason, setReason] = useState<DeletionFlag['reason']>('inappropriate');
   const [comment, setComment] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -45,8 +46,11 @@ export default function FlagStoryModal({
       return;
     }
 
-    if (!currentUser) {
-      setError('You must be signed in to flag stories.');
+    const flaggerEmail = (currentUser?.email || guestEmail.trim()).toLowerCase();
+    const flaggerId = currentUser?.uid || 'guest';
+
+    if (!currentUser && (!flaggerEmail || !flaggerEmail.includes('@'))) {
+      setError('Please provide a valid contact email address for your report.');
       return;
     }
 
@@ -57,8 +61,8 @@ export default function FlagStoryModal({
       await flagStoryForDeletion({
         storyId: story.id,
         storyTitle: story.title || 'Untitled Story',
-        flaggerId: currentUser.uid,
-        flaggerEmail: currentUser.email || 'anonymous@user.com',
+        flaggerId,
+        flaggerEmail,
         reason,
         comment: comment.trim(),
       });
@@ -69,6 +73,7 @@ export default function FlagStoryModal({
         );
       }
       setComment('');
+      setGuestEmail('');
       onClose();
     } catch (err: any) {
       console.error('Error submitting story flag:', err);
@@ -162,6 +167,25 @@ export default function FlagStoryModal({
             </select>
           </div>
 
+          {!currentUser && (
+            <div>
+              <label className="block text-xs font-bold text-tj-text-muted uppercase tracking-wider mb-2">
+                Your Contact Email <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="email"
+                value={guestEmail}
+                onChange={(e) => setGuestEmail(e.target.value)}
+                placeholder="name@example.com"
+                className="w-full text-xs p-3 rounded-xl border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:border-tj-primary focus:outline-none"
+                required
+              />
+              <p className="mt-1 text-[10px] text-tj-text-muted">
+                Required so our administrators can follow up regarding your report.
+              </p>
+            </div>
+          )}
+
           {/* Comment / Explanation Textarea */}
           <div>
             <label className="block text-xs font-bold text-tj-text-muted uppercase tracking-wider mb-2">
@@ -177,6 +201,17 @@ export default function FlagStoryModal({
               className="w-full text-xs p-3 rounded-xl border border-tj-border-main bg-tj-bg-recessed text-tj-text-main focus:border-tj-primary focus:outline-none resize-none disabled:opacity-50"
               required
             />
+          </div>
+
+          {/* Direct Email Takedown Notice Alternative */}
+          <div className="p-3 bg-tj-bg-recessed/60 rounded-xl border border-tj-border-main/50 text-[11px] text-tj-text-muted leading-relaxed">
+            Need urgent copyright or legal removal? Email our designated agent at{' '}
+            <a
+              href={`mailto:admin@teacherjake.com?subject=Takedown%20Notice:%20${encodeURIComponent(story.title)}%20(ID:%20${story.id})&body=Hello,%0D%0A%0D%0AI%20am%20submitting%20a%20formal%20takedown%20request%20for%20the%20following%20story:%0D%0ATitle:%20${encodeURIComponent(story.title)}%0D%0AStory%20ID:%20${story.id}%0D%0AURL:%20${encodeURIComponent(window.location.href)}%0D%0A%0D%0AReason%20for%20removal:%20`}
+              className="text-tj-primary hover:underline font-semibold"
+            >
+              admin@teacherjake.com
+            </a>
           </div>
 
           {/* Action Buttons */}

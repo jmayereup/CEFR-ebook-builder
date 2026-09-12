@@ -72,7 +72,7 @@ export default function InstructionFloatingBox({
               </div>
               <div>
                 <h4 className="text-sm font-bold tracking-tight text-tj-text-main">
-                  Welcome to CEFR Readers
+                  Welcome to Easy eBooks
                 </h4>
                 <p className="text-[11px] text-tj-text-muted">
                   Your AI-powered language reading companion

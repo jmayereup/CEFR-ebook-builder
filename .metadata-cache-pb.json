@@ -1,6 +1,52 @@
 {
-  "lastFetchTime": 1789114006928,
+  "lastFetchTime": 1789215065215,
   "stories": [
+    {
+      "id": "sla7pyuyi6gezrq",
+      "cover": "sla7pyuyi6gezrq_y7nu5lxihm.jpg",
+      "title": "Le sport et notre cerveau : entre vérités scientifiques, espoirs et idées reçues",
+      "language": "French",
+      "translationLanguage": "French",
+      "cefrLevel": "B2",
+      "genre": "science_tech_analysis",
+      "totalChapters": 10,
+      "createdAt": "2026-09-12T04:34:14.310Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "meta/muse-spark-1.3-contributor",
+      "ratings": null,
+      "totalReads": 0,
+      "completedBy": {},
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 3436,
+      "description": "A rigorous yet accessible analysis of how exercise really affects mood, memory, and brain aging. It separates solid science on blood flow, plasticity, and cognitive reserve from myths about new neurons and miracle cures, and shows which workouts best protect the mind.",
+      "updated": "2026-09-12 04:39:30.890Z"
+    },
+    {
+      "id": "s9smhvaxrnvqkv6",
+      "cover": "s9smhvaxrnvqkv6_t78v1q2aur.jpg",
+      "title": "Cinco Cuentos Mágicos de México",
+      "language": "Spanish",
+      "translationLanguage": "English",
+      "cefrLevel": "A2",
+      "genre": "folklore",
+      "totalChapters": 25,
+      "createdAt": "2026-09-12T00:00:39.689Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "meta/muse-spark-1.3-contributor",
+      "ratings": null,
+      "totalReads": 0,
+      "completedBy": {},
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 25,
+      "wordCount": 7717,
+      "description": "Five magical tales take young readers across Mexico, from a Day of the Dead ofrenda to an Oaxacan workshop, a cornfield, a living Lotería board, and a whispering Yucatan cenote. Each story blends authentic folklore with simple A2 Spanish, friendly dialogue, and joyful lessons about family and gratitude.",
+      "updated": "2026-09-12 00:17:09.331Z"
+    },
     {
       "id": "s44zclybg9cxr9j",
       "cover": "s44zclybg9cxr9j_81918v16gq.jpg",
@@ -14,15 +60,19 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "meta/muse-spark-1.3-contributor",
-      "ratings": null,
-      "totalReads": 0,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 12,
       "wordCount": 4359,
       "description": "A B2-level French analytical work that breaks down Zack Kass's techno-optimism — unmetered intelligence, identity displacement, and policy-induced scarcity — then critiques it through Baumol's Cost Disease, land scarcity, capital capture, and compute concentration. It validates Kass's warning about the future of living while arguing for grounded institutional realism over passive abundance narratives.",
-      "updated": "2026-09-11 06:07:04.585Z"
+      "updated": "2026-09-11 14:13:15.549Z"
     },
     {
       "id": "s5ra71xm29t9nmz",
@@ -45,7 +95,7 @@
       "chaptersCount": 5,
       "wordCount": 1232,
       "description": "Ingrid and Werner leave city life behind to retire in a small Bavarian village. Through festivals, dialect mix-ups, winter loneliness, and new friendships, they slowly discover what home really means. A warm, character-driven slice-of-life story about starting over later in life.",
-      "updated": "2026-09-09 10:38:29.768Z"
+      "updated": "2026-09-12 03:32:13.091Z"
     },
     {
       "id": "stcups8cwg8e5sd",
@@ -60,15 +110,19 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "meta/muse-spark-1.3-contributor",
-      "ratings": null,
-      "totalReads": 0,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 6130,
       "description": "A B2-level analytical study of Yuval Noah Harari's vision of the next 50 years, examining language as civilization's operating system, democracy's media foundations, AI as autonomous agent, algorithmic intimacy, and the safety gap. It compares intelligence versus wisdom and asks how humanity can govern a storytelling power no longer exclusively human.",
-      "updated": "2026-09-08 11:56:36.697Z"
+      "updated": "2026-09-12 03:49:03.644Z"
     },
     {
       "id": "syztwp5jlzzdx6i",
@@ -384,8 +438,10 @@
       "creatorId": "kjksljovpk623jy",
       "model": "~z-ai/glm-flash-latest",
       "ratings": null,
-      "totalReads": 0,
-      "completedBy": {},
+      "totalReads": 1,
+      "completedBy": {
+        "gy2srip70u2y41v": 1
+      },
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 26,

@@ -13,8 +13,8 @@ export default defineConfig(() => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'tj-logo.svg'],
         manifest: {
-          name: 'CEFR Stories - Reading Companion',
-          short_name: 'CEFR Stories',
+          name: 'Easy eBooks - eBook Builder and Library',
+          short_name: 'Easy eBooks',
           description:
             'Graded reading companion for language learners with interactive translations and speech synthesis.',
           theme_color: '#004d2c',
@@ -66,14 +66,14 @@ export default defineConfig(() => {
               sizes: '1280x720',
               type: 'image/png',
               form_factor: 'wide',
-              label: 'CEFR Stories Desktop View',
+              label: 'Easy eBooks Desktop View',
             },
             {
               src: '/screenshot-mobile.png',
               sizes: '768x1024',
               type: 'image/png',
               form_factor: 'narrow',
-              label: 'CEFR Stories Mobile View',
+              label: 'Easy eBooks Mobile View',
             },
           ],
         },

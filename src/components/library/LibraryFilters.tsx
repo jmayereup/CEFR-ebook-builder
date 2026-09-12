@@ -185,7 +185,7 @@ export default function LibraryFilters({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-tj-text-muted" />
           <input
             type="text"
-            placeholder="Search CEFR Stories..."
+            placeholder="Search Easy eBooks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-9 py-2 bg-tj-bg-card/40 dark:bg-slate-900/20 border border-tj-border-main hover:border-slate-355 dark:hover:border-slate-700 text-tj-text-main placeholder-tj-text-muted/60 text-xs rounded-xl focus:border-tj-primary focus:ring-0 focus:outline-none transition-all duration-150 font-sans"

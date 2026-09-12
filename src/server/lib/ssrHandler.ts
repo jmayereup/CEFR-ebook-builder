@@ -123,7 +123,7 @@ export function createSSRHandler(getVite: () => any): express.RequestHandler {
           numberOfPages: (story.chapters?.length ?? 0) * 8,
           publisher: {
             '@type': 'Organization',
-            name: 'CEFR Stories',
+            name: 'Easy eBooks',
             logo: {
               '@type': 'ImageObject',
               url: `${origin}/tj-logo-512.png`,
@@ -133,7 +133,7 @@ export function createSSRHandler(getVite: () => any): express.RequestHandler {
 
         const dynamicMeta = `
           <meta name="description" content="${escapeHtmlAttr(description)}" />
-          <meta property="og:site_name" content="CEFR Stories" />
+          <meta property="og:site_name" content="Easy eBooks" />
           <meta property="og:type" content="book" />
           <meta property="og:title" content="${escapeHtmlAttr(title)}" />
           <meta property="og:description" content="${escapeHtmlAttr(description)}" />

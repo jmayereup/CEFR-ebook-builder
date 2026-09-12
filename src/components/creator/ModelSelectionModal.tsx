@@ -35,7 +35,7 @@ const MODEL_DETAILS: Record<
   },
   'meta/muse-spark-1.3': {
     verdict:
-      'Meta flagship frontier reasoning model for BYOK users. Superior long-horizon coherence, complex narrative pacing, character voice, and zero data training retention.',
+      'Meta flagship frontier reasoning model for BYOK users. Superior long-horizon coherence, complex narrative pacing, and expressive character voice.',
     languages: 'All supported languages',
   },
   'deepseek/deepseek-v4.1-flash': {

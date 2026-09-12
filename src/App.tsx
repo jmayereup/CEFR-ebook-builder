@@ -1418,7 +1418,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
           <footer className="mt-20 border-t border-tj-border-main bg-tj-bg-card py-6 text-tj-text-muted select-none">
             <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-xs text-slate-400 dark:text-slate-500">
-                CEFR Graded Short Story Builder.
+                Easy eBooks - Graded Short Story Builder.
               </p>
               <div className="flex items-center gap-4 text-xs font-medium">
                 <button

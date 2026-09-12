@@ -282,7 +282,7 @@ export default function SettingsModal({
         <div className="space-y-4">
           <div className="bg-tj-bg-recessed p-4 rounded border border-tj-border-main text-xs text-tj-text-muted leading-normal space-y-3">
             <p>
-              <strong>CEFR Stories</strong> provides free story creation credits
+              <strong>Easy eBooks</strong> provides free story creation credits
               for a limited time while our shared library catalog is being
               built! If you wish to create additional stories or bypass shared
               generation limits, you can connect your own{' '}
@@ -631,10 +631,10 @@ export default function SettingsModal({
                     <span>JSON Format & Credit Loss Liability Notice</span>
                   </div>
                   <p className="opacity-90 leading-normal text-[10px]">
-                    CEFR Stories uses structured JSON prompts for story
+                    Easy eBooks uses structured JSON prompts for story
                     creation, chapter outlines, and vocabulary glossaries.
                     Custom or user-selected models must reliably adhere to JSON
-                    output formatting. CEFR Stories is not responsible for
+                    output formatting. Easy eBooks is not responsible for
                     OpenRouter API credit consumption or financial loss incurred
                     from malformed, unparseable, or rejected model responses.
                   </p>

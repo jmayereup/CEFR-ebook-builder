@@ -187,7 +187,7 @@ export default function AppHeader({
           />
           <div>
             <h1 className="text-sm font-bold tracking-tight text-tj-text-main leading-none font-sans">
-              CEFR Stories
+              Easy eBooks
             </h1>
             <span className="text-[10px] text-tj-text-muted font-mono">
               eBook Builder

@@ -8,14 +8,14 @@ export function useDocumentMetadata(
   activeChapterIndex: number,
 ) {
   useEffect(() => {
-    const defaultTitle = 'CEFR Stories - Reading Companion';
+    const defaultTitle = 'Easy eBooks - eBook Builder and Library';
     const defaultDesc =
       'Generate and read custom CEFR-graded stories in Spanish, French, Japanese, and more. Improve reading comprehension with dynamic glossaries, audio narration, and EPUB eBook downloads.';
 
     if (!story) {
       document.title = defaultTitle;
       updateMetaTag('name', 'description', defaultDesc);
-      updateMetaTag('property', 'og:site_name', 'CEFR Stories');
+      updateMetaTag('property', 'og:site_name', 'Easy eBooks');
       updateMetaTag('property', 'og:type', 'website');
       updateMetaTag('property', 'og:title', defaultTitle);
       updateMetaTag('property', 'og:description', defaultDesc);
@@ -57,7 +57,7 @@ export function useDocumentMetadata(
 
     document.title = newTitle;
     updateMetaTag('name', 'description', newDesc);
-    updateMetaTag('property', 'og:site_name', 'CEFR Stories');
+    updateMetaTag('property', 'og:site_name', 'Easy eBooks');
     updateMetaTag('property', 'og:type', 'book');
     updateMetaTag('property', 'og:title', newTitle);
     updateMetaTag('property', 'og:description', newDesc);
@@ -86,7 +86,7 @@ export function useDocumentMetadata(
       numberOfPages: (story.chapters?.length ?? 0) * 8, // Estimated page count
       publisher: {
         '@type': 'Organization',
-        name: 'CEFR Stories',
+        name: 'Easy eBooks',
         logo: {
           '@type': 'ImageObject',
           url: `${window.location.origin}/tj-logo-512.png`,

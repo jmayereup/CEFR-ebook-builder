@@ -521,13 +521,18 @@ export default function StoryConfigForm({
             '';
           setCopyrightFlagReason(reason);
         } else {
-          setCopyrightFlag(false);
-          setCopyrightFlagReason('');
+          // Fail-safe: if classifier fails, default to private flag so unvetted content isn't published
+          setCopyrightFlag(true);
+          setCopyrightFlagReason(
+            '[Safety Fallback] Content classification unavailable; story saved as private.',
+          );
         }
       } catch (classifyErr) {
-        console.warn('Content classification call failed:', classifyErr);
-        setCopyrightFlag(false);
-        setCopyrightFlagReason('');
+        console.warn('Content classification call failed, failing safe to private:', classifyErr);
+        setCopyrightFlag(true);
+        setCopyrightFlagReason(
+          '[Safety Fallback] Content classification unavailable; story saved as private.',
+        );
       }
 
       setShowOutlineReview(true);
@@ -590,10 +595,21 @@ export default function StoryConfigForm({
             setCopyrightFlag(true);
             setCopyrightFlagReason(finalCopyrightFlagReason);
           }
+        } else {
+          finalCopyrightFlag = true;
+          finalCopyrightFlagReason =
+            '[Safety Fallback] Content classification unavailable; story saved as private.';
+          setCopyrightFlag(true);
+          setCopyrightFlagReason(finalCopyrightFlagReason);
         }
       } catch (err) {
-        // Fail-open: never block story creation on a classifier outage.
-        console.warn('Content classification failed, proceeding unflagged:', err);
+        // Fail-safe: on classifier outage, keep story private for platform safety
+        console.warn('Content classification failed, failing safe to private:', err);
+        finalCopyrightFlag = true;
+        finalCopyrightFlagReason =
+          '[Safety Fallback] Content classification unavailable; story saved as private.';
+        setCopyrightFlag(true);
+        setCopyrightFlagReason(finalCopyrightFlagReason);
       } finally {
         setIsClassifying(false);
       }
@@ -887,7 +903,9 @@ export default function StoryConfigForm({
                     {copyrightFlagReason?.toLowerCase().includes('explicit') ||
                     copyrightFlagReason?.toLowerCase().includes('adult')
                       ? 'Adult content policy restriction — this story will be saved as private.'
-                      : 'Copyright-restricted story — this will be saved as private.'}
+                      : copyrightFlagReason?.toLowerCase().includes('safety fallback')
+                        ? 'Safety check unavailable — this story will be saved as private.'
+                        : 'Copyright-restricted story — this will be saved as private.'}
                   </p>
                   <p>
                     {copyrightFlagReason

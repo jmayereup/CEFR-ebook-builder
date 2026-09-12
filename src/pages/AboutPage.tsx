@@ -44,7 +44,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-extrabold text-tj-text-main tracking-tight font-sans">
-            About CEFR Stories
+            About Easy eBooks
           </h1>
 
           <p className="text-sm sm:text-base text-tj-text-muted leading-relaxed max-w-2xl font-sans">
@@ -62,7 +62,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           </div>
           <div>
             <h2 className="text-lg sm:text-xl font-bold text-tj-text-main font-sans">
-              How CEFR Stories Started
+              How Easy eBooks Started
             </h2>
             <p className="text-xs text-tj-text-muted">
               A personal journey in language learning
@@ -72,7 +72,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
 
         <div className="space-y-3 text-xs sm:text-sm text-tj-text-main/90 leading-relaxed font-sans border-l-2 border-tj-primary/40 pl-4 py-1 my-2">
           <p>
-            CEFR Stories was born out of a real personal challenge. While
+            Easy eBooks was born out of a real personal challenge. While
             learning Thai and striving to reach reading fluency, I wanted to
             read engaging, level-appropriate short stories on my Kindle.
             However, finding accessible, graded Thai reading material formatted
@@ -81,7 +81,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           <p></p>
           <p>
             Frustrated by the lack of graded readers for non-Western languages,
-            I built CEFR Stories: an AI-driven eBook builder that crafts custom,
+            I built Easy eBooks: an AI-driven eBook builder that crafts custom,
             multi-chapter stories guided by CEFR difficulty levels. It offers
             helpful difficulty scaffolding, click-to-listen pronunciation help,
             integrated glossaries, and instant EPUB exports optimized for Kindle
@@ -160,7 +160,7 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
       {/* Core Platform Purpose & Features */}
       <div className="space-y-4">
         <h3 className="text-base sm:text-lg font-bold text-tj-text-main font-sans px-1">
-          What CEFR Stories Offers
+          What Easy eBooks Offers
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
