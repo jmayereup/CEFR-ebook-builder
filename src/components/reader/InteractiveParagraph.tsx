@@ -474,6 +474,7 @@ export default function InteractiveParagraph({
       {beforeSegments.map(renderSegment)}
       {sentenceSegments.length > 0 && (
         <mark
+          id="active-reading-sentence"
           className="bg-[#e2ece3] dark:bg-[#28362b] text-inherit rounded-md px-1 py-0.5 transition-colors duration-300 inline"
           style={{
             boxDecorationBreak: 'clone',

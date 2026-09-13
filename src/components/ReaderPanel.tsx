@@ -525,11 +525,8 @@ export default function ReaderPanel({
     setAutoPlayWord,
     isSpeaking,
     isPaused,
-    speak,
-    stop,
     playWord,
     currentSentenceIndex,
-    activeSentenceId,
     activeParagraphIndex,
     playSentenceQueue,
     pauseSentenceQueue,
@@ -611,23 +608,73 @@ export default function ReaderPanel({
     return chapterSentences[currentSentenceIndex];
   }, [currentSentenceIndex, chapterSentences]);
 
-  // Gently auto-scroll to the active paragraph / sentence during narration
+  // Gently auto-scroll to the active sentence / paragraph during narration
   useEffect(() => {
-    if (!isSpeaking || activeParagraphIndex === null) return;
-    const el = document.getElementById(
-      `para-container-${activeParagraphIndex}`,
-    );
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      if (
-        rect.top < viewportHeight * 0.15 ||
-        rect.bottom > viewportHeight * 0.82
-      ) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (!isSpeaking || isPaused || activeParagraphIndex === null) return;
+
+    const frameId = requestAnimationFrame(() => {
+      const isFirstLineOfChapter =
+        activeParagraphIndex === 0 &&
+        (currentSentenceIndex === null || currentSentenceIndex === 0);
+
+      const headerOffset = isZenMode ? 36 : 84;
+
+      if (isFirstLineOfChapter) {
+        const firstEl =
+          document.getElementById('active-reading-sentence') ||
+          document.getElementById('para-container-0');
+        if (firstEl) {
+          const rect = firstEl.getBoundingClientRect();
+          // Check if already comfortably positioned right near the top
+          if (rect.top < headerOffset - 16 || rect.top > headerOffset + 60) {
+            const targetY = window.scrollY + rect.top - headerOffset;
+            window.scrollTo({
+              top: Math.max(0, targetY),
+              behavior: 'smooth',
+            });
+          }
+        }
+        return;
       }
-    }
-  }, [activeParagraphIndex, isSpeaking]);
+
+      // Subsequent sentences or paragraphs:
+      const targetEl =
+        document.getElementById('active-reading-sentence') ||
+        document.getElementById(`para-container-${activeParagraphIndex}`);
+      if (targetEl) {
+        const rect = targetEl.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        if (rect.top < headerOffset - 10) {
+          // Scrolled too high / behind sticky header
+          const targetY = window.scrollY + rect.top - headerOffset;
+          window.scrollTo({
+            top: Math.max(0, targetY),
+            behavior: 'smooth',
+          });
+        } else if (rect.bottom > viewportHeight * 0.78) {
+          // Approaching bottom of viewport: bring comfortably into upper-middle reading area
+          const comfortableTop = Math.max(
+            headerOffset + 20,
+            Math.round(viewportHeight * 0.25),
+          );
+          const targetY = window.scrollY + rect.top - comfortableTop;
+          window.scrollTo({
+            top: Math.max(0, targetY),
+            behavior: 'smooth',
+          });
+        }
+      }
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [
+    activeParagraphIndex,
+    currentSentenceIndex,
+    isSpeaking,
+    isPaused,
+    isZenMode,
+  ]);
 
   // Stop narration on chapter changes
   useEffect(() => {
@@ -1969,7 +2016,7 @@ export default function ReaderPanel({
                           <div
                             key={idx}
                             id={`para-container-${idx}`}
-                            className="space-y-2 mb-6 group/para relative"
+                            className="space-y-2 mb-6 group/para relative scroll-mt-24"
                           >
                             {/* Subtle Margin Marker for active narration */}
                             {isSpeakingThisPara && (
