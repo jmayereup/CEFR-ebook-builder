@@ -113,9 +113,10 @@ export default function StoryPromptInput({
                   >
                     Only you will be able to view and read this story. Quotas:
                     Free tier allows up to 10 elective private stories,
-                    Paid/Premium allows up to 100. Stories flagged as containing
-                    copyrighted material are automatically kept private and
-                    don't count toward this limit.
+                    Paid/Premium allows up to 100, and Admins have unlimited.
+                    Stories flagged as containing copyrighted material are
+                    automatically kept private and don't count toward this
+                    limit.
                   </motion.div>
                 )}
               </AnimatePresence>

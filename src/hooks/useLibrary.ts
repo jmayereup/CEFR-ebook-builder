@@ -288,7 +288,8 @@ export function useLibrary(options: UseLibraryOptions) {
       return false;
     }
 
-    if (newIsPublic === false) {
+    const isAdmin = currentUser?.isAdmin === true;
+    if (newIsPublic === false && !isAdmin) {
       const privateCount = stories.filter(
         (s) =>
           s.creatorId === currentUser?.uid &&

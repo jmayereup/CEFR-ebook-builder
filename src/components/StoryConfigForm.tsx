@@ -390,7 +390,7 @@ export default function StoryConfigForm({
       const isLongStory = totalChapters > 10;
       if (isLongStory) {
         setDraftError(
-          `Free tier stories are limited to 10 chapters. Add your own OpenRouter API key in Settings to unlock stories up to 30 chapters.`,
+          `Free tier stories are limited to 10 chapters. Add your own OpenRouter API key in Settings to unlock stories up to 50 chapters.`,
         );
         setIsDraftingOutline(false);
         return;
@@ -698,7 +698,7 @@ export default function StoryConfigForm({
     chapterLength,
     selectedModel,
   );
-  const maxChapters = isPaid || isAdmin || isByokActive ? 30 : 10;
+  const maxChapters = isAdmin || isByokActive ? 50 : isPaid ? 30 : 10;
 
   return (
     <>

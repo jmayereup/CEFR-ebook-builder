@@ -311,7 +311,7 @@ export const useStoryGeneration = (
       return;
     }
 
-    if (config.isPublic === false) {
+    if (config.isPublic === false && !isAdmin) {
       const privateCount = stories.filter(
         (s) =>
           s.creatorId === currentUser.uid &&
