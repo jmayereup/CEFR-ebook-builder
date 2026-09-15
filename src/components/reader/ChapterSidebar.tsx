@@ -391,46 +391,39 @@ export default function ChapterSidebar({
                   <button
                     disabled={!isLoaded && !isLoadingNext}
                     onClick={() => onSelectChapter(index)}
-                    className={`flex items-center justify-between w-full p-2.5 rounded-xl font-sans text-xs text-left transition-all cursor-pointer border ${
+                    className={`flex items-center gap-2 w-full p-2.5 rounded-xl font-sans text-xs text-left transition-all cursor-pointer border ${
                       isCurrent
-                        ? 'bg-tj-mint text-tj-text-main border-tj-success/50 shadow-none font-bold'
+                        ? `bg-tj-mint text-tj-text-main border-tj-success/50 shadow-none font-bold ${
+                            currentUser?.isAdmin === true && onDeleteChapter ? 'pr-8' : ''
+                          }`
                         : isLoaded
-                          ? 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 bg-transparent pr-8 border-transparent'
+                          ? `hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 bg-transparent border-transparent ${
+                              currentUser?.isAdmin === true && onDeleteChapter ? 'pr-8' : ''
+                            }`
                           : 'text-slate-400 dark:text-slate-600 cursor-not-allowed bg-slate-50/50 dark:bg-slate-900/10 border-transparent'
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`w-5 h-5 rounded-md flex items-center justify-center border font-mono text-[10px] ${
-                          isCurrent
-                            ? 'border-tj-success/50 bg-tj-mint text-tj-text-main font-bold'
-                            : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
-                        }`}
-                      >
-                        {chapterNum}
-                      </span>
-                      <span
-                        lang={
-                          isLoaded
-                            ? getLanguageCodeFromName(story.language)
-                            : undefined
-                        }
-                        className="truncate max-w-[120px] lg:max-w-[150px]"
-                      >
-                        {isLoaded
-                          ? (story.chapters ?? [])[index]?.title
-                          : `Chapter ${chapterNum}`}
-                      </span>
-                    </div>
-                    {isLoaded && (
-                      <CheckCircle2
-                        className={`w-3.5 h-3.5 ${isCurrent ? 'text-tj-success' : 'text-emerald-500'} ${
-                          currentUser?.isAdmin === true && onDeleteChapter
-                            ? 'group-hover:hidden'
-                            : ''
-                        }`}
-                      />
-                    )}
+                    <span
+                      className={`w-5 h-5 shrink-0 rounded-md flex items-center justify-center border font-mono text-[10px] ${
+                        isCurrent
+                          ? 'border-tj-success/50 bg-tj-mint text-tj-text-main font-bold'
+                          : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400'
+                      }`}
+                    >
+                      {chapterNum}
+                    </span>
+                    <span
+                      lang={
+                        isLoaded
+                          ? getLanguageCodeFromName(story.language)
+                          : undefined
+                      }
+                      className="truncate flex-1"
+                    >
+                      {isLoaded
+                        ? (story.chapters ?? [])[index]?.title
+                        : `Chapter ${chapterNum}`}
+                    </span>
                   </button>
 
                   {isLoaded &&
