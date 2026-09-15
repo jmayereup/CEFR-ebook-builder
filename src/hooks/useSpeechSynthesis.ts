@@ -150,6 +150,7 @@ export function useSpeechSynthesis(language: string) {
   const queueRef = useRef<{
     sentences: ChapterSentence[];
     currentIndex: number;
+    stopAfterIndex?: number;
     timerId: number | null;
   } | null>(null);
   const isStoppingRef = useRef<boolean>(false);
@@ -238,7 +239,11 @@ export function useSpeechSynthesis(language: string) {
       if (typeof window === 'undefined' || !window.speechSynthesis) return;
       if (isStoppingRef.current || !queueRef.current) return;
 
-      if (index >= sentences.length) {
+      if (
+        index >= sentences.length ||
+        (queueRef.current?.stopAfterIndex !== undefined &&
+          index > queueRef.current.stopAfterIndex)
+      ) {
         // Complete queue
         queueRef.current = null;
         setCurrentSentenceIndex(null);
@@ -276,6 +281,18 @@ export function useSpeechSynthesis(language: string) {
 
       utterance.onend = () => {
         if (isStoppingRef.current || !queueRef.current) return;
+        if (
+          queueRef.current.stopAfterIndex !== undefined &&
+          index >= queueRef.current.stopAfterIndex
+        ) {
+          queueRef.current = null;
+          setCurrentSentenceIndex(null);
+          setActiveSentenceId(null);
+          setActiveParagraphIndex(null);
+          setIsSpeaking(false);
+          setIsPaused(false);
+          return;
+        }
         // Schedule next sentence after an organic natural reading pause (160ms)
         const nextIdx = index + 1;
         const timerId = window.setTimeout(() => {
@@ -294,6 +311,19 @@ export function useSpeechSynthesis(language: string) {
         if (!isRetry && selectedVoice) {
           console.info('Retrying sentence with OS default voice...');
           speakSentenceChunk(sentences, index, true);
+          return;
+        }
+
+        if (
+          queueRef.current.stopAfterIndex !== undefined &&
+          index >= queueRef.current.stopAfterIndex
+        ) {
+          queueRef.current = null;
+          setCurrentSentenceIndex(null);
+          setActiveSentenceId(null);
+          setActiveParagraphIndex(null);
+          setIsSpeaking(false);
+          setIsPaused(false);
           return;
         }
 
@@ -317,7 +347,11 @@ export function useSpeechSynthesis(language: string) {
   );
 
   const playSentenceQueue = useCallback(
-    async (sentences: ChapterSentence[], startIndex = 0) => {
+    async (
+      sentences: ChapterSentence[],
+      startIndex = 0,
+      stopAfterIndex?: number,
+    ) => {
       if (typeof window === 'undefined' || !window.speechSynthesis) return;
       if (!sentences || sentences.length === 0) return;
 
@@ -328,6 +362,7 @@ export function useSpeechSynthesis(language: string) {
       queueRef.current = {
         sentences,
         currentIndex: startIndex,
+        stopAfterIndex,
         timerId: null,
       };
 

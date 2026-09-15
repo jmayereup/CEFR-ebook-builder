@@ -300,9 +300,9 @@ export default function ReaderPanel({
   const setAlignment = useUIStore((state) => state.setReaderTextAlignment);
   const columnWidth = useUIStore((state) => state.readerColumnWidth);
   const setColumnWidth = useUIStore((state) => state.setReaderColumnWidth);
-  const [showBilingual, setShowBilingual] = useState<boolean>(
-    story.cefrLevel === 'A1' || story.cefrLevel === 'Pre-A1',
-  );
+  const isPreA1OrA1 = story.cefrLevel === 'Pre-A1' || story.cefrLevel === 'A1';
+  const [showBilingual, setShowBilingual] = useState<boolean>(isPreA1OrA1);
+  const showLineAudio = isPreA1OrA1 || showBilingual;
   const [isSwapped, setIsSwapped] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'read' | 'maintenance'>('read');
   const [maintenanceSubTab, setMaintenanceSubTab] = useState<
@@ -701,11 +701,33 @@ export default function ReaderPanel({
   };
   const handlePlayWord = playWord;
 
-  const handlePlayParagraph = (pIdx: number) => {
-    const startSentence = chapterSentences.find((s) => s.pIdx === pIdx);
-    if (startSentence) {
-      playSentenceQueue(chapterSentences, startSentence.globalIndex);
+  const handlePlayParagraph = (pIdx: number, singleLineOnly = false) => {
+    const paraSentences = chapterSentences.filter((s) => s.pIdx === pIdx);
+    if (paraSentences.length > 0) {
+      const startIdx = paraSentences[0].globalIndex;
+      const stopAfterIdx = singleLineOnly
+        ? paraSentences[paraSentences.length - 1].globalIndex
+        : undefined;
+      playSentenceQueue(chapterSentences, startIdx, stopAfterIdx);
+    } else if (effectiveDisplayParagraphs[pIdx]) {
+      handlePlayWord(effectiveDisplayParagraphs[pIdx].original);
     }
+  };
+
+  const handleTogglePlayParagraph = (
+    pIdx: number,
+    isSpeakingThisPara: boolean,
+  ) => {
+    if (isSpeakingThisPara) {
+      if (isPaused) {
+        resumeSentenceQueue();
+      } else {
+        pauseSentenceQueue();
+      }
+      return;
+    }
+    // For low-level books (Pre-A1 and A1), stop after this line so learners can listen and repeat
+    handlePlayParagraph(pIdx, isPreA1OrA1);
   };
 
   // Resume chapter narration starting from the exact clicked word sentence chunk
@@ -2034,24 +2056,79 @@ export default function ReaderPanel({
                               </div>
                             )}
 
-                            <InteractiveParagraph
-                              paragraphText={dp.original}
-                              pIdx={idx}
-                              language={effectivePrimaryLanguage}
-                              handleWordClick={handleWordClick}
-                              isBilingual={showBilingual}
-                              glossaryWordsSet={glossaryWordsSet}
-                              savedWordsSet={savedWordsSet}
-                              activeWordRangeInPara={activeWordRangeInPara}
-                              activeSentenceRange={activeSentenceRange}
-                              alignment={alignment}
-                              highlights={paraHighlights}
-                              onHighlightClick={handleHighlightClick}
-                            />
+                            {showLineAudio ? (
+                              <div className="flex items-start gap-3">
+                                <div className="flex-1 min-w-0">
+                                  <InteractiveParagraph
+                                    paragraphText={dp.original}
+                                    pIdx={idx}
+                                    language={effectivePrimaryLanguage}
+                                    handleWordClick={handleWordClick}
+                                    isBilingual={showBilingual}
+                                    glossaryWordsSet={glossaryWordsSet}
+                                    savedWordsSet={savedWordsSet}
+                                    activeWordRangeInPara={activeWordRangeInPara}
+                                    activeSentenceRange={activeSentenceRange}
+                                    alignment={alignment}
+                                    highlights={paraHighlights}
+                                    onHighlightClick={handleHighlightClick}
+                                  />
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleTogglePlayParagraph(
+                                      idx,
+                                      isSpeakingThisPara,
+                                    )
+                                  }
+                                  className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-colors shrink-0 ${
+                                    isSpeakingThisPara && !isPaused
+                                      ? 'text-tj-success bg-[#e2ece3] dark:bg-[#28362b]'
+                                      : 'text-slate-400 hover:text-tj-success hover:bg-tj-primary-light dark:hover:bg-slate-800'
+                                  }`}
+                                  title={
+                                    isSpeakingThisPara && !isPaused
+                                      ? 'Pause'
+                                      : isSpeakingThisPara && isPaused
+                                        ? 'Resume'
+                                        : isPreA1OrA1
+                                          ? 'Play this line'
+                                          : 'Read from this line'
+                                  }
+                                  aria-label={
+                                    isSpeakingThisPara && !isPaused
+                                      ? 'Pause narration'
+                                      : isPreA1OrA1
+                                        ? 'Play this line'
+                                        : 'Read from this line'
+                                  }
+                                >
+                                  <Volume2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ) : (
+                              <InteractiveParagraph
+                                paragraphText={dp.original}
+                                pIdx={idx}
+                                language={effectivePrimaryLanguage}
+                                handleWordClick={handleWordClick}
+                                isBilingual={showBilingual}
+                                glossaryWordsSet={glossaryWordsSet}
+                                savedWordsSet={savedWordsSet}
+                                activeWordRangeInPara={activeWordRangeInPara}
+                                activeSentenceRange={activeSentenceRange}
+                                alignment={alignment}
+                                highlights={paraHighlights}
+                                onHighlightClick={handleHighlightClick}
+                              />
+                            )}
                             {showBilingual && dp.translation && (
                               <p
                                 translate="yes"
-                                className="text-sm text-tj-text-muted font-sans italic pl-4 border-l-2 border-tj-border-main select-text leading-[1.6]"
+                                className={`text-sm text-tj-text-muted font-sans italic pl-4 border-l-2 border-tj-border-main select-text leading-[1.6] ${
+                                  showLineAudio ? 'pr-8' : ''
+                                }`}
                               >
                                 {dp.translation}
                               </p>
