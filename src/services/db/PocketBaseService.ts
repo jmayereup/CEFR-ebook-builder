@@ -66,6 +66,14 @@ export class PocketBaseService implements IDatabaseService {
     if (pbStory.consistencyAudits == null) delete pbStory.consistencyAudits;
     delete pbStory.coverModel;
 
+    // Never wipe out an existing cover when updating or creating if the client has an empty/unset cover
+    if (
+      !pbStory.cover ||
+      (typeof pbStory.cover === 'string' && pbStory.cover.trim() === '')
+    ) {
+      delete pbStory.cover;
+    }
+
     try {
       const { id, ...updateData } = pbStory;
       await pb.collection('stories').update(pbStory.id, updateData);

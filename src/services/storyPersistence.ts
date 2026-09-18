@@ -68,8 +68,8 @@ export async function triggerStoryCoverGeneration(
     }
     const data = await res.json();
     const updatedTime = data.updated || new Date().toISOString();
-    if (onCoverUpdated) {
-      onCoverUpdated(data.cover || '', updatedTime);
+    if (data.cover && onCoverUpdated) {
+      onCoverUpdated(data.cover, updatedTime);
     }
     const cachedObj = await getStory(storyId);
     if (cachedObj) {
