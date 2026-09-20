@@ -24,7 +24,6 @@ import {
 } from 'react';
 import { FREE_MODEL_IDS } from '../constants/models';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
-import { buildChapterSentences } from '../utils/sentenceChunker';
 import { useStoryHighlights } from '../hooks/useStoryHighlights';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
@@ -44,6 +43,7 @@ import {
   segmentText,
   stripMarkdown,
 } from '../utils/segmenter';
+import { buildChapterSentences } from '../utils/sentenceChunker';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
 import StoryBookCover from './library/StoryBookCover';
@@ -2067,7 +2067,9 @@ export default function ReaderPanel({
                                     isBilingual={showBilingual}
                                     glossaryWordsSet={glossaryWordsSet}
                                     savedWordsSet={savedWordsSet}
-                                    activeWordRangeInPara={activeWordRangeInPara}
+                                    activeWordRangeInPara={
+                                      activeWordRangeInPara
+                                    }
                                     activeSentenceRange={activeSentenceRange}
                                     alignment={alignment}
                                     highlights={paraHighlights}

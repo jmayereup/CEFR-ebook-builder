@@ -35,7 +35,9 @@ export default function StoryLengthSliders({
             max={maxChapters}
             step="1"
             value={totalChapters}
-            onChange={(e) => onTotalChaptersChange(parseInt(e.target.value, 10))}
+            onChange={(e) =>
+              onTotalChaptersChange(parseInt(e.target.value, 10))
+            }
             className="w-full accent-tj-primary dark:accent-tj-primary"
           />
           <span className="text-sm font-bold text-slate-800 dark:text-slate-100 font-mono bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg shrink-0">
@@ -43,8 +45,8 @@ export default function StoryLengthSliders({
           </span>
         </div>
         <p className="text-[10px] text-slate-400 mt-1">
-          Select from 1 to {maxChapters}{' '}
-          {isNarrative ? 'chapters' : 'sections'}.
+          Select from 1 to {maxChapters} {isNarrative ? 'chapters' : 'sections'}
+          .
         </p>
       </div>
 
@@ -61,7 +63,9 @@ export default function StoryLengthSliders({
             max="500"
             step="25"
             value={chapterLength}
-            onChange={(e) => onChapterLengthChange(parseInt(e.target.value, 10))}
+            onChange={(e) =>
+              onChapterLengthChange(parseInt(e.target.value, 10))
+            }
             className="w-full accent-tj-primary dark:accent-tj-primary"
           />
           <span className="text-sm font-bold text-slate-800 dark:text-slate-100 font-mono bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg shrink-0">

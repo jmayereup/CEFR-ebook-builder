@@ -65,9 +65,9 @@ export default function AgeVerificationModal({
           <div className="p-3 bg-amber-500/10 border border-amber-500/25 rounded-xl flex items-start gap-2.5 text-amber-900 dark:text-amber-200">
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
             <p className="text-[11px]">
-              By proceeding, you attest that you are at least 18 years of age (or
-              of legal age of majority in your jurisdiction) to generate content
-              using this model.
+              By proceeding, you attest that you are at least 18 years of age
+              (or of legal age of majority in your jurisdiction) to generate
+              content using this model.
             </p>
           </div>
           {modelId === 'meta/muse-spark-1.3-contributor' && (

@@ -46,7 +46,9 @@ export default function FlagStoryModal({
       return;
     }
 
-    const flaggerEmail = (currentUser?.email || guestEmail.trim()).toLowerCase();
+    const flaggerEmail = (
+      currentUser?.email || guestEmail.trim()
+    ).toLowerCase();
     const flaggerId = currentUser?.uid || 'guest';
 
     if (!currentUser && (!flaggerEmail || !flaggerEmail.includes('@'))) {
@@ -181,7 +183,8 @@ export default function FlagStoryModal({
                 required
               />
               <p className="mt-1 text-[10px] text-tj-text-muted">
-                Required so our administrators can follow up regarding your report.
+                Required so our administrators can follow up regarding your
+                report.
               </p>
             </div>
           )}
@@ -205,7 +208,8 @@ export default function FlagStoryModal({
 
           {/* Direct Email Takedown Notice Alternative */}
           <div className="p-3 bg-tj-bg-recessed/60 rounded-xl border border-tj-border-main/50 text-[11px] text-tj-text-muted leading-relaxed">
-            Need urgent copyright or legal removal? Email our designated agent at{' '}
+            Need urgent copyright or legal removal? Email our designated agent
+            at{' '}
             <a
               href={`mailto:admin@teacherjake.com?subject=Takedown%20Notice:%20${encodeURIComponent(story.title)}%20(ID:%20${story.id})&body=Hello,%0D%0A%0D%0AI%20am%20submitting%20a%20formal%20takedown%20request%20for%20the%20following%20story:%0D%0ATitle:%20${encodeURIComponent(story.title)}%0D%0AStory%20ID:%20${story.id}%0D%0AURL:%20${encodeURIComponent(window.location.href)}%0D%0A%0D%0AReason%20for%20removal:%20`}
               className="text-tj-primary hover:underline font-semibold"
