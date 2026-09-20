@@ -104,6 +104,7 @@
   --font-sans: "Noto Sans Thai", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif:
     "Krub", "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  line-height: 1.8;
 }
 
 /* Japanese */

@@ -352,15 +352,14 @@ ${chaptersToc}    <navPoint id="navpoint-${endingPlayOrder}" playOrder="${ending
 }
 .chapter-translation-p {
   font-family: sans-serif;
-  font-style: italic;
-  font-size: 0.9em;
+  font-size: 1em;
   color: #000000;
   border-left: 2px solid #cbd5e1;
   padding-left: 12px;
   text-indent: 0;
   margin-top: -0.75em;
   margin-bottom: 1.25em;
-  line-height: 1.4;
+  line-height: 1.6;
   text-align: left;
 }
 .glossary-title {
