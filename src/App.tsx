@@ -218,6 +218,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     handleToggleBookshelf,
     updateRecentlyRead,
     removeFromRecentlyRead,
+    remoteReadingLocation,
+    clearRemoteReadingLocation,
     dirty,
     isSyncing,
     syncChangesToDatabase,
@@ -263,6 +265,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     handleRateStory,
     handleDeleteChapter,
     handleSaveNewChapter,
+    chapterRestoredStoryId,
   } = useActiveStory({
     currentUser,
     recentlyRead,
@@ -941,6 +944,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
   useEffect(() => {
     if (!selectedStory?.id) return;
     if (currentUser && !isUserDataLoaded) return;
+    // Guard: Do not save if the story's initial chapter has not been restored / initialized yet!
+    if (chapterRestoredStoryId !== selectedStory.id) return;
 
     // If story is already completed and user is on the final chapter, do not auto-add to recentlyRead
     const guestCompletedStoryIds = useUIStore.getState().guestCompletedStoryIds;
@@ -963,6 +968,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     selectedStory?.chapters?.length,
     selectedStory?.totalChapters,
     activeChapterIdx,
+    chapterRestoredStoryId,
     currentUser,
     isUserDataLoaded,
   ]);
@@ -1182,6 +1188,8 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   selectedStory={selectedStory}
                   setSelectedStory={handleRequestClearStory}
                   activeChapterIdx={activeChapterIdx}
+                  remoteReadingLocation={remoteReadingLocation}
+                  onClearRemoteReadingLocation={clearRemoteReadingLocation}
                   onSelectChapter={(idx) => {
                     if (idx !== activeChapterIdx) {
                       handleChapterFinished();

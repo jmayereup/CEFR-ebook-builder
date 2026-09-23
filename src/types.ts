@@ -280,6 +280,7 @@ export interface DeletionFlag {
 export interface RecentlyReadItem {
   storyId: string;
   chapterIdx: number;
+  updatedAt?: number;
 }
 
 export interface UserProfileData {

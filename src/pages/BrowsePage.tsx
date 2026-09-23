@@ -12,7 +12,7 @@ interface BrowsePageProps {
   recentlyReadStories: { story: Story; chapterIdx: number }[];
   recentlyRead: RecentlyReadItem[];
   handleToggleBookshelf: (id: string) => void;
-  handleSelectStory: (story: Story) => void;
+  handleSelectStory: (story: Story, chapterIdx?: number) => void;
   onDownloadStory?: (story: Story) => void;
   handleDeleteStory: (
     storyId: string,

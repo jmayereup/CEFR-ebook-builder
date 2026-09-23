@@ -5,6 +5,7 @@ import type { IUser } from '../services/types';
 import type { Story } from '../types';
 import { getStoryIdFromSegment, slugify } from '../utils/slugify';
 import type { SortBy } from '../utils/storyFilters';
+import { parseRecentlyReadItems } from './useUserData';
 
 interface UseUrlRoutingOptions {
   selectedStory: Story | null;
@@ -183,9 +184,20 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
         selectedStory.chapters &&
         selectedStory.chapters.length > 0
       ) {
-        const syncedItem = recentlyRead.find(
+        let syncedItem = recentlyRead.find(
           (item) => item.storyId === selectedStory.id,
         );
+        if (!syncedItem && typeof window !== 'undefined') {
+          try {
+            const local = localStorage.getItem('recently_read');
+            if (local) {
+              const parsed = parseRecentlyReadItems(JSON.parse(local));
+              syncedItem = parsed.find(
+                (item) => item.storyId === selectedStory.id,
+              );
+            }
+          } catch {}
+        }
         const idx = syncedItem ? syncedItem.chapterIdx : 0;
         const validIdx =
           idx >= 0 && idx < selectedStory.chapters.length ? idx : 0;
@@ -310,9 +322,20 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
               chapterIdx < (directStory.chapters?.length ?? 0) ? chapterIdx : 0;
             setActiveChapterIdx(validIdx);
           } else {
-            const syncedItem = recentlyRead.find(
+            let syncedItem = recentlyRead.find(
               (item) => item.storyId === directStory.id,
             );
+            if (!syncedItem && typeof window !== 'undefined') {
+              try {
+                const local = localStorage.getItem('recently_read');
+                if (local) {
+                  const parsed = parseRecentlyReadItems(JSON.parse(local));
+                  syncedItem = parsed.find(
+                    (item) => item.storyId === directStory.id,
+                  );
+                }
+              } catch {}
+            }
             const idx = syncedItem ? syncedItem.chapterIdx : 0;
             const validIdx =
               idx >= 0 && idx < (directStory.chapters?.length ?? 0) ? idx : 0;

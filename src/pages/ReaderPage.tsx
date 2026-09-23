@@ -4,6 +4,7 @@ import ExportPanel from '../components/app/ExportPanel';
 import ReaderPanel from '../components/ReaderPanel';
 import GeminiEmbedReader from '../components/reader/GeminiEmbedReader';
 import NonFictionDisclaimer from '../components/reader/NonFictionDisclaimer';
+import ReadingSyncPrompt from '../components/reader/ReadingSyncPrompt';
 import type { IUser } from '../services/types';
 import {
   getLanguageCodeFromName,
@@ -17,6 +18,12 @@ interface ReaderPageProps {
   setSelectedStory: (story: Story | null) => void;
   activeChapterIdx: number;
   onSelectChapter: (idx: number) => void;
+  remoteReadingLocation?: {
+    storyId: string;
+    chapterIdx: number;
+    updatedAt: number;
+  } | null;
+  onClearRemoteReadingLocation?: () => void;
   handleToggleStoryPrivacy: (storyId: string) => Promise<void>;
   handleToggleBookshelf: (storyId: string) => void;
   handleShareStoryLink: () => void;
@@ -95,6 +102,8 @@ export default function ReaderPage({
   setSelectedStory,
   activeChapterIdx,
   onSelectChapter,
+  remoteReadingLocation,
+  onClearRemoteReadingLocation,
   isGeneratingCover,
   handleToggleStoryPrivacy,
   handleToggleBookshelf,
@@ -331,6 +340,27 @@ export default function ReaderPage({
           <NonFictionDisclaimer className="mt-1" />
         </header>
       )}
+
+      {/* Cross-device reading location sync prompt */}
+      <ReadingSyncPrompt
+        isOpen={
+          !!remoteReadingLocation &&
+          remoteReadingLocation.storyId === selectedStory.id &&
+          remoteReadingLocation.chapterIdx !== activeChapterIdx
+        }
+        remoteChapterIdx={remoteReadingLocation?.chapterIdx ?? 0}
+        currentChapterIdx={activeChapterIdx}
+        totalChapters={
+          selectedStory.chapters?.length || selectedStory.totalChapters
+        }
+        onJump={(targetIdx) => {
+          onSelectChapter(targetIdx);
+          onClearRemoteReadingLocation?.();
+        }}
+        onDismiss={() => {
+          onClearRemoteReadingLocation?.();
+        }}
+      />
 
       {/* Novel reading window */}
       <ReaderPanel

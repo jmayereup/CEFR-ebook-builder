@@ -16,6 +16,7 @@ import type { IUser } from '../services/types';
 import type { Chapter, Story, VocabularyTerm } from '../types';
 import { getStoryIdFromSegment } from '../utils/slugify';
 import { cleanCompletedStory } from '../utils/storyCleanup';
+import { parseRecentlyReadItems } from './useUserData';
 
 interface UseActiveStoryOptions {
   currentUser: IUser | null;
@@ -128,36 +129,79 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     return 0;
   });
 
+  const [chapterRestoredStoryId, setChapterRestoredStoryId] = useState<
+    string | null
+  >(() => {
+    let pathVal = ssrPath;
+    if (!pathVal && typeof window !== 'undefined') {
+      pathVal = window.location.pathname;
+    }
+    if (pathVal) {
+      const bookChapterMatch = pathVal.match(
+        /^\/book\/([^/]+)\/chapter\/(\d+)/,
+      );
+      if (bookChapterMatch) {
+        return getStoryIdFromSegment(bookChapterMatch[1]);
+      }
+    }
+    return null;
+  });
+
   const hasRestoredChapterRef = useRef<string | null>(null);
 
   // Sync active chapter index from recentlyRead when story loads
   useEffect(() => {
-    if (!selectedStory || !isUserDataLoaded) return;
-    const syncedItem = recentlyRead.find(
+    if (!selectedStory) {
+      hasRestoredChapterRef.current = null;
+      setChapterRestoredStoryId(null);
+      return;
+    }
+
+    if (hasRestoredChapterRef.current === selectedStory.id) {
+      return;
+    }
+
+    const currentPath =
+      typeof window !== 'undefined' ? window.location.pathname : '';
+    const explicitChapterMatch = currentPath.match(
+      /^\/book\/[^/]+\/chapter\/\d+/,
+    );
+
+    if (explicitChapterMatch) {
+      hasRestoredChapterRef.current = selectedStory.id;
+      setChapterRestoredStoryId(selectedStory.id);
+      return;
+    }
+
+    // Try finding in recentlyRead prop first, then fallback to localStorage
+    let syncedItem = recentlyRead.find(
       (item) => item.storyId === selectedStory.id,
     );
-    if (syncedItem) {
-      const currentPath =
-        typeof window !== 'undefined' ? window.location.pathname : '';
-      const explicitChapterMatch = currentPath.match(
-        /^\/book\/[^/]+\/chapter\/\d+/,
-      );
+    if (!syncedItem && typeof window !== 'undefined') {
+      try {
+        const local = localStorage.getItem('recently_read');
+        if (local) {
+          const parsed = parseRecentlyReadItems(JSON.parse(local));
+          syncedItem = parsed.find((item) => item.storyId === selectedStory.id);
+        }
+      } catch {}
+    }
 
+    if (syncedItem || isUserDataLoaded) {
       const validIdx =
+        syncedItem &&
         syncedItem.chapterIdx >= 0 &&
         syncedItem.chapterIdx < (selectedStory.chapters?.length ?? 0)
           ? syncedItem.chapterIdx
           : 0;
-      if (
-        validIdx !== activeChapterIdx &&
-        (!explicitChapterMatch ||
-          hasRestoredChapterRef.current !== selectedStory.id)
-      ) {
+
+      if (validIdx !== activeChapterIdx) {
         setActiveChapterIdx(validIdx);
-        hasRestoredChapterRef.current = selectedStory.id;
       }
+      hasRestoredChapterRef.current = selectedStory.id;
+      setChapterRestoredStoryId(selectedStory.id);
     }
-  }, [selectedStory?.id, recentlyRead, isUserDataLoaded]);
+  }, [selectedStory?.id, recentlyRead, isUserDataLoaded, activeChapterIdx]);
 
   const [cachedStoryIds, setCachedStoryIds] = useState<string[]>([]);
 
@@ -210,9 +254,18 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       if (overrideChapterIdx !== undefined) {
         idx = overrideChapterIdx;
       } else {
-        const syncedItem = recentlyRead.find(
+        let syncedItem = recentlyRead.find(
           (item) => item.storyId === story.id,
         );
+        if (!syncedItem && typeof window !== 'undefined') {
+          try {
+            const local = localStorage.getItem('recently_read');
+            if (local) {
+              const parsed = parseRecentlyReadItems(JSON.parse(local));
+              syncedItem = parsed.find((item) => item.storyId === story.id);
+            }
+          } catch {}
+        }
         idx = syncedItem ? syncedItem.chapterIdx : 0;
       }
 
@@ -220,6 +273,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
         idx >= 0 && idx < (fullStory.chapters?.length ?? 0) ? idx : 0;
       setActiveChapterIdx(validIdx);
       hasRestoredChapterRef.current = story.id;
+      setChapterRestoredStoryId(story.id);
     } catch (err) {
       if (loadingStoryIdRef.current === story.id) {
         setLoadingStory(null);
@@ -406,5 +460,6 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     handleRateStory,
     handleDeleteChapter,
     handleSaveNewChapter,
+    chapterRestoredStoryId,
   };
 }
