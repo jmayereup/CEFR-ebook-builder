@@ -38,19 +38,19 @@ const MODEL_DETAILS: Record<
       'Meta flagship frontier reasoning model for BYOK users. Superior long-horizon coherence, complex narrative pacing, and expressive character voice.',
     languages: 'All supported languages',
   },
-  'deepseek/deepseek-v4.1-flash': {
+  '~deepseek/deepseek-flash-latest': {
     verdict:
-      'High-speed reasoning model delivering superior prose, character voice, and plot consistency with native multimodal capabilities.',
+      'High-speed, cost-efficient multimodal reasoning model always redirecting to the latest DeepSeek Flash release. Superior prose, character voice, and plot consistency.',
+    languages: 'All supported languages',
+  },
+  'xiaomi/mimo-v2.6-pro': {
+    verdict:
+      'Flagship foundation model developed by Xiaomi. Highly capable reasoning, creative narrative depth, and superior character voice.',
     languages: 'All supported languages',
   },
   'nousresearch/hermes-3-llama-3.1-405b': {
     verdict:
       'Frontier 405B open-weights model fine-tuned by Nous Research. Exceptional creative writing, roleplaying, reasoning, and complex narrative capabilities.',
-    languages: 'All supported languages',
-  },
-  'deepseek/deepseek-v4-flash': {
-    verdict:
-      'Lightweight, high-speed model dedicated for dictionary lookups, vocabulary glossaries, and calculation tasks.',
     languages: 'All supported languages',
   },
 };
@@ -108,7 +108,7 @@ export default function ModelSelectionModal({
         <div className="space-y-4 text-xs font-sans text-tj-text-main overflow-y-auto pr-1 flex-1">
           <p className="leading-relaxed text-tj-text-muted">
             {!isAdmin && !hasKey
-              ? 'Choose between free AI models (GLM 5.3 Flash and Muse Spark 1.3 Contributor) for story generation on the free tier. To unlock all frontier models (Muse Spark 1.3, DeepSeek V4.1 Flash, Hermes 3, Claude, Gemini, GPT), configure your own OpenRouter API key in Settings.'
+              ? 'Choose between free AI models (GLM 5.3 Flash and Muse Spark 1.3 Contributor) for story generation on the free tier. To unlock all frontier models (Muse Spark 1.3, DeepSeek Flash Latest, Xiaomi MiMo-V2.6-Pro, Hermes 3, Claude, Gemini, GPT), configure your own OpenRouter API key in Settings.'
               : 'Select an AI model for story generation. Standard Flash models are cost-efficient and fast, while Pro models offer deep narrative nuances and high structural complexity.'}
           </p>
 

@@ -16,8 +16,7 @@ interface GlossaryGenerationToastProps {
 
 const FALLBACK_MODELS = [
   { id: 'google/gemini-2.5-flash-lite', name: 'Google: Gemini 2.5 Flash Lite' },
-  { id: 'deepseek/deepseek-v4-flash', name: 'DeepSeek V4 Flash' },
-  { id: 'deepseek/deepseek-v4.1-flash', name: 'DeepSeek V4.1 Flash' },
+  { id: '~deepseek/deepseek-flash-latest', name: 'DeepSeek Flash Latest' },
 ];
 
 export default function GlossaryGenerationToast({

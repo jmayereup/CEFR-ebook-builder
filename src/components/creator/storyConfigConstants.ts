@@ -10,16 +10,16 @@ export const getCefrBadgeStyle = (level: string): string => {
 };
 
 export const DEFAULT_MODEL_FOR_LANGUAGE: Record<string, string> = {
-  en: 'deepseek/deepseek-v4.1-flash',
-  es: 'deepseek/deepseek-v4.1-flash',
-  fr: 'deepseek/deepseek-v4.1-flash',
-  de: 'deepseek/deepseek-v4.1-flash',
-  it: 'deepseek/deepseek-v4.1-flash',
-  pt: 'deepseek/deepseek-v4.1-flash',
-  ja: 'deepseek/deepseek-v4.1-flash',
-  zh: 'deepseek/deepseek-v4.1-flash',
-  th: 'deepseek/deepseek-v4.1-flash',
-  ko: 'deepseek/deepseek-v4.1-flash',
+  en: '~deepseek/deepseek-flash-latest',
+  es: '~deepseek/deepseek-flash-latest',
+  fr: '~deepseek/deepseek-flash-latest',
+  de: '~deepseek/deepseek-flash-latest',
+  it: '~deepseek/deepseek-flash-latest',
+  pt: '~deepseek/deepseek-flash-latest',
+  ja: '~deepseek/deepseek-flash-latest',
+  zh: '~deepseek/deepseek-flash-latest',
+  th: '~deepseek/deepseek-flash-latest',
+  ko: '~deepseek/deepseek-flash-latest',
 };
 
 export interface WritingTypeItem {

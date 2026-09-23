@@ -226,7 +226,7 @@ export default function SettingsModal({
           word: 'test',
           language: 'English',
           context: 'Testing key connection',
-          model: 'deepseek/deepseek-chat',
+          model: '~deepseek/deepseek-flash-latest',
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
         }),
@@ -514,7 +514,7 @@ export default function SettingsModal({
                     <div className="space-y-1 pt-1">
                       <input
                         type="text"
-                        placeholder="e.g. deepseek/deepseek-v4-flash"
+                        placeholder="e.g. ~deepseek/deepseek-flash-latest"
                         value={customGlossaryModelIdInput}
                         onChange={(e) =>
                           setCustomGlossaryModelIdInput(e.target.value)
@@ -562,7 +562,7 @@ export default function SettingsModal({
                     <div className="space-y-1 pt-1">
                       <input
                         type="text"
-                        placeholder="e.g. deepseek/deepseek-v4-flash"
+                        placeholder="e.g. ~deepseek/deepseek-flash-latest"
                         value={customTranslationModelIdInput}
                         onChange={(e) =>
                           setCustomTranslationModelIdInput(e.target.value)

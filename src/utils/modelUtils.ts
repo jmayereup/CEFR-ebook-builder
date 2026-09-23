@@ -15,12 +15,13 @@ export const getModelBaseName = (modelId?: string): string => {
   if (modelId.includes('mistral')) return 'Mistral';
   if (modelId.includes('kimi') || modelId.includes('moonshot')) return 'Kimi';
   if (modelId.includes('glm') || modelId.includes('z-ai')) return 'GLM';
+  if (modelId.includes('xiaomi') || modelId.includes('mimo')) return 'Xiaomi';
   return 'DeepSeek';
 };
 
 /** Returns the short, user-facing display name for a given model ID. */
 export const getModelDisplayName = (modelId?: string): string => {
-  if (!modelId) return 'DeepSeek V4.1 Flash';
+  if (!modelId) return 'DeepSeek Flash Latest';
   const found =
     AI_MODELS.find((m) => m.id === modelId) ||
     FRONTIER_LATEST_MODELS.find((m) => m.id === modelId);

@@ -41,7 +41,7 @@ export default function AddChapterModal({
   const [errorMsg, setErrorMsg] = useState('');
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState<string>(
-    modelId || defaultStoryModel || 'deepseek/deepseek-v4.1-flash',
+    modelId || defaultStoryModel || '~deepseek/deepseek-flash-latest',
   );
 
   useEffect(() => {
@@ -258,11 +258,8 @@ export default function AddChapterModal({
                           (BYOK Default Model)
                         </option>
                       )}
-                      <option value="deepseek/deepseek-v4-flash">
-                        DeepSeek V4 Flash
-                      </option>
-                      <option value="deepseek/deepseek-v4.1-flash">
-                        DeepSeek V4.1 Flash
+                      <option value="~deepseek/deepseek-flash-latest">
+                        DeepSeek Flash Latest
                       </option>
                       <option value="nousresearch/hermes-3-llama-3.1-405b">
                         Hermes 3 405B
