@@ -369,8 +369,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       story,
       currentUser,
       customOpenRouterKey,
-      coverModel:
-        story.coverModel || useUIStore.getState().defaultCoverModel,
+      coverModel: story.coverModel || useUIStore.getState().defaultCoverModel,
       onStoryUpdated: setSelectedStory,
       onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
       generatingCoverIds,

@@ -157,11 +157,10 @@ export async function generateEpub(story: Story): Promise<Blob> {
   let chaptersSpine = '';
   let chaptersToc = '';
   let chaptersNavList = '';
-  const coverOffset = coverBlob ? 1 : 0;
 
   (story.chapters ?? []).forEach((chapter, index) => {
     const idx = index + 1;
-    const playOrder = idx + 1 + coverOffset;
+    const playOrder = idx + 1;
     chaptersManifest += `    <item id="chapter_${idx}" href="chapter_${idx}.html" media-type="application/xhtml+xml"/>\n`;
     chaptersSpine += `    <itemref idref="chapter_${idx}"/>\n`;
     chaptersToc += `    <navPoint id="navpoint-${idx + 1}" playOrder="${playOrder}">
@@ -171,31 +170,19 @@ export async function generateEpub(story: Story): Promise<Blob> {
     chaptersNavList += `      <li style="margin-bottom: 8px;"><a href="chapter_${idx}.html" class="vocab-link">Chapter ${idx}: ${escapeXml(chapter.title)}</a></li>\n`;
   });
 
-  const endingPlayOrder = (story.chapters?.length ?? 0) + 2 + coverOffset;
+  const endingPlayOrder = (story.chapters?.length ?? 0) + 2;
   chaptersManifest += `    <item id="ending" href="ending.html" media-type="application/xhtml+xml"/>\n`;
   chaptersSpine += `    <itemref idref="ending"/>\n`;
 
-  // Setup cover manifests and structures
+  // Setup cover manifest and metadata
+  // Only declare the image in metadata/manifest (properties="cover-image" and meta cover)
+  // so Kindle and other e-readers display the cover once without redundant HTML cover pages.
   let metadataCover = '';
   let manifestCover = '';
-  let spineCover = '';
-  let ncxCoverPoint = '';
-  let guideCover = '';
-  let coverLandmark = '';
-  let coverTocNavEntry = '';
 
   if (coverBlob) {
     metadataCover = `\n    <meta name="cover" content="cover-image"/>`;
-    manifestCover = `\n    <item id="cover-image" href="cover.${coverExtension}" media-type="${coverMediaType}" properties="cover-image"/>
-    <item id="cover-html" href="cover.html" media-type="application/xhtml+xml"/>`;
-    spineCover = `\n    <itemref idref="cover-html"/>`;
-    ncxCoverPoint = `\n    <navPoint id="navpoint-cover" playOrder="1">
-      <navLabel><text>Cover</text></navLabel>
-      <content src="cover.html"/>
-    </navPoint>`;
-    guideCover = `\n    <reference type="cover" title="Cover" href="cover.html"/>`;
-    coverLandmark = `\n      <li><a epub:type="cover" href="cover.html">Cover</a></li>`;
-    coverTocNavEntry = `      <li style="margin-bottom: 8px;"><a href="cover.html" class="vocab-link">Cover</a></li>\n`;
+    manifestCover = `\n    <item id="cover-image" href="cover.${coverExtension}" media-type="${coverMediaType}" properties="cover-image"/>`;
   }
 
   // 3. OEBPS/content.opf (EPUB 3.0 package with EPUB 2 NCX and guide fallback)
@@ -217,12 +204,12 @@ export async function generateEpub(story: Story): Promise<Blob> {
     <item id="style" href="style.css" media-type="text/css"/>
     <item id="title" href="title.html" media-type="application/xhtml+xml"/>${manifestCover}
 ${chaptersManifest}  </manifest>
-  <spine toc="ncx">${spineCover}
+  <spine toc="ncx">
     <itemref idref="title"/>
 ${chaptersSpine}  </spine>
-  <guide>${guideCover}
+  <guide>
     <reference type="toc" title="Table of Contents" href="nav.xhtml"/>
-    <reference type="text" title="Beginning" href="${coverBlob ? 'cover.html' : 'title.html'}"/>
+    <reference type="text" title="Beginning" href="title.html"/>
   </guide>
 </package>`,
   );
@@ -241,15 +228,15 @@ ${chaptersSpine}  </spine>
   <nav epub:type="toc" id="toc">
     <h1 class="chapter-title">Table of Contents</h1>
     <ol class="toc-list" style="list-style-type: none; padding-left: 0;">
-${coverTocNavEntry}      <li style="margin-bottom: 8px;"><a href="title.html" class="vocab-link">Book Information</a></li>
+      <li style="margin-bottom: 8px;"><a href="title.html" class="vocab-link">Book Information</a></li>
 ${chaptersNavList}      <li style="margin-bottom: 8px;"><a href="ending.html" class="vocab-link">Thank You</a></li>
     </ol>
   </nav>
   <nav epub:type="landmarks" hidden="" style="display: none;">
     <h2>Landmarks</h2>
     <ol>
-${coverLandmark}      <li><a epub:type="toc" href="nav.xhtml">Table of Contents</a></li>
-      <li><a epub:type="bodymatter" href="${coverBlob ? 'cover.html' : 'title.html'}">Start Reading</a></li>
+      <li><a epub:type="toc" href="nav.xhtml">Table of Contents</a></li>
+      <li><a epub:type="bodymatter" href="title.html">Start Reading</a></li>
     </ol>
   </nav>
 </body>
@@ -271,9 +258,9 @@ ${coverLandmark}      <li><a epub:type="toc" href="nav.xhtml">Table of Contents<
   <docTitle>
     <text>${escapeXml(story.title)}</text>
   </docTitle>
-  <navMap>${ncxCoverPoint}
-    <navPoint id="navpoint-1" playOrder="${1 + coverOffset}">
-      <navLabel><text>${coverBlob ? 'Book Information' : 'Cover &amp; Information'}</text></navLabel>
+  <navMap>
+    <navPoint id="navpoint-1" playOrder="1">
+      <navLabel><text>Book Information</text></navLabel>
       <content src="title.html"/>
     </navPoint>
 ${chaptersToc}    <navPoint id="navpoint-${endingPlayOrder}" playOrder="${endingPlayOrder}">
@@ -296,18 +283,6 @@ ${chaptersToc}    <navPoint id="navpoint-${endingPlayOrder}" playOrder="${ending
 .title-container {
   text-align: center;
   padding: 40px 10px;
-}
-.cover-thumb-wrap {
-  text-align: center;
-  margin-bottom: 24px;
-}
-.cover-thumb {
-  max-width: 220px;
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  margin: 0 auto;
 }
 .book-title {
   font-size: 2em;
@@ -377,15 +352,14 @@ ${chaptersToc}    <navPoint id="navpoint-${endingPlayOrder}" playOrder="${ending
 }
 .chapter-translation-p {
   font-family: sans-serif;
-  font-style: italic;
-  font-size: 0.9em;
+  font-size: 1em;
   color: #000000;
   border-left: 2px solid #cbd5e1;
   padding-left: 12px;
   text-indent: 0;
   margin-top: -0.75em;
   margin-bottom: 1.25em;
-  line-height: 1.4;
+  line-height: 1.6;
   text-align: left;
 }
 .glossary-title {
@@ -455,12 +429,6 @@ a.glossary-backlink {
   );
 
   // 7. OEBPS/title.html
-  const titleCoverHtml = coverBlob
-    ? `<div class="cover-thumb-wrap">
-      <img class="cover-thumb" src="cover.${coverExtension}" alt="${escapeXml(story.title)} Cover" />
-    </div>`
-    : '';
-
   zip.file(
     'OEBPS/title.html',
     `<?xml version="1.0" encoding="utf-8"?>
@@ -472,7 +440,6 @@ a.glossary-backlink {
 </head>
 <body>
   <div class="title-container">
-    ${titleCoverHtml}
     <h1 class="book-title">${escapeXml(story.title)}</h1>
     <h2 class="book-language">${story.language} Learner Edition</h2>
     <div class="book-meta">
@@ -615,50 +582,10 @@ ${glossaryHtml}
 </html>`,
   );
 
-  // 10. Write cover page and image if fetched successfully
+  // 10. Write cover image if fetched successfully
   if (coverBlob) {
-    zip.file(`OEBPS/cover.${coverExtension}`, coverBlob);
-    zip.file(
-      'OEBPS/cover.html',
-      `<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="${languageCode}" xml:lang="${languageCode}">
-<head>
-  <title>Cover</title>
-  <style type="text/css">
-    @page { padding: 0; margin: 0; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      text-align: center;
-      background-color: #ffffff;
-    }
-    .cover-container {
-      text-align: center;
-      padding: 0;
-      margin: 0;
-      width: 100%;
-      height: 100%;
-    }
-    img.cover-image {
-      max-width: 100%;
-      max-height: 100vh;
-      height: auto;
-      width: auto;
-      display: block;
-      margin: 0 auto;
-    }
-  </style>
-</head>
-<body>
-  <div class="cover-container">
-    <img class="cover-image" src="cover.${coverExtension}" alt="Book Cover" />
-  </div>
-</body>
-</html>`,
-    );
+    const coverData = await coverBlob.arrayBuffer();
+    zip.file(`OEBPS/cover.${coverExtension}`, coverData);
   }
 
   // Generate the zip binary with standard container compression

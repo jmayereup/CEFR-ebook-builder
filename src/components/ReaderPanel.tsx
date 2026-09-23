@@ -24,7 +24,6 @@ import {
 } from 'react';
 import { FREE_MODEL_IDS } from '../constants/models';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
-import { buildChapterSentences } from '../utils/sentenceChunker';
 import { useStoryHighlights } from '../hooks/useStoryHighlights';
 import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
@@ -44,6 +43,7 @@ import {
   segmentText,
   stripMarkdown,
 } from '../utils/segmenter';
+import { buildChapterSentences } from '../utils/sentenceChunker';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
 import StoryBookCover from './library/StoryBookCover';
@@ -430,6 +430,19 @@ export default function ReaderPanel({
     ? story.translationLanguage || story.language
     : story.language;
 
+  const effectiveTranslationLanguage = isSwapped
+    ? story.language
+    : story.translationLanguage ||
+      (story.language?.toLowerCase().includes('thai') ? 'English' : 'Thai');
+
+  const isPrimaryThai =
+    effectivePrimaryLanguage.toLowerCase().includes('thai') ||
+    getLanguageCodeFromName(effectivePrimaryLanguage) === 'th';
+
+  const isTranslationThai =
+    effectiveTranslationLanguage.toLowerCase().includes('thai') ||
+    getLanguageCodeFromName(effectiveTranslationLanguage) === 'th';
+
   const chapterWords = useMemo(() => {
     const words: {
       word: string;
@@ -529,9 +542,11 @@ export default function ReaderPanel({
     currentSentenceIndex,
     activeParagraphIndex,
     playSentenceQueue,
+    playParagraphTranslation,
     pauseSentenceQueue,
     resumeSentenceQueue,
     stopSentenceQueue,
+    activeSpeechType,
     ttsError,
     clearTtsError,
   } = useSpeechSynthesis(effectivePrimaryLanguage);
@@ -728,6 +743,22 @@ export default function ReaderPanel({
     }
     // For low-level books (Pre-A1 and A1), stop after this line so learners can listen and repeat
     handlePlayParagraph(pIdx, isPreA1OrA1);
+  };
+
+  const handleTogglePlayTranslation = (
+    pIdx: number,
+    text: string,
+    isSpeakingThisParaTranslation: boolean,
+  ) => {
+    if (isSpeakingThisParaTranslation) {
+      if (isPaused) {
+        resumeSentenceQueue();
+      } else {
+        pauseSentenceQueue();
+      }
+      return;
+    }
+    playParagraphTranslation(pIdx, text, effectiveTranslationLanguage);
   };
 
   // Resume chapter narration starting from the exact clicked word sentence chunk
@@ -1996,12 +2027,16 @@ export default function ReaderPanel({
                   />
                 ) : (
                   <>
+                    {/* biome-ignore lint/a11y/noStaticElementInteractions: text selection listener */}
                     <section
                       lang={getLanguageCodeFromName(effectivePrimaryLanguage)}
                       onMouseUp={handleTextSelection}
                       onTouchEnd={handleTextSelection}
                       className={`space-y-6 select-text ${useSerif ? 'font-serif' : 'font-sans'}`}
-                      style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
+                      style={{
+                        fontSize: `${fontSize}px`,
+                        lineHeight: isPrimaryThai ? 1.8 : 1.6,
+                      }}
                     >
                       {effectiveDisplayParagraphs.map((dp, idx) => {
                         const startWord = selectedWordRange
@@ -2022,12 +2057,22 @@ export default function ReaderPanel({
                         );
 
                         // Check if this paragraph contains the currently spoken sentence chunk
-                        const isSpeakingThisPara =
+                        const isSpeakingThisParaPrimary =
                           (isSpeaking || isPaused) &&
-                          activeParagraphIndex === idx;
+                          activeParagraphIndex === idx &&
+                          activeSpeechType !== 'translation';
+
+                        const isSpeakingThisParaTranslation =
+                          (isSpeaking || isPaused) &&
+                          activeParagraphIndex === idx &&
+                          activeSpeechType === 'translation';
+
+                        const isSpeakingThisPara =
+                          isSpeakingThisParaPrimary ||
+                          isSpeakingThisParaTranslation;
 
                         const activeSentenceRange =
-                          isSpeakingThisPara && activeSentence
+                          isSpeakingThisParaPrimary && activeSentence
                             ? {
                                 startChar: activeSentence.startChar,
                                 endChar: activeSentence.endChar,
@@ -2067,7 +2112,9 @@ export default function ReaderPanel({
                                     isBilingual={showBilingual}
                                     glossaryWordsSet={glossaryWordsSet}
                                     savedWordsSet={savedWordsSet}
-                                    activeWordRangeInPara={activeWordRangeInPara}
+                                    activeWordRangeInPara={
+                                      activeWordRangeInPara
+                                    }
                                     activeSentenceRange={activeSentenceRange}
                                     alignment={alignment}
                                     highlights={paraHighlights}
@@ -2079,28 +2126,28 @@ export default function ReaderPanel({
                                   onClick={() =>
                                     handleTogglePlayParagraph(
                                       idx,
-                                      isSpeakingThisPara,
+                                      isSpeakingThisParaPrimary,
                                     )
                                   }
                                   className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-colors shrink-0 ${
-                                    isSpeakingThisPara && !isPaused
+                                    isSpeakingThisParaPrimary && !isPaused
                                       ? 'text-tj-success bg-[#e2ece3] dark:bg-[#28362b]'
                                       : 'text-slate-400 hover:text-tj-success hover:bg-tj-primary-light dark:hover:bg-slate-800'
                                   }`}
                                   title={
-                                    isSpeakingThisPara && !isPaused
+                                    isSpeakingThisParaPrimary && !isPaused
                                       ? 'Pause'
-                                      : isSpeakingThisPara && isPaused
+                                      : isSpeakingThisParaPrimary && isPaused
                                         ? 'Resume'
                                         : isPreA1OrA1
-                                          ? 'Play this line'
+                                          ? `Play ${effectivePrimaryLanguage} line`
                                           : 'Read from this line'
                                   }
                                   aria-label={
-                                    isSpeakingThisPara && !isPaused
+                                    isSpeakingThisParaPrimary && !isPaused
                                       ? 'Pause narration'
                                       : isPreA1OrA1
-                                        ? 'Play this line'
+                                        ? `Play ${effectivePrimaryLanguage} line`
                                         : 'Read from this line'
                                   }
                                 >
@@ -2123,16 +2170,73 @@ export default function ReaderPanel({
                                 onHighlightClick={handleHighlightClick}
                               />
                             )}
-                            {showBilingual && dp.translation && (
-                              <p
-                                translate="yes"
-                                className={`text-sm text-tj-text-muted font-sans italic pl-4 border-l-2 border-tj-border-main select-text leading-[1.6] ${
-                                  showLineAudio ? 'pr-8' : ''
-                                }`}
-                              >
-                                {dp.translation}
-                              </p>
-                            )}
+                            {showBilingual &&
+                              dp.translation &&
+                              (showLineAudio ? (
+                                <div className="flex items-start gap-3">
+                                  <div className="flex-1 min-w-0">
+                                    <p
+                                      lang={getLanguageCodeFromName(
+                                        effectiveTranslationLanguage,
+                                      )}
+                                      translate="yes"
+                                      style={{
+                                        fontSize: `${fontSize}px`,
+                                        lineHeight: isTranslationThai
+                                          ? 1.8
+                                          : 1.6,
+                                      }}
+                                      className="text-tj-text-muted pl-4 border-l-2 border-tj-border-main select-text"
+                                    >
+                                      {dp.translation}
+                                    </p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleTogglePlayTranslation(
+                                        idx,
+                                        dp.translation!,
+                                        isSpeakingThisParaTranslation,
+                                      )
+                                    }
+                                    className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-colors shrink-0 ${
+                                      isSpeakingThisParaTranslation && !isPaused
+                                        ? 'text-tj-success bg-[#e2ece3] dark:bg-[#28362b]'
+                                        : 'text-slate-400 hover:text-tj-success hover:bg-tj-primary-light dark:hover:bg-slate-800'
+                                    }`}
+                                    title={
+                                      isSpeakingThisParaTranslation && !isPaused
+                                        ? 'Pause'
+                                        : isSpeakingThisParaTranslation &&
+                                            isPaused
+                                          ? 'Resume'
+                                          : `Play ${effectiveTranslationLanguage} line`
+                                    }
+                                    aria-label={
+                                      isSpeakingThisParaTranslation && !isPaused
+                                        ? 'Pause translation narration'
+                                        : `Play ${effectiveTranslationLanguage} line`
+                                    }
+                                  >
+                                    <Volume2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <p
+                                  lang={getLanguageCodeFromName(
+                                    effectiveTranslationLanguage,
+                                  )}
+                                  translate="yes"
+                                  style={{
+                                    fontSize: `${fontSize}px`,
+                                    lineHeight: isTranslationThai ? 1.8 : 1.6,
+                                  }}
+                                  className="text-tj-text-muted pl-4 border-l-2 border-tj-border-main select-text"
+                                >
+                                  {dp.translation}
+                                </p>
+                              ))}
                           </div>
                         );
                       })}

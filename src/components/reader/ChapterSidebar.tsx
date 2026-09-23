@@ -16,10 +16,10 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   AI_MODELS,
   COVER_IMAGE_MODELS,
-  formatCoverModelPriceIndicator,
-  formatModelPriceIndicator,
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
+  formatCoverModelPriceIndicator,
+  formatModelPriceIndicator,
   isMuseModel,
   MODEL_PRICES_LAST_UPDATED,
 } from '../../constants/models';
@@ -36,8 +36,8 @@ import {
 import { getModelDisplayName } from '../../utils/modelUtils';
 import { extractChapterOutline } from '../../utils/outlineParser';
 import { calculateEstimatedUsage } from '../../utils/storyEstimation';
-import AddChapterModal from './AddChapterModal';
 import AgeVerificationModal from '../creator/AgeVerificationModal';
+import AddChapterModal from './AddChapterModal';
 import StoryNotesSidebarTab from './StoryNotesSidebarTab';
 
 interface ChapterSidebarProps {
@@ -394,11 +394,15 @@ export default function ChapterSidebar({
                     className={`flex items-center gap-2 w-full p-2.5 rounded-xl font-sans text-xs text-left transition-all cursor-pointer border ${
                       isCurrent
                         ? `bg-tj-mint text-tj-text-main border-tj-success/50 shadow-none font-bold ${
-                            currentUser?.isAdmin === true && onDeleteChapter ? 'pr-8' : ''
+                            currentUser?.isAdmin === true && onDeleteChapter
+                              ? 'pr-8'
+                              : ''
                           }`
                         : isLoaded
                           ? `hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 bg-transparent border-transparent ${
-                              currentUser?.isAdmin === true && onDeleteChapter ? 'pr-8' : ''
+                              currentUser?.isAdmin === true && onDeleteChapter
+                                ? 'pr-8'
+                                : ''
                             }`
                           : 'text-slate-400 dark:text-slate-600 cursor-not-allowed bg-slate-50/50 dark:bg-slate-900/10 border-transparent'
                     }`}
@@ -497,7 +501,8 @@ export default function ChapterSidebar({
                           {story.model &&
                             !freeModels.some((m) => m.id === story.model) && (
                               <option value={story.model} disabled>
-                                {getModelDisplayName(story.model)} (BYOK Key Required)
+                                {getModelDisplayName(story.model)} (BYOK Key
+                                Required)
                               </option>
                             )}
                           {freeModels.map((m) => (
@@ -698,7 +703,7 @@ export default function ChapterSidebar({
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-tj-text-muted">
                       Story Cover
                     </label>
-                    {currentUser?.isAdmin === true || !!customOpenRouterKey ? (
+                    {currentUser?.isAdmin === true || customOpenRouterKey ? (
                       <div className="space-y-2">
                         <div>
                           <label className="block text-[9px] uppercase tracking-wider text-tj-text-muted font-medium mb-1">
@@ -721,7 +726,8 @@ export default function ChapterSidebar({
                               const badge = isMuseModel(m.id) ? ' [18+]' : '';
                               return (
                                 <option key={m.id} value={m.id}>
-                                  {m.name}{badge} {price}
+                                  {m.name}
+                                  {badge} {price}
                                 </option>
                               );
                             })}
@@ -770,7 +776,9 @@ export default function ChapterSidebar({
                     ) : (
                       <div className="p-2.5 rounded-xl bg-tj-primary-light/40 dark:bg-white/5 border border-tj-border-main/60 text-center">
                         <p className="text-[10px] text-tj-text-muted leading-relaxed">
-                          Custom AI covers are available for BYOK users. Add your OpenRouter key in Settings to generate custom covers.
+                          Custom AI covers are available for BYOK users. Add
+                          your OpenRouter key in Settings to generate custom
+                          covers.
                         </p>
                       </div>
                     )}

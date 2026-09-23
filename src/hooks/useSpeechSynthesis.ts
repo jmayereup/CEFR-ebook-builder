@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getLanguageCodeFromName } from '../types';
-import type { ChapterSentence } from '../utils/sentenceChunker';
+import {
+  type ChapterSentence,
+  segmentParagraphIntoSentences,
+} from '../utils/sentenceChunker';
 
 function cleanSpeechText(text: string): string {
   if (!text) return '';
@@ -144,6 +147,9 @@ export function useSpeechSynthesis(language: string) {
   const [activeParagraphIndex, setActiveParagraphIndex] = useState<
     number | null
   >(null);
+  const [activeSpeechType, setActiveSpeechType] = useState<
+    'primary' | 'translation' | null
+  >(null);
   const [ttsError, setTtsError] = useState<string | null>(null);
 
   // Queue references for sequential sentence playback
@@ -152,6 +158,8 @@ export function useSpeechSynthesis(language: string) {
     currentIndex: number;
     stopAfterIndex?: number;
     timerId: number | null;
+    customLanguage?: string;
+    speechType?: 'primary' | 'translation';
   } | null>(null);
   const isStoppingRef = useRef<boolean>(false);
 
@@ -259,14 +267,42 @@ export function useSpeechSynthesis(language: string) {
       setCurrentSentenceIndex(index);
       setActiveSentenceId(sentence.id);
       setActiveParagraphIndex(sentence.pIdx);
+      setActiveSpeechType(queueRef.current.speechType || 'primary');
       setIsSpeaking(true);
       setIsPaused(false);
 
       const utterance = new SpeechSynthesisUtterance(sentence.speechText);
-      const targetLangCode = getLanguageCodeFromName(language);
+      const langToUse = queueRef.current.customLanguage || language;
+      const targetLangCode = getLanguageCodeFromName(langToUse);
       utterance.lang = targetLangCode;
 
-      const selectedVoice = voices.find((v) => v.name === selectedVoiceName);
+      let selectedVoice: SpeechSynthesisVoice | undefined;
+      if (queueRef.current.customLanguage) {
+        const lowerLang = targetLangCode.toLowerCase();
+        const savedTransVoiceName =
+          typeof localStorage !== 'undefined'
+            ? localStorage.getItem(`reader-voice-${lowerLang}`)
+            : null;
+
+        if (
+          savedTransVoiceName &&
+          voices.some((v) => v.name === savedTransVoiceName)
+        ) {
+          selectedVoice = voices.find((v) => v.name === savedTransVoiceName);
+        } else {
+          const sortedCustomVoices = [...voices].sort(
+            (a, b) =>
+              getVoiceQualityScore(b, lowerLang) -
+              getVoiceQualityScore(a, lowerLang),
+          );
+          if (sortedCustomVoices.length > 0) {
+            selectedVoice = sortedCustomVoices[0];
+          }
+        }
+      } else {
+        selectedVoice = voices.find((v) => v.name === selectedVoiceName);
+      }
+
       if (selectedVoice && !isRetry) {
         utterance.voice = selectedVoice;
       }
@@ -289,6 +325,7 @@ export function useSpeechSynthesis(language: string) {
           setCurrentSentenceIndex(null);
           setActiveSentenceId(null);
           setActiveParagraphIndex(null);
+          setActiveSpeechType(null);
           setIsSpeaking(false);
           setIsPaused(false);
           return;
@@ -322,6 +359,7 @@ export function useSpeechSynthesis(language: string) {
           setCurrentSentenceIndex(null);
           setActiveSentenceId(null);
           setActiveParagraphIndex(null);
+          setActiveSpeechType(null);
           setIsSpeaking(false);
           setIsPaused(false);
           return;
@@ -364,6 +402,7 @@ export function useSpeechSynthesis(language: string) {
         currentIndex: startIndex,
         stopAfterIndex,
         timerId: null,
+        speechType: 'primary',
       };
 
       unstickSpeechQueue();
@@ -407,6 +446,7 @@ export function useSpeechSynthesis(language: string) {
     setCurrentSentenceIndex(null);
     setActiveSentenceId(null);
     setActiveParagraphIndex(null);
+    setActiveSpeechType(null);
     setIsSpeaking(false);
     setIsPaused(false);
   }, []);
@@ -428,6 +468,54 @@ export function useSpeechSynthesis(language: string) {
   const stop = useCallback(() => {
     stopSentenceQueue();
   }, [stopSentenceQueue]);
+
+  const playParagraphTranslation = useCallback(
+    async (pIdx: number, text: string, transLanguage: string) => {
+      if (typeof window === 'undefined' || !window.speechSynthesis) return;
+      if (!text?.trim()) return;
+
+      const targetLangCode = getLanguageCodeFromName(transLanguage);
+      const cleanPara = cleanSpeechText(text);
+      const chunks = segmentParagraphIntoSentences(
+        cleanPara,
+        pIdx,
+        targetLangCode,
+      );
+      const sentences: ChapterSentence[] =
+        chunks.length > 0
+          ? chunks.map((c, sIdx) => ({ ...c, globalIndex: sIdx }))
+          : [
+              {
+                id: `p${pIdx}-trans-0`,
+                pIdx,
+                sIdx: 0,
+                globalIndex: 0,
+                speechText: cleanPara,
+                rawText: text,
+                startChar: 0,
+                endChar: cleanPara.length,
+              },
+            ];
+
+      isStoppingRef.current = false;
+      if (queueRef.current?.timerId) {
+        clearTimeout(queueRef.current.timerId);
+      }
+      queueRef.current = {
+        sentences,
+        currentIndex: 0,
+        stopAfterIndex: sentences.length - 1,
+        timerId: null,
+        customLanguage: transLanguage,
+        speechType: 'translation',
+      };
+
+      unstickSpeechQueue();
+      await safeCancelSpeech();
+      speakSentenceChunk(sentences, 0);
+    },
+    [speakSentenceChunk],
+  );
 
   const playWord = useCallback(
     async (word: string, customLanguage?: string) => {
@@ -576,7 +664,9 @@ export function useSpeechSynthesis(language: string) {
     currentSentenceIndex,
     activeSentenceId,
     activeParagraphIndex,
+    activeSpeechType,
     playSentenceQueue,
+    playParagraphTranslation,
     pauseSentenceQueue,
     resumeSentenceQueue,
     stopSentenceQueue,

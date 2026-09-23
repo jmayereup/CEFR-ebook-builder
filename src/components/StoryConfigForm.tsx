@@ -1,9 +1,4 @@
-import {
-  BookText,
-  Globe,
-  ShieldAlert,
-  Sparkles,
-} from 'lucide-react';
+import { BookText, Globe, ShieldAlert, Sparkles } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
@@ -528,7 +523,10 @@ export default function StoryConfigForm({
           );
         }
       } catch (classifyErr) {
-        console.warn('Content classification call failed, failing safe to private:', classifyErr);
+        console.warn(
+          'Content classification call failed, failing safe to private:',
+          classifyErr,
+        );
         setCopyrightFlag(true);
         setCopyrightFlagReason(
           '[Safety Fallback] Content classification unavailable; story saved as private.',
@@ -604,7 +602,10 @@ export default function StoryConfigForm({
         }
       } catch (err) {
         // Fail-safe: on classifier outage, keep story private for platform safety
-        console.warn('Content classification failed, failing safe to private:', err);
+        console.warn(
+          'Content classification failed, failing safe to private:',
+          err,
+        );
         finalCopyrightFlag = true;
         finalCopyrightFlagReason =
           '[Safety Fallback] Content classification unavailable; story saved as private.';
@@ -814,7 +815,9 @@ export default function StoryConfigForm({
                   onLevelChange={handleLevelChange}
                   language={language}
                   translationTargetLanguage={translationTargetLanguage}
-                  onTranslationTargetLanguageChange={setTranslationTargetLanguage}
+                  onTranslationTargetLanguageChange={
+                    setTranslationTargetLanguage
+                  }
                 />
 
                 {/* Writing Style / Type & Genre / Theme */}
@@ -903,7 +906,9 @@ export default function StoryConfigForm({
                     {copyrightFlagReason?.toLowerCase().includes('explicit') ||
                     copyrightFlagReason?.toLowerCase().includes('adult')
                       ? 'Adult content policy restriction — this story will be saved as private.'
-                      : copyrightFlagReason?.toLowerCase().includes('safety fallback')
+                      : copyrightFlagReason
+                            ?.toLowerCase()
+                            .includes('safety fallback')
                         ? 'Safety check unavailable — this story will be saved as private.'
                         : 'Copyright-restricted story — this will be saved as private.'}
                   </p>

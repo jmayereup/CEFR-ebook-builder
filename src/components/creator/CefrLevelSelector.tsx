@@ -77,13 +77,13 @@ export default function CefrLevelSelector({
                 Select language...
               </option>
             )}
-            {SUPPORTED_LANGUAGES.filter(
-              (lang) => lang.code !== language,
-            ).map((lang) => (
-              <option key={lang.code} value={lang.name}>
-                {lang.flag} {lang.name}
-              </option>
-            ))}
+            {SUPPORTED_LANGUAGES.filter((lang) => lang.code !== language).map(
+              (lang) => (
+                <option key={lang.code} value={lang.name}>
+                  {lang.flag} {lang.name}
+                </option>
+              ),
+            )}
           </select>
           <p className="text-[10px] text-slate-405 dark:text-slate-400 leading-normal">
             {cefrLevel} stories will be generated in a line-by-line bilingual

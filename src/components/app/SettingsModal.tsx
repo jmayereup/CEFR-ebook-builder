@@ -14,8 +14,8 @@ import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import {
   COVER_IMAGE_MODELS,
-  formatCoverModelPriceIndicator,
   FRONTIER_LATEST_MODELS,
+  formatCoverModelPriceIndicator,
   formatModelPriceIndicator,
   isMuseModel,
   MODEL_PRICES_LAST_UPDATED,
@@ -418,7 +418,8 @@ export default function SettingsModal({
                 <Lock className="w-4 h-4 text-tj-primary shrink-0" />
                 <span>
                   Connect a custom OpenRouter API Key above to configure custom
-                  models for story generation, glossaries, covers, and word lookups.
+                  models for story generation, glossaries, covers, and word
+                  lookups.
                 </span>
               </div>
             ) : (
@@ -452,7 +453,8 @@ export default function SettingsModal({
                         const ageBadge = isMuseModel(m.id) ? ' [18+]' : '';
                         return (
                           <option key={m.id} value={m.id}>
-                            {m.name}{ageBadge} {priceLabel}
+                            {m.name}
+                            {ageBadge} {priceLabel}
                           </option>
                         );
                       })}
@@ -596,7 +598,8 @@ export default function SettingsModal({
                         const ageBadge = isMuseModel(m.id) ? ' [18+]' : '';
                         return (
                           <option key={m.id} value={m.id}>
-                            {m.name}{ageBadge} {priceLabel}
+                            {m.name}
+                            {ageBadge} {priceLabel}
                           </option>
                         );
                       })}
@@ -631,12 +634,12 @@ export default function SettingsModal({
                     <span>JSON Format & Credit Loss Liability Notice</span>
                   </div>
                   <p className="opacity-90 leading-normal text-[10px]">
-                    Easy eBooks uses structured JSON prompts for story
-                    creation, chapter outlines, and vocabulary glossaries.
-                    Custom or user-selected models must reliably adhere to JSON
-                    output formatting. Easy eBooks is not responsible for
-                    OpenRouter API credit consumption or financial loss incurred
-                    from malformed, unparseable, or rejected model responses.
+                    Easy eBooks uses structured JSON prompts for story creation,
+                    chapter outlines, and vocabulary glossaries. Custom or
+                    user-selected models must reliably adhere to JSON output
+                    formatting. Easy eBooks is not responsible for OpenRouter
+                    API credit consumption or financial loss incurred from
+                    malformed, unparseable, or rejected model responses.
                   </p>
                 </div>
 
@@ -773,9 +776,11 @@ export default function SettingsModal({
         isOpen={showAgeVerificationModal}
         modelName={
           pendingCoverModelOption
-            ? COVER_IMAGE_MODELS.find((m) => m.id === pendingCoverModelOption)?.name ||
-              pendingCoverModelOption
-            : FRONTIER_LATEST_MODELS.find((m) => m.id === pendingStoryModelOption)?.name ||
+            ? COVER_IMAGE_MODELS.find((m) => m.id === pendingCoverModelOption)
+                ?.name || pendingCoverModelOption
+            : FRONTIER_LATEST_MODELS.find(
+                (m) => m.id === pendingStoryModelOption,
+              )?.name ||
               pendingStoryModelOption ||
               'Meta Muse'
         }
@@ -785,4 +790,3 @@ export default function SettingsModal({
     </div>
   );
 }
-

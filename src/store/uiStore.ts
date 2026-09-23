@@ -213,8 +213,7 @@ export const useUIStore = create<UIState>((set, get) => ({
         widthVal === 'full'
           ? widthVal
           : 'medium';
-      const ageVerified =
-        localStorage.getItem('tj_age_verified') === 'true';
+      const ageVerified = localStorage.getItem('tj_age_verified') === 'true';
       set({
         customOpenRouterKey: key,
         translationTargetLanguage: lang,

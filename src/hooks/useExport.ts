@@ -147,7 +147,7 @@ export function useExport(options: UseExportOptions) {
                 const trimmed = p.trim();
                 if (trimmed.startsWith('Translation:')) {
                   const stripped = trimmed.replace(/^Translation:\s*/i, '');
-                  return `<p style="font-family: Arial, sans-serif; font-style: italic; font-size: 14px; color: #64748b; padding-left: 16px; border-left: 2px solid #cbd5e1; text-indent: 0px; margin-top: 4px; margin-bottom: 12px; line-height: 1.4; text-align: left;">${escapeHtml(stripped)}</p>`;
+                  return `<p style="font-family: Arial, sans-serif; font-size: 16px; color: #64748b; padding-left: 16px; border-left: 2px solid #cbd5e1; text-indent: 0px; margin-top: 4px; margin-bottom: 12px; line-height: 1.6; text-align: left;">${escapeHtml(stripped)}</p>`;
                 }
 
                 const glossaryWordsSet = new Set(

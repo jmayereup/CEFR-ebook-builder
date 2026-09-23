@@ -12,10 +12,10 @@ import { useState } from 'react';
 import {
   AI_MODELS,
   COVER_IMAGE_MODELS,
-  formatCoverModelPriceIndicator,
-  formatModelPriceIndicator,
   FREE_MODEL_IDS,
   FRONTIER_LATEST_MODELS,
+  formatCoverModelPriceIndicator,
+  formatModelPriceIndicator,
   isMuseModel,
 } from '../../constants/models';
 import { getModelThinkingSupport } from '../../utils/modelUtils';
@@ -277,9 +277,7 @@ export default function ModelSettingsCard({
                     return (
                       <select
                         value={thinkingOption}
-                        onChange={(e) =>
-                          onThinkingOptionChange(e.target.value)
-                        }
+                        onChange={(e) => onThinkingOptionChange(e.target.value)}
                         className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none"
                       >
                         <option value="disabled">Disabled (No Thinking)</option>
@@ -292,9 +290,7 @@ export default function ModelSettingsCard({
                     return (
                       <select
                         value={thinkingOption}
-                        onChange={(e) =>
-                          onThinkingOptionChange(e.target.value)
-                        }
+                        onChange={(e) => onThinkingOptionChange(e.target.value)}
                         className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none"
                       >
                         <option value="disabled">Disabled (No Thinking)</option>
@@ -310,9 +306,7 @@ export default function ModelSettingsCard({
                     return (
                       <select
                         value={thinkingOption}
-                        onChange={(e) =>
-                          onThinkingOptionChange(e.target.value)
-                        }
+                        onChange={(e) => onThinkingOptionChange(e.target.value)}
                         className="w-full p-2.5 rounded-xl border border-tj-border-main bg-tj-bg-card text-tj-text-main text-sm focus:border-tj-primary focus:outline-none"
                       >
                         <option value="disabled">Disabled (No Thinking)</option>
@@ -348,8 +342,7 @@ export default function ModelSettingsCard({
               const currentModelObj = AI_MODELS.find(
                 (m) => m.id === selectedModel,
               );
-              const supportsTemp =
-                currentModelObj?.supportsTemperature ?? true;
+              const supportsTemp = currentModelObj?.supportsTemperature ?? true;
               const isThinkingActive = thinkingOption !== 'disabled';
 
               if (!supportsTemp) return null;
@@ -357,9 +350,7 @@ export default function ModelSettingsCard({
               const showReasoning = isAdmin || isByokActive;
 
               return (
-                <div
-                  className={showReasoning ? 'col-span-1' : 'md:col-span-2'}
-                >
+                <div className={showReasoning ? 'col-span-1' : 'md:col-span-2'}>
                   <label className="flex items-center justify-between text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     <span className="flex items-center gap-2">
                       <Sliders className="w-4 h-4 text-tj-primary dark:text-tj-primary-hover" />
