@@ -13,7 +13,7 @@ export function useToastAutoDismiss({
   isExpanded,
   isHovered,
   onDismiss,
-  timeoutMs = 2000,
+  timeoutMs = 5000,
 }: UseToastAutoDismissOptions) {
   const [activityKey, setActivityKey] = useState<number>(0);
 
