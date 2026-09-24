@@ -2609,11 +2609,6 @@ export default function ReaderPanel({
         setSelectedWord={setSelectedWord}
         story={story}
         currentUser={currentUser}
-        isPaid={isPaid}
-        isAdmin={isAdmin}
-        customOpenRouterKey={customOpenRouterKey}
-        lookupLimitData={lookupLimitData}
-        translationTargetLanguage={translationTargetLanguage}
         handleFetchTranslation={handleFetchTranslation}
         handleSaveWordRecord={handleSaveWordRecord}
         handlePlayWord={handlePlayWord}
@@ -2627,12 +2622,8 @@ export default function ReaderPanel({
         onNavigatePrev={handleNavigatePrev}
         onNavigateNext={handleNavigateNext}
         selectedWordRange={selectedWordRange}
-        canExtendLeft={canExtendLeft}
-        canShrinkLeft={canShrinkLeft}
         canShrinkRight={canShrinkRight}
         canExtendRight={canExtendRight}
-        onExtendLeft={handleExtendLeft}
-        onShrinkLeft={handleShrinkLeft}
         onShrinkRight={handleShrinkRight}
         onExtendRight={handleExtendRight}
         activeHighlight={activeHighlightForToast}
