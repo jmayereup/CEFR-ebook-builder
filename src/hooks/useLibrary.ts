@@ -11,6 +11,7 @@ import {
 import {
   getAllCachedStories,
   getStory,
+  getStorySync,
   saveStory,
 } from '../services/storage/offlineStorage';
 import type { IUser } from '../services/types';
@@ -159,17 +160,45 @@ export function useLibrary(options: UseLibraryOptions) {
   }, [publicStories, privateStories, offlineCachedStories]);
 
   const handleSelectStory = async (story: Story): Promise<Story | null> => {
-    setStoriesLoading(true);
     try {
-      // Check offline storage first
-      const cachedStory = await getStory(story.id);
+      // Check memory / offline storage first (or story itself if chapters already present)
+      const cachedStory =
+        story.chapters && story.chapters.length > 0
+          ? story
+          : getStorySync(story.id) || (await getStory(story.id));
 
-      // If offline or story is an unsaved draft, return cached version immediately
-      if (cachedStory && (cachedStory.isUnsaved || !isOnline)) {
+      if (
+        cachedStory &&
+        cachedStory.chapters &&
+        cachedStory.chapters.length > 0
+      ) {
+        // Return cached version immediately for instant opening
+        if (isOnline && !cachedStory.isUnsaved) {
+          // Revalidate in background to keep IndexedDB and cache fresh
+          fetchStory(story.id)
+            .then(async (fullStory) => {
+              if (fullStory) {
+                await saveStory(fullStory);
+                setOfflineCachedStories((prev) => {
+                  const exists = prev.some((p) => p.id === fullStory.id);
+                  return exists
+                    ? prev.map((p) => (p.id === fullStory.id ? fullStory : p))
+                    : [...prev, fullStory];
+                });
+              }
+            })
+            .catch((fetchErr) => {
+              console.warn(
+                `[Library] Background refresh failed for story "${story.id}":`,
+                fetchErr,
+              );
+            });
+        }
         return cachedStory;
       }
 
-      // Try network fetch if online
+      // Not cached locally yet: perform blocking network fetch
+      setStoriesLoading(true);
       if (isOnline) {
         try {
           const fullStory = await fetchStory(story.id);
@@ -215,7 +244,7 @@ export function useLibrary(options: UseLibraryOptions) {
       return null;
     } catch (err) {
       console.error('Error loading story chapters:', err);
-      const cachedStory = await getStory(story.id);
+      const cachedStory = getStorySync(story.id) || (await getStory(story.id));
       if (cachedStory) {
         return cachedStory;
       }

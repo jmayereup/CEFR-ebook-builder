@@ -229,6 +229,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
   const { refresh = false, storyId, deleteId, forceAll = false } = options;
 
   if (deleteId) {
+    invalidateServerStoryCache(deleteId);
     updateStoriesMetadataCache(
       storiesMetadataCache.filter((s) => s.id !== deleteId),
     );
@@ -237,6 +238,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
   }
 
   if (storyId) {
+    invalidateServerStoryCache(storyId);
     try {
       const record = await pb.collection('stories').getOne(storyId);
       if (
@@ -335,9 +337,27 @@ export function getStoriesMetadataSync(): any[] {
   return storiesMetadataCache;
 }
 
+const serverStoryCache = new Map<string, { story: any; timestamp: number }>();
+const SERVER_STORY_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+export function invalidateServerStoryCache(storyId?: string) {
+  if (storyId) {
+    serverStoryCache.delete(storyId);
+  } else {
+    serverStoryCache.clear();
+  }
+}
+
 export async function fetchStoryServer(storyId: string): Promise<any | null> {
+  const cached = serverStoryCache.get(storyId);
+  if (cached && Date.now() - cached.timestamp < SERVER_STORY_CACHE_TTL) {
+    return cached.story;
+  }
   try {
     const record = await pb.collection('stories').getOne(storyId);
+    if (record) {
+      serverStoryCache.set(storyId, { story: record, timestamp: Date.now() });
+    }
     return record;
   } catch (err) {
     console.error(`[Server PB SSR] Error fetching story ${storyId}:`, err);

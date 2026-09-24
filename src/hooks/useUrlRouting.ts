@@ -1,6 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { fetchStory, type RecentlyReadItem } from '../services/db';
-import { getStory, saveStory } from '../services/storage/offlineStorage';
+import {
+  getStory,
+  getStorySync,
+  saveStory,
+} from '../services/storage/offlineStorage';
 import type { IUser } from '../services/types';
 import type { Story } from '../types';
 import { getStoryIdFromSegment, slugify } from '../utils/slugify';
@@ -9,7 +20,7 @@ import { parseRecentlyReadItems } from './useUserData';
 
 interface UseUrlRoutingOptions {
   selectedStory: Story | null;
-  setSelectedStory: (story: Story | null) => void;
+  setSelectedStory: Dispatch<SetStateAction<Story | null>>;
   loadingStoryId?: string | null;
   setLoadingStoryId?: (id: string | null) => void;
   activeChapterIdx: number;
@@ -173,8 +184,18 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
           chapterIdx < selectedStory.chapters.length ? chapterIdx : 0;
         setActiveChapterIdx(validIdx);
       } else {
-        setLoadingStoryId?.(storyId);
-        setPendingNavigation({ storyId, chapterNum });
+        const cached = getStorySync(storyId);
+        if (cached && cached.chapters && cached.chapters.length > 0) {
+          setSelectedStory(cached);
+          setLoadingStoryId?.(null);
+          setPendingNavigation(null);
+          const chapterIdx = chapterNum > 0 ? chapterNum - 1 : 0;
+          const validIdx = chapterIdx < cached.chapters.length ? chapterIdx : 0;
+          setActiveChapterIdx(validIdx);
+        } else {
+          setLoadingStoryId?.(storyId);
+          setPendingNavigation({ storyId, chapterNum });
+        }
       }
     } else if (bookMatch) {
       const storyId = getStoryIdFromSegment(bookMatch[1]);
@@ -203,8 +224,30 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
           idx >= 0 && idx < selectedStory.chapters.length ? idx : 0;
         setActiveChapterIdx(validIdx);
       } else {
-        setLoadingStoryId?.(storyId);
-        setPendingNavigation({ storyId, chapterNum: null });
+        const cached = getStorySync(storyId);
+        if (cached && cached.chapters && cached.chapters.length > 0) {
+          setSelectedStory(cached);
+          setLoadingStoryId?.(null);
+          setPendingNavigation(null);
+          let syncedItem = recentlyRead.find(
+            (item) => item.storyId === cached.id,
+          );
+          if (!syncedItem && typeof window !== 'undefined') {
+            try {
+              const local = localStorage.getItem('recently_read');
+              if (local) {
+                const parsed = parseRecentlyReadItems(JSON.parse(local));
+                syncedItem = parsed.find((item) => item.storyId === cached.id);
+              }
+            } catch {}
+          }
+          const idx = syncedItem ? syncedItem.chapterIdx : 0;
+          const validIdx = idx >= 0 && idx < cached.chapters.length ? idx : 0;
+          setActiveChapterIdx(validIdx);
+        } else {
+          setLoadingStoryId?.(storyId);
+          setPendingNavigation({ storyId, chapterNum: null });
+        }
       }
     } else if (tabMatch) {
       const tab = tabMatch[1] as
@@ -274,10 +317,90 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
 
     let active = true;
     (async () => {
-      // Check offline storage first
-      let directStory = await getStory(storyId);
+      // Check memory / offline storage first
+      let directStory = getStorySync(storyId) || (await getStory(storyId));
 
-      // If online and not an unsaved draft, attempt fetch from DB
+      if (!active || loadingStoryIdRef.current !== storyId) return;
+
+      const hasCachedContent =
+        directStory && directStory.chapters && directStory.chapters.length > 0;
+
+      if (hasCachedContent) {
+        if (!directStory.cover) {
+          const meta = stories.find((s) => s.id === storyId);
+          if (meta?.cover) {
+            directStory = { ...directStory, cover: meta.cover };
+            await saveStory(directStory);
+          }
+        }
+
+        const isOwner =
+          currentUser && directStory.creatorId === currentUser.uid;
+        const isAdmin = currentUser?.isAdmin === true;
+        const isCopyrightBlocked = directStory.copyrightFlag === true;
+        const isAllowed =
+          !isCopyrightBlocked &&
+          (directStory.isPublic !== false || isOwner || isAdmin || !isOnline);
+
+        if (isAllowed) {
+          if (!active || loadingStoryIdRef.current !== storyId) return;
+          setSelectedStory(directStory);
+          setLoadingStoryId?.(null);
+          if (chapterNum !== null) {
+            const chapterIdx = chapterNum > 0 ? chapterNum - 1 : 0;
+            const validIdx =
+              chapterIdx < (directStory.chapters?.length ?? 0) ? chapterIdx : 0;
+            setActiveChapterIdx(validIdx);
+          } else {
+            let syncedItem = recentlyRead.find(
+              (item) => item.storyId === directStory.id,
+            );
+            if (!syncedItem && typeof window !== 'undefined') {
+              try {
+                const local = localStorage.getItem('recently_read');
+                if (local) {
+                  const parsed = parseRecentlyReadItems(JSON.parse(local));
+                  syncedItem = parsed.find(
+                    (item) => item.storyId === directStory.id,
+                  );
+                }
+              } catch {}
+            }
+            const idx = syncedItem ? syncedItem.chapterIdx : 0;
+            const validIdx =
+              idx >= 0 && idx < (directStory.chapters?.length ?? 0) ? idx : 0;
+            setActiveChapterIdx(validIdx);
+          }
+          setPendingNavigation(null);
+
+          // Background revalidation (stale-while-revalidate)
+          if (isOnline && !directStory.isUnsaved) {
+            fetchStory(storyId)
+              .then(async (fetched) => {
+                if (!active || !fetched) return;
+                await saveStory(fetched);
+                setSelectedStory((prev) => {
+                  if (!prev || prev.id !== fetched.id) return prev;
+                  if (prev.isUnsaved) return prev;
+                  return {
+                    ...prev,
+                    ...fetched,
+                    chapters: fetched.chapters || prev.chapters,
+                  };
+                });
+              })
+              .catch((fetchErr) => {
+                console.warn(
+                  `[Router] Background refresh failed for story "${storyId}":`,
+                  fetchErr,
+                );
+              });
+          }
+          return;
+        }
+      }
+
+      // If not cached locally, perform blocking network fetch
       if (isOnline && !directStory?.isUnsaved) {
         try {
           const fetched = await fetchStory(storyId);

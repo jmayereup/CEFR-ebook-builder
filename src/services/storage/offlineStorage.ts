@@ -15,13 +15,31 @@ const metaStore =
 
 const GUEST_COMPLETED_KEY = 'guest_completed_story_ids';
 
+// In-memory cache for fast synchronous or microtask access
+const memoryStoryCache = new Map<string, Story>();
+
+/**
+ * Synchronously get a story from the in-memory cache if available.
+ */
+export function getStorySync(id: string): Story | undefined {
+  if (!id) return undefined;
+  return memoryStoryCache.get(id);
+}
+
 /**
  * Get a cached story from IndexedDB.
  */
 export async function getStory(id: string): Promise<Story | undefined> {
-  if (!storyStore || !id) return undefined;
+  if (!id) return undefined;
+  const inMemory = memoryStoryCache.get(id);
+  if (inMemory) return inMemory;
+  if (!storyStore) return undefined;
   try {
-    return await get<Story>(id, storyStore);
+    const story = await get<Story>(id, storyStore);
+    if (story) {
+      memoryStoryCache.set(id, story);
+    }
+    return story;
   } catch (error) {
     console.error(
       `[OfflineStorage] Failed to get story "${id}" from IndexedDB:`,
@@ -35,7 +53,9 @@ export async function getStory(id: string): Promise<Story | undefined> {
  * Save or update a story in IndexedDB.
  */
 export async function saveStory(story: Story): Promise<void> {
-  if (!storyStore || !story?.id) return;
+  if (!story?.id) return;
+  memoryStoryCache.set(story.id, story);
+  if (!storyStore) return;
   try {
     await set(story.id, story, storyStore);
   } catch (error) {
@@ -50,7 +70,9 @@ export async function saveStory(story: Story): Promise<void> {
  * Remove a cached story from IndexedDB.
  */
 export async function removeStory(id: string): Promise<void> {
-  if (!storyStore || !id) return;
+  if (!id) return;
+  memoryStoryCache.delete(id);
+  if (!storyStore) return;
   try {
     await del(id, storyStore);
   } catch (error) {
@@ -85,7 +107,12 @@ export async function getAllCachedStories(): Promise<Story[]> {
   if (!storyStore) return [];
   try {
     const allEntries = await entries<string, Story>(storyStore);
-    return allEntries.map(([_, story]) => story);
+    return allEntries.map(([_, story]) => {
+      if (story?.id) {
+        memoryStoryCache.set(story.id, story);
+      }
+      return story;
+    });
   } catch (error) {
     console.error(
       '[OfflineStorage] Failed to get all cached stories from IndexedDB:',
@@ -99,6 +126,7 @@ export async function getAllCachedStories(): Promise<Story[]> {
  * Clear all cached stories from IndexedDB.
  */
 export async function clearAllStories(): Promise<void> {
+  memoryStoryCache.clear();
   if (!storyStore) return;
   try {
     const allKeys = await keys(storyStore);

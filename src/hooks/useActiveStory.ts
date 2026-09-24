@@ -9,6 +9,8 @@ import {
 import { createStory, type RecentlyReadItem } from '../services/db';
 import {
   getAllCachedStoryIds,
+  getStory as getStoryFromOffline,
+  getStorySync as getStorySyncFromOffline,
   removeStory as removeStoryFromOffline,
   saveStory as saveStoryToOffline,
 } from '../services/storage/offlineStorage';
@@ -84,6 +86,15 @@ export function useActiveStory(options: UseActiveStoryOptions) {
           return (window as any).__PRELOADED_DATA__.story;
         }
       }
+    } else if (typeof window !== 'undefined') {
+      const bookMatch = window.location.pathname.match(/^\/book\/([^/]+)/);
+      if (bookMatch) {
+        const storyId = getStoryIdFromSegment(bookMatch[1]);
+        const inMemory = getStorySyncFromOffline(storyId);
+        if (inMemory && inMemory.chapters && inMemory.chapters.length > 0) {
+          return inMemory;
+        }
+      }
     }
     return null;
   });
@@ -102,6 +113,10 @@ export function useActiveStory(options: UseActiveStoryOptions) {
           (typeof window !== 'undefined' &&
             (window as any).__PRELOADED_DATA__?.story?.id === storyId)
         ) {
+          return null;
+        }
+        const inMemory = getStorySyncFromOffline(storyId);
+        if (inMemory && inMemory.chapters && inMemory.chapters.length > 0) {
           return null;
         }
         return storyId;
@@ -219,6 +234,77 @@ export function useActiveStory(options: UseActiveStoryOptions) {
     overrideChapterIdx?: number,
     targetParagraphIdx?: number,
   ) => {
+    // Check if we already have the full story cached locally (memory or IndexedDB)
+    const cachedStory =
+      story.chapters && story.chapters.length > 0
+        ? story
+        : getStorySyncFromOffline(story.id) ||
+          (await getStoryFromOffline(story.id));
+
+    const hasCachedContent =
+      cachedStory && cachedStory.chapters && cachedStory.chapters.length > 0;
+
+    if (hasCachedContent) {
+      // INSTANT OPEN: Render immediately without showing a loading skeleton
+      setSelectedStory(cachedStory);
+      setLoadingStory(null);
+      setLoadingStoryId(null);
+      loadingStoryIdRef.current = null;
+
+      if (targetParagraphIdx !== undefined && typeof window !== 'undefined') {
+        sessionStorage.setItem(
+          'target_highlight_paragraph',
+          targetParagraphIdx.toString(),
+        );
+      }
+
+      let idx = 0;
+      if (overrideChapterIdx !== undefined) {
+        idx = overrideChapterIdx;
+      } else {
+        let syncedItem = recentlyRead.find((item) => item.storyId === story.id);
+        if (!syncedItem && typeof window !== 'undefined') {
+          try {
+            const local = localStorage.getItem('recently_read');
+            if (local) {
+              const parsed = parseRecentlyReadItems(JSON.parse(local));
+              syncedItem = parsed.find((item) => item.storyId === story.id);
+            }
+          } catch {}
+        }
+        idx = syncedItem ? syncedItem.chapterIdx : 0;
+      }
+
+      const validIdx =
+        idx >= 0 && idx < (cachedStory.chapters?.length ?? 0) ? idx : 0;
+      setActiveChapterIdx(validIdx);
+      hasRestoredChapterRef.current = story.id;
+      setChapterRestoredStoryId(story.id);
+
+      // Background revalidation (stale-while-revalidate)
+      if (!cachedStory.isUnsaved) {
+        libHandleSelectStory(story)
+          .then((freshStory) => {
+            if (!freshStory) return;
+            setSelectedStory((prev) => {
+              if (!prev || prev.id !== freshStory.id) return prev;
+              if (prev.isUnsaved) return prev;
+              return {
+                ...prev,
+                ...freshStory,
+                chapters: freshStory.chapters || prev.chapters,
+              };
+            });
+          })
+          .catch((err) => {
+            console.warn('[useActiveStory] Background refresh error:', err);
+          });
+      }
+
+      return;
+    }
+
+    // Story is not cached yet: show loading skeleton and wait for network fetch
     setLoadingStory(story);
     setLoadingStoryId(story.id);
     loadingStoryIdRef.current = story.id;
@@ -254,9 +340,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       if (overrideChapterIdx !== undefined) {
         idx = overrideChapterIdx;
       } else {
-        let syncedItem = recentlyRead.find(
-          (item) => item.storyId === story.id,
-        );
+        let syncedItem = recentlyRead.find((item) => item.storyId === story.id);
         if (!syncedItem && typeof window !== 'undefined') {
           try {
             const local = localStorage.getItem('recently_read');
