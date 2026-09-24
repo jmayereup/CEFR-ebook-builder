@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   deleteWord,
   fetchUserProfile,
@@ -21,26 +21,31 @@ interface LookupLimitData {
   date: string;
 }
 
+export interface RemoteReadingLocation {
+  storyId: string;
+  chapterIdx: number;
+  updatedAt: number;
+}
+
 export function parseRecentlyReadItems(data: any): RecentlyReadItem[] {
   if (!data || !Array.isArray(data)) return [];
-  return data
-    .map((item) => {
-      if (typeof item === 'string') {
-        return { storyId: item, chapterIdx: 0 };
-      }
-      if (
-        item &&
-        typeof item === 'object' &&
-        typeof item.storyId === 'string'
-      ) {
-        return {
-          storyId: item.storyId,
-          chapterIdx: typeof item.chapterIdx === 'number' ? item.chapterIdx : 0,
-        };
-      }
-      return null;
-    })
-    .filter((item): item is RecentlyReadItem => !!item);
+  const results: RecentlyReadItem[] = [];
+  for (const item of data) {
+    if (typeof item === 'string') {
+      results.push({ storyId: item, chapterIdx: 0, updatedAt: 0 });
+    } else if (
+      item &&
+      typeof item === 'object' &&
+      typeof item.storyId === 'string'
+    ) {
+      results.push({
+        storyId: item.storyId,
+        chapterIdx: typeof item.chapterIdx === 'number' ? item.chapterIdx : 0,
+        updatedAt: typeof item.updatedAt === 'number' ? item.updatedAt : 0,
+      });
+    }
+  }
+  return results;
 }
 
 const defaultLookupLimitData = (): LookupLimitData => {
@@ -98,6 +103,9 @@ export function useUserData(options: UseUserDataOptions) {
 
   const [bookshelf, setBookshelf] = useState<string[]>([]);
   const [recentlyRead, setRecentlyRead] = useState<RecentlyReadItem[]>([]);
+  const [remoteReadingLocation, setRemoteReadingLocation] =
+    useState<RemoteReadingLocation | null>(null);
+  const lastLocalUpdateTimestampRef = useRef<number>(Date.now());
   const [savedVocab, setSavedVocab] = useState<VocabularyTerm[]>([]);
   const [lookupLimitData, setLookupLimitData] = useState<LookupLimitData>(
     defaultLookupLimitData,
@@ -351,19 +359,35 @@ export function useUserData(options: UseUserDataOptions) {
     }
   };
 
-  const updateRecentlyRead = async (storyId: string, chapterIdx: number) => {
+  const updateRecentlyRead = async (
+    storyId: string,
+    chapterIdx: number,
+    customTimestamp?: number,
+  ) => {
     const currentList = recentlyReadRef.current;
     const existing = currentList.find((item) => item.storyId === storyId);
+    const now = customTimestamp ?? Date.now();
+    lastLocalUpdateTimestampRef.current = now;
+
+    // Clear remote prompt for this story if matching or advancing
+    setRemoteReadingLocation((prev) =>
+      prev?.storyId === storyId ? null : prev,
+    );
+
     if (
       existing &&
       existing.chapterIdx === chapterIdx &&
-      currentList[0]?.storyId === storyId
+      currentList[0]?.storyId === storyId &&
+      now - (existing.updatedAt || 0) < 60000
     ) {
       return;
     }
 
     const filtered = currentList.filter((item) => item.storyId !== storyId);
-    const updated = [{ storyId, chapterIdx }, ...filtered].slice(0, 100);
+    const updated = [
+      { storyId, chapterIdx, updatedAt: now },
+      ...filtered,
+    ].slice(0, 100);
     localStorage.setItem('recently_read', JSON.stringify(updated));
     setRecentlyRead(updated);
 
@@ -479,7 +503,7 @@ export function useUserData(options: UseUserDataOptions) {
               cloudMap.set(item.storyId, item);
             }
 
-            // Cloud history is authoritative for the user's account across devices
+            // Cloud history is merged with guest history, prioritizing newer timestamps
             const mergedRecentlyRead: RecentlyReadItem[] = [
               ...cloudRecentlyRead,
             ];
@@ -487,19 +511,47 @@ export function useUserData(options: UseUserDataOptions) {
               const existingCloud = cloudMap.get(guestItem.storyId);
               if (!existingCloud) {
                 mergedRecentlyRead.push(guestItem);
-              } else if (guestItem.chapterIdx > existingCloud.chapterIdx) {
-                const idx = mergedRecentlyRead.findIndex(
-                  (m) => m.storyId === guestItem.storyId,
-                );
-                if (idx !== -1) {
-                  mergedRecentlyRead[idx] = {
-                    ...mergedRecentlyRead[idx],
-                    chapterIdx: guestItem.chapterIdx,
-                  };
+              } else {
+                const guestTime = guestItem.updatedAt || 0;
+                const cloudTime = existingCloud.updatedAt || 0;
+                if (
+                  guestTime > cloudTime ||
+                  (guestTime === cloudTime &&
+                    guestItem.chapterIdx > existingCloud.chapterIdx)
+                ) {
+                  const idx = mergedRecentlyRead.findIndex(
+                    (m) => m.storyId === guestItem.storyId,
+                  );
+                  if (idx !== -1) {
+                    mergedRecentlyRead[idx] = {
+                      ...mergedRecentlyRead[idx],
+                      chapterIdx: guestItem.chapterIdx,
+                      updatedAt: guestItem.updatedAt || guestTime,
+                    };
+                  }
                 }
               }
             }
+            mergedRecentlyRead.sort(
+              (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0),
+            );
             const finalRecentlyRead = mergedRecentlyRead.slice(0, 100);
+
+            // Detect remote device progress update on focus/refresh
+            if (!force) {
+              const remoteCandidate = cloudRecentlyRead.find(
+                (item) =>
+                  item.updatedAt &&
+                  item.updatedAt > lastLocalUpdateTimestampRef.current + 2000,
+              );
+              if (remoteCandidate) {
+                setRemoteReadingLocation({
+                  storyId: remoteCandidate.storyId,
+                  chapterIdx: remoteCandidate.chapterIdx,
+                  updatedAt: remoteCandidate.updatedAt,
+                });
+              }
+            }
 
             // Determine if data has changed/guest data is added compared to cloud
             const bookshelfChanged =
@@ -513,7 +565,8 @@ export function useUserData(options: UseUserDataOptions) {
                 return (
                   !cloudItem ||
                   cloudItem.storyId !== item.storyId ||
-                  cloudItem.chapterIdx !== item.chapterIdx
+                  cloudItem.chapterIdx !== item.chapterIdx ||
+                  cloudItem.updatedAt !== item.updatedAt
                 );
               });
 
@@ -788,6 +841,20 @@ export function useUserData(options: UseUserDataOptions) {
               localStorage.setItem('recently_read', JSON.stringify(parsed));
               return parsed;
             });
+
+            // Detect remote device progress update
+            const remoteCandidate = parsed.find(
+              (item) =>
+                item.updatedAt &&
+                item.updatedAt > lastLocalUpdateTimestampRef.current + 2000,
+            );
+            if (remoteCandidate) {
+              setRemoteReadingLocation({
+                storyId: remoteCandidate.storyId,
+                chapterIdx: remoteCandidate.chapterIdx,
+                updatedAt: remoteCandidate.updatedAt,
+              });
+            }
           }
 
           // 3. Sync Lookup Limit
@@ -878,11 +945,17 @@ export function useUserData(options: UseUserDataOptions) {
     };
   }, [currentUser?.uid, setIsPaid]);
 
+  const clearRemoteReadingLocation = useCallback(() => {
+    setRemoteReadingLocation(null);
+  }, []);
+
   return {
     bookshelf,
     setBookshelf,
     recentlyRead,
     setRecentlyRead,
+    remoteReadingLocation,
+    clearRemoteReadingLocation,
     savedVocab,
     setSavedVocab,
     lookupLimitData,

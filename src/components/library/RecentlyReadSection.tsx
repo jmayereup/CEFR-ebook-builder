@@ -18,7 +18,7 @@ interface RecentlyReadSectionProps {
     story: Story;
     chapterIdx: number;
   }[];
-  onSelectStory: (story: Story) => void;
+  onSelectStory: (story: Story, chapterIdx?: number) => void;
   generatingCoverIds?: Set<string>;
 }
 
@@ -86,7 +86,7 @@ export default function RecentlyReadSection({
             <motion.div
               key={story.id}
               whileHover={{ y: -4 }}
-              onClick={() => onSelectStory(story)}
+              onClick={() => onSelectStory(story, chapterIdx)}
               className="flex gap-4 p-4 bg-tj-bg-card border border-tj-border-main hover:border-tj-primary-border rounded-2xl shadow-xs transition-all cursor-pointer relative overflow-hidden group select-none"
             >
               {/* Cover Art Miniature */}
