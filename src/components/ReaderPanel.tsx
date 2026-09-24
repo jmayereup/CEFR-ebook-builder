@@ -188,6 +188,7 @@ interface ReaderPanelProps {
   syncChangesToDatabase?: () => Promise<void>;
   onExit?: () => void;
   isGeneratingCover?: boolean;
+  onOpenAuth?: (mode?: 'signin' | 'signup') => void;
 }
 
 export default function ReaderPanel({
@@ -204,6 +205,7 @@ export default function ReaderPanel({
   isPaid = false,
   isAdmin = false,
   onOpenSettings,
+  onOpenAuth,
   onShowAlert,
   generationStatus = '',
   onCancelGeneration,
@@ -331,11 +333,15 @@ export default function ReaderPanel({
     storyId: story.id,
     currentUser,
     onUnauthorized: () => {
-      onShowAlert?.(
-        'Sign In Required',
-        'Please sign in or create an account to save highlights and personal notes.',
-        'info',
-      );
+      if (onOpenAuth) {
+        onOpenAuth('signin');
+      } else {
+        onShowAlert?.(
+          'Sign In Required',
+          'Please sign in or create an account to save highlights and personal notes.',
+          'info',
+        );
+      }
     },
   });
 
@@ -561,6 +567,9 @@ export default function ReaderPanel({
     isFetching: boolean;
     saveSuccess: boolean;
   } | null>(null);
+
+  // Toast expansion state (collapsed thin toast vs full details)
+  const [isToastExpanded, setIsToastExpanded] = useState<boolean>(false);
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
@@ -910,6 +919,8 @@ export default function ReaderPanel({
       handleStopSpeech();
     }
 
+    setIsToastExpanded(false);
+
     const clickedFlatIdx = chapterWords.findIndex(
       (w) => w.pIdx === pIdx && w.indexInPara === indexInPara,
     );
@@ -925,9 +936,12 @@ export default function ReaderPanel({
       // Must be in the same paragraph
       if (startWord && clickedWord && startWord.pIdx === clickedWord.pIdx) {
         if (clickedFlatIdx === start && clickedFlatIdx === end) {
-          // Single word clicked again -> Deselect completely
-          setSelectedWordRange(null);
-          setSelectedWord(null);
+          // Single word clicked again -> Replay audio sound and keep thin toast active
+          setIsToastExpanded(false);
+          const activeWord = chapterWords[clickedFlatIdx];
+          if (activeWord) {
+            handlePlayWord(activeWord.word);
+          }
           return;
         } else if (clickedFlatIdx === start) {
           // Start word clicked again -> Shrink range by unselecting start
@@ -992,6 +1006,7 @@ export default function ReaderPanel({
   useEffect(() => {
     if (selectedWord === null) {
       setSelectedWordRange(null);
+      setIsToastExpanded(false);
     } else if (selectedWordRange !== null) {
       const [start, end] = selectedWordRange;
       if (
@@ -1025,7 +1040,7 @@ export default function ReaderPanel({
       const viewportHeight = window.innerHeight;
       // Position the active highlighted word around 18% from the top (leaving 4-6 lines visible below it)
       const desiredTop = Math.max(70, Math.min(140, viewportHeight * 0.18));
-      const bottomThreshold = viewportHeight - 340; // Clearance above toast
+      const bottomThreshold = viewportHeight - (isToastExpanded ? 340 : 70); // Clearance above toast
 
       // If hidden behind or near the bottom toast, or not scrolled up enough to show subsequent lines
       if (rect.bottom > bottomThreshold || rect.top < 65) {
@@ -1038,7 +1053,7 @@ export default function ReaderPanel({
     }, 80);
 
     return () => clearTimeout(timeoutId);
-  }, [selectedWord, selectedWordRange, chapterWords]);
+  }, [selectedWord, selectedWordRange, chapterWords, isToastExpanded]);
 
   // Helper checks for range adjustment (up to 50 words)
   const canExtendLeft =
@@ -1300,11 +1315,13 @@ export default function ReaderPanel({
       const lastFlatIdx = overlapping[overlapping.length - 1].flatIdx;
       const newRange: [number, number] = [firstFlatIdx, lastFlatIdx];
       setSelectedWordRange(newRange);
+      setIsToastExpanded(true);
       updateSelectedWordForRange(firstFlatIdx, lastFlatIdx);
     } else {
       if (autoPlayWord) {
         handlePlayWord(highlight.text);
       }
+      setIsToastExpanded(true);
       setSelectedWord({
         word: highlight.text,
         context: dp.original,
@@ -1381,11 +1398,13 @@ export default function ReaderPanel({
       const firstFlatIdx = overlapping[0].flatIdx;
       const lastFlatIdx = overlapping[overlapping.length - 1].flatIdx;
       setSelectedWordRange([firstFlatIdx, lastFlatIdx]);
+      setIsToastExpanded(true);
       updateSelectedWordForRange(firstFlatIdx, lastFlatIdx);
     } else {
       if (autoPlayWord) {
         handlePlayWord(text);
       }
+      setIsToastExpanded(true);
       setSelectedWord({
         word: text,
         context: dp.original,
@@ -2623,6 +2642,9 @@ export default function ReaderPanel({
         autoPlayWord={autoPlayWord}
         setAutoPlayWord={setAutoPlayWord}
         onResumeChapterFromWord={handleResumeChapterFromWord}
+        isExpanded={isToastExpanded}
+        setIsExpanded={setIsToastExpanded}
+        onOpenAuth={onOpenAuth}
       />
 
       {/* FLOATING COMPACT MEDIA CONTROLS */}

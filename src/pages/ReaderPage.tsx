@@ -53,6 +53,7 @@ interface ReaderPageProps {
   onRemoveWord?: (wordText: string) => void;
   isPaid: boolean;
   onOpenSettings: () => void;
+  onOpenAuth?: (mode?: 'signin' | 'signup') => void;
   showAlert: (
     title: string,
     message: string,
@@ -131,6 +132,7 @@ export default function ReaderPage({
   onRemoveWord,
   isPaid,
   onOpenSettings,
+  onOpenAuth,
   showAlert,
   generationStatus,
   handleCancelGeneration,
@@ -378,6 +380,7 @@ export default function ReaderPage({
         isPaid={isPaid}
         isAdmin={currentUser?.isAdmin === true}
         onOpenSettings={onOpenSettings}
+        onOpenAuth={onOpenAuth}
         onShowAlert={showAlert}
         generationStatus={generationStatus}
         onCancelGeneration={handleCancelGeneration}

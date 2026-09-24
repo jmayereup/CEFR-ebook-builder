@@ -257,9 +257,10 @@ export default function InteractiveParagraph({
     if (isBold) weightClass = 'font-bold';
     if (isItalic) weightClass += ' italic';
 
+    const paddingClass = isSpaceLess ? 'px-0' : 'px-1 -mx-1';
+
     if (isActive) {
-      const activePad = isSpaceLess ? 'px-0' : 'px-1 -mx-1';
-      return `text-tj-primary dark:text-tj-primary-hover underline decoration-2 decoration-black dark:decoration-white underline-offset-4 ${activePad} cursor-pointer transition font-bold ${isItalic ? 'italic' : ''} select-text`;
+      return `text-tj-primary dark:text-tj-primary-hover bg-tj-primary/10 dark:bg-tj-primary/20 rounded-xs underline decoration-2 decoration-tj-primary underline-offset-4 ${paddingClass} cursor-pointer transition ${weightClass} select-text`;
     }
 
     if (highlight) {
@@ -271,9 +272,6 @@ export default function InteractiveParagraph({
         isItalic,
       );
     }
-
-    const paddingClass = isSpaceLess ? 'px-0' : 'px-1 -mx-1';
-
     if (isSaved) {
       return `text-amber-800 dark:text-amber-300 border-b border-amber-500/35 dark:border-amber-400/20 hover:border-amber-600 dark:hover:border-amber-400 ${paddingClass} cursor-pointer transition ${weightClass} select-text`;
     }
@@ -422,7 +420,7 @@ export default function InteractiveParagraph({
       return (
         <span
           key={seg.key}
-          className={`text-tj-primary dark:text-tj-primary-hover underline decoration-2 decoration-black dark:decoration-white underline-offset-4 cursor-pointer font-bold ${seg.isItalic ? 'italic' : ''} select-text`}
+          className={`text-tj-primary dark:text-tj-primary-hover bg-tj-primary/10 dark:bg-tj-primary/20 rounded-xs underline decoration-2 decoration-tj-primary underline-offset-4 cursor-pointer ${seg.isBold ? 'font-bold' : isSpaceLess ? '' : 'font-medium'} ${seg.isItalic ? 'italic' : ''} select-text`}
         >
           {seg.segment}
         </span>

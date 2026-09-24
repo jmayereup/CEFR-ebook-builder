@@ -1223,6 +1223,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   onRemoveWord={handleRemoveSavedWord}
                   isPaid={isPaid}
                   onOpenSettings={() => setShowSettingsModal(true)}
+                  onOpenAuth={handleOpenAuth}
                   showAlert={showAlert}
                   generationStatus={generationStatus}
                   handleCancelGeneration={handleCancelGeneration}
