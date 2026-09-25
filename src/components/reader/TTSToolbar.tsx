@@ -196,6 +196,17 @@ export default function TTSToolbar({
         >
           <Settings2 className="w-4 h-4" />
         </button>
+
+        {/* ZEN MODE TRIGGER */}
+        <button
+          type="button"
+          onClick={onToggleZen}
+          className="h-8 w-8 sm:w-auto sm:px-2.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 dark:hover:text-tj-primary-hover bg-transparent hover:text-tj-primary hover:border-slate-300 transition-all cursor-pointer flex items-center justify-center gap-1.5 text-xs font-semibold shrink-0"
+          title="Zen Mode (Distraction-free reading)"
+        >
+          <Eye className="w-4 h-4" />
+          <span className="hidden sm:inline">Zen</span>
+        </button>
       </div>
 
       {/* RIGHT: Delete (admin) / Flag (non-admin) */}
@@ -381,109 +392,86 @@ export default function TTSToolbar({
                 </div>
 
                 {/* READING SECTION */}
-                <div className="space-y-3 border-t border-tj-border-main pt-4">
-                  <span className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
-                    Reading
-                  </span>
+                {((cefrLevel === 'A1' || cefrLevel === 'Pre-A1') ||
+                  (canSwapLanguages && onToggleSwap)) && (
+                  <div className="space-y-3 border-t border-tj-border-main pt-4">
+                    <span className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
+                      Reading
+                    </span>
 
-                  {/* Bilingual Mode Toggle (A1 / Pre-A1 only) */}
-                  {(cefrLevel === 'A1' || cefrLevel === 'Pre-A1') && (
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <Languages className="w-3.5 h-3.5 text-tj-text-muted shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold text-tj-text-main">
-                            Bilingual
-                          </p>
-                          <p className="text-[10px] text-tj-text-muted leading-tight">
-                            Show translation under each line
-                          </p>
+                    {/* Bilingual Mode Toggle (A1 / Pre-A1 only) */}
+                    {(cefrLevel === 'A1' || cefrLevel === 'Pre-A1') && (
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Languages className="w-3.5 h-3.5 text-tj-text-muted shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold text-tj-text-main">
+                              Bilingual
+                            </p>
+                            <p className="text-[10px] text-tj-text-muted leading-tight">
+                              Show translation under each line
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={showBilingual}
-                        onClick={() => setShowBilingual(!showBilingual)}
-                        className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer border shrink-0 ${
-                          showBilingual
-                            ? 'bg-tj-primary border-tj-primary'
-                            : 'bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600'
-                        }`}
-                      >
-                        <span
-                          className={`absolute top-0.5 h-4.5 w-4.5 rounded-full bg-white shadow-sm transition-all duration-200 ${
-                            showBilingual ? 'left-[22px]' : 'left-0.5'
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={showBilingual}
+                          onClick={() => setShowBilingual(!showBilingual)}
+                          className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer border shrink-0 ${
+                            showBilingual
+                              ? 'bg-tj-primary border-tj-primary'
+                              : 'bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600'
                           }`}
-                          style={{ width: '1.125rem', height: '1.125rem' }}
-                        />
-                      </button>
-                    </div>
-                  )}
+                        >
+                          <span
+                            className={`absolute top-0.5 h-4.5 w-4.5 rounded-full bg-white shadow-sm transition-all duration-200 ${
+                              showBilingual ? 'left-[22px]' : 'left-0.5'
+                            }`}
+                            style={{ width: '1.125rem', height: '1.125rem' }}
+                          />
+                        </button>
+                      </div>
+                    )}
 
-                  {/* Swap Primary/Translation (A1 bilingual only — Pre-A1 has inserted scaffolding) */}
-                  {canSwapLanguages && onToggleSwap && (
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <ArrowLeftRight className="w-3.5 h-3.5 text-tj-text-muted shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold text-tj-text-main">
-                            Swap Languages
-                          </p>
-                          <p className="text-[10px] text-tj-text-muted leading-tight">
-                            {isSwapped
-                              ? `Showing ${translationLanguage} as primary`
-                              : `Showing ${primaryLanguage} as primary`}
-                          </p>
+                    {/* Swap Primary/Translation (A1 bilingual only — Pre-A1 has inserted scaffolding) */}
+                    {canSwapLanguages && onToggleSwap && (
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <ArrowLeftRight className="w-3.5 h-3.5 text-tj-text-muted shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold text-tj-text-main">
+                              Swap Languages
+                            </p>
+                            <p className="text-[10px] text-tj-text-muted leading-tight">
+                              {isSwapped
+                                ? `Showing ${translationLanguage} as primary`
+                                : `Showing ${primaryLanguage} as primary`}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={isSwapped}
-                        onClick={onToggleSwap}
-                        className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer border shrink-0 ${
-                          isSwapped
-                            ? 'bg-tj-primary border-tj-primary'
-                            : 'bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600'
-                        }`}
-                      >
-                        <span
-                          className={`absolute top-0.5 rounded-full bg-white shadow-sm transition-all duration-200 ${
-                            isSwapped ? 'left-[22px]' : 'left-0.5'
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={isSwapped}
+                          onClick={onToggleSwap}
+                          className={`relative h-6 w-11 rounded-full transition-colors cursor-pointer border shrink-0 ${
+                            isSwapped
+                              ? 'bg-tj-primary border-tj-primary'
+                              : 'bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600'
                           }`}
-                          style={{ width: '1.125rem', height: '1.125rem' }}
-                        />
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Zen Mode */}
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Eye className="w-3.5 h-3.5 text-tj-text-muted shrink-0" />
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-tj-text-main">
-                          Zen Mode
-                        </p>
-                        <p className="text-[10px] text-tj-text-muted leading-tight">
-                          Distraction-free fullscreen reading
-                        </p>
+                        >
+                          <span
+                            className={`absolute top-0.5 rounded-full bg-white shadow-sm transition-all duration-200 ${
+                              isSwapped ? 'left-[22px]' : 'left-0.5'
+                            }`}
+                            style={{ width: '1.125rem', height: '1.125rem' }}
+                          />
+                        </button>
                       </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsSettingsModalOpen(false);
-                        onToggleZen();
-                      }}
-                      className="px-3 h-8 text-xs font-semibold rounded-xl border flex items-center gap-1.5 cursor-pointer transition-all bg-tj-primary-light hover:bg-tj-primary-border dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover border-tj-primary-border shrink-0"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>Enter</span>
-                    </button>
+                    )}
                   </div>
-                </div>
+                )}
 
                 {/* TEXT SECTION */}
                 <div className="space-y-3 border-t border-tj-border-main pt-4">

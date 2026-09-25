@@ -1,28 +1,76 @@
 {
-  "lastFetchTime": 1790150775295,
+  "lastFetchTime": 1790324481040,
   "stories": [
     {
-      "id": "sxgox97k5slmoxv",
-      "cover": "sxgox97k5slmoxv_bvlbfllzv9.jpg",
-      "title": "ระบบที่พังทลาย หัวใจที่เปิดกว้าง: ทบทวนบาปเจ็ดประการผ่านมุมมองของนักบุญฟรังซีส พระสังฆราชฟรังซิส และริชาร์ด โรร์",
-      "language": "Thai",
+      "id": "sinec80jbb28lxv",
+      "cover": "sinec80jbb28lxv_ggbrx5xktl.jpg",
+      "title": "Le Surhumain et l’Arahant : l’écart irréconciliable entre le vitalisme de Nietzsche et la libération bouddhique",
+      "language": "French",
       "translationLanguage": "English",
       "cefrLevel": "B2",
-      "genre": "meditative",
-      "totalChapters": 18,
-      "createdAt": "2026-09-23T02:49:31.205Z",
+      "genre": "philosophy",
+      "totalChapters": 10,
+      "createdAt": "2026-09-24T05:58:42.535Z",
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
-      "model": "z-ai/glm-5.3-flash",
+      "model": "~deepseek/deepseek-flash-latest",
+      "ratings": null,
+      "totalReads": 0,
+      "completedBy": {},
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 4234,
+      "description": "This analytical work contrasts Nietzsche’s vitalist affirmation of suffering and the self with the Buddhist path of non-self, cessation of craving, and liberation from saṃsāra. Across ten accessible French sections designed for CEFR B2 readers, it examines four central clashes: the metaphysics of selfhood, the meaning of suffering, the teleology of desire, and the ethics of compassion and eternal recurrence. The result is a clear, faithful guide to two irreconcilable post-theistic responses to the modern crisis of meaning.",
+      "updated": "2026-09-24 06:04:54.887Z"
+    },
+    {
+      "id": "st0wkz3y3rr68px",
+      "cover": "st0wkz3y3rr68px_komumzmb8b.jpg",
+      "title": "สังคมที่แตกแยก: กับดักสมัยใหม่ 7 ประการ และหนทางสร้างใหม่ของเรา",
+      "language": "Thai",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "social_cultural_issues",
+      "totalChapters": 18,
+      "createdAt": "2026-09-24T03:41:39.807Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "xiaomi/mimo-v2.6-pro",
       "ratings": null,
       "totalReads": 0,
       "completedBy": {},
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 18,
-      "wordCount": 9921,
-      "description": "This meditative analytical booklet re-examines the seven deadly sins not as private moral failures but as patterns embedded in modern systems, guided by St. Francis of Assisi, Pope Francis, and Richard Rohr. Each of the 18 short contemplative chapters pairs a critique of contemporary society with a practical, life-giving alternative, written in clear Thai at CEFR B2 level for slow, reflective reading.",
-      "updated": "2026-09-23 02:56:56.167Z"
+      "wordCount": 8564,
+      "description": "This analytical work reframes the traditional seven vices as seven modern social traps embedded in institutions, markets, and digital systems — from the self-made-winner myth and GDP-driven growth to algorithmic division, punitive justice, information overload, disposable culture, and the commodification of people and nature. Each trap is examined through cause-and-effect analysis and a real institutional example, then paired with a concrete alternative and practical actions such as right-to-repair initiatives, restorative circles, mutual aid, and care-economy models. Written in clear, accessible Thai, it closes with historic models of cultural change and five daily habits that connect personal choices to larger policy reform.",
+      "updated": "2026-09-24 03:55:48.445Z"
+    },
+    {
+      "id": "sm9mfcyfewc4evv",
+      "cover": "sm9mfcyfewc4evv_3l3gce36ud.jpg",
+      "title": "The Day of the Flood",
+      "language": "th",
+      "translationLanguage": "",
+      "cefrLevel": "A1",
+      "genre": "sliceoflife",
+      "totalChapters": 1,
+      "createdAt": "2026-09-23T11:26:31.665Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "",
+      "ratings": null,
+      "totalReads": 0,
+      "completedBy": {},
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 0,
+      "wordCount": 0,
+      "description": "Meetang can't go to school because of a flood.",
+      "updated": "2026-09-23 11:26:43.354Z",
+      "embedUrl": "https://share.gemini.google/9BCrSuk53IkM",
+      "sourceType": "gemini_storybook"
     },
     {
       "id": "s4iavqcuif7go4w",
@@ -37,15 +85,19 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "meta/muse-spark-1.3-contributor",
-      "ratings": null,
-      "totalReads": 0,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 15,
       "wordCount": 5826,
       "description": "A night-shift supervisor moves into discounted Room 409, cuts the sai-sin thread tied to his steel bed, and awakens a phi tai hong factory worker who doesn't know his shift has ended. A slow-burn Thai apartment horror about industrial exhaustion, paper-thin walls, and urban isolation. Suspenseful, melancholic, and culturally grounded for B2 readers.",
-      "updated": "2026-09-22 04:11:52.114Z"
+      "updated": "2026-09-23 09:55:04.643Z"
     },
     {
       "id": "s1ymy6gsyfplzca",
@@ -1130,15 +1182,19 @@
       "isCompleted": true,
       "creatorId": "kjksljovpk623jy",
       "model": "deepseek/deepseek-v4-pro",
-      "ratings": null,
-      "totalReads": 0,
-      "completedBy": {},
+      "ratings": {
+        "kjksljovpk623jy": 3
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
       "isPublic": true,
       "copyrightFlag": false,
       "chaptersCount": 12,
       "wordCount": 6788,
       "description": "This book introduces ten major ethical frameworks—from Aristotelian virtue ethics and Kantian deontology to Ubuntu and Daoist natural harmony—in clear, accessible Thai. Each chapter explains a framework’s core claims, examples, strengths, and limitations, followed by a comparative closing chapter that helps readers reflect on moral choices in daily life. It is designed for CEFR B1 learners who want to build both philosophical literacy and Thai reading skills.",
-      "updated": "2026-08-28 01:05:37.744Z"
+      "updated": "2026-09-23 13:10:04.176Z"
     },
     {
       "id": "s1h4396f9vq2stk",
