@@ -14,6 +14,7 @@ import { useUIStore } from '../../store/uiStore';
 // Firestore import removed to operate in-memory
 import {
   type Chapter,
+  getLineHeightMultiplier,
   type Story,
   SUPPORTED_LANGUAGES,
   type VocabularyTerm,
@@ -57,7 +58,10 @@ export default function ChapterEditForm({
   const [isGeneratingGlossary, setIsGeneratingGlossary] =
     useState<boolean>(false);
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
-  const { translationTargetLanguage, defaultStoryModel } = useUIStore();
+  const { translationTargetLanguage, defaultStoryModel, readerLineSpacing } =
+    useUIStore();
+  const isThai = (story.language || '').toLowerCase().includes('thai');
+  const editLineHeight = getLineHeightMultiplier(readerLineSpacing, isThai);
   const [selectedModel, setSelectedModel] = useState<string>(
     defaultStoryModel || '~deepseek/deepseek-flash-latest',
   );
@@ -267,7 +271,7 @@ export default function ChapterEditForm({
           value={editContent}
           onChange={(e) => setEditContent(e.target.value)}
           rows={12}
-          style={{ fontSize: `${fontSize}px`, lineHeight: 1.6 }}
+          style={{ fontSize: `${fontSize}px`, lineHeight: editLineHeight }}
           className={`w-full p-2 bg-transparent border border-transparent border-b-tj-border-main focus:border-tj-primary focus:rounded focus:outline-none focus:ring-0 transition-all resize-y font-serif`}
           placeholder="Chapter narrative content..."
         />

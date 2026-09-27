@@ -323,6 +323,26 @@ export interface SRSRecord {
 
 export type HighlightColor = 'yellow' | 'green' | 'blue' | 'purple' | 'pink';
 
+export type ReaderLineSpacing = 'tight' | 'normal' | 'relaxed' | 'loose';
+
+export function getLineHeightMultiplier(
+  spacing: ReaderLineSpacing = 'normal',
+  isThai = false,
+): number {
+  const thaiOffset = isThai ? 0.2 : 0;
+  switch (spacing) {
+    case 'tight':
+      return 1.4 + thaiOffset;
+    case 'relaxed':
+      return 1.9 + thaiOffset;
+    case 'loose':
+      return 2.2 + thaiOffset;
+    case 'normal':
+    default:
+      return 1.6 + thaiOffset;
+  }
+}
+
 export interface StoryHighlight {
   id?: string;
   user?: string;

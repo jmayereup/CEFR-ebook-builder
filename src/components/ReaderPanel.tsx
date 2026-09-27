@@ -31,7 +31,9 @@ import {
   type Chapter,
   getAverageRating,
   getLanguageCodeFromName,
+  getLineHeightMultiplier,
   type HighlightColor,
+  type ReaderLineSpacing,
   type Story,
   type StoryHighlight,
   SUPPORTED_LANGUAGES,
@@ -302,6 +304,8 @@ export default function ReaderPanel({
   const setAlignment = useUIStore((state) => state.setReaderTextAlignment);
   const columnWidth = useUIStore((state) => state.readerColumnWidth);
   const setColumnWidth = useUIStore((state) => state.setReaderColumnWidth);
+  const lineSpacing = useUIStore((state) => state.readerLineSpacing);
+  const setLineSpacing = useUIStore((state) => state.setReaderLineSpacing);
   const isPreA1OrA1 = story.cefrLevel === 'Pre-A1' || story.cefrLevel === 'A1';
   const [showBilingual, setShowBilingual] = useState<boolean>(isPreA1OrA1);
   const showLineAudio = isPreA1OrA1 || showBilingual;
@@ -448,6 +452,20 @@ export default function ReaderPanel({
   const isTranslationThai =
     effectiveTranslationLanguage.toLowerCase().includes('thai') ||
     getLanguageCodeFromName(effectiveTranslationLanguage) === 'th';
+
+  const primaryLineHeight = getLineHeightMultiplier(lineSpacing, isPrimaryThai);
+  const translationLineHeight = getLineHeightMultiplier(
+    lineSpacing,
+    isTranslationThai,
+  );
+  const paragraphSpacingClass =
+    lineSpacing === 'tight'
+      ? 'space-y-4'
+      : lineSpacing === 'relaxed'
+        ? 'space-y-7'
+        : lineSpacing === 'loose'
+          ? 'space-y-8'
+          : 'space-y-6';
 
   const chapterWords = useMemo(() => {
     const words: {
@@ -1894,6 +1912,8 @@ export default function ReaderPanel({
                       setUseSerif={setUseSerif}
                       fontSize={fontSize}
                       setFontSize={setFontSize}
+                      lineSpacing={lineSpacing}
+                      setLineSpacing={setLineSpacing}
                       alignment={alignment}
                       setAlignment={setAlignment}
                       columnWidth={columnWidth}
@@ -2051,10 +2071,10 @@ export default function ReaderPanel({
                       lang={getLanguageCodeFromName(effectivePrimaryLanguage)}
                       onMouseUp={handleTextSelection}
                       onTouchEnd={handleTextSelection}
-                      className={`space-y-6 select-text ${useSerif ? 'font-serif' : 'font-sans'}`}
+                      className={`${paragraphSpacingClass} select-text ${useSerif ? 'font-serif' : 'font-sans'}`}
                       style={{
                         fontSize: `${fontSize}px`,
-                        lineHeight: isPrimaryThai ? 1.8 : 1.6,
+                        lineHeight: primaryLineHeight,
                       }}
                     >
                       {effectiveDisplayParagraphs.map((dp, idx) => {
@@ -2201,9 +2221,7 @@ export default function ReaderPanel({
                                       translate="yes"
                                       style={{
                                         fontSize: `${fontSize}px`,
-                                        lineHeight: isTranslationThai
-                                          ? 1.8
-                                          : 1.6,
+                                        lineHeight: translationLineHeight,
                                       }}
                                       className="text-tj-text-muted pl-4 border-l-2 border-tj-border-main select-text"
                                     >
@@ -2249,7 +2267,7 @@ export default function ReaderPanel({
                                   translate="yes"
                                   style={{
                                     fontSize: `${fontSize}px`,
-                                    lineHeight: isTranslationThai ? 1.8 : 1.6,
+                                    lineHeight: translationLineHeight,
                                   }}
                                   className="text-tj-text-muted pl-4 border-l-2 border-tj-border-main select-text"
                                 >
