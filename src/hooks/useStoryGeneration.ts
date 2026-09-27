@@ -488,7 +488,7 @@ export const useStoryGeneration = (
 
       if (onGenerationSuccess) {
         onGenerationSuccess(
-          config.model || 'z-ai/glm-5.3-flash',
+          config.model || '~z-ai/glm-flash-latest',
           estimatedCreditsCost,
           true,
         );

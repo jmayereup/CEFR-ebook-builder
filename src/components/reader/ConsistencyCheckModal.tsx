@@ -453,17 +453,23 @@ export default function ConsistencyCheckModal({
                               {selectedModel} (Active Model)
                             </option>
                           )}
-                        {FRONTIER_LATEST_MODELS.map((m) => {
-                          const priceLabel = formatModelPriceIndicator(
-                            m.inputCost1M,
-                            m.outputCost1M,
-                          );
-                          return (
-                            <option key={m.id} value={m.id}>
-                              {m.name} {priceLabel}
-                            </option>
-                          );
-                        })}
+                        {[...FRONTIER_LATEST_MODELS]
+                          .sort((a, b) =>
+                            a.name.localeCompare(b.name, undefined, {
+                              sensitivity: 'base',
+                            }),
+                          )
+                          .map((m) => {
+                            const priceLabel = formatModelPriceIndicator(
+                              m.inputCost1M,
+                              m.outputCost1M,
+                            );
+                            return (
+                              <option key={m.id} value={m.id}>
+                                {m.name} {priceLabel}
+                              </option>
+                            );
+                          })}
                         <option value="custom">
                           ⚙️ Enter Custom OpenRouter Model ID...
                         </option>
@@ -473,14 +479,15 @@ export default function ConsistencyCheckModal({
                         <option value="~deepseek/deepseek-flash-latest">
                           DeepSeek Flash Latest (Recommended)
                         </option>
-                        <option value="z-ai/glm-5.3-flash">
-                          GLM 5.3 Flash
+                        <option value="~z-ai/glm-flash-latest">
+                          GLM Flash Latest
                         </option>
                         <option value="~google/gemini-flash-latest">
                           Gemini Flash Latest
                         </option>
                         {story.model &&
                           story.model !== '~deepseek/deepseek-flash-latest' &&
+                          story.model !== '~z-ai/glm-flash-latest' &&
                           story.model !== 'z-ai/glm-5.3-flash' &&
                           story.model !== '~google/gemini-flash-latest' && (
                             <option value={story.model}>

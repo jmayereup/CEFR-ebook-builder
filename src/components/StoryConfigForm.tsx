@@ -128,13 +128,13 @@ export default function StoryConfigForm({
       }
       return preferred;
     }
-    return 'z-ai/glm-5.3-flash';
+    return '~z-ai/glm-flash-latest';
   });
   const [thinkingOption, setThinkingOption] = useState(() => {
     const initialModel =
       isByokActive || isAdmin
         ? defaultStoryModel || '~deepseek/deepseek-flash-latest'
-        : 'z-ai/glm-5.3-flash';
+        : '~z-ai/glm-flash-latest';
     const support = getModelThinkingSupport(initialModel);
     return support.defaultOption;
   });
@@ -245,7 +245,7 @@ export default function StoryConfigForm({
     }
     if (!isByokActive && !isAdmin) {
       if (!FREE_MODEL_IDS.has(selectedModel)) {
-        const newModel = 'z-ai/glm-5.3-flash';
+        const newModel = '~z-ai/glm-flash-latest';
         setSelectedModel(newModel);
 
         // Auto-update thinkingOption for the new model
@@ -377,7 +377,7 @@ export default function StoryConfigForm({
         !selectedModel.endsWith(':free')
       ) {
         setDraftError(
-          'Free tier accounts can only generate stories using Free Tier models (GLM 5.3 Flash or Muse Spark 1.3 Contributor). Configure your own OpenRouter API key in Settings to use frontier models.',
+          'Free tier accounts can only generate stories using Free Tier models (GLM Flash Latest or Muse Spark 1.3 Contributor). Configure your own OpenRouter API key in Settings to use frontier models.',
         );
         setIsDraftingOutline(false);
         return;

@@ -508,23 +508,30 @@ export default function ChapterSidebar({
                           {freeModels.map((m) => (
                             <option key={m.id} value={m.id}>
                               {m.name}
+                              {m.bestFor ? ` (${m.bestFor})` : ''}
                             </option>
                           ))}
                         </>
                       );
                     }
 
-                    return FRONTIER_LATEST_MODELS.map((m) => {
-                      const priceLabel = formatModelPriceIndicator(
-                        m.inputCost1M,
-                        m.outputCost1M,
-                      );
-                      return (
-                        <option key={m.id} value={m.id}>
-                          {m.name} {priceLabel}
-                        </option>
-                      );
-                    });
+                    return [...FRONTIER_LATEST_MODELS]
+                      .sort((a, b) =>
+                        a.name.localeCompare(b.name, undefined, {
+                          sensitivity: 'base',
+                        }),
+                      )
+                      .map((m) => {
+                        const priceLabel = formatModelPriceIndicator(
+                          m.inputCost1M,
+                          m.outputCost1M,
+                        );
+                        return (
+                          <option key={m.id} value={m.id}>
+                            {m.name} {priceLabel}
+                          </option>
+                        );
+                      });
                   })()}
                 </select>
               </div>
