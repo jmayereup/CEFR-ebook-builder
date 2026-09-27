@@ -12,7 +12,11 @@ import {
   X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { AI_MODELS, FRONTIER_LATEST_MODELS } from '../../constants/models';
+import {
+  AI_MODELS,
+  FRONTIER_LATEST_MODELS,
+  formatModelPriceIndicator,
+} from '../../constants/models';
 import { useAuthStore } from '../../store/authStore';
 import { useUIStore } from '../../store/uiStore';
 import type {
@@ -57,9 +61,11 @@ export default function ConsistencyCheckModal({
 
   const [customIssuePrompt, setCustomIssuePrompt] = useState(initialPrompt);
   const [submittedPrompt, setSubmittedPrompt] = useState('');
-  const [selectedModel, setSelectedModel] = useState<string>(
-    story.model || defaultStoryModel || '~deepseek/deepseek-flash-latest',
-  );
+  const [selectedModel, setSelectedModel] = useState<string>(() => {
+    return story.model || defaultStoryModel || '~deepseek/deepseek-flash-latest';
+  });
+  const [isCustomModelMode, setIsCustomModelMode] = useState<boolean>(false);
+  const [customModelInput, setCustomModelInput] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
@@ -83,19 +89,18 @@ export default function ConsistencyCheckModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // When model or default changes
+  // Sync initialPrompt and ensure selectedModel has a default on open
   useEffect(() => {
-    if (customOpenRouterKey && defaultStoryModel) {
-      setSelectedModel(defaultStoryModel);
+    if (isOpen) {
+      if (initialPrompt) {
+        setCustomIssuePrompt(initialPrompt);
+      }
+      setSelectedModel((prev) => {
+        if (prev) return prev;
+        return defaultStoryModel || story.model || '~deepseek/deepseek-flash-latest';
+      });
     }
-  }, [customOpenRouterKey, defaultStoryModel, isOpen]);
-
-  // Sync initialPrompt when opened
-  useEffect(() => {
-    if (isOpen && initialPrompt) {
-      setCustomIssuePrompt(initialPrompt);
-    }
-  }, [isOpen, initialPrompt]);
+  }, [isOpen, initialPrompt, defaultStoryModel, story.model]);
 
   // Whenever a proposal is loaded, select all edits by default
   useEffect(() => {
@@ -415,33 +420,105 @@ export default function ConsistencyCheckModal({
 
           {/* Configuration & Trigger Bar */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 bg-tj-bg-recessed/60 border border-tj-border-main rounded-xl">
-            <div className="flex items-center gap-2 flex-1 max-w-sm">
-              <label className="text-[11px] font-bold text-tj-text-muted whitespace-nowrap">
-                Model:
-              </label>
-              <select
-                value={selectedModel}
-                disabled={!!customOpenRouterKey || isLoading}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                className="w-full text-xs p-2 rounded-lg border border-tj-border-main bg-tj-bg-card text-tj-text-main focus:outline-none cursor-pointer disabled:opacity-80"
-              >
-                {customOpenRouterKey && (
-                  <option value={selectedModel}>
-                    {FRONTIER_LATEST_MODELS.find((m) => m.id === selectedModel)
-                      ?.name ||
-                      AI_MODELS.find((m) => m.id === selectedModel)?.name ||
-                      selectedModel}{' '}
-                    (BYOK Model)
-                  </option>
-                )}
-                <option value="~deepseek/deepseek-flash-latest">
-                  DeepSeek Flash Latest (Recommended)
-                </option>
-                <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
-                <option value="anthropic/claude-3.5-sonnet">
-                  Claude 3.5 Sonnet
-                </option>
-              </select>
+            <div className="flex-1 max-w-md space-y-1.5">
+              <div className="flex items-center gap-2">
+                <label className="text-[11px] font-bold text-tj-text-muted whitespace-nowrap">
+                  Model:
+                </label>
+                <div className="flex-1">
+                  <select
+                    value={isCustomModelMode ? 'custom' : selectedModel}
+                    disabled={isLoading}
+                    onChange={(e) => {
+                      if (e.target.value === 'custom') {
+                        setIsCustomModelMode(true);
+                        if (!customModelInput) {
+                          setCustomModelInput(selectedModel);
+                        }
+                      } else {
+                        setIsCustomModelMode(false);
+                        setSelectedModel(e.target.value);
+                      }
+                    }}
+                    className="w-full text-xs p-2 rounded-lg border border-tj-border-main bg-tj-bg-card text-tj-text-main focus:outline-none cursor-pointer"
+                  >
+                    {customOpenRouterKey ? (
+                      <>
+                        {/* Curated BYOK Frontier & Latest models */}
+                        {!isCustomModelMode &&
+                          !FRONTIER_LATEST_MODELS.some(
+                            (m) => m.id === selectedModel,
+                          ) && (
+                            <option value={selectedModel}>
+                              {selectedModel} (Active Model)
+                            </option>
+                          )}
+                        {FRONTIER_LATEST_MODELS.map((m) => {
+                          const priceLabel = formatModelPriceIndicator(
+                            m.inputCost1M,
+                            m.outputCost1M,
+                          );
+                          return (
+                            <option key={m.id} value={m.id}>
+                              {m.name} {priceLabel}
+                            </option>
+                          );
+                        })}
+                        <option value="custom">
+                          ⚙️ Enter Custom OpenRouter Model ID...
+                        </option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="~deepseek/deepseek-flash-latest">
+                          DeepSeek Flash Latest (Recommended)
+                        </option>
+                        <option value="z-ai/glm-5.3-flash">
+                          GLM 5.3 Flash
+                        </option>
+                        <option value="~google/gemini-flash-latest">
+                          Gemini Flash Latest
+                        </option>
+                        {story.model &&
+                          story.model !== '~deepseek/deepseek-flash-latest' &&
+                          story.model !== 'z-ai/glm-5.3-flash' &&
+                          story.model !== '~google/gemini-flash-latest' && (
+                            <option value={story.model}>
+                              {story.model} (Story Model)
+                            </option>
+                          )}
+                      </>
+                    )}
+                  </select>
+                </div>
+              </div>
+
+              {isCustomModelMode && (
+                <div className="flex items-center gap-1.5 pl-14">
+                  <input
+                    type="text"
+                    placeholder="e.g. anthropic/claude-3.7-sonnet"
+                    value={customModelInput}
+                    onChange={(e) => {
+                      setCustomModelInput(e.target.value);
+                      setSelectedModel(e.target.value.trim());
+                    }}
+                    className="flex-1 text-xs px-2.5 py-1.5 rounded-lg border border-tj-border-main bg-tj-bg-card text-tj-text-main font-mono focus:border-tj-primary focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomModelMode(false);
+                      setSelectedModel(
+                        defaultStoryModel || '~deepseek/deepseek-flash-latest',
+                      );
+                    }}
+                    className="text-[10px] text-tj-text-muted hover:text-tj-text-main hover:underline bg-transparent border-0 cursor-pointer p-0"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
 
             <button
