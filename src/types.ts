@@ -39,6 +39,24 @@ export interface ConsistencyAudit {
   createdAt: string;
 }
 
+export interface TargetedEdit {
+  chapterNumber: number;
+  findText: string;
+  replaceWith: string;
+  explanation: string;
+}
+
+export interface ConsistencyIssue {
+  issueDescription: string;
+  severity: 'low' | 'medium' | 'high';
+  edits: TargetedEdit[];
+}
+
+export interface ConsistencyEditProposal {
+  issuesSummary: string;
+  issues: ConsistencyIssue[];
+}
+
 export interface Story {
   id: string;
   cover?: string;

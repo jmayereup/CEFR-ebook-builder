@@ -229,7 +229,7 @@ Configured via `express-rate-limit` in [src/server/lib/proxy.ts](file:///home/jm
 | `/api/stories/generate-batch` | `tj-gen/src/routes/batch-chapter.ts` | Background batch generation of multiple chapters |
 | `/api/stories/generate-glossary` | `tj-gen/src/routes/glossary.ts` | Extracts vocabulary definitions, CEFR ratings, and context sentences |
 | `/api/stories/generate-cover` | `tj-gen/src/routes/cover.ts` | Concept prompt generation, OpenRouter image call, Sharp resizing, R2 upload |
-| `/api/stories/maintenance` | `tj-gen/src/routes/maintenance.ts` | Story bible updates, consistency audits, tone refreshes |
+| `/api/stories/maintenance` | `tj-gen/src/routes/maintenance.ts` | Story bible updates, consistency audits, tone refreshes, and surgical multi-chapter consistency edits (`/propose-consistency-edits`) |
 | `/api/stories/classify-ip` | `tj-gen/src/routes/classify.ts` | Lightweight IP classifier for manually created/scratch outlines |
 | `/api/translate` | `tj-gen/src/routes/translate.ts` | Inline sentence/phrase translations during reading |
 
