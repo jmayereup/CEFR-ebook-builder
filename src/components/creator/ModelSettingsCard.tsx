@@ -53,10 +53,14 @@ export default function ModelSettingsCard({
 }: ModelSettingsCardProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const byokModelName =
-    FRONTIER_LATEST_MODELS.find((m) => m.id === selectedModel)?.name ||
-    AI_MODELS.find((m) => m.id === selectedModel)?.name ||
-    selectedModel;
+  const selectedModelObj =
+    AI_MODELS.find((m) => m.id === selectedModel) ||
+    FRONTIER_LATEST_MODELS.find((m) => m.id === selectedModel);
+  const byokModelName = selectedModelObj?.name || selectedModel;
+  const selectedModelBestFor =
+    selectedModelObj && 'bestFor' in selectedModelObj
+      ? selectedModelObj.bestFor
+      : undefined;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-tj-bg-recessed/50 border border-tj-border-main rounded-2xl animate-fade-in">
@@ -89,27 +93,34 @@ export default function ModelSettingsCard({
                   {byokModelName} (Custom Model)
                 </option>
               )}
-              {FRONTIER_LATEST_MODELS.map((m) => {
-                const priceLabel = formatModelPriceIndicator(
-                  m.inputCost1M,
-                  m.outputCost1M,
-                );
-                const ageBadge = isMuseModel(m.id) ? ' [18+]' : '';
-                return (
-                  <option key={m.id} value={m.id}>
-                    {m.name}
-                    {ageBadge} {priceLabel}
-                  </option>
-                );
-              })}
+              {[...FRONTIER_LATEST_MODELS]
+                .sort((a, b) =>
+                  a.name.localeCompare(b.name, undefined, {
+                    sensitivity: 'base',
+                  }),
+                )
+                .map((m) => {
+                  const priceLabel = formatModelPriceIndicator(
+                    m.inputCost1M,
+                    m.outputCost1M,
+                  );
+                  const ageBadge = isMuseModel(m.id) ? ' [18+]' : '';
+                  return (
+                    <option key={m.id} value={m.id}>
+                      {m.name}
+                      {ageBadge} {priceLabel}
+                    </option>
+                  );
+                })}
             </>
           ) : (
             (() => {
               const isFreeModelLocal = (id: string) =>
                 FREE_MODEL_IDS.has(id) || id.endsWith(':free');
 
-              // Free tier non-BYOK users only see free models (Muse Spark 1.3 Contributor and GLM 5.3 Flash)
-              const modelsToDisplay = !isAdmin
+              const isFreeTier = !isAdmin && !isByokActive;
+              // Free tier non-BYOK users only see free models (Muse Spark 1.3 Contributor and GLM Flash Latest)
+              const modelsToDisplay = isFreeTier
                 ? AI_MODELS.filter((m) => isFreeModelLocal(m.id))
                 : AI_MODELS;
 
@@ -117,10 +128,13 @@ export default function ModelSettingsCard({
                 const isFree = isFreeModelLocal(model.id);
                 const ageBadge = isMuseModel(model.id) ? ' [18+]' : '';
                 const costLabel = isFree ? ' (Free)' : '';
+                const bestForLabel =
+                  isFreeTier && model.bestFor ? ` (${model.bestFor})` : '';
 
                 return (
                   <option key={model.id} value={model.id}>
                     {model.name}
+                    {bestForLabel}
                     {ageBadge}
                     {costLabel}
                   </option>
@@ -135,6 +149,12 @@ export default function ModelSettingsCard({
             })()
           )}
         </select>
+        {!isByokActive && !isAdmin && selectedModelBestFor && (
+          <p className="mt-1.5 text-[11px] font-medium text-tj-text-muted flex items-center gap-1.5 animate-fade-in">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-tj-primary" />
+            <span>{selectedModelBestFor}</span>
+          </p>
+        )}
       </div>
 
       {/* Cover Artwork Generator */}

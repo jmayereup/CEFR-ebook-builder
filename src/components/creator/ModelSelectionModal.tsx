@@ -23,20 +23,25 @@ const MODEL_DETAILS: Record<
     languages: string;
   }
 > = {
+  '~z-ai/glm-flash-latest': {
+    verdict:
+      'Free high-speed multimodal reasoning model from Z.ai. Delivers efficient generation, factual clarity, structured explanations, and responsive chapter creation.',
+    languages: 'Non-Fiction (all supported languages)',
+  },
   'z-ai/glm-5.3-flash': {
     verdict:
-      'Free high-speed multimodal reasoning model from Z.ai. Delivers efficient generation, rich multilingual prose, and responsive chapter creation.',
-    languages: 'All supported languages',
+      'Free high-speed multimodal reasoning model from Z.ai. Delivers efficient generation, factual clarity, structured explanations, and responsive chapter creation.',
+    languages: 'Non-Fiction (all supported languages)',
   },
   'meta/muse-spark-1.3-contributor': {
     verdict:
       'Free tier high-speed multimodal reasoning model from Meta. Delivers structured long-horizon narrative tracking and creative chapter creation. (Note: Meta may retain prompts and completions on contributor endpoints to improve models).',
-    languages: 'All supported languages',
+    languages: 'Fiction & narrative storytelling',
   },
   'meta/muse-spark-1.3': {
     verdict:
-      'Meta flagship frontier reasoning model for BYOK users. Superior long-horizon coherence, complex narrative pacing, and expressive character voice.',
-    languages: 'All supported languages',
+      'Meta flagship frontier reasoning model for BYOK users. Superior long-horizon coherence, complex narrative pacing, expressive character voice, and creative fiction.',
+    languages: 'Fiction & complex narrative storytelling',
   },
   '~deepseek/deepseek-flash-latest': {
     verdict:
@@ -64,16 +69,22 @@ export default function ModelSelectionModal({
   const currentUser = useAuthStore((state) => state.currentUser);
   const isAdmin = currentUser?.isAdmin === true;
   const hasKey = !!customOpenRouterKey;
+  const isFreeTier = !isAdmin && !hasKey;
 
   if (!isOpen) return null;
 
   const isFreeModelLocal = (id: string) =>
     FREE_MODEL_IDS.has(id) || id.endsWith(':free');
 
-  const modelsToDisplay =
-    !isAdmin && !hasKey
+  const modelsToDisplay = (
+    isFreeTier
       ? AI_MODELS.filter((m) => isFreeModelLocal(m.id))
-      : AI_MODELS;
+      : AI_MODELS
+  )
+    .slice()
+    .sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
+    );
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm">
@@ -108,7 +119,7 @@ export default function ModelSelectionModal({
         <div className="space-y-4 text-xs font-sans text-tj-text-main overflow-y-auto pr-1 flex-1">
           <p className="leading-relaxed text-tj-text-muted">
             {!isAdmin && !hasKey
-              ? 'Choose between free AI models (GLM 5.3 Flash and Muse Spark 1.3 Contributor) for story generation on the free tier. To unlock all frontier models (Muse Spark 1.3, DeepSeek Flash Latest, Xiaomi MiMo-V2.6-Pro, Hermes 3, Claude, Gemini, GPT), configure your own OpenRouter API key in Settings.'
+              ? 'Choose between free AI models for story generation: GLM Flash Latest (best for non-fiction) and Muse Spark 1.3 Contributor (best for fiction). To unlock all frontier models (Muse Spark 1.3, DeepSeek Flash Latest, Xiaomi MiMo-V2.6-Pro, Hermes 3, Claude, Gemini, GPT), configure your own OpenRouter API key in Settings.'
               : 'Select an AI model for story generation. Standard Flash models are cost-efficient and fast, while Pro models offer deep narrative nuances and high structural complexity.'}
           </p>
 
@@ -156,6 +167,17 @@ export default function ModelSelectionModal({
                             18+ Required
                           </span>
                         )}
+                        {isFreeTier && model.bestFor && (
+                          <span
+                            className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                              model.bestFor.includes('Non-Fiction')
+                                ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                                : 'bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300'
+                            }`}
+                          >
+                            {model.bestFor}
+                          </span>
+                        )}
                       </div>
                       <p className="text-[10px] text-tj-text-muted mt-0.5 font-mono">
                         ID: {model.id}
@@ -184,9 +206,11 @@ export default function ModelSelectionModal({
                     <div className="flex items-center gap-1 text-tj-text-muted">
                       <Sparkles className="w-3.5 h-3.5 text-tj-primary" />
                       <span>
-                        Best for:{' '}
+                        {isFreeTier ? 'Best for: ' : 'Focus: '}
                         <strong className="text-tj-text-main">
-                          {details.languages}
+                          {isFreeTier
+                            ? details.languages
+                            : 'All supported languages'}
                         </strong>
                       </span>
                     </div>

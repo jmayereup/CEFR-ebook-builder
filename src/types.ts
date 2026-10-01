@@ -39,6 +39,24 @@ export interface ConsistencyAudit {
   createdAt: string;
 }
 
+export interface TargetedEdit {
+  chapterNumber: number;
+  findText: string;
+  replaceWith: string;
+  explanation: string;
+}
+
+export interface ConsistencyIssue {
+  issueDescription: string;
+  severity: 'low' | 'medium' | 'high';
+  edits: TargetedEdit[];
+}
+
+export interface ConsistencyEditProposal {
+  issuesSummary: string;
+  issues: ConsistencyIssue[];
+}
+
 export interface Story {
   id: string;
   cover?: string;
@@ -304,6 +322,26 @@ export interface SRSRecord {
 }
 
 export type HighlightColor = 'yellow' | 'green' | 'blue' | 'purple' | 'pink';
+
+export type ReaderLineSpacing = 'tight' | 'normal' | 'relaxed' | 'loose';
+
+export function getLineHeightMultiplier(
+  spacing: ReaderLineSpacing = 'normal',
+  isThai = false,
+): number {
+  const thaiOffset = isThai ? 0.2 : 0;
+  switch (spacing) {
+    case 'tight':
+      return 1.4 + thaiOffset;
+    case 'relaxed':
+      return 1.9 + thaiOffset;
+    case 'loose':
+      return 2.2 + thaiOffset;
+    case 'normal':
+    default:
+      return 1.6 + thaiOffset;
+  }
+}
 
 export interface StoryHighlight {
   id?: string;

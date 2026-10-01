@@ -12,9 +12,9 @@ The application is built on an abstracted **database-neutral and authentication-
 - **Abstract Service Interfaces**: All database and auth operations are decoupled from vendor-specific SDKs using clean interfaces (`IDatabaseService` and `IAuthService`). This makes it exceptionally easy to port the application to another backend provider (such as Supabase, a custom PostgreSQL database, or any other DB/Auth system) by simply implementing these interfaces.
 
 To swap the backend implementation:
-1. Implement the `IAuthService` interface defined in [src/services/auth/AuthService.ts](file:///home/jmayer/Dev/CEFR-Language-Story-Generator/src/services/auth/AuthService.ts).
-2. Implement the `IDatabaseService` interface defined in [src/services/db/DatabaseService.ts](file:///home/jmayer/Dev/CEFR-Language-Story-Generator/src/services/db/DatabaseService.ts).
-3. Update the active provider export in [src/services/auth/index.ts](file:///home/jmayer/Dev/CEFR-Language-Story-Generator/src/services/auth/index.ts) and [src/services/db/index.ts](file:///home/jmayer/Dev/CEFR-Language-Story-Generator/src/services/db/index.ts).
+1. Implement the `IAuthService` interface defined in [src/services/auth/AuthService.ts](file:///home/jmayer/Dev/teacherjake.com/tj-books/src/services/auth/AuthService.ts).
+2. Implement the `IDatabaseService` interface defined in [src/services/db/DatabaseService.ts](file:///home/jmayer/Dev/teacherjake.com/tj-books/src/services/db/DatabaseService.ts).
+3. Update the active provider export in [src/services/auth/index.ts](file:///home/jmayer/Dev/teacherjake.com/tj-books/src/services/auth/index.ts) and [src/services/db/index.ts](file:///home/jmayer/Dev/teacherjake.com/tj-books/src/services/db/index.ts).
 
 ---
 

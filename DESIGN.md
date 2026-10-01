@@ -6,7 +6,7 @@ This document details the unified design system, structural styling conventions,
 
 ## 1. Design Tokens & Color Palette
 
-The primary brand colors align with an organic **monochrome dark slate** and **mint green** theme. Mapped design tokens are declared in [index.css](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/index.css) under `:root` and exposed globally.
+The primary brand colors align with an organic **monochrome dark slate** and **mint green** theme. Mapped design tokens are declared in [index.css](file:///home/jmayer/Dev/teacherjake.com/tj-books/src/index.css) under `:root` and exposed globally.
 
 To maintain consistency and prevent hardcoded colors in React components, the Tailwind v4 theme block maps to these variables:
 
@@ -39,7 +39,7 @@ To maintain consistency and prevent hardcoded colors in React components, the Ta
 
 ## 2. Natively Supported Dark Mode
 
-Dark mode mappings are handled dynamically at the CSS level inside `.dark` selector blocks in [index.css](file:///home/jmayer/Documents/Dev/CEFR-Language-Story-Generator/src/index.css):
+Dark mode mappings are handled dynamically at the CSS level inside `.dark` selector blocks in [index.css](file:///home/jmayer/Dev/teacherjake.com/tj-books/src/index.css):
 
 ```css
 .dark {

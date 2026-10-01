@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
+import type { ReaderLineSpacing } from '../../types';
 
 interface TTSToolbarProps {
   isSpeaking: boolean;
@@ -37,6 +38,8 @@ interface TTSToolbarProps {
   setUseSerif: (serif: boolean) => void;
   fontSize: number;
   setFontSize: (size: number) => void;
+  lineSpacing?: ReaderLineSpacing;
+  setLineSpacing?: (spacing: ReaderLineSpacing) => void;
   alignment: 'left' | 'center' | 'right' | 'justify';
   setAlignment: (alignment: 'left' | 'center' | 'right' | 'justify') => void;
   columnWidth: 'narrow' | 'medium' | 'wide' | 'full';
@@ -76,6 +79,8 @@ export default function TTSToolbar({
   setUseSerif,
   fontSize,
   setFontSize,
+  lineSpacing = 'normal',
+  setLineSpacing,
   alignment,
   setAlignment,
   columnWidth,
@@ -392,7 +397,8 @@ export default function TTSToolbar({
                 </div>
 
                 {/* READING SECTION */}
-                {((cefrLevel === 'A1' || cefrLevel === 'Pre-A1') ||
+                {(cefrLevel === 'A1' ||
+                  cefrLevel === 'Pre-A1' ||
                   (canSwapLanguages && onToggleSwap)) && (
                   <div className="space-y-3 border-t border-tj-border-main pt-4">
                     <span className="block text-[10px] font-mono uppercase tracking-wider text-tj-text-muted font-bold">
@@ -537,6 +543,98 @@ export default function TTSToolbar({
                       </button>
                     </div>
                   </div>
+
+                  {/* Line Spacing Selector */}
+                  {setLineSpacing && (
+                    <div className="space-y-1.5">
+                      <span className="block text-[10px] font-semibold text-tj-text-muted">
+                        Line Spacing
+                      </span>
+                      <div className="grid grid-cols-4 gap-2">
+                        {(['tight', 'normal', 'relaxed', 'loose'] as const).map(
+                          (spacing) => (
+                            <button
+                              key={spacing}
+                              type="button"
+                              onClick={() => setLineSpacing(spacing)}
+                              className={`py-2 px-1 flex flex-col items-center justify-center gap-1.5 text-[10px] font-semibold rounded-xl border transition-all cursor-pointer ${
+                                lineSpacing === spacing
+                                  ? 'border-tj-primary bg-tj-primary-light dark:bg-tj-primary-light/10 text-tj-primary dark:text-tj-primary-hover font-bold'
+                                  : 'border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+                              }`}
+                              title={`Set line spacing to ${spacing}`}
+                            >
+                              {spacing === 'tight' && (
+                                <svg
+                                  className="w-4 h-4"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <title>Tight Line Spacing</title>
+                                  <line x1="3" y1="8" x2="21" y2="8" />
+                                  <line x1="3" y1="12" x2="21" y2="12" />
+                                  <line x1="3" y1="16" x2="21" y2="16" />
+                                </svg>
+                              )}
+                              {spacing === 'normal' && (
+                                <svg
+                                  className="w-4 h-4"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <title>Normal Line Spacing</title>
+                                  <line x1="3" y1="6" x2="21" y2="6" />
+                                  <line x1="3" y1="12" x2="21" y2="12" />
+                                  <line x1="3" y1="18" x2="21" y2="18" />
+                                </svg>
+                              )}
+                              {spacing === 'relaxed' && (
+                                <svg
+                                  className="w-4 h-4"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <title>Relaxed Line Spacing</title>
+                                  <line x1="3" y1="4" x2="21" y2="4" />
+                                  <line x1="3" y1="12" x2="21" y2="12" />
+                                  <line x1="3" y1="20" x2="21" y2="20" />
+                                </svg>
+                              )}
+                              {spacing === 'loose' && (
+                                <svg
+                                  className="w-4 h-4"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <title>Loose Line Spacing</title>
+                                  <line x1="3" y1="2" x2="21" y2="2" />
+                                  <line x1="3" y1="12" x2="21" y2="12" />
+                                  <line x1="3" y1="22" x2="21" y2="22" />
+                                </svg>
+                              )}
+                              <span className="capitalize">{spacing}</span>
+                            </button>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Text Alignment Selector */}
                   <div className="space-y-1.5">

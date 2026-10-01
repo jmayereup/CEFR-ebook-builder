@@ -21,6 +21,7 @@ import type {
   StoryBible,
 } from '../../types';
 import { buildApiHeaders } from '../../utils/modelUtils';
+import ConsistencyCheckModal from './ConsistencyCheckModal';
 
 interface NarrativeMaintenancePanelProps {
   story: Story;
@@ -65,6 +66,7 @@ export default function NarrativeMaintenancePanel({
   // Consistency Audits States
   const [audits, setAudits] = useState<ConsistencyAudit[]>([]);
   const [isAuditing, setIsAuditing] = useState(false);
+  const [isConsistencyModalOpen, setIsConsistencyModalOpen] = useState(false);
 
   // Tone States
   const [toneGuidance, setToneGuidance] = useState('');
@@ -680,10 +682,34 @@ export default function NarrativeMaintenancePanel({
       {/* SUBTAB: MIRROR AUDITS */}
       {activeSubTab === 'audits' && (
         <div className="space-y-6 font-sans">
+          {/* Targeted Consistency Check & Fixes Card */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-tj-mint/20 border border-tj-success/20 rounded-xl">
+            <div className="max-w-xl">
+              <h4 className="text-xs font-bold text-tj-mint-dark uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Targeted Continuity Check & Surgical Edits
+              </h4>
+              <p className="text-[11px] text-tj-text-muted mt-1 leading-relaxed">
+                Run an AI consistency scan across all chapters, or describe a custom
+                problem (e.g., character names, timeline slips, forgotten items).
+                Review targeted find-and-replace edits with a diff before applying.
+              </p>
+            </div>
+
+            <button
+              disabled={!isOnline || !story.chapters || story.chapters.length === 0}
+              onClick={() => setIsConsistencyModalOpen(true)}
+              className="flex items-center justify-center gap-1.5 px-4 py-2 bg-tj-primary hover:bg-tj-primary-hover text-white text-xs font-bold rounded-xl transition-all cursor-pointer border-0 shrink-0 disabled:opacity-50"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Check & Fix Continuity</span>
+            </button>
+          </div>
+
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-tj-primary-light/50 dark:bg-tj-primary-light/10 border border-tj-primary-border rounded-xl">
             <div className="max-w-xl">
               <h4 className="text-xs font-bold text-tj-text-main uppercase tracking-wider">
-                Mirror Audits (Consistency Checks)
+                Mirror Audits (Read-Only Narrative History)
               </h4>
               <p className="text-[11px] text-tj-text-muted mt-1 leading-relaxed">
                 Consistency Checks run every 10 chapters. The AI evaluates
@@ -888,6 +914,17 @@ export default function NarrativeMaintenancePanel({
           </div>
         </div>
       )}
+
+      {/* Consistency Check & Targeted Edits Modal */}
+      <ConsistencyCheckModal
+        isOpen={isConsistencyModalOpen}
+        onClose={() => setIsConsistencyModalOpen(false)}
+        story={story}
+        onStoryUpdated={onStoryUpdated}
+        onSaveStory={onSaveStory}
+        customOpenRouterKey={customOpenRouterKey}
+        onShowAlert={onShowAlert}
+      />
     </div>
   );
 }

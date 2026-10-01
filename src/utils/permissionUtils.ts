@@ -49,7 +49,7 @@ export const checkGenerationPermission = (
     return null;
   }
 
-  // 2. Free non-BYOK tier: restrict to free tier models only (GLM 5.3 Flash & Muse Spark 1.3 Contributor)
+  // 2. Free non-BYOK tier: restrict to free tier models only (GLM Flash Latest & Muse Spark 1.3 Contributor)
   const isFreeModel =
     !!modelId && (FREE_MODEL_IDS.has(modelId) || modelId.endsWith(':free'));
 
@@ -57,7 +57,7 @@ export const checkGenerationPermission = (
     return {
       title: 'Frontier Model Locked',
       message:
-        'Free tier accounts can only generate stories using Free Tier models (GLM 5.3 Flash or Muse Spark 1.3 Contributor). Configure your own OpenRouter API key in Settings to use frontier models.',
+        'Free tier accounts can only generate stories using Free Tier models (GLM Flash Latest or Muse Spark 1.3 Contributor). Configure your own OpenRouter API key in Settings to use frontier models.',
     };
   }
 

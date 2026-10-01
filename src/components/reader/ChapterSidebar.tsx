@@ -508,23 +508,30 @@ export default function ChapterSidebar({
                           {freeModels.map((m) => (
                             <option key={m.id} value={m.id}>
                               {m.name}
+                              {m.bestFor ? ` (${m.bestFor})` : ''}
                             </option>
                           ))}
                         </>
                       );
                     }
 
-                    return FRONTIER_LATEST_MODELS.map((m) => {
-                      const priceLabel = formatModelPriceIndicator(
-                        m.inputCost1M,
-                        m.outputCost1M,
-                      );
-                      return (
-                        <option key={m.id} value={m.id}>
-                          {m.name} {priceLabel}
-                        </option>
-                      );
-                    });
+                    return [...FRONTIER_LATEST_MODELS]
+                      .sort((a, b) =>
+                        a.name.localeCompare(b.name, undefined, {
+                          sensitivity: 'base',
+                        }),
+                      )
+                      .map((m) => {
+                        const priceLabel = formatModelPriceIndicator(
+                          m.inputCost1M,
+                          m.outputCost1M,
+                        );
+                        return (
+                          <option key={m.id} value={m.id}>
+                            {m.name} {priceLabel}
+                          </option>
+                        );
+                      });
                   })()}
                 </select>
               </div>
@@ -981,6 +988,20 @@ export default function ChapterSidebar({
                 </button>
               </div>
             )}
+
+          {/* Consistency Check Trigger */}
+          {isCreator && onViewAudits && (story.chapters?.length ?? 0) > 1 && (
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-805/50">
+              <button
+                disabled={!isOnline}
+                onClick={onViewAudits}
+                className="w-full py-2 px-3 bg-tj-mint/20 hover:bg-tj-mint/30 text-tj-mint-dark text-xs font-semibold rounded-xl transition-all cursor-pointer border border-tj-success/20 flex items-center justify-center gap-1.5 disabled:opacity-50"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Consistency Check & Fixes</span>
+              </button>
+            </div>
+          )}
 
           {/* Add Chapter Modal */}
           {isAddModalOpen && onAddCustomChapter && (

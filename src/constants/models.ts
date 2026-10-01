@@ -14,6 +14,7 @@ export interface AIModelOption {
   supportsTemperature: boolean;
   maxOutputTokens?: number;
   requiresAgeVerification?: boolean;
+  bestFor?: string;
 }
 
 /** Legacy alias */
@@ -27,10 +28,10 @@ export function isMuseModel(modelId?: string | null): boolean {
 
 export const AI_MODELS: AIModelOption[] = [
   {
-    id: 'z-ai/glm-5.3-flash',
-    name: 'GLM 5.3 Flash',
-    inputCost1M: 0.075,
-    outputCost1M: 0.25,
+    id: '~deepseek/deepseek-flash-latest',
+    name: 'DeepSeek Flash Latest',
+    inputCost1M: 0.035,
+    outputCost1M: 0.29,
     category: 'flash',
     supportsThinkingLevel: true,
     supportsThinkingBudget: false,
@@ -38,16 +39,27 @@ export const AI_MODELS: AIModelOption[] = [
     maxOutputTokens: 16384,
   },
   {
-    id: 'meta/muse-spark-1.3-contributor',
-    name: 'Muse Spark 1.3 (Contributor)',
-    inputCost1M: 0.1,
-    outputCost1M: 0.2,
+    id: '~z-ai/glm-flash-latest',
+    name: 'GLM Flash Latest',
+    inputCost1M: 0.045,
+    outputCost1M: 0.14,
     category: 'flash',
     supportsThinkingLevel: true,
     supportsThinkingBudget: false,
     supportsTemperature: true,
     maxOutputTokens: 16384,
-    requiresAgeVerification: true,
+    bestFor: 'Best for Non-Fiction',
+  },
+  {
+    id: 'nousresearch/hermes-3-llama-3.1-405b',
+    name: 'Hermes 3 405B',
+    inputCost1M: 1.0,
+    outputCost1M: 1.0,
+    category: 'pro',
+    supportsThinkingLevel: false,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 16384,
   },
   {
     id: 'meta/muse-spark-1.3',
@@ -62,15 +74,17 @@ export const AI_MODELS: AIModelOption[] = [
     requiresAgeVerification: true,
   },
   {
-    id: '~deepseek/deepseek-flash-latest',
-    name: 'DeepSeek Flash Latest',
-    inputCost1M: 0.04,
-    outputCost1M: 0.64,
+    id: 'meta/muse-spark-1.3-contributor',
+    name: 'Muse Spark 1.3 (Contributor)',
+    inputCost1M: 0.1,
+    outputCost1M: 0.2,
     category: 'flash',
     supportsThinkingLevel: true,
     supportsThinkingBudget: false,
     supportsTemperature: true,
     maxOutputTokens: 16384,
+    requiresAgeVerification: true,
+    bestFor: 'Best for Fiction',
   },
   {
     id: 'xiaomi/mimo-v2.6-pro',
@@ -83,27 +97,17 @@ export const AI_MODELS: AIModelOption[] = [
     supportsTemperature: true,
     maxOutputTokens: 16384,
   },
-  {
-    id: 'nousresearch/hermes-3-llama-3.1-405b',
-    name: 'Hermes 3 405B',
-    inputCost1M: 1.0,
-    outputCost1M: 1.0,
-    category: 'pro',
-    supportsThinkingLevel: false,
-    supportsThinkingBudget: false,
-    supportsTemperature: true,
-    maxOutputTokens: 16384,
-  },
 ];
 
 /** IDs of models that are always free to use (no contributor approval needed). */
 export const FREE_MODEL_IDS = new Set<string>([
+  '~z-ai/glm-flash-latest',
   'z-ai/glm-5.3-flash',
   'meta/muse-spark-1.3-contributor',
 ]);
 
 /** Date when OpenRouter token rates were last verified/updated */
-export const MODEL_PRICES_LAST_UPDATED = 'September 5, 2026';
+export const MODEL_PRICES_LAST_UPDATED = 'September 27, 2026';
 
 export interface FrontierModelOption {
   id: string;
@@ -131,6 +135,41 @@ export const formatModelPriceIndicator = (
 /** Curated frontier & latest models for BYOK story generation selection with OpenRouter rates */
 export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
   {
+    id: 'anthropic/claude-sonnet-5',
+    name: 'Anthropic: Claude Sonnet 5',
+    category: 'pro',
+    inputCost1M: 2.0,
+    outputCost1M: 10.0,
+  },
+  {
+    id: '~deepseek/deepseek-flash-latest',
+    name: 'DeepSeek: DeepSeek Flash Latest',
+    category: 'flash',
+    inputCost1M: 0.035,
+    outputCost1M: 0.29,
+  },
+  {
+    id: 'google/gemini-2.5-flash-lite',
+    name: 'Google: Gemini 2.5 Flash Lite',
+    category: 'flash',
+    inputCost1M: 0.1,
+    outputCost1M: 0.4,
+  },
+  {
+    id: '~google/gemini-flash-latest',
+    name: 'Google: Gemini Flash Latest',
+    category: 'flash',
+    inputCost1M: 0.75,
+    outputCost1M: 3.75,
+  },
+  {
+    id: '~google/gemini-pro-latest',
+    name: 'Google: Gemini Pro Latest',
+    category: 'pro',
+    inputCost1M: 2.0,
+    outputCost1M: 12.0,
+  },
+  {
     id: 'meta/muse-spark-1.3',
     name: 'Meta: Muse Spark 1.3',
     category: 'pro',
@@ -147,83 +186,6 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     requiresAgeVerification: true,
   },
   {
-    id: 'z-ai/glm-5.3-flash',
-    name: 'Z-AI: GLM 5.3 Flash',
-    category: 'flash',
-    inputCost1M: 0.075,
-    outputCost1M: 0.25,
-  },
-  {
-    id: '~deepseek/deepseek-flash-latest',
-    name: 'DeepSeek: DeepSeek Flash Latest',
-    category: 'flash',
-    inputCost1M: 0.04,
-    outputCost1M: 0.64,
-  },
-  {
-    id: 'xiaomi/mimo-v2.6-pro',
-    name: 'Xiaomi: MiMo-V2.6-Pro',
-    category: 'pro',
-    inputCost1M: 0.435,
-    outputCost1M: 0.87,
-  },
-  {
-    id: 'google/gemini-3.6-flash',
-    name: 'Google: Gemini 3.6 Flash',
-    category: 'flash',
-    inputCost1M: 0.75,
-    outputCost1M: 3.75,
-  },
-  {
-    id: 'anthropic/claude-sonnet-5',
-    name: 'Anthropic: Claude Sonnet 5',
-    category: 'pro',
-    inputCost1M: 2.0,
-    outputCost1M: 10.0,
-  },
-  {
-    id: 'openai/gpt-chat-latest',
-    name: 'OpenAI: GPT Chat Latest',
-    category: 'pro',
-    inputCost1M: 5.0,
-    outputCost1M: 30.0,
-  },
-  {
-    id: '~openai/gpt-mini-latest',
-    name: 'OpenAI: GPT Mini Latest',
-    category: 'flash',
-    inputCost1M: 0.75,
-    outputCost1M: 4.5,
-  },
-  {
-    id: '~google/gemini-pro-latest',
-    name: 'Google: Gemini Pro Latest',
-    category: 'pro',
-    inputCost1M: 2.0,
-    outputCost1M: 12.0,
-  },
-  {
-    id: '~google/gemini-flash-latest',
-    name: 'Google: Gemini Flash Latest',
-    category: 'flash',
-    inputCost1M: 0.75,
-    outputCost1M: 3.75,
-  },
-  {
-    id: 'google/gemini-2.5-flash-lite',
-    name: 'Google: Gemini 2.5 Flash Lite',
-    category: 'flash',
-    inputCost1M: 0.1,
-    outputCost1M: 0.4,
-  },
-  {
-    id: '~x-ai/grok-latest',
-    name: 'xAI: Grok Latest',
-    category: 'pro',
-    inputCost1M: 2.0,
-    outputCost1M: 6.0,
-  },
-  {
     id: 'moonshotai/kimi-k2.5',
     name: 'MoonshotAI: Kimi K2.5',
     category: 'pro',
@@ -234,15 +196,8 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     id: '~moonshotai/kimi-latest',
     name: 'MoonshotAI: Kimi Latest',
     category: 'pro',
-    inputCost1M: 2.55,
-    outputCost1M: 12.75,
-  },
-  {
-    id: '~z-ai/glm-latest',
-    name: 'Z-AI: GLM Latest',
-    category: 'pro',
-    inputCost1M: 1.092,
-    outputCost1M: 3.432,
+    inputCost1M: 0.9875,
+    outputCost1M: 5.53,
   },
   {
     id: 'nousresearch/hermes-3-llama-3.1-405b',
@@ -250,6 +205,55 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     category: 'pro',
     inputCost1M: 1.0,
     outputCost1M: 1.0,
+  },
+  {
+    id: '~openai/gpt-luna-latest',
+    name: 'OpenAI: GPT Luna Latest',
+    category: 'flash',
+    inputCost1M: 0.1,
+    outputCost1M: 0.5,
+  },
+  {
+    id: '~openai/gpt-sol-latest',
+    name: 'OpenAI: GPT Sol Latest',
+    category: 'pro',
+    inputCost1M: 2.0,
+    outputCost1M: 10.0,
+  },
+  {
+    id: '~openai/gpt-terra-latest',
+    name: 'OpenAI: GPT Terra Latest',
+    category: 'pro',
+    inputCost1M: 2.0,
+    outputCost1M: 12.0,
+  },
+  {
+    id: '~x-ai/grok-latest',
+    name: 'xAI: Grok Latest',
+    category: 'pro',
+    inputCost1M: 1.6,
+    outputCost1M: 4.8,
+  },
+  {
+    id: 'xiaomi/mimo-v2.6-pro',
+    name: 'Xiaomi: MiMo-V2.6-Pro',
+    category: 'pro',
+    inputCost1M: 0.435,
+    outputCost1M: 0.87,
+  },
+  {
+    id: '~z-ai/glm-flash-latest',
+    name: 'Z-AI: GLM Flash Latest',
+    category: 'flash',
+    inputCost1M: 0.045,
+    outputCost1M: 0.14,
+  },
+  {
+    id: '~z-ai/glm-latest',
+    name: 'Z-AI: GLM Latest',
+    category: 'pro',
+    inputCost1M: 0.2737,
+    outputCost1M: 2.574,
   },
 ];
 

@@ -5,6 +5,7 @@ import {
   migrateFromLocalStorage,
   saveGuestCompletedStoryIds,
 } from '../services/storage/offlineStorage';
+import type { ReaderLineSpacing } from '../types';
 
 interface UIState {
   isOnline: boolean;
@@ -18,6 +19,7 @@ interface UIState {
   readerUseSerif: boolean;
   readerTextAlignment: 'left' | 'center' | 'right' | 'justify';
   readerColumnWidth: 'narrow' | 'medium' | 'wide' | 'full';
+  readerLineSpacing: ReaderLineSpacing;
   guestCompletedStoryIds: string[];
   isAgeVerified: boolean;
   setIsOnline: (isOnline: boolean) => void;
@@ -35,6 +37,7 @@ interface UIState {
   setReaderColumnWidth: (
     columnWidth: 'narrow' | 'medium' | 'wide' | 'full',
   ) => void;
+  setReaderLineSpacing: (spacing: ReaderLineSpacing) => void;
   setGuestCompletedStoryIds: (ids: string[]) => void;
   addGuestCompletedStoryId: (id: string) => void;
   removeGuestCompletedStoryId: (id: string) => void;
@@ -57,6 +60,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   readerUseSerif: true,
   readerTextAlignment: 'justify',
   readerColumnWidth: 'medium',
+  readerLineSpacing: 'normal',
   guestCompletedStoryIds: [],
   isAgeVerified: false,
   setIsOnline: (isOnline) => set({ isOnline }),
@@ -148,6 +152,19 @@ export const useUIStore = create<UIState>((set, get) => ({
     }
     set({ readerColumnWidth: columnWidth });
   },
+  setReaderLineSpacing: (spacing) => {
+    const validatedSpacing: ReaderLineSpacing =
+      spacing === 'tight' ||
+      spacing === 'normal' ||
+      spacing === 'relaxed' ||
+      spacing === 'loose'
+        ? spacing
+        : 'normal';
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('reader-line-spacing', validatedSpacing);
+    }
+    set({ readerLineSpacing: validatedSpacing });
+  },
   setGuestCompletedStoryIds: (ids) => {
     set({ guestCompletedStoryIds: ids });
     saveGuestCompletedStoryIds(ids);
@@ -180,13 +197,45 @@ export const useUIStore = create<UIState>((set, get) => ({
       ) {
         storyModel = '~deepseek/deepseek-flash-latest';
         localStorage.setItem('custom_default_story_model', storyModel);
+      } else if (storyModel === 'z-ai/glm-5.3-flash') {
+        storyModel = '~z-ai/glm-flash-latest';
+        localStorage.setItem('custom_default_story_model', storyModel);
+      } else if (storyModel === 'google/gemini-3.6-flash') {
+        storyModel = '~google/gemini-flash-latest';
+        localStorage.setItem('custom_default_story_model', storyModel);
+      } else if (storyModel === 'openai/gpt-chat-latest') {
+        storyModel = '~openai/gpt-sol-latest';
+        localStorage.setItem('custom_default_story_model', storyModel);
+      } else if (storyModel === '~openai/gpt-mini-latest') {
+        storyModel = '~openai/gpt-luna-latest';
+        localStorage.setItem('custom_default_story_model', storyModel);
       }
-      const glossaryModel =
+      let glossaryModel =
         localStorage.getItem('custom_default_glossary_model') ||
         'google/gemini-2.5-flash-lite';
-      const translationModel =
+      if (glossaryModel === 'google/gemini-3.6-flash') {
+        glossaryModel = '~google/gemini-flash-latest';
+        localStorage.setItem('custom_default_glossary_model', glossaryModel);
+      } else if (glossaryModel === 'z-ai/glm-5.3-flash') {
+        glossaryModel = '~z-ai/glm-flash-latest';
+        localStorage.setItem('custom_default_glossary_model', glossaryModel);
+      }
+      let translationModel =
         localStorage.getItem('custom_default_translation_model') ||
         'google/gemini-2.5-flash-lite';
+      if (translationModel === 'google/gemini-3.6-flash') {
+        translationModel = '~google/gemini-flash-latest';
+        localStorage.setItem(
+          'custom_default_translation_model',
+          translationModel,
+        );
+      } else if (translationModel === 'z-ai/glm-5.3-flash') {
+        translationModel = '~z-ai/glm-flash-latest';
+        localStorage.setItem(
+          'custom_default_translation_model',
+          translationModel,
+        );
+      }
       const coverModel =
         localStorage.getItem('custom_default_cover_model') ||
         DEFAULT_COVER_IMAGE_MODEL;
@@ -213,6 +262,14 @@ export const useUIStore = create<UIState>((set, get) => ({
         widthVal === 'full'
           ? widthVal
           : 'medium';
+      const spacingVal = localStorage.getItem('reader-line-spacing');
+      const spacing: ReaderLineSpacing =
+        spacingVal === 'tight' ||
+        spacingVal === 'normal' ||
+        spacingVal === 'relaxed' ||
+        spacingVal === 'loose'
+          ? spacingVal
+          : 'normal';
       const ageVerified = localStorage.getItem('tj_age_verified') === 'true';
       set({
         customOpenRouterKey: key,
@@ -225,6 +282,7 @@ export const useUIStore = create<UIState>((set, get) => ({
         readerUseSerif: serif,
         readerTextAlignment: align,
         readerColumnWidth: width,
+        readerLineSpacing: spacing,
         isAgeVerified: ageVerified,
       });
 
