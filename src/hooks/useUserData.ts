@@ -48,6 +48,39 @@ export function parseRecentlyReadItems(data: any): RecentlyReadItem[] {
   return results;
 }
 
+const defaultRecentlyRead = (): RecentlyReadItem[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const local = localStorage.getItem('recently_read');
+    return local ? parseRecentlyReadItems(JSON.parse(local)) : [];
+  } catch (e) {
+    console.error('Error parsing local recently_read:', e);
+    return [];
+  }
+};
+
+const defaultBookshelf = (): string[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const local = localStorage.getItem('bookshelf');
+    return local ? JSON.parse(local) : [];
+  } catch (e) {
+    console.error('Error parsing local bookshelf:', e);
+    return [];
+  }
+};
+
+const defaultSavedVocab = (): VocabularyTerm[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const local = localStorage.getItem('saved_vocab');
+    return local ? JSON.parse(local) : [];
+  } catch (e) {
+    console.error('Error parsing local saved_vocab:', e);
+    return [];
+  }
+};
+
 const defaultLookupLimitData = (): LookupLimitData => {
   const todayStr = new Date().toISOString().split('T')[0];
   const local =
@@ -101,12 +134,14 @@ export function useUserData(options: UseUserDataOptions) {
     onProfileLoadedRef.current = onProfileLoaded;
   }, [onProfileLoaded]);
 
-  const [bookshelf, setBookshelf] = useState<string[]>([]);
-  const [recentlyRead, setRecentlyRead] = useState<RecentlyReadItem[]>([]);
+  const [bookshelf, setBookshelf] = useState<string[]>(defaultBookshelf);
+  const [recentlyRead, setRecentlyRead] =
+    useState<RecentlyReadItem[]>(defaultRecentlyRead);
   const [remoteReadingLocation, setRemoteReadingLocation] =
     useState<RemoteReadingLocation | null>(null);
   const lastLocalUpdateTimestampRef = useRef<number>(Date.now());
-  const [savedVocab, setSavedVocab] = useState<VocabularyTerm[]>([]);
+  const [savedVocab, setSavedVocab] =
+    useState<VocabularyTerm[]>(defaultSavedVocab);
   const [lookupLimitData, setLookupLimitData] = useState<LookupLimitData>(
     defaultLookupLimitData,
   );
@@ -422,6 +457,15 @@ export function useUserData(options: UseUserDataOptions) {
     if (currentUser?.uid !== prevUserRef.current?.uid) {
       lastSyncedSettingsRef.current = null;
       setIsUserDataLoaded(false);
+      if (prevUserRef.current && currentUser) {
+        // Direct switch between accounts - purge stale user data from memory and storage
+        setBookshelf([]);
+        setRecentlyRead([]);
+        setSavedVocab([]);
+        localStorage.removeItem('recently_read');
+        localStorage.removeItem('bookshelf');
+        localStorage.removeItem('saved_vocab');
+      }
     }
 
     const todayStr = new Date().toISOString().split('T')[0];
@@ -461,6 +505,7 @@ export function useUserData(options: UseUserDataOptions) {
 
           if (profile) {
             setSavedVocab(vocab);
+            localStorage.setItem('saved_vocab', JSON.stringify(vocab));
             setIsPaid(profile.isPaid ?? false);
 
             // Notify parent about profile load for streak sync
@@ -714,9 +759,79 @@ export function useUserData(options: UseUserDataOptions) {
             ) {
               useUIStore.getState().setReaderUseSerif(profile.readerUseSerif);
             }
+          } else {
+            // Profile returned null/not found, fall back to local storage
+            const localRecentlyRead = localStorage.getItem('recently_read');
+            if (localRecentlyRead) {
+              try {
+                setRecentlyRead(
+                  parseRecentlyReadItems(JSON.parse(localRecentlyRead)),
+                );
+              } catch {}
+            }
+            const localBookshelf = localStorage.getItem('bookshelf');
+            if (localBookshelf) {
+              try {
+                setBookshelf(JSON.parse(localBookshelf));
+              } catch {}
+            }
+            const localVocab = localStorage.getItem('saved_vocab');
+            if (localVocab) {
+              try {
+                setSavedVocab(JSON.parse(localVocab));
+              } catch {}
+            }
           }
         } catch (err) {
-          console.error('Error fetching user profile: ', err);
+          console.error(
+            'Error fetching user profile (falling back to offline local storage): ',
+            err,
+          );
+          // Hydrate from localStorage when offline or network fails
+          const localRecentlyRead = localStorage.getItem('recently_read');
+          if (localRecentlyRead) {
+            try {
+              const parsed = parseRecentlyReadItems(
+                JSON.parse(localRecentlyRead),
+              );
+              setRecentlyRead((prev) => (prev.length === 0 ? parsed : prev));
+            } catch (e) {
+              console.error('Error parsing local recently_read on fallback:', e);
+            }
+          }
+          const localBookshelf = localStorage.getItem('bookshelf');
+          if (localBookshelf) {
+            try {
+              const parsed = JSON.parse(localBookshelf);
+              setBookshelf((prev) => (prev.length === 0 ? parsed : prev));
+            } catch (e) {
+              console.error('Error parsing local bookshelf on fallback:', e);
+            }
+          }
+          const localVocab = localStorage.getItem('saved_vocab');
+          if (localVocab) {
+            try {
+              const parsed = JSON.parse(localVocab);
+              setSavedVocab((prev) => (prev.length === 0 ? parsed : prev));
+            } catch (e) {
+              console.error('Error parsing local saved_vocab on fallback:', e);
+            }
+          }
+          const localLookup = localStorage.getItem('lookup_limit_data');
+          if (localLookup) {
+            try {
+              const parsed = JSON.parse(localLookup);
+              if (parsed.date === todayStr) {
+                setLookupLimitData(parsed);
+              }
+            } catch {}
+          }
+          const localGen = localStorage.getItem('generation_limit_data');
+          if (localGen) {
+            try {
+              setGenerationLimitData(JSON.parse(localGen));
+            } catch {}
+          }
         } finally {
           isFetchingRef.current = false;
           setIsUserDataLoaded(true);

@@ -1285,6 +1285,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
                   recentlyReadStories={recentlyReadStories}
                   recentlyRead={recentlyRead}
                   generatingCoverIds={generatingCoverIds}
+                  storiesLoading={storiesLoading}
                   handleToggleBookshelf={handleToggleBookshelfWithAuth}
                   handleSelectStory={handleSelectStory}
                   onDownloadStory={handleDownloadStory}

@@ -170,6 +170,40 @@ export async function saveGuestCompletedStoryIds(ids: string[]): Promise<void> {
   }
 }
 
+const STORIES_METADATA_KEY = 'cached_stories_metadata';
+
+/**
+ * Retrieve cached public stories metadata from IndexedDB.
+ */
+export async function getCachedStoriesMetadata(): Promise<Story[] | undefined> {
+  if (!metaStore) return undefined;
+  try {
+    const data = await get<Story[]>(STORIES_METADATA_KEY, metaStore);
+    return Array.isArray(data) && data.length > 0 ? data : undefined;
+  } catch (error) {
+    console.error(
+      '[OfflineStorage] Failed to get cached stories metadata from IndexedDB:',
+      error,
+    );
+    return undefined;
+  }
+}
+
+/**
+ * Persist public stories metadata to IndexedDB for offline access.
+ */
+export async function saveCachedStoriesMetadata(stories: Story[]): Promise<void> {
+  if (!metaStore || !Array.isArray(stories) || stories.length === 0) return;
+  try {
+    await set(STORIES_METADATA_KEY, stories, metaStore);
+  } catch (error) {
+    console.error(
+      '[OfflineStorage] Failed to save cached stories metadata to IndexedDB:',
+      error,
+    );
+  }
+}
+
 /**
  * Request persistent browser storage to prevent automatic eviction by the OS/browser.
  */

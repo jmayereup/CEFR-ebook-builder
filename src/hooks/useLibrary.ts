@@ -10,8 +10,10 @@ import {
 } from '../services/db';
 import {
   getAllCachedStories,
+  getCachedStoriesMetadata,
   getStory,
   getStorySync,
+  saveCachedStoriesMetadata,
   saveStory,
 } from '../services/storage/offlineStorage';
 import type { IUser } from '../services/types';
@@ -51,6 +53,17 @@ export function useLibrary(options: UseLibraryOptions) {
   });
   const [privateStories, setPrivateStories] = useState<Story[]>([]);
   const [offlineCachedStories, setOfflineCachedStories] = useState<Story[]>([]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Restore cached metadata on mount if publicStories is empty
+  useEffect(() => {
+    if (publicStories.length === 0) {
+      getCachedStoriesMetadata().then((cached) => {
+        if (cached && cached.length > 0) {
+          setPublicStories((prev) => (prev.length === 0 ? cached : prev));
+        }
+      });
+    }
+  }, []);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Reload cached stories whenever cached IDs update
   useEffect(() => {
@@ -102,10 +115,15 @@ export function useLibrary(options: UseLibraryOptions) {
       try {
         const data = await fetchStoriesMetadata(options);
         setPublicStories(data);
+        saveCachedStoriesMetadata(data).catch(() => {});
         lastMetadataFetchRef.current = Date.now();
       } catch (error) {
         console.error('Failed to load public stories metadata:', error);
         try {
+          const cachedMeta = await getCachedStoriesMetadata();
+          if (cachedMeta && cachedMeta.length > 0) {
+            setPublicStories((prev) => (prev.length === 0 ? cachedMeta : prev));
+          }
           const cached = await getAllCachedStories();
           if (cached && cached.length > 0) {
             setOfflineCachedStories(cached);

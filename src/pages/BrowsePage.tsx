@@ -36,6 +36,7 @@ interface BrowsePageProps {
   filterReadingStatus: string[];
   setFilterReadingStatus: (status: string[]) => void;
   generatingCoverIds?: Set<string>;
+  storiesLoading?: boolean;
 }
 
 export default function BrowsePage({
@@ -64,6 +65,7 @@ export default function BrowsePage({
   filterReadingStatus,
   setFilterReadingStatus,
   generatingCoverIds,
+  storiesLoading,
 }: BrowsePageProps) {
   return (
     <div className="space-y-8">
@@ -71,6 +73,8 @@ export default function BrowsePage({
         items={recentlyReadStories}
         onSelectStory={handleSelectStory}
         generatingCoverIds={generatingCoverIds}
+        storiesLoading={storiesLoading}
+        hasRecentItems={recentlyRead.length > 0}
       />
       <LibraryGrid
         cachedStoryIds={cachedStoryIds}

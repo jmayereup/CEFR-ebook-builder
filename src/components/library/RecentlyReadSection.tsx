@@ -20,6 +20,8 @@ interface RecentlyReadSectionProps {
   }[];
   onSelectStory: (story: Story, chapterIdx?: number) => void;
   generatingCoverIds?: Set<string>;
+  storiesLoading?: boolean;
+  hasRecentItems?: boolean;
 }
 
 const cleanGenreLabel = (label: string) => {
@@ -32,6 +34,8 @@ export default function RecentlyReadSection({
   items,
   onSelectStory,
   generatingCoverIds,
+  storiesLoading = false,
+  hasRecentItems = false,
 }: RecentlyReadSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -44,7 +48,43 @@ export default function RecentlyReadSection({
     setIsMounted(true);
   }, []);
 
-  if (!isMounted || !items || items.length === 0) return null;
+  if (!isMounted) return null;
+
+  if (!items || items.length === 0) {
+    if (storiesLoading && hasRecentItems) {
+      return (
+        <div className="pb-6 border-b border-tj-border-main space-y-4 animate-pulse">
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-tj-primary/80" />
+            <h3 className="text-base font-bold text-tj-text-main font-sans tracking-tight">
+              Reading
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[1, 2, 3].map((idx) => (
+              <div
+                key={idx}
+                className="flex gap-4 p-4 bg-tj-bg-card border border-tj-border-main rounded-2xl shadow-xs"
+              >
+                <div className="w-16 h-24 shrink-0 aspect-[3/4.2] rounded-md bg-slate-200 dark:bg-slate-800" />
+                <div className="flex-1 flex flex-col justify-between py-1 min-w-0">
+                  <div className="space-y-2">
+                    <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
+                    <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2" />
+                  </div>
+                  <div className="space-y-1.5 mt-2">
+                    <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded w-full" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    return null;
+  }
 
   const visibleItems = isExpanded ? items : items.slice(0, 3);
 
