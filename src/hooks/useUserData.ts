@@ -81,6 +81,78 @@ const defaultSavedVocab = (): VocabularyTerm[] => {
   }
 };
 
+const PENDING_VOCAB_PREFIX = 'pending_vocab_queue_';
+
+interface PendingVocabAction {
+  action: 'upsert' | 'delete';
+  term?: VocabularyTerm;
+  word?: string;
+  timestamp: number;
+}
+
+function getPendingVocabQueue(userId: string): PendingVocabAction[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(PENDING_VOCAB_PREFIX + userId);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function queuePendingVocab(
+  userId: string,
+  action: Omit<PendingVocabAction, 'timestamp'>,
+) {
+  if (typeof window === 'undefined') return;
+  try {
+    const queue = getPendingVocabQueue(userId);
+    const wordKey = (action.term?.word || action.word || '').toLowerCase();
+    const filtered = queue.filter((item) => {
+      const itemKey = (item.term?.word || item.word || '').toLowerCase();
+      return itemKey !== wordKey;
+    });
+    filtered.push({ ...action, timestamp: Date.now() });
+    localStorage.setItem(
+      PENDING_VOCAB_PREFIX + userId,
+      JSON.stringify(filtered),
+    );
+  } catch (e) {
+    console.error('[useUserData] Failed to queue pending vocab mutation:', e);
+  }
+}
+
+const flushPendingVocab = async (userId: string) => {
+  if (typeof window === 'undefined') return;
+  const queue = getPendingVocabQueue(userId);
+  if (queue.length === 0) return;
+
+  const remaining: PendingVocabAction[] = [];
+  for (const item of queue) {
+    try {
+      if (item.action === 'upsert' && item.term) {
+        await saveWord(userId, item.term);
+      } else if (item.action === 'delete' && item.word) {
+        await deleteWord(userId, item.word);
+      }
+    } catch (err) {
+      console.warn(
+        '[useUserData] Failed to flush pending vocab action, retaining in queue:',
+        item,
+        err,
+      );
+      remaining.push(item);
+    }
+  }
+
+  const key = PENDING_VOCAB_PREFIX + userId;
+  if (remaining.length > 0) {
+    localStorage.setItem(key, JSON.stringify(remaining));
+  } else {
+    localStorage.removeItem(key);
+  }
+};
+
 const defaultLookupLimitData = (): LookupLimitData => {
   const todayStr = new Date().toISOString().split('T')[0];
   const local =
@@ -134,17 +206,32 @@ export function useUserData(options: UseUserDataOptions) {
     onProfileLoadedRef.current = onProfileLoaded;
   }, [onProfileLoaded]);
 
-  const [bookshelf, setBookshelf] = useState<string[]>(defaultBookshelf);
-  const [recentlyRead, setRecentlyRead] =
-    useState<RecentlyReadItem[]>(defaultRecentlyRead);
+  // Initialize with empty arrays so server SSR HTML and initial client hydration match exactly
+  const [bookshelf, setBookshelf] = useState<string[]>([]);
+  const [recentlyRead, setRecentlyRead] = useState<RecentlyReadItem[]>([]);
   const [remoteReadingLocation, setRemoteReadingLocation] =
     useState<RemoteReadingLocation | null>(null);
   const lastLocalUpdateTimestampRef = useRef<number>(Date.now());
-  const [savedVocab, setSavedVocab] =
-    useState<VocabularyTerm[]>(defaultSavedVocab);
-  const [lookupLimitData, setLookupLimitData] = useState<LookupLimitData>(
-    defaultLookupLimitData,
-  );
+  const [savedVocab, setSavedVocab] = useState<VocabularyTerm[]>([]);
+  const [lookupLimitData, setLookupLimitData] = useState<LookupLimitData>(() => ({
+    count: 0,
+    date: new Date().toISOString().split('T')[0],
+  }));
+
+  // Immediately hydrate client-persisted storage on mount to eliminate layout shifts without hydration mismatches
+  useEffect(() => {
+    const recent = defaultRecentlyRead();
+    if (recent.length > 0) setRecentlyRead(recent);
+
+    const shelf = defaultBookshelf();
+    if (shelf.length > 0) setBookshelf(shelf);
+
+    const vocab = defaultSavedVocab();
+    if (vocab.length > 0) setSavedVocab(vocab);
+
+    const lookup = defaultLookupLimitData();
+    if (lookup.count > 0) setLookupLimitData(lookup);
+  }, []);
 
   const [isUserDataLoaded, setIsUserDataLoaded] = useState<boolean>(false);
   const lastSyncedSettingsRef = useRef<{
@@ -295,20 +382,42 @@ export function useUserData(options: UseUserDataOptions) {
       return;
     }
 
+    // 1. Optimistically update local state & localStorage immediately
+    const updated = [...savedVocab, wordObj];
+    setSavedVocab(updated);
+    localStorage.setItem('saved_vocab', JSON.stringify(updated));
+
+    // 2. Persist to PocketBase or queue for offline sync
     if (currentUser) {
-      try {
-        const savedTerm = await saveWord(currentUser.uid, wordObj);
-        const updated = [...savedVocab, savedTerm];
-        setSavedVocab(updated);
-        localStorage.setItem('saved_vocab', JSON.stringify(updated));
-      } catch (e) {
-        console.error('Error saving word to DB:', e);
-        showAlert('Error', 'Failed to save word.', 'error');
+      if (typeof navigator !== 'undefined' && navigator.onLine) {
+        try {
+          const savedTerm = await saveWord(currentUser.uid, wordObj);
+          if (savedTerm.id) {
+            setSavedVocab((prev) =>
+              prev.map((v) =>
+                v.word.toLowerCase() === savedTerm.word.toLowerCase()
+                  ? savedTerm
+                  : v,
+              ),
+            );
+          }
+        } catch (e) {
+          console.warn(
+            '[useUserData] Failed to save word to DB, queued offline:',
+            e,
+          );
+          queuePendingVocab(currentUser.uid, {
+            action: 'upsert',
+            term: wordObj,
+          });
+        }
+      } else {
+        queuePendingVocab(currentUser.uid, {
+          action: 'upsert',
+          term: wordObj,
+        });
       }
     } else {
-      const updated = [...savedVocab, wordObj];
-      setSavedVocab(updated);
-      localStorage.setItem('saved_vocab', JSON.stringify(updated));
       showAlert(
         'Word Saved Locally',
         `"${wordObj.word}" saved to your local device.`,
@@ -318,18 +427,35 @@ export function useUserData(options: UseUserDataOptions) {
   };
 
   const handleRemoveSavedWord = async (wordText: string) => {
-    if (currentUser) {
-      try {
-        await deleteWord(currentUser.uid, wordText);
-      } catch (e) {
-        console.error('Error deleting word from DB:', e);
-      }
-    }
+    // 1. Optimistically remove from local state & localStorage immediately
     const updated = savedVocab.filter(
       (v) => v.word.toLowerCase() !== wordText.toLowerCase(),
     );
     setSavedVocab(updated);
     localStorage.setItem('saved_vocab', JSON.stringify(updated));
+
+    // 2. Delete on PocketBase or queue for offline sync
+    if (currentUser) {
+      if (typeof navigator !== 'undefined' && navigator.onLine) {
+        try {
+          await deleteWord(currentUser.uid, wordText);
+        } catch (e) {
+          console.warn(
+            '[useUserData] Failed to delete word from DB, queued offline:',
+            e,
+          );
+          queuePendingVocab(currentUser.uid, {
+            action: 'delete',
+            word: wordText,
+          });
+        }
+      } else {
+        queuePendingVocab(currentUser.uid, {
+          action: 'delete',
+          word: wordText,
+        });
+      }
+    }
   };
 
   const handleUpdateWordSRS = async (
@@ -351,30 +477,46 @@ export function useUserData(options: UseUserDataOptions) {
       ...updatedSrs,
     };
 
+    // 1. Optimistically update local state & localStorage immediately
+    setSavedVocab((prev) => {
+      const filtered = prev.filter(
+        (v) => v.word.toLowerCase() !== updatedTerm.word.toLowerCase(),
+      );
+      const updated = [...filtered, updatedTerm];
+      localStorage.setItem('saved_vocab', JSON.stringify(updated));
+      return updated;
+    });
+
+    // 2. Persist to PocketBase or queue for offline sync
     if (currentUser) {
-      try {
-        const savedTerm = await saveWord(currentUser.uid, updatedTerm);
-        setSavedVocab((prev) => {
-          const filtered = prev.filter(
-            (v) => v.word.toLowerCase() !== savedTerm.word.toLowerCase(),
+      if (typeof navigator !== 'undefined' && navigator.onLine) {
+        try {
+          const savedTerm = await saveWord(currentUser.uid, updatedTerm);
+          if (savedTerm.id) {
+            setSavedVocab((prev) =>
+              prev.map((v) =>
+                v.word.toLowerCase() === savedTerm.word.toLowerCase()
+                  ? savedTerm
+                  : v,
+              ),
+            );
+          }
+        } catch (e) {
+          console.warn(
+            '[useUserData] Failed to update word SRS, queued offline:',
+            e,
           );
-          const updated = [...filtered, savedTerm];
-          localStorage.setItem('saved_vocab', JSON.stringify(updated));
-          return updated;
+          queuePendingVocab(currentUser.uid, {
+            action: 'upsert',
+            term: updatedTerm,
+          });
+        }
+      } else {
+        queuePendingVocab(currentUser.uid, {
+          action: 'upsert',
+          term: updatedTerm,
         });
-      } catch (e) {
-        console.error('Error updating word SRS:', e);
       }
-    } else {
-      // Local fallback
-      setSavedVocab((prev) => {
-        const filtered = prev.filter(
-          (v) => v.word.toLowerCase() !== updatedTerm.word.toLowerCase(),
-        );
-        const updated = [...filtered, updatedTerm];
-        localStorage.setItem('saved_vocab', JSON.stringify(updated));
-        return updated;
-      });
     }
   };
 
@@ -500,12 +642,44 @@ export function useUserData(options: UseUserDataOptions) {
             }
           }
 
+          // Flush any pending offline vocab changes before fetching from cloud
+          await flushPendingVocab(currentUser.uid);
+
           const profile = await fetchUserProfile(currentUser.uid);
           const vocab = await fetchUserVocab(currentUser.uid);
 
           if (profile) {
-            setSavedVocab(vocab);
-            localStorage.setItem('saved_vocab', JSON.stringify(vocab));
+            // Reconcile cloud vocab with any remaining local pending updates
+            const pendingQueue = getPendingVocabQueue(currentUser.uid);
+            const pendingUpserts = new Map<string, VocabularyTerm>();
+            const pendingDeletes = new Set<string>();
+
+            for (const item of pendingQueue) {
+              const k = (item.term?.word || item.word || '').toLowerCase();
+              if (item.action === 'delete') {
+                pendingDeletes.add(k);
+              } else if (item.action === 'upsert' && item.term) {
+                pendingUpserts.set(k, item.term);
+              }
+            }
+
+            const finalVocab: VocabularyTerm[] = [];
+            for (const v of vocab) {
+              const k = v.word.toLowerCase();
+              if (pendingDeletes.has(k)) continue;
+              if (pendingUpserts.has(k)) {
+                finalVocab.push(pendingUpserts.get(k)!);
+                pendingUpserts.delete(k);
+              } else {
+                finalVocab.push(v);
+              }
+            }
+            for (const term of pendingUpserts.values()) {
+              finalVocab.push(term);
+            }
+
+            setSavedVocab(finalVocab);
+            localStorage.setItem('saved_vocab', JSON.stringify(finalVocab));
             setIsPaid(profile.isPaid ?? false);
 
             // Notify parent about profile load for streak sync
@@ -901,16 +1075,25 @@ export function useUserData(options: UseUserDataOptions) {
     // Trigger initial load
     loadSavedVocab(true);
 
-    // Refresh profile on window/tab focus to sync multi-device state seamlessly
+    // Refresh profile and flush pending mutations on reconnect or window/tab focus
     const handleFocus = () => {
       if (document.visibilityState === 'visible') {
         loadSavedVocab(false);
       }
     };
+    const handleOnline = () => {
+      if (currentUser?.uid) {
+        flushPendingVocab(currentUser.uid).then(() => {
+          loadSavedVocab(false);
+        });
+      }
+    };
+    window.addEventListener('online', handleOnline);
     window.addEventListener('focus', handleFocus);
     window.addEventListener('visibilitychange', handleFocus);
 
     return () => {
+      window.removeEventListener('online', handleOnline);
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('visibilitychange', handleFocus);
     };
