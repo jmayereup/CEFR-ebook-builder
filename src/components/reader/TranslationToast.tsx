@@ -58,7 +58,8 @@ export default function TranslationToast({
     isExpanded,
     isHovered,
     onDismiss: () => setSelectedWord(null),
-    timeoutMs: 2000,
+    timeoutMs: 5000,
+    resetKey: selectedWord?.word,
   });
 
   useEffect(() => {
@@ -84,9 +85,13 @@ export default function TranslationToast({
       {selectedWord && (
         <motion.div
           layout
-          initial={{ opacity: 0, y: 80 }}
+          initial={{ opacity: 0, y: '100%' }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 80 }}
+          exit={{
+            opacity: 0,
+            y: '100%',
+            transition: { duration: 0.22, ease: [0.4, 0, 1, 1] },
+          }}
           transition={{ type: 'spring', damping: 28, stiffness: 240 }}
           onClick={(e) => e.stopPropagation()}
           onPointerEnter={() => setIsHovered(true)}
@@ -133,6 +138,10 @@ export default function TranslationToast({
             <ToastCollapsedBar
               selectedWord={selectedWord}
               languageCode={languageCode}
+              hasPrev={hasPrev}
+              hasNext={hasNext}
+              onNavigatePrev={onNavigatePrev}
+              onNavigateNext={onNavigateNext}
               onExpand={() => setIsExpanded(true)}
               onDismiss={() => setSelectedWord(null)}
               onPlayWord={handlePlayWord}

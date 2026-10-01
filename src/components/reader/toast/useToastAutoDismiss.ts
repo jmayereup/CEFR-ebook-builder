@@ -6,6 +6,7 @@ interface UseToastAutoDismissOptions {
   isHovered: boolean;
   onDismiss: () => void;
   timeoutMs?: number;
+  resetKey?: unknown;
 }
 
 export function useToastAutoDismiss({
@@ -14,6 +15,7 @@ export function useToastAutoDismiss({
   isHovered,
   onDismiss,
   timeoutMs = 5000,
+  resetKey,
 }: UseToastAutoDismissOptions) {
   const [activityKey, setActivityKey] = useState<number>(0);
 
@@ -24,7 +26,7 @@ export function useToastAutoDismiss({
   useEffect(() => {
     if (!isActive || isExpanded || isHovered) return;
 
-    // Depend on activityKey so interactions restart the dismiss countdown
+    // Depend on activityKey and resetKey so interactions restart the dismiss countdown
     if (activityKey < 0) return;
 
     const timer = setTimeout(() => {
@@ -32,7 +34,7 @@ export function useToastAutoDismiss({
     }, timeoutMs);
 
     return () => clearTimeout(timer);
-  }, [isActive, isExpanded, isHovered, activityKey, timeoutMs, onDismiss]);
+  }, [isActive, isExpanded, isHovered, activityKey, resetKey, timeoutMs, onDismiss]);
 
   return { resetActivityTimer };
 }

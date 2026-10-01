@@ -1,9 +1,19 @@
-import { ChevronUp, Volume2, X } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Volume2,
+  X,
+} from 'lucide-react';
 import type { SelectedWordData } from './types';
 
 interface ToastCollapsedBarProps {
   selectedWord: SelectedWordData;
   languageCode: string;
+  hasPrev?: boolean;
+  hasNext?: boolean;
+  onNavigatePrev?: () => void;
+  onNavigateNext?: () => void;
   onExpand: () => void;
   onDismiss: () => void;
   onPlayWord: (word: string) => void;
@@ -13,6 +23,10 @@ interface ToastCollapsedBarProps {
 export default function ToastCollapsedBar({
   selectedWord,
   languageCode,
+  hasPrev,
+  hasNext,
+  onNavigatePrev,
+  onNavigateNext,
   onExpand,
   onDismiss,
   onPlayWord,
@@ -54,8 +68,40 @@ export default function ToastCollapsedBar({
         )}
       </div>
 
-      {/* Right: Simple ChevronUp only & Quick Dismiss */}
+      {/* Right: Word navigation, ChevronUp only & Quick Dismiss */}
       <div className="flex items-center gap-1 shrink-0">
+        {onNavigatePrev && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onUserActivity?.();
+              onNavigatePrev();
+            }}
+            disabled={!hasPrev}
+            className="p-1.5 text-slate-400 hover:text-tj-primary hover:bg-tj-primary/10 dark:hover:bg-tj-primary/20 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent disabled:hover:text-slate-400 rounded-xl transition-all cursor-pointer hover:scale-110 active:scale-95"
+            title="Previous word (Left Arrow)"
+          >
+            <ChevronLeft className="w-4 h-4 stroke-[2.25]" />
+          </button>
+        )}
+
+        {onNavigateNext && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onUserActivity?.();
+              onNavigateNext();
+            }}
+            disabled={!hasNext}
+            className="p-1.5 text-slate-400 hover:text-tj-primary hover:bg-tj-primary/10 dark:hover:bg-tj-primary/20 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-transparent disabled:hover:text-slate-400 rounded-xl transition-all cursor-pointer hover:scale-110 active:scale-95"
+            title="Next word (Right Arrow)"
+          >
+            <ChevronRight className="w-4 h-4 stroke-[2.25]" />
+          </button>
+        )}
+
         <button
           type="button"
           onClick={(e) => {

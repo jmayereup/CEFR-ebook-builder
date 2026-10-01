@@ -130,6 +130,11 @@ export default function ToastExpandedContent({
             isFetching={selectedWord.isFetching}
             translation={selectedWord.translation}
             isSaved={isSaved}
+            hasPrev={hasPrev}
+            hasNext={hasNext}
+            onNavigatePrev={onNavigatePrev}
+            onNavigateNext={onNavigateNext}
+            onClose={onClose}
             onFetchTranslation={handleFetchTranslation}
             onSaveWordRecord={handleSaveWordRecord}
             onRemoveWordRecord={handleRemoveWordRecord}

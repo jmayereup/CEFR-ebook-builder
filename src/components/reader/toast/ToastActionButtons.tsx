@@ -1,4 +1,12 @@
-import { Bookmark, Check, Languages, Loader2 } from 'lucide-react';
+import {
+  Bookmark,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Languages,
+  Loader2,
+  X,
+} from 'lucide-react';
 
 import type { IUser } from '../../../services/types';
 
@@ -8,6 +16,11 @@ interface ToastActionButtonsProps {
   isFetching: boolean;
   translation: string;
   isSaved?: boolean;
+  hasPrev?: boolean;
+  hasNext?: boolean;
+  onNavigatePrev?: () => void;
+  onNavigateNext?: () => void;
+  onClose?: () => void;
   onFetchTranslation: () => void;
   onSaveWordRecord: () => void;
   onRemoveWordRecord?: () => void;
@@ -19,13 +32,50 @@ export default function ToastActionButtons({
   isFetching,
   translation,
   isSaved = false,
+  hasPrev,
+  hasNext,
+  onNavigatePrev,
+  onNavigateNext,
+  onClose,
   onFetchTranslation,
   onSaveWordRecord,
   onRemoveWordRecord,
 }: ToastActionButtonsProps) {
   return (
-    <div className="flex flex-col justify-center items-center shrink-0">
-      <div className="flex flex-row lg:flex-col items-center gap-2 w-full lg:pt-4">
+    <div className="flex flex-col justify-center lg:justify-start items-center lg:items-end shrink-0 min-w-[110px]">
+      {/* On wider screens, render the nav arrows and close button in the upper right corner */}
+      {onClose && (
+        <div className="hidden lg:flex items-center justify-end gap-1 w-full pb-2.5">
+          <button
+            type="button"
+            onClick={onNavigatePrev}
+            disabled={!hasPrev}
+            className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-2xs flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+            title="Previous word (Left Arrow)"
+          >
+            <ChevronLeft className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={onNavigateNext}
+            disabled={!hasNext}
+            className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed disabled:opacity-30 disabled:cursor-not-allowed rounded-xl text-tj-text-main border border-tj-border-main cursor-pointer shadow-2xs flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+            title="Next word (Right Arrow)"
+          >
+            <ChevronRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 bg-tj-bg-card hover:bg-tj-bg-recessed rounded-xl text-slate-400 hover:text-rose-500 border border-tj-border-main cursor-pointer shadow-2xs flex items-center justify-center ml-1 transition-all hover:scale-110 active:scale-95"
+            title="Close toast"
+          >
+            <X className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          </button>
+        </div>
+      )}
+
+      <div className="flex flex-row lg:flex-col items-center gap-2 w-full">
         {currentUser && (
           <button
             type="button"
