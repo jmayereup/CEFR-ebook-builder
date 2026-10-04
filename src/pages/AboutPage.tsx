@@ -11,6 +11,7 @@ import {
   Languages,
   Layers,
   Mail,
+  ShieldCheck,
   Sparkles,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -234,6 +235,50 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
               directly to your Kindle, Kobo, or mobile e-reader for offline
               reading anytime.
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Community & Content Standards */}
+      <div className="bg-tj-bg-card border border-tj-border-main rounded-3xl p-6 sm:p-8 shadow-sm space-y-4">
+        <div className="flex items-center gap-3 text-tj-primary">
+          <div className="p-2.5 bg-tj-primary/10 rounded-2xl">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-tj-text-main font-sans">
+              Community & Content Guidelines
+            </h2>
+            <p className="text-xs text-tj-text-muted">
+              Inclusive, user-generated stories with light AI moderation
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-3 text-xs sm:text-sm text-tj-text-muted leading-relaxed font-sans">
+          <p>
+            Easy eBooks is an open reading platform powered by user-generated stories with minimal AI-assisted moderation. We believe meaningful language acquisition flourishes when learners can read and write about topics that matter to them.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div className="p-4 bg-tj-bg-recessed border border-tj-border-main/70 rounded-2xl space-y-1.5">
+              <h4 className="text-xs font-bold text-tj-text-main flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                Welcoming & Diverse Perspectives
+              </h4>
+              <p className="text-[11px] text-tj-text-muted leading-relaxed">
+                Stories highlighting LGBTQ+ narratives, diverse cultural backgrounds, personal identities, and religious traditions are openly welcomed in our public library.
+              </p>
+            </div>
+
+            <div className="p-4 bg-tj-bg-recessed border border-tj-border-main/70 rounded-2xl space-y-1.5">
+              <h4 className="text-xs font-bold text-tj-text-main flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                Adult & Explicit Content Policy
+              </h4>
+              <p className="text-[11px] text-tj-text-muted leading-relaxed">
+                Users are free to generate stories for private personal study. However, sexually explicit content must be marked private and kept out of the shared public library catalog.
+              </p>
+            </div>
           </div>
         </div>
       </div>

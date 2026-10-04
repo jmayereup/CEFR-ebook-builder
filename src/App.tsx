@@ -1421,45 +1421,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
           </Suspense>
         </AnimatePresence>
       </main>
-      {!isZenMode && (
-        <>
-          <FloatingFooter />
-          <footer className="mt-20 border-t border-tj-border-main bg-tj-bg-card py-6 text-tj-text-muted select-none">
-            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-xs text-slate-400 dark:text-slate-500">
-                Easy eBooks - Graded Short Story Builder.
-              </p>
-              <div className="flex items-center gap-4 text-xs font-medium">
-                <button
-                  type="button"
-                  onClick={() => handleRequestTabChange('about')}
-                  className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors border-0 bg-transparent cursor-pointer p-0 font-medium"
-                >
-                  About & Support
-                </button>
-                <span className="text-slate-300 dark:text-slate-700">|</span>
-                <a
-                  href="/privacy.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors"
-                >
-                  Privacy Notice
-                </a>
-                <span className="text-slate-300 dark:text-slate-700">|</span>
-                <a
-                  href="/terms.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-slate-400 hover:text-tj-primary dark:text-slate-500 dark:hover:text-tj-primary-hover transition-colors"
-                >
-                  Terms of Service
-                </a>
-              </div>
-            </div>
-          </footer>
-        </>
-      )}
+      {!isZenMode && <FloatingFooter />}
       <SettingsModal
         isOpen={showSettingsModal}
         onClose={() => setShowSettingsModal(false)}
@@ -1515,6 +1477,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       <CookieConsent />
       <InstructionFloatingBox
         onOpenAuth={(mode = 'signup') => handleOpenAuth(mode)}
+        onOpenAbout={() => handleRequestTabChange('about')}
       />
     </div>
   );

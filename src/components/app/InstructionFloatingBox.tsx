@@ -1,11 +1,8 @@
 import {
   BookOpen,
   CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  Filter,
   Gift,
-  Lock,
+  ShieldCheck,
   Sparkles,
   X,
 } from 'lucide-react';
@@ -17,14 +14,15 @@ const STORAGE_KEY = 'cefr_hide_instruction_box';
 
 interface InstructionFloatingBoxProps {
   onOpenAuth?: (mode?: 'signin' | 'signup') => void;
+  onOpenAbout?: () => void;
 }
 
 export default function InstructionFloatingBox({
   onOpenAuth,
+  onOpenAbout,
 }: InstructionFloatingBoxProps) {
   const [show, setShow] = useState<boolean>(false);
   const [dontShowAgain, setDontShowAgain] = useState<boolean>(false);
-  const [showCefrDetails, setShowCefrDetails] = useState<boolean>(false);
   const { currentUser } = useAuthStore();
 
   useEffect(() => {
@@ -54,6 +52,13 @@ export default function InstructionFloatingBox({
     }
   };
 
+  const handleAboutClick = () => {
+    handleClose();
+    if (onOpenAbout) {
+      onOpenAbout();
+    }
+  };
+
   return (
     <AnimatePresence>
       {show && (
@@ -62,20 +67,20 @@ export default function InstructionFloatingBox({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 40, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-          className="fixed bottom-4 right-4 left-4 md:left-auto md:max-w-md z-40 p-5 bg-tj-bg-card/95 backdrop-blur-md border border-tj-border-main rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] text-tj-text-main flex flex-col gap-3.5 select-text"
+          className="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-40 p-5 bg-tj-bg-card/95 backdrop-blur-md border border-tj-border-main rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] text-tj-text-main flex flex-col gap-3.5 select-text"
         >
           {/* Header */}
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2.5">
               <div className="p-2 bg-tj-primary/10 text-tj-primary rounded-xl shrink-0">
                 <BookOpen className="w-5 h-5 text-tj-primary" />
               </div>
               <div>
-                <h4 className="text-sm font-bold tracking-tight text-tj-text-main">
+                <h4 className="text-sm font-bold tracking-tight text-tj-text-main font-sans">
                   Welcome to Easy eBooks
                 </h4>
                 <p className="text-[11px] text-tj-text-muted">
-                  Your AI-powered language reading companion
+                  Graded reader builder & language library
                 </p>
               </div>
             </div>
@@ -90,119 +95,90 @@ export default function InstructionFloatingBox({
             </button>
           </div>
 
-          {/* Body Cards */}
-          <div className="flex flex-col gap-2.5 text-xs text-tj-text-muted leading-relaxed">
-            {/* Promo Banner */}
+          {/* Core Feature Points */}
+          <div className="flex flex-col gap-2 text-xs text-tj-text-muted leading-relaxed">
+            {/* Free Generations */}
             <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
               <Gift className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-              <div>
-                <span className="font-bold text-amber-700 dark:text-amber-300">
-                  Limited-Time Offer:
-                </span>{' '}
-                Sign up today to enjoy{' '}
-                <strong className="text-tj-text-amber-700 font-semibold">
-                  free book generations
+              <div className="text-[11px] leading-snug">
+                <strong className="text-amber-800 dark:text-amber-300 font-semibold">
+                  Free Daily Generations:
                 </strong>{' '}
-                while our shared library is being built. Users can generate 1-2
-                short stories per day for free. (No payment options required.)
+                Create 1–2 custom stories per day for free while our shared library grows. No credit card required.
               </div>
             </div>
 
-            {/* App & CEFR Explanation */}
-            <div className="p-2.5 rounded-xl bg-slate-50/60 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 flex flex-col gap-2">
-              <div className="flex items-start gap-2">
-                <Filter className="w-4 h-4 text-tj-primary shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-tj-text-main font-semibold">
-                    CEFR Level Filters:
-                  </strong>{' '}
-                  Stories are written to match standardized CEFR levels (Pre-A1
-                  to C2), ensuring vocabulary and sentence structures fit your
-                  reading comfort level.
-                </div>
+            {/* CEFR & DRM Free Reading */}
+            <div className="p-2.5 rounded-xl bg-slate-50/60 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 flex items-start gap-2.5">
+              <Sparkles className="w-4 h-4 text-tj-primary shrink-0 mt-0.5" />
+              <div className="text-[11px] leading-snug">
+                <strong className="text-tj-text-main font-semibold">
+                  Graded Input & Kindle Export:
+                </strong>{' '}
+                Read at your CEFR level (Pre-A1 to C2) in 20+ languages with instant lookups, audio, and DRM-free EPUB downloads.
               </div>
-
-              {/* Collapsible CEFR breakdown */}
-              <button
-                type="button"
-                onClick={() => setShowCefrDetails(!showCefrDetails)}
-                className="flex items-center justify-between text-[11px] text-tj-primary font-medium hover:underline pt-1 cursor-pointer select-none"
-              >
-                <span>
-                  {showCefrDetails
-                    ? 'Hide CEFR levels breakdown'
-                    : 'What are CEFR levels (Pre-A1 – C2)?'}
-                </span>
-                {showCefrDetails ? (
-                  <ChevronUp className="w-3.5 h-3.5" />
-                ) : (
-                  <ChevronDown className="w-3.5 h-3.5" />
-                )}
-              </button>
-
-              {showCefrDetails && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mt-1 pt-1.5 border-t border-slate-200/50 dark:border-slate-800/50 flex flex-col gap-1 text-[11px]"
-                >
-                  <div className="grid grid-cols-2 gap-1.5">
-                    <span className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded font-mono font-medium">
-                      A1 - Beginner
-                    </span>
-                    <span className="bg-sky-500/10 text-sky-700 dark:text-sky-300 px-1.5 py-0.5 rounded font-mono font-medium">
-                      A2 - Elementary
-                    </span>
-                    <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 px-1.5 py-0.5 rounded font-mono font-medium">
-                      B1 - Intermediate
-                    </span>
-                    <span className="bg-purple-500/10 text-purple-700 dark:text-purple-300 px-1.5 py-0.5 rounded font-mono font-medium">
-                      B2 - Upper Interm.
-                    </span>
-                    <span className="bg-amber-500/10 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded font-mono font-medium">
-                      C1 - Advanced
-                    </span>
-                    <span className="bg-rose-500/10 text-rose-700 dark:text-rose-300 px-1.5 py-0.5 rounded font-mono font-medium">
-                      C2 - Proficient
-                    </span>
-                  </div>
-                </motion.div>
-              )}
             </div>
 
-            {/* DRM Free Notice */}
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-200 flex items-start gap-2.5">
-              <Lock className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5 line-through" />
-              <div>
-                <strong className="text-emerald-800 dark:text-emerald-300 font-semibold">
-                  100% DRM-Free eBooks:
+            {/* Content Note */}
+            <div className="p-2.5 rounded-xl bg-tj-primary/10 border border-tj-primary/20 text-tj-text-main flex items-start gap-2.5">
+              <ShieldCheck className="w-4 h-4 text-tj-primary shrink-0 mt-0.5" />
+              <div className="text-[11px] leading-snug">
+                <strong className="text-tj-primary font-semibold">
+                  Content Note:
                 </strong>{' '}
-                Download your generated stories as standard EPUB ebooks. Keep
-                them forever and read on Kindle, Kobo, Apple Books, or any
-                e-reader.
+                Stories are user-generated with light AI moderation. Diverse perspectives (including LGBTQ+ and religious themes) are welcome. Sexually explicit content must be marked private.
               </div>
             </div>
           </div>
 
-          {/* Footer Controls & Checkbox */}
-          <div className="flex flex-col gap-2.5 pt-1 border-t border-slate-200/60 dark:border-slate-800/60">
-            <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-tj-text-muted hover:text-tj-text-main transition-colors">
-              <input
-                type="checkbox"
-                checked={dontShowAgain}
-                onChange={(e) => setDontShowAgain(e.target.checked)}
-                className="w-4 h-4 rounded text-tj-primary focus:ring-tj-primary border-slate-300 dark:border-slate-700 cursor-pointer accent-tj-primary"
-              />
-              <span>Don't show this again</span>
-            </label>
+          {/* Footer Controls, Links & Checkbox */}
+          <div className="flex flex-col gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-800/60">
+            <div className="flex items-center justify-between text-[11px] text-tj-text-muted px-0.5">
+              <label className="flex items-center gap-2 cursor-pointer select-none hover:text-tj-text-main transition-colors">
+                <input
+                  type="checkbox"
+                  checked={dontShowAgain}
+                  onChange={(e) => setDontShowAgain(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded text-tj-primary focus:ring-tj-primary border-slate-300 dark:border-slate-700 cursor-pointer accent-tj-primary"
+                />
+                <span>Don't show again</span>
+              </label>
 
-            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-[10px]">
+                <button
+                  type="button"
+                  onClick={handleAboutClick}
+                  className="hover:text-tj-primary transition-colors cursor-pointer bg-transparent border-0 p-0 text-tj-text-muted"
+                >
+                  About
+                </button>
+                <span>•</span>
+                <a
+                  href="/privacy.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-tj-primary transition-colors"
+                >
+                  Privacy
+                </a>
+                <span>•</span>
+                <a
+                  href="/terms.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-tj-primary transition-colors"
+                >
+                  Terms
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-1">
               {!currentUser ? (
                 <button
                   type="button"
                   onClick={handleActionClick}
-                  className="flex-1 py-2 px-4 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer transition-colors shadow-sm select-none text-center flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2 px-3 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer transition-colors shadow-sm select-none text-center flex items-center justify-center gap-1.5"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   Sign Up & Generate Free
@@ -211,10 +187,10 @@ export default function InstructionFloatingBox({
                 <button
                   type="button"
                   onClick={handleActionClick}
-                  className="flex-1 py-2 px-4 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer transition-colors shadow-sm select-none text-center flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2 px-3 bg-tj-primary hover:bg-tj-primary-hover text-tj-bg-main font-bold text-xs rounded-xl cursor-pointer transition-colors shadow-sm select-none text-center flex items-center justify-center gap-1.5"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  Got it, let's read!
+                  Start Reading
                 </button>
               )}
               <button
