@@ -38,7 +38,7 @@ function unstickSpeechQueue() {
 }
 
 /**
- * On Android Chromium, calling cancel() immediately followed synchronously by speak()
+ * On Android Chromium and WebKit, calling cancel() immediately followed synchronously by speak()
  * triggers an IPC race condition that discards the newly queued utterance.
  * This helper ensures any existing utterance is canceled and allows the IPC to settle.
  */
@@ -46,11 +46,12 @@ function safeCancelSpeech(): Promise<void> {
   if (typeof window === 'undefined' || !window.speechSynthesis) {
     return Promise.resolve();
   }
-  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+  try {
     window.speechSynthesis.cancel();
-    return new Promise((resolve) => setTimeout(resolve, 40));
+  } catch (e) {
+    console.warn('Could not cancel speech synthesis:', e);
   }
-  return Promise.resolve();
+  return new Promise((resolve) => setTimeout(resolve, 40));
 }
 
 export function getVoiceQualityScore(
@@ -120,7 +121,7 @@ export function useSpeechSynthesis(language: string) {
       const saved = localStorage.getItem('reader-speech-rate');
       if (saved) {
         const parsed = parseFloat(saved);
-        if (!isNaN(parsed) && parsed >= 0.5 && parsed <= 2.0) {
+        if (!Number.isNaN(parsed) && parsed >= 0.5 && parsed <= 2.0) {
           return parsed;
         }
       }
@@ -162,6 +163,7 @@ export function useSpeechSynthesis(language: string) {
     speechType?: 'primary' | 'translation';
   } | null>(null);
   const isStoppingRef = useRef<boolean>(false);
+  const playSessionRef = useRef<number>(0);
 
   const setAutoPlayWord = useCallback((enabled: boolean) => {
     setAutoPlayWordState(enabled);
@@ -232,20 +234,37 @@ export function useSpeechSynthesis(language: string) {
   // Clean up any ongoing speech timers on unmount
   useEffect(() => {
     return () => {
+      isStoppingRef.current = true;
+      playSessionRef.current += 1;
       if (queueRef.current?.timerId) {
         clearTimeout(queueRef.current.timerId);
       }
       if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
+        try {
+          window.speechSynthesis.cancel();
+        } catch (e) {
+          console.warn('Could not cancel speech synthesis on unmount:', e);
+        }
       }
     };
   }, []);
 
   // Internal recursive sentence chunk speaker
   const speakSentenceChunk = useCallback(
-    (sentences: ChapterSentence[], index: number, isRetry = false) => {
+    (
+      sentences: ChapterSentence[],
+      index: number,
+      isRetry = false,
+      sessionId = playSessionRef.current,
+    ) => {
       if (typeof window === 'undefined' || !window.speechSynthesis) return;
-      if (isStoppingRef.current || !queueRef.current) return;
+      if (
+        playSessionRef.current !== sessionId ||
+        isStoppingRef.current ||
+        !queueRef.current
+      ) {
+        return;
+      }
 
       if (
         index >= sentences.length ||
@@ -309,14 +328,21 @@ export function useSpeechSynthesis(language: string) {
       utterance.rate = speechRate;
 
       utterance.onstart = () => {
-        if (!isStoppingRef.current) {
+        if (playSessionRef.current === sessionId && !isStoppingRef.current) {
           setIsSpeaking(true);
           setIsPaused(false);
+          setTtsError(null);
         }
       };
 
       utterance.onend = () => {
-        if (isStoppingRef.current || !queueRef.current) return;
+        if (
+          playSessionRef.current !== sessionId ||
+          isStoppingRef.current ||
+          !queueRef.current
+        ) {
+          return;
+        }
         if (
           queueRef.current.stopAfterIndex !== undefined &&
           index >= queueRef.current.stopAfterIndex
@@ -333,7 +359,14 @@ export function useSpeechSynthesis(language: string) {
         // Schedule next sentence after an organic natural reading pause (160ms)
         const nextIdx = index + 1;
         const timerId = window.setTimeout(() => {
-          speakSentenceChunk(sentences, nextIdx);
+          if (
+            playSessionRef.current !== sessionId ||
+            isStoppingRef.current ||
+            !queueRef.current
+          ) {
+            return;
+          }
+          speakSentenceChunk(sentences, nextIdx, false, sessionId);
         }, 160);
         if (queueRef.current) {
           queueRef.current.timerId = timerId;
@@ -341,13 +374,23 @@ export function useSpeechSynthesis(language: string) {
       };
 
       utterance.onerror = (e) => {
+        // If canceled or interrupted, it is normal speech cancellation - do not treat as error or retry
+        if (e.error === 'canceled' || e.error === 'interrupted') {
+          return;
+        }
+        if (
+          playSessionRef.current !== sessionId ||
+          isStoppingRef.current ||
+          !queueRef.current
+        ) {
+          return;
+        }
         console.warn(`Sentence narration error at chunk ${index}:`, e);
-        if (isStoppingRef.current || !queueRef.current) return;
 
         // If voice failed and we haven't retried with system default voice yet, retry once
         if (!isRetry && selectedVoice) {
           console.info('Retrying sentence with OS default voice...');
-          speakSentenceChunk(sentences, index, true);
+          speakSentenceChunk(sentences, index, true, sessionId);
           return;
         }
 
@@ -371,7 +414,14 @@ export function useSpeechSynthesis(language: string) {
           index,
         );
         const timerId = window.setTimeout(() => {
-          speakSentenceChunk(sentences, index + 1);
+          if (
+            playSessionRef.current !== sessionId ||
+            isStoppingRef.current ||
+            !queueRef.current
+          ) {
+            return;
+          }
+          speakSentenceChunk(sentences, index + 1, false, sessionId);
         }, 250);
         if (queueRef.current) {
           queueRef.current.timerId = timerId;
@@ -393,6 +443,7 @@ export function useSpeechSynthesis(language: string) {
       if (typeof window === 'undefined' || !window.speechSynthesis) return;
       if (!sentences || sentences.length === 0) return;
 
+      const sessionId = ++playSessionRef.current;
       isStoppingRef.current = false;
       if (queueRef.current?.timerId) {
         clearTimeout(queueRef.current.timerId);
@@ -407,19 +458,25 @@ export function useSpeechSynthesis(language: string) {
 
       unstickSpeechQueue();
       await safeCancelSpeech();
-      speakSentenceChunk(sentences, startIndex);
+      if (playSessionRef.current !== sessionId) return;
+      speakSentenceChunk(sentences, startIndex, false, sessionId);
     },
     [speakSentenceChunk],
   );
 
   const pauseSentenceQueue = useCallback(() => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    playSessionRef.current += 1;
     if (queueRef.current?.timerId) {
       clearTimeout(queueRef.current.timerId);
       queueRef.current.timerId = null;
     }
     // Cancel active audio stream cleanly so Android doesn't hang the speech thread
-    window.speechSynthesis.cancel();
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {
+      console.warn('Could not cancel speech on pause:', e);
+    }
     setIsSpeaking(false);
     setIsPaused(true);
   }, []);
@@ -428,20 +485,27 @@ export function useSpeechSynthesis(language: string) {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
     if (!queueRef.current) return;
     const { sentences, currentIndex } = queueRef.current;
+    const sessionId = ++playSessionRef.current;
+    isStoppingRef.current = false;
     unstickSpeechQueue();
     await safeCancelSpeech();
-    isStoppingRef.current = false;
-    speakSentenceChunk(sentences, currentIndex);
+    if (playSessionRef.current !== sessionId || !queueRef.current) return;
+    speakSentenceChunk(sentences, currentIndex, false, sessionId);
   }, [speakSentenceChunk]);
 
   const stopSentenceQueue = useCallback(() => {
     isStoppingRef.current = true;
+    playSessionRef.current += 1;
     if (queueRef.current?.timerId) {
       clearTimeout(queueRef.current.timerId);
     }
     queueRef.current = null;
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {
+        console.warn('Could not cancel speech on stop:', e);
+      }
     }
     setCurrentSentenceIndex(null);
     setActiveSentenceId(null);
@@ -458,9 +522,11 @@ export function useSpeechSynthesis(language: string) {
         clearTimeout(queueRef.current.timerId);
         queueRef.current.timerId = null;
       }
-      await safeCancelSpeech();
+      const sessionId = ++playSessionRef.current;
       isStoppingRef.current = false;
-      speakSentenceChunk(queueRef.current.sentences, index);
+      await safeCancelSpeech();
+      if (playSessionRef.current !== sessionId || !queueRef.current) return;
+      speakSentenceChunk(queueRef.current.sentences, index, false, sessionId);
     },
     [speakSentenceChunk],
   );
@@ -474,6 +540,11 @@ export function useSpeechSynthesis(language: string) {
       if (typeof window === 'undefined' || !window.speechSynthesis) return;
       if (!text?.trim()) return;
 
+      const sessionId = ++playSessionRef.current;
+      isStoppingRef.current = false;
+      if (queueRef.current?.timerId) {
+        clearTimeout(queueRef.current.timerId);
+      }
       const targetLangCode = getLanguageCodeFromName(transLanguage);
       const cleanPara = cleanSpeechText(text);
       const chunks = segmentParagraphIntoSentences(
@@ -497,10 +568,6 @@ export function useSpeechSynthesis(language: string) {
               },
             ];
 
-      isStoppingRef.current = false;
-      if (queueRef.current?.timerId) {
-        clearTimeout(queueRef.current.timerId);
-      }
       queueRef.current = {
         sentences,
         currentIndex: 0,
@@ -512,7 +579,8 @@ export function useSpeechSynthesis(language: string) {
 
       unstickSpeechQueue();
       await safeCancelSpeech();
-      speakSentenceChunk(sentences, 0);
+      if (playSessionRef.current !== sessionId) return;
+      speakSentenceChunk(sentences, 0, false, sessionId);
     },
     [speakSentenceChunk],
   );
@@ -520,8 +588,22 @@ export function useSpeechSynthesis(language: string) {
   const playWord = useCallback(
     async (word: string, customLanguage?: string) => {
       if (typeof window === 'undefined' || !window.speechSynthesis) return;
+
+      const sessionId = ++playSessionRef.current;
+      isStoppingRef.current = false;
+      // Stop and clear any active chapter sentence queue so words don't race with sentence stepper
+      if (queueRef.current?.timerId) {
+        clearTimeout(queueRef.current.timerId);
+      }
+      queueRef.current = null;
+      setCurrentSentenceIndex(null);
+      setActiveSentenceId(null);
+      setActiveParagraphIndex(null);
+      setActiveSpeechType(null);
+
       unstickSpeechQueue();
       await safeCancelSpeech();
+      if (playSessionRef.current !== sessionId) return;
 
       const cleanedWord = cleanSpeechText(word);
       if (!cleanedWord) return;
@@ -550,7 +632,29 @@ export function useSpeechSynthesis(language: string) {
       }
       utterance.rate = speechRate;
 
+      utterance.onstart = () => {
+        if (playSessionRef.current === sessionId) {
+          setIsSpeaking(true);
+          setIsPaused(false);
+          setTtsError(null);
+        }
+      };
+
+      utterance.onend = () => {
+        if (playSessionRef.current === sessionId) {
+          setIsSpeaking(false);
+          setIsPaused(false);
+        }
+      };
+
       utterance.onerror = (e) => {
+        // If canceled or interrupted, it is normal speech cancellation - do not treat as error
+        if (e.error === 'canceled' || e.error === 'interrupted') {
+          return;
+        }
+        if (playSessionRef.current !== sessionId || isStoppingRef.current) {
+          return;
+        }
         console.warn('Speech synthesis utterance error on playWord:', e);
         // Fallback retry without setting utterance.voice (delegating to OS default voice for language)
         if (selectedVoice) {
@@ -561,17 +665,40 @@ export function useSpeechSynthesis(language: string) {
           const fallback = new SpeechSynthesisUtterance(cleanedWord);
           fallback.lang = targetLangCode;
           fallback.rate = speechRate;
+          fallback.onstart = () => {
+            if (playSessionRef.current === sessionId) {
+              setIsSpeaking(true);
+              setIsPaused(false);
+              setTtsError(null);
+            }
+          };
+          fallback.onend = () => {
+            if (playSessionRef.current === sessionId) {
+              setIsSpeaking(false);
+              setIsPaused(false);
+            }
+          };
           fallback.onerror = (err2) => {
+            if (err2.error === 'canceled' || err2.error === 'interrupted') {
+              return;
+            }
+            if (playSessionRef.current !== sessionId || isStoppingRef.current) {
+              return;
+            }
             console.error('Fallback playWord failed:', err2);
             setTtsError(
               'Voice playback error. Please verify preferred TTS engine in device settings.',
             );
+            setIsSpeaking(false);
+            setIsPaused(false);
           };
           window.speechSynthesis.speak(fallback);
         } else {
           setTtsError(
             'Voice playback error. Please verify preferred TTS engine in device settings.',
           );
+          setIsSpeaking(false);
+          setIsPaused(false);
         }
       };
 
@@ -595,8 +722,16 @@ export function useSpeechSynthesis(language: string) {
         return;
       }
 
+      const sessionId = ++playSessionRef.current;
+      isStoppingRef.current = false;
+      if (queueRef.current?.timerId) {
+        clearTimeout(queueRef.current.timerId);
+      }
+      queueRef.current = null;
+
       unstickSpeechQueue();
       await safeCancelSpeech();
+      if (playSessionRef.current !== sessionId) return;
 
       const cleanedText = cleanSpeechText(textToSpeak);
       if (!cleanedText) return;
@@ -612,26 +747,49 @@ export function useSpeechSynthesis(language: string) {
       utterance.rate = speechRate;
 
       utterance.onstart = () => {
-        setIsSpeaking(true);
-        setIsPaused(false);
+        if (playSessionRef.current === sessionId) {
+          setIsSpeaking(true);
+          setIsPaused(false);
+          setTtsError(null);
+        }
       };
 
       utterance.onend = () => {
-        setIsSpeaking(false);
-        setIsPaused(false);
+        if (playSessionRef.current === sessionId) {
+          setIsSpeaking(false);
+          setIsPaused(false);
+        }
       };
 
       utterance.onerror = (e) => {
+        if (e.error === 'canceled' || e.error === 'interrupted') {
+          return;
+        }
+        if (playSessionRef.current !== sessionId || isStoppingRef.current) {
+          return;
+        }
         console.error('Speech synthesis error: ', e);
         if (selectedVoice) {
           const fallback = new SpeechSynthesisUtterance(cleanedText);
           fallback.lang = targetLangCode;
           fallback.rate = speechRate;
           fallback.onstart = () => {
-            setIsSpeaking(true);
-            setIsPaused(false);
+            if (playSessionRef.current === sessionId) {
+              setIsSpeaking(true);
+              setIsPaused(false);
+              setTtsError(null);
+            }
           };
           fallback.onend = () => {
+            if (playSessionRef.current === sessionId) {
+              setIsSpeaking(false);
+              setIsPaused(false);
+            }
+          };
+          fallback.onerror = (err2) => {
+            if (err2.error === 'canceled' || err2.error === 'interrupted') {
+              return;
+            }
             setIsSpeaking(false);
             setIsPaused(false);
           };

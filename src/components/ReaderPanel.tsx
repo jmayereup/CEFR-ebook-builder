@@ -718,10 +718,11 @@ export default function ReaderPanel({
     isZenMode,
   ]);
 
-  // Stop narration on chapter changes
+  // Stop narration and clear any stale TTS error diagnostics on chapter changes
   useEffect(() => {
     stopSentenceQueue();
-  }, [activeChapterIndex, stopSentenceQueue]);
+    clearTtsError();
+  }, [activeChapterIndex, stopSentenceQueue, clearTtsError]);
 
   // Core TTS executors using sentence queue stepper
   const handleReadChapter = () => {
