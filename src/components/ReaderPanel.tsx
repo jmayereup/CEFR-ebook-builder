@@ -718,10 +718,15 @@ export default function ReaderPanel({
     isZenMode,
   ]);
 
-  // Stop narration and clear any stale TTS error diagnostics on chapter changes
+  const prevChapterIndexRef = useRef<number>(activeChapterIndex);
+
+  // Stop narration and clear any stale TTS error diagnostics only when chapter actually changes
   useEffect(() => {
-    stopSentenceQueue();
-    clearTtsError();
+    if (prevChapterIndexRef.current !== activeChapterIndex) {
+      prevChapterIndexRef.current = activeChapterIndex;
+      stopSentenceQueue();
+      clearTtsError();
+    }
   }, [activeChapterIndex, stopSentenceQueue, clearTtsError]);
 
   // Core TTS executors using sentence queue stepper

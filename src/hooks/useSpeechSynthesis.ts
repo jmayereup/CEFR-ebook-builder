@@ -46,12 +46,15 @@ function safeCancelSpeech(): Promise<void> {
   if (typeof window === 'undefined' || !window.speechSynthesis) {
     return Promise.resolve();
   }
-  try {
-    window.speechSynthesis.cancel();
-  } catch (e) {
-    console.warn('Could not cancel speech synthesis:', e);
+  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {
+      console.warn('Could not cancel speech synthesis:', e);
+    }
+    return new Promise((resolve) => setTimeout(resolve, 40));
   }
-  return new Promise((resolve) => setTimeout(resolve, 40));
+  return Promise.resolve();
 }
 
 export function getVoiceQualityScore(
@@ -408,7 +411,14 @@ export function useSpeechSynthesis(language: string) {
           return;
         }
 
-        // If it still fails, advance to the next sentence chunk rather than locking up narration
+        // If it still fails on the first sentence, notify the user of genuine engine failure
+        if (index === 0) {
+          setTtsError(
+            'Voice playback error. Please verify preferred TTS engine in device settings.',
+          );
+        }
+
+        // Advance to the next sentence chunk rather than locking up narration
         console.warn(
           'Advancing to next sentence after synthesis error:',
           index,
@@ -805,6 +815,10 @@ export function useSpeechSynthesis(language: string) {
     [isSpeaking, isPaused, language, voices, selectedVoiceName, speechRate],
   );
 
+  const clearTtsError = useCallback(() => {
+    setTtsError(null);
+  }, []);
+
   return {
     voices,
     selectedVoiceName,
@@ -830,6 +844,6 @@ export function useSpeechSynthesis(language: string) {
     stopSentenceQueue,
     jumpToSentence,
     ttsError,
-    clearTtsError: () => setTtsError(null),
+    clearTtsError,
   };
 }
