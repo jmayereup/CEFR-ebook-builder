@@ -1464,7 +1464,6 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        onLogin={handleLogin}
         initialMode={authModalMode}
       />
       <FlagStoryModal

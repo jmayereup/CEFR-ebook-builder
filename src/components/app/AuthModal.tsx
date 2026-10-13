@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { emailSignIn, emailSignUp } from '../../services/auth';
+import { useAuthStore } from '../../store/authStore';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface AuthModalProps {
 export default function AuthModal({
   isOpen,
   onClose,
+  onLogin,
   initialMode = 'signin',
 }: AuthModalProps) {
   const [isSignUp, setIsSignUp] = useState(initialMode === 'signup');
@@ -42,10 +44,19 @@ export default function AuthModal({
     setLoading(true);
 
     try {
+      let result: Awaited<ReturnType<typeof emailSignIn>> = null;
       if (isSignUp) {
-        await emailSignUp(email.trim(), password, name.trim() || undefined);
+        result = await emailSignUp(
+          email.trim(),
+          password,
+          name.trim() || undefined,
+        );
       } else {
-        await emailSignIn(email.trim(), password);
+        result = await emailSignIn(email.trim(), password);
+      }
+      if (result?.user) {
+        useAuthStore.getState().setCurrentUser(result.user);
+        onLogin?.();
       }
       onClose();
     } catch (err: any) {

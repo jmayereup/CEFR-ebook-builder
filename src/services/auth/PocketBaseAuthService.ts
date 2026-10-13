@@ -1,3 +1,4 @@
+import { useAuthStore } from '../../store/authStore';
 import { pb } from '../pocketbase';
 import type { IUser } from '../types';
 import type { IAuthService, Unsubscribe } from './AuthService';
@@ -18,8 +19,11 @@ export class PocketBaseAuthService implements IAuthService {
     onSuccess: (user: IUser, token: string) => void,
     onFailure: () => void,
   ): Unsubscribe {
-    // If already logged in, invoke onSuccess immediately
+    let lastUserId: string | null = null;
+
+    // If already logged in and token is valid, invoke onSuccess immediately
     if (pb.authStore.isValid && pb.authStore.record) {
+      lastUserId = pb.authStore.record.id;
       onSuccess(toIUser(pb.authStore.record), pb.authStore.token);
 
       // Asynchronously refresh the token to keep it valid and verify with server
@@ -37,25 +41,34 @@ export class PocketBaseAuthService implements IAuthService {
           );
           if (err.status === 401 || err.status === 403) {
             pb.authStore.clear();
+            lastUserId = null;
             onFailure();
           }
         });
     } else {
+      // Clear expired or invalid stored credentials so stale record doesn't block future login
+      pb.authStore.clear();
+      lastUserId = null;
       onFailure();
     }
 
-    let lastUserId = pb.authStore.record?.id || null;
-
     // Listen for auth store changes (login/logout/token refreshes)
     const unsubscribe = pb.authStore.onChange((token, record) => {
-      if (record) {
-        if (record.id === lastUserId) {
+      if (record && pb.authStore.isValid) {
+        // If already recognized as logged in with this exact user in both lastUserId and authStore, skip redundant notification
+        if (
+          record.id === lastUserId &&
+          useAuthStore.getState().currentUser?.uid === record.id
+        ) {
           return;
         }
         lastUserId = record.id;
         onSuccess(toIUser(record), token);
       } else {
-        if (lastUserId === null) {
+        if (
+          lastUserId === null &&
+          useAuthStore.getState().currentUser === null
+        ) {
           return;
         }
         lastUserId = null;
@@ -72,8 +85,10 @@ export class PocketBaseAuthService implements IAuthService {
         .collection('users')
         .authWithOAuth2({ provider: 'google' });
       if (authData.record) {
+        const user = toIUser(authData.record);
+        useAuthStore.getState().setCurrentUser(user);
         return {
-          user: toIUser(authData.record),
+          user,
           accessToken: authData.token,
         };
       }
@@ -93,8 +108,10 @@ export class PocketBaseAuthService implements IAuthService {
         .collection('users')
         .authWithPassword(email, password);
       if (authData.record) {
+        const user = toIUser(authData.record);
+        useAuthStore.getState().setCurrentUser(user);
         return {
-          user: toIUser(authData.record),
+          user,
           accessToken: authData.token,
         };
       }
@@ -129,8 +146,10 @@ export class PocketBaseAuthService implements IAuthService {
         .collection('users')
         .authWithPassword(email, password);
       if (authData.record) {
+        const user = toIUser(authData.record);
+        useAuthStore.getState().setCurrentUser(user);
         return {
-          user: toIUser(authData.record),
+          user,
           accessToken: authData.token,
         };
       }
@@ -143,6 +162,7 @@ export class PocketBaseAuthService implements IAuthService {
 
   async signOut(): Promise<void> {
     pb.authStore.clear();
+    useAuthStore.getState().setCurrentUser(null);
   }
 
   async getAccessToken(): Promise<string | null> {
