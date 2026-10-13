@@ -25,10 +25,7 @@ import type {
   Story,
   TargetedEdit,
 } from '../../types';
-import {
-  applyBatchEdits,
-  checkEditMatch,
-} from '../../utils/consistencyUtils';
+import { applyBatchEdits, checkEditMatch } from '../../utils/consistencyUtils';
 import { buildApiHeaders } from '../../utils/modelUtils';
 
 interface ConsistencyCheckModalProps {
@@ -62,7 +59,9 @@ export default function ConsistencyCheckModal({
   const [customIssuePrompt, setCustomIssuePrompt] = useState(initialPrompt);
   const [submittedPrompt, setSubmittedPrompt] = useState('');
   const [selectedModel, setSelectedModel] = useState<string>(() => {
-    return story.model || defaultStoryModel || '~deepseek/deepseek-flash-latest';
+    return (
+      story.model || defaultStoryModel || '~deepseek/deepseek-flash-latest'
+    );
   });
   const [isCustomModelMode, setIsCustomModelMode] = useState<boolean>(false);
   const [customModelInput, setCustomModelInput] = useState<string>('');
@@ -97,7 +96,9 @@ export default function ConsistencyCheckModal({
       }
       setSelectedModel((prev) => {
         if (prev) return prev;
-        return defaultStoryModel || story.model || '~deepseek/deepseek-flash-latest';
+        return (
+          defaultStoryModel || story.model || '~deepseek/deepseek-flash-latest'
+        );
       });
     }
   }, [isOpen, initialPrompt, defaultStoryModel, story.model]);
@@ -221,7 +222,11 @@ export default function ConsistencyCheckModal({
 
     if (editsToApply.length === 0) {
       if (onShowAlert) {
-        onShowAlert('No Edits Selected', 'Please select at least one edit to apply.', 'warning');
+        onShowAlert(
+          'No Edits Selected',
+          'Please select at least one edit to apply.',
+          'warning',
+        );
       }
       return;
     }
@@ -313,8 +318,9 @@ export default function ConsistencyCheckModal({
                 Story Consistency Check & Targeted Edits
               </h2>
               <p className="text-xs text-tj-text-muted mt-0.5">
-                Audit character continuity, timeline, and plot across all chapters,
-                or target specific fixes with surgical search-and-replace edits.
+                Audit character continuity, timeline, and plot across all
+                chapters, or target specific fixes with surgical
+                search-and-replace edits.
               </p>
             </div>
           </div>
@@ -358,7 +364,8 @@ export default function ConsistencyCheckModal({
             </div>
 
             <p className="text-[11px] text-tj-text-muted leading-relaxed">
-              Ask the AI to trace a specific item, character, or plotline across all chapters (e.g.{' '}
+              Ask the AI to trace a specific item, character, or plotline across
+              all chapters (e.g.{' '}
               <span className="italic font-medium text-tj-text-main">
                 "Check the location of the amulet"
               </span>
@@ -382,7 +389,9 @@ export default function ConsistencyCheckModal({
               <button
                 type="button"
                 onClick={() =>
-                  setCustomIssuePrompt('Check the location of the amulet across all chapters')
+                  setCustomIssuePrompt(
+                    'Check the location of the amulet across all chapters',
+                  )
                 }
                 className="text-[10px] px-2.5 py-1 rounded-full bg-tj-bg-card hover:bg-tj-primary/10 hover:text-tj-primary border border-tj-border-main text-tj-text-main cursor-pointer transition-all"
               >
@@ -391,7 +400,9 @@ export default function ConsistencyCheckModal({
               <button
                 type="button"
                 onClick={() =>
-                  setCustomIssuePrompt('Trace possession and location of key items or artifacts across all chapters')
+                  setCustomIssuePrompt(
+                    'Trace possession and location of key items or artifacts across all chapters',
+                  )
                 }
                 className="text-[10px] px-2.5 py-1 rounded-full bg-tj-bg-card hover:bg-tj-primary/10 hover:text-tj-primary border border-tj-border-main text-tj-text-main cursor-pointer transition-all"
               >
@@ -400,7 +411,9 @@ export default function ConsistencyCheckModal({
               <button
                 type="button"
                 onClick={() =>
-                  setCustomIssuePrompt('Check character names, physical descriptions, and relationships across all chapters')
+                  setCustomIssuePrompt(
+                    'Check character names, physical descriptions, and relationships across all chapters',
+                  )
                 }
                 className="text-[10px] px-2.5 py-1 rounded-full bg-tj-bg-card hover:bg-tj-primary/10 hover:text-tj-primary border border-tj-border-main text-tj-text-main cursor-pointer transition-all"
               >
@@ -409,7 +422,9 @@ export default function ConsistencyCheckModal({
               <button
                 type="button"
                 onClick={() =>
-                  setCustomIssuePrompt('Check timeline consistency, days elapsed, and chronology of events')
+                  setCustomIssuePrompt(
+                    'Check timeline consistency, days elapsed, and chronology of events',
+                  )
                 }
                 className="text-[10px] px-2.5 py-1 rounded-full bg-tj-bg-card hover:bg-tj-primary/10 hover:text-tj-primary border border-tj-border-main text-tj-text-main cursor-pointer transition-all"
               >
@@ -567,8 +582,8 @@ export default function ConsistencyCheckModal({
                     : `Analyzing ${chapters.length} chapters for narrative continuity...`}
                 </p>
                 <p className="text-[11px] text-tj-text-muted">
-                  Checking character profiles, timeline contradictions, item locations,
-                  and generating surgical edits.
+                  Checking character profiles, timeline contradictions, item
+                  locations, and generating surgical edits.
                 </p>
               </div>
             </div>
@@ -664,132 +679,134 @@ export default function ConsistencyCheckModal({
                   </div>
 
                   <div className="space-y-4">
-                    {proposal.issues.map((issue: ConsistencyIssue, issueIdx) => (
-                      <div
-                        key={issueIdx}
-                        className="border border-tj-border-main bg-tj-bg-recessed/30 rounded-xl overflow-hidden shadow-xs"
-                      >
-                        {/* Issue Header */}
-                        <div className="p-3 bg-tj-bg-card border-b border-tj-border-main flex items-start justify-between gap-3">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                                  issue.severity === 'high'
-                                    ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400'
-                                    : issue.severity === 'medium'
-                                      ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400'
-                                      : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                                }`}
-                              >
-                                {issue.severity} priority
-                              </span>
-                              <span className="font-bold text-tj-text-main text-xs">
-                                Issue #{issueIdx + 1}
-                              </span>
+                    {proposal.issues.map(
+                      (issue: ConsistencyIssue, issueIdx) => (
+                        <div
+                          key={issueIdx}
+                          className="border border-tj-border-main bg-tj-bg-recessed/30 rounded-xl overflow-hidden shadow-xs"
+                        >
+                          {/* Issue Header */}
+                          <div className="p-3 bg-tj-bg-card border-b border-tj-border-main flex items-start justify-between gap-3">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                                    issue.severity === 'high'
+                                      ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400'
+                                      : issue.severity === 'medium'
+                                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400'
+                                        : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                                  }`}
+                                >
+                                  {issue.severity} priority
+                                </span>
+                                <span className="font-bold text-tj-text-main text-xs">
+                                  Issue #{issueIdx + 1}
+                                </span>
+                              </div>
+                              <p className="text-xs text-tj-text-main font-medium">
+                                {issue.issueDescription}
+                              </p>
                             </div>
-                            <p className="text-xs text-tj-text-main font-medium">
-                              {issue.issueDescription}
-                            </p>
                           </div>
-                        </div>
 
-                        {/* List of Edits for this Issue */}
-                        <div className="p-3 space-y-3">
-                          {issue.edits.map((edit: TargetedEdit, editIdx) => {
-                            const key = `${issueIdx}-${editIdx}`;
-                            const isSelected = selectedEditKeys.has(key);
-                            const targetChapter = chapters.find(
-                              (c) => c.chapterNumber === edit.chapterNumber,
-                            );
-                            const isMatchReady = targetChapter
-                              ? checkEditMatch(
-                                  targetChapter.content,
-                                  edit.findText,
-                                )
-                              : false;
+                          {/* List of Edits for this Issue */}
+                          <div className="p-3 space-y-3">
+                            {issue.edits.map((edit: TargetedEdit, editIdx) => {
+                              const key = `${issueIdx}-${editIdx}`;
+                              const isSelected = selectedEditKeys.has(key);
+                              const targetChapter = chapters.find(
+                                (c) => c.chapterNumber === edit.chapterNumber,
+                              );
+                              const isMatchReady = targetChapter
+                                ? checkEditMatch(
+                                    targetChapter.content,
+                                    edit.findText,
+                                  )
+                                : false;
 
-                            return (
-                              <div
-                                key={editIdx}
-                                className={`p-3 rounded-xl border transition-all ${
-                                  isSelected
-                                    ? 'bg-tj-bg-card border-tj-primary/40 shadow-xs'
-                                    : 'bg-tj-bg-card/50 border-tj-border-main/60 opacity-60'
-                                }`}
-                              >
-                                <div className="flex items-start gap-2.5">
-                                  <button
-                                    type="button"
-                                    onClick={() => toggleEditSelection(key)}
-                                    className="mt-0.5 text-tj-primary cursor-pointer border-0 bg-transparent p-0"
-                                    title={isSelected ? 'Deselect' : 'Select'}
-                                  >
-                                    {isSelected ? (
-                                      <CheckSquare className="w-4 h-4 text-tj-primary" />
-                                    ) : (
-                                      <Square className="w-4 h-4 text-tj-text-muted" />
-                                    )}
-                                  </button>
-
-                                  <div className="flex-1 space-y-2">
-                                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                                      <span className="text-[11px] font-bold text-tj-primary">
-                                        Chapter {edit.chapterNumber}
-                                        {targetChapter?.title
-                                          ? `: "${targetChapter.title}"`
-                                          : ''}
-                                      </span>
-
-                                      {isMatchReady ? (
-                                        <span className="inline-flex items-center gap-1 text-[10px] text-tj-forest font-semibold">
-                                          <Check className="w-3 h-3" />
-                                          Exact match ready
-                                        </span>
+                              return (
+                                <div
+                                  key={editIdx}
+                                  className={`p-3 rounded-xl border transition-all ${
+                                    isSelected
+                                      ? 'bg-tj-bg-card border-tj-primary/40 shadow-xs'
+                                      : 'bg-tj-bg-card/50 border-tj-border-main/60 opacity-60'
+                                  }`}
+                                >
+                                  <div className="flex items-start gap-2.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleEditSelection(key)}
+                                      className="mt-0.5 text-tj-primary cursor-pointer border-0 bg-transparent p-0"
+                                      title={isSelected ? 'Deselect' : 'Select'}
+                                    >
+                                      {isSelected ? (
+                                        <CheckSquare className="w-4 h-4 text-tj-primary" />
                                       ) : (
-                                        <span className="inline-flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
-                                          <AlertTriangle className="w-3 h-3" />
-                                          Snippet not found verbatim
+                                        <Square className="w-4 h-4 text-tj-text-muted" />
+                                      )}
+                                    </button>
+
+                                    <div className="flex-1 space-y-2">
+                                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                                        <span className="text-[11px] font-bold text-tj-primary">
+                                          Chapter {edit.chapterNumber}
+                                          {targetChapter?.title
+                                            ? `: "${targetChapter.title}"`
+                                            : ''}
                                         </span>
+
+                                        {isMatchReady ? (
+                                          <span className="inline-flex items-center gap-1 text-[10px] text-tj-forest font-semibold">
+                                            <Check className="w-3 h-3" />
+                                            Exact match ready
+                                          </span>
+                                        ) : (
+                                          <span className="inline-flex items-center gap-1 text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
+                                            <AlertTriangle className="w-3 h-3" />
+                                            Snippet not found verbatim
+                                          </span>
+                                        )}
+                                      </div>
+
+                                      {/* Diff View */}
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px]">
+                                        {/* Original (Find) */}
+                                        <div className="p-2.5 bg-rose-50 dark:bg-rose-950/20 border border-rose-200/60 dark:border-rose-900/30 rounded-lg space-y-1">
+                                          <span className="text-[9px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 block">
+                                            Original Snippet:
+                                          </span>
+                                          <p className="line-through decoration-rose-500/70 text-tj-text-main whitespace-pre-wrap leading-relaxed font-sans">
+                                            {edit.findText}
+                                          </p>
+                                        </div>
+
+                                        {/* Replacement (ReplaceWith) */}
+                                        <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/30 rounded-lg space-y-1">
+                                          <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
+                                            Replacement:
+                                          </span>
+                                          <p className="text-tj-text-main font-medium whitespace-pre-wrap leading-relaxed font-sans">
+                                            {edit.replaceWith}
+                                          </p>
+                                        </div>
+                                      </div>
+
+                                      {edit.explanation && (
+                                        <p className="text-[10px] text-tj-text-muted italic">
+                                          Why: {edit.explanation}
+                                        </p>
                                       )}
                                     </div>
-
-                                    {/* Diff View */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px]">
-                                      {/* Original (Find) */}
-                                      <div className="p-2.5 bg-rose-50 dark:bg-rose-950/20 border border-rose-200/60 dark:border-rose-900/30 rounded-lg space-y-1">
-                                        <span className="text-[9px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 block">
-                                          Original Snippet:
-                                        </span>
-                                        <p className="line-through decoration-rose-500/70 text-tj-text-main whitespace-pre-wrap leading-relaxed font-sans">
-                                          {edit.findText}
-                                        </p>
-                                      </div>
-
-                                      {/* Replacement (ReplaceWith) */}
-                                      <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/30 rounded-lg space-y-1">
-                                        <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
-                                          Replacement:
-                                        </span>
-                                        <p className="text-tj-text-main font-medium whitespace-pre-wrap leading-relaxed font-sans">
-                                          {edit.replaceWith}
-                                        </p>
-                                      </div>
-                                    </div>
-
-                                    {edit.explanation && (
-                                      <p className="text-[10px] text-tj-text-muted italic">
-                                        Why: {edit.explanation}
-                                      </p>
-                                    )}
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ),
+                    )}
                   </div>
                 </div>
               )}

@@ -54,7 +54,10 @@ export const calculateEstimatedUsage = (
   const staticOutputTokensPerChapter = 100;
 
   // Find model matching modelId robustly (exact match first, then fuzzy contains match)
-  let model: (typeof AI_MODELS)[0] | (typeof FRONTIER_LATEST_MODELS)[0] | undefined =
+  let model:
+    | (typeof AI_MODELS)[0]
+    | (typeof FRONTIER_LATEST_MODELS)[0]
+    | undefined =
     AI_MODELS.find((m) => m.id === modelId) ||
     FRONTIER_LATEST_MODELS.find((m) => m.id === modelId);
   if (!model && modelId) {

@@ -45,7 +45,11 @@ import {
   segmentText,
   stripMarkdown,
 } from '../utils/segmenter';
-import { buildChapterSentences } from '../utils/sentenceChunker';
+import {
+  buildChapterSentences,
+  findSentenceIndexForSelection,
+  getParagraphCleanText,
+} from '../utils/sentenceChunker';
 import { calculateEstimatedUsage } from '../utils/storyEstimation';
 import { countWords } from '../utils/wordCounter';
 import StoryBookCover from './library/StoryBookCover';
@@ -479,8 +483,9 @@ export default function ReaderPanel({
 
     effectiveDisplayParagraphs.forEach((dp, pIdx) => {
       let indexInPara = 0;
+      const cleanPara = getParagraphCleanText(dp.original);
       const segments = segmentText(
-        dp.original,
+        cleanPara,
         targetLangCode,
         segmentMatchingSet,
       );
@@ -739,8 +744,25 @@ export default function ReaderPanel({
         pauseSentenceQueue();
       }
     } else {
-      const startIdx = currentSentenceIndex ?? 0;
-      playSentenceQueue(chapterSentences, startIdx);
+      let startIdx = currentSentenceIndex;
+      if (
+        startIdx === null &&
+        (selectedWordRange !== null || selectedWord !== null)
+      ) {
+        const targetLangCode = getLanguageCodeFromName(
+          effectivePrimaryLanguage,
+        );
+        startIdx = findSentenceIndexForSelection(
+          selectedWordRange,
+          selectedWord,
+          chapterWords,
+          chapterSentences,
+          effectiveDisplayParagraphs,
+          targetLangCode,
+          segmentMatchingSet,
+        );
+      }
+      playSentenceQueue(chapterSentences, startIdx ?? 0);
     }
   };
 
@@ -796,21 +818,20 @@ export default function ReaderPanel({
 
   // Resume chapter narration starting from the exact clicked word sentence chunk
   const handleResumeChapterFromWord = () => {
-    if (selectedWordRange === null || !activeChapter) return;
-    const startFlatIdx = selectedWordRange[0];
-    const clickedWord = chapterWords[startFlatIdx];
-    if (!clickedWord) return;
+    if (!activeChapter || chapterSentences.length === 0) return;
+    if (selectedWordRange === null && !selectedWord) return;
 
-    const candidateSentences = chapterSentences.filter(
-      (s) => s.pIdx === clickedWord.pIdx,
+    const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
+    const targetIdx = findSentenceIndexForSelection(
+      selectedWordRange,
+      selectedWord,
+      chapterWords,
+      chapterSentences,
+      effectiveDisplayParagraphs,
+      targetLangCode,
+      segmentMatchingSet,
     );
-    const matchingSentence = candidateSentences.find((s) =>
-      s.rawText.toLowerCase().includes(clickedWord.word.toLowerCase()),
-    );
-    const target = matchingSentence || candidateSentences[0];
-    if (target) {
-      playSentenceQueue(chapterSentences, target.globalIndex);
-    }
+    playSentenceQueue(chapterSentences, targetIdx);
   };
 
   const handleFloatingPlayPause = () => {
@@ -1161,8 +1182,9 @@ export default function ReaderPanel({
       if (!dp) return null;
 
       const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
+      const cleanPara = getParagraphCleanText(dp.original);
       const segments = segmentText(
-        dp.original,
+        cleanPara,
         targetLangCode,
         segmentMatchingSet,
       );

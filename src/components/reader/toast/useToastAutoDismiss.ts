@@ -34,7 +34,15 @@ export function useToastAutoDismiss({
     }, timeoutMs);
 
     return () => clearTimeout(timer);
-  }, [isActive, isExpanded, isHovered, activityKey, resetKey, timeoutMs, onDismiss]);
+  }, [
+    isActive,
+    isExpanded,
+    isHovered,
+    activityKey,
+    resetKey,
+    timeoutMs,
+    onDismiss,
+  ]);
 
   return { resetActivityTimer };
 }

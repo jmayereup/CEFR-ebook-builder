@@ -1,6 +1,6 @@
-import React from 'react';
-import { AnimatePresence, motion } from 'motion/react';
 import { ArrowRight, BookOpen, Smartphone, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import type React from 'react';
 
 export interface ReadingSyncPromptProps {
   isOpen: boolean;

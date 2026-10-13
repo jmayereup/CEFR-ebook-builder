@@ -108,10 +108,10 @@ export default function ToastWordControls({
               type="button"
               onClick={onResumeChapterFromWord}
               className="h-6 md:h-7 flex items-center gap-1 px-2 md:px-2.5 bg-tj-primary-light hover:bg-tj-primary-light/80 dark:bg-tj-primary-light/10 dark:hover:bg-tj-primary-light/20 text-tj-primary dark:text-tj-primary-hover border border-tj-primary-border rounded-xl text-[11px] md:text-xs font-bold cursor-pointer shadow-2xs transition-all shrink-0"
-              title="Resume chapter narration from this word"
+              title="Play chapter from this word"
             >
               <Play className="w-3 h-3 fill-current" />
-              <span>Listen from here</span>
+              <span>Play from here</span>
             </button>
           )}
           {setAutoPlayWord && (

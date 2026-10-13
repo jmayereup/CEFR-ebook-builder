@@ -213,10 +213,12 @@ export function useUserData(options: UseUserDataOptions) {
     useState<RemoteReadingLocation | null>(null);
   const lastLocalUpdateTimestampRef = useRef<number>(Date.now());
   const [savedVocab, setSavedVocab] = useState<VocabularyTerm[]>([]);
-  const [lookupLimitData, setLookupLimitData] = useState<LookupLimitData>(() => ({
-    count: 0,
-    date: new Date().toISOString().split('T')[0],
-  }));
+  const [lookupLimitData, setLookupLimitData] = useState<LookupLimitData>(
+    () => ({
+      count: 0,
+      date: new Date().toISOString().split('T')[0],
+    }),
+  );
 
   // Immediately hydrate client-persisted storage on mount to eliminate layout shifts without hydration mismatches
   useEffect(() => {
@@ -970,7 +972,10 @@ export function useUserData(options: UseUserDataOptions) {
               );
               setRecentlyRead((prev) => (prev.length === 0 ? parsed : prev));
             } catch (e) {
-              console.error('Error parsing local recently_read on fallback:', e);
+              console.error(
+                'Error parsing local recently_read on fallback:',
+                e,
+              );
             }
           }
           const localBookshelf = localStorage.getItem('bookshelf');

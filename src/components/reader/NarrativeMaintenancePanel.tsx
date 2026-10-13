@@ -690,14 +690,17 @@ export default function NarrativeMaintenancePanel({
                 Targeted Continuity Check & Surgical Edits
               </h4>
               <p className="text-[11px] text-tj-text-muted mt-1 leading-relaxed">
-                Run an AI consistency scan across all chapters, or describe a custom
-                problem (e.g., character names, timeline slips, forgotten items).
-                Review targeted find-and-replace edits with a diff before applying.
+                Run an AI consistency scan across all chapters, or describe a
+                custom problem (e.g., character names, timeline slips, forgotten
+                items). Review targeted find-and-replace edits with a diff
+                before applying.
               </p>
             </div>
 
             <button
-              disabled={!isOnline || !story.chapters || story.chapters.length === 0}
+              disabled={
+                !isOnline || !story.chapters || story.chapters.length === 0
+              }
               onClick={() => setIsConsistencyModalOpen(true)}
               className="flex items-center justify-center gap-1.5 px-4 py-2 bg-tj-primary hover:bg-tj-primary-hover text-white text-xs font-bold rounded-xl transition-all cursor-pointer border-0 shrink-0 disabled:opacity-50"
             >

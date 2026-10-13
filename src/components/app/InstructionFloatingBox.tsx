@@ -104,7 +104,8 @@ export default function InstructionFloatingBox({
                 <strong className="text-amber-800 dark:text-amber-300 font-semibold">
                   Free Daily Generations:
                 </strong>{' '}
-                Create 1–2 custom stories per day for free while our shared library grows. No credit card required.
+                Create 1–2 custom stories per day for free while our shared
+                library grows. No credit card required.
               </div>
             </div>
 
@@ -115,7 +116,8 @@ export default function InstructionFloatingBox({
                 <strong className="text-tj-text-main font-semibold">
                   Graded Input & Kindle Export:
                 </strong>{' '}
-                Read at your CEFR level (Pre-A1 to C2) in 20+ languages with instant lookups, audio, and DRM-free EPUB downloads.
+                Read at your CEFR level (Pre-A1 to C2) in 20+ languages with
+                instant lookups, audio, and DRM-free EPUB downloads.
               </div>
             </div>
 
@@ -126,7 +128,9 @@ export default function InstructionFloatingBox({
                 <strong className="text-tj-primary font-semibold">
                   Content Note:
                 </strong>{' '}
-                Stories are user-generated with light AI moderation. Diverse perspectives (including LGBTQ+ and religious themes) are welcome. Sexually explicit content must be marked private.
+                Stories are user-generated with light AI moderation. Diverse
+                perspectives (including LGBTQ+ and religious themes) are
+                welcome. Sexually explicit content must be marked private.
               </div>
             </div>
           </div>

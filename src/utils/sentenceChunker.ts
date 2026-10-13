@@ -1,4 +1,4 @@
-import { stripMarkdown } from './segmenter';
+import { segmentText, stripMarkdown } from './segmenter';
 
 export interface SentenceChunk {
   /** Unique id for keying, e.g. "p0-s0" */
@@ -224,4 +224,114 @@ export function buildChapterSentences(
   }
 
   return allSentences;
+}
+
+/**
+ * Accurately finds the global sentence index for the currently selected word or word range,
+ * matching character offsets within paragraph sentence chunks, with fallback to selectedWord context.
+ */
+export function findSentenceIndexForSelection(
+  selectedWordRange: [number, number] | null,
+  selectedWord: { word: string; context?: string } | null,
+  chapterWords: { word: string; pIdx: number; indexInPara: number }[],
+  chapterSentences: ChapterSentence[],
+  displayParagraphs: { original: string }[],
+  langCode: string,
+  segmentMatchingSet?: Set<string>,
+): number {
+  if (chapterSentences.length === 0) return 0;
+
+  // 1. Try selectedWordRange first if valid
+  if (selectedWordRange !== null) {
+    const startFlatIdx = selectedWordRange[0];
+    const clickedWord = chapterWords[startFlatIdx];
+    if (clickedWord) {
+      const pIdx = clickedWord.pIdx;
+      const dp = displayParagraphs[pIdx];
+      if (dp) {
+        const cleanPara = getParagraphCleanText(dp.original);
+        const segments = segmentText(cleanPara, langCode, segmentMatchingSet);
+
+        let wordCount = 0;
+        let wordCharOffset = 0;
+        let currentOffset = 0;
+        let found = false;
+
+        for (let i = 0; i < segments.length; i++) {
+          const seg = segments[i];
+          if (seg.isWordLike) {
+            if (wordCount === clickedWord.indexInPara) {
+              wordCharOffset = currentOffset;
+              found = true;
+              break;
+            }
+            wordCount++;
+          }
+          currentOffset += seg.segment.length;
+        }
+
+        const candidateSentences = chapterSentences.filter(
+          (s) => s.pIdx === pIdx,
+        );
+        if (candidateSentences.length > 0) {
+          if (found) {
+            const target = candidateSentences.find(
+              (s) =>
+                wordCharOffset >= s.startChar && wordCharOffset < s.endChar,
+            );
+            if (target) {
+              return target.globalIndex;
+            }
+          }
+          const textMatch = candidateSentences.find((s) =>
+            s.rawText.toLowerCase().includes(clickedWord.word.toLowerCase()),
+          );
+          return textMatch?.globalIndex ?? candidateSentences[0].globalIndex;
+        }
+      }
+    }
+  }
+
+  // 2. Fallback using selectedWord
+  if (selectedWord) {
+    const wordClean = selectedWord.word.trim().toLowerCase();
+    let targetPIdx = -1;
+    const ctx = selectedWord.context;
+    if (ctx) {
+      targetPIdx = displayParagraphs.findIndex((dp) => dp.original === ctx);
+      if (targetPIdx === -1) {
+        targetPIdx = displayParagraphs.findIndex(
+          (dp) => dp.original.includes(ctx) || ctx.includes(dp.original),
+        );
+      }
+    }
+    if (targetPIdx === -1 && wordClean) {
+      targetPIdx = displayParagraphs.findIndex((dp) =>
+        dp.original.toLowerCase().includes(wordClean),
+      );
+    }
+
+    if (targetPIdx !== -1) {
+      const candidateSentences = chapterSentences.filter(
+        (s) => s.pIdx === targetPIdx,
+      );
+      if (candidateSentences.length > 0) {
+        const textMatch = candidateSentences.find((s) =>
+          s.rawText.toLowerCase().includes(wordClean),
+        );
+        return textMatch?.globalIndex ?? candidateSentences[0].globalIndex;
+      }
+    }
+
+    if (wordClean) {
+      const globalMatch = chapterSentences.find((s) =>
+        s.rawText.toLowerCase().includes(wordClean),
+      );
+      if (globalMatch) {
+        return globalMatch.globalIndex;
+      }
+    }
+  }
+
+  return 0;
 }

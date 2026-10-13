@@ -77,9 +77,7 @@ export default function ModelSelectionModal({
     FREE_MODEL_IDS.has(id) || id.endsWith(':free');
 
   const modelsToDisplay = (
-    isFreeTier
-      ? AI_MODELS.filter((m) => isFreeModelLocal(m.id))
-      : AI_MODELS
+    isFreeTier ? AI_MODELS.filter((m) => isFreeModelLocal(m.id)) : AI_MODELS
   )
     .slice()
     .sort((a, b) =>

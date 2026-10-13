@@ -257,7 +257,10 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
 
         <div className="space-y-3 text-xs sm:text-sm text-tj-text-muted leading-relaxed font-sans">
           <p>
-            Easy eBooks is an open reading platform powered by user-generated stories with minimal AI-assisted moderation. We believe meaningful language acquisition flourishes when learners can read and write about topics that matter to them.
+            Easy eBooks is an open reading platform powered by user-generated
+            stories with minimal AI-assisted moderation. We believe meaningful
+            language acquisition flourishes when learners can read and write
+            about topics that matter to them.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <div className="p-4 bg-tj-bg-recessed border border-tj-border-main/70 rounded-2xl space-y-1.5">
@@ -266,7 +269,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
                 Welcoming & Diverse Perspectives
               </h4>
               <p className="text-[11px] text-tj-text-muted leading-relaxed">
-                Stories highlighting LGBTQ+ narratives, diverse cultural backgrounds, personal identities, and religious traditions are openly welcomed in our public library.
+                Stories highlighting LGBTQ+ narratives, diverse cultural
+                backgrounds, personal identities, and religious traditions are
+                openly welcomed in our public library.
               </p>
             </div>
 
@@ -276,7 +281,9 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
                 Adult & Explicit Content Policy
               </h4>
               <p className="text-[11px] text-tj-text-muted leading-relaxed">
-                Users are free to generate stories for private personal study. However, sexually explicit content must be marked private and kept out of the shared public library catalog.
+                Users are free to generate stories for private personal study.
+                However, sexually explicit content must be marked private and
+                kept out of the shared public library catalog.
               </p>
             </div>
           </div>

@@ -77,11 +77,13 @@ export default function ToastHighlightSection({
                       e.stopPropagation();
                       onSelectHighlightColor(c.id);
                     }}
-                    className={`w-5 h-5 md:w-6 md:h-6 rounded-full border ${c.dotClass
-                      } flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-2xs ${isSelected
+                    className={`w-5 h-5 md:w-6 md:h-6 rounded-full border ${
+                      c.dotClass
+                    } flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-2xs ${
+                      isSelected
                         ? 'ring-2 ring-tj-primary ring-offset-1 dark:ring-offset-slate-900 scale-105'
                         : ''
-                      }`}
+                    }`}
                     title={`Highlight in ${c.label}`}
                   >
                     {isSelected && (
@@ -99,10 +101,11 @@ export default function ToastHighlightSection({
                 e.stopPropagation();
                 setIsEditingNote((prev) => !prev);
               }}
-              className={`p-1 px-2 md:p-1.5 md:px-2.5 rounded-xl border transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold ${isEditingNote || activeHighlight?.note
-                ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                : 'bg-tj-bg-recessed text-tj-text-muted border-tj-border-main hover:text-tj-text-main'
-                }`}
+              className={`p-1 px-2 md:p-1.5 md:px-2.5 rounded-xl border transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold ${
+                isEditingNote || activeHighlight?.note
+                  ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
+                  : 'bg-tj-bg-recessed text-tj-text-muted border-tj-border-main hover:text-tj-text-main'
+              }`}
               title={
                 activeHighlight?.note ? 'Edit study note' : 'Add study note'
               }

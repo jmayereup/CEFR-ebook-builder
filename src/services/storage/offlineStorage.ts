@@ -192,7 +192,9 @@ export async function getCachedStoriesMetadata(): Promise<Story[] | undefined> {
 /**
  * Persist public stories metadata to IndexedDB for offline access.
  */
-export async function saveCachedStoriesMetadata(stories: Story[]): Promise<void> {
+export async function saveCachedStoriesMetadata(
+  stories: Story[],
+): Promise<void> {
   if (!metaStore || !Array.isArray(stories) || stories.length === 0) return;
   try {
     await set(STORIES_METADATA_KEY, stories, metaStore);

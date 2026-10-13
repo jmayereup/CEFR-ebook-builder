@@ -372,7 +372,7 @@ export default function InteractiveParagraph({
       }
       if (seg.isWordLike) {
         e.stopPropagation();
-        handleWordClick(seg.segment, paragraphText, pIdx, seg.index);
+        handleWordClick(seg.segment, paragraphText, pIdx, seg.wordIndexInPara);
       }
     };
 

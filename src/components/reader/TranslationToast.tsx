@@ -145,6 +145,7 @@ export default function TranslationToast({
               onExpand={() => setIsExpanded(true)}
               onDismiss={() => setSelectedWord(null)}
               onPlayWord={handlePlayWord}
+              onResumeChapterFromWord={onResumeChapterFromWord}
               onUserActivity={resetActivityTimer}
             />
           ) : (
