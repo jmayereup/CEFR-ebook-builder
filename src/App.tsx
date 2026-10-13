@@ -115,14 +115,33 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     title: string;
     message: string;
     type?: 'info' | 'error' | 'warning';
+    onClose?: () => void;
   } | null>(null);
-  const showAlert = (
-    title: string,
-    message: string,
-    type: 'info' | 'error' | 'warning' = 'error',
-  ) => {
-    setAlertConfig({ title, message, type });
-  };
+
+  const showAlert = useCallback(
+    (
+      title: string,
+      message: string,
+      type: 'info' | 'error' | 'warning' = 'error',
+      onClose?: () => void,
+    ) => {
+      setAlertConfig({ title, message, type, onClose });
+    },
+    [],
+  );
+
+  const handleCloseAlert = useCallback(() => {
+    setAlertConfig((prev) => {
+      if (prev?.onClose) {
+        try {
+          prev.onClose();
+        } catch (err) {
+          console.error('Error in alert onClose callback:', err);
+        }
+      }
+      return null;
+    });
+  }, []);
 
   // WebView detection and warning for TTS compatibility
   useWebViewWarning(showAlert);
@@ -1442,10 +1461,11 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
       <AnimatePresence>
         {alertConfig && (
           <AlertModal
+            key="alert-modal"
             title={alertConfig.title}
             message={alertConfig.message}
             type={alertConfig.type}
-            onClose={() => setAlertConfig(null)}
+            onClose={handleCloseAlert}
           />
         )}
       </AnimatePresence>

@@ -42,14 +42,18 @@ export default function AlertModal({
   const IconComponent = theme.Icon;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+    >
       {/* Backdrop blur overlay */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <div
         onClick={onClose}
-        className="fixed inset-0 bg-[#0f172a]/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-[#0f172a]/60 backdrop-blur-sm"
+        aria-hidden="true"
       />
 
       {/* Modal card */}
@@ -58,12 +62,17 @@ export default function AlertModal({
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 15 }}
         transition={{ type: 'spring', duration: 0.35 }}
-        className="relative bg-tj-bg-card rounded-lg border border-tj-border-main shadow-2xl max-w-sm w-full p-6 space-y-4 overflow-hidden z-10"
+        onClick={(e) => e.stopPropagation()}
+        className="relative bg-tj-bg-card rounded-lg border border-tj-border-main shadow-2xl max-w-sm w-full p-6 space-y-4 overflow-hidden z-10 pointer-events-auto"
       >
         <button
           type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1 hover:bg-tj-bg-recessed text-tj-text-muted rounded-full cursor-pointer transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          aria-label="Close alert"
+          className="absolute top-4 right-4 p-1.5 hover:bg-tj-bg-recessed text-tj-text-muted rounded-full cursor-pointer transition-colors touch-manipulation"
         >
           <X className="w-4 h-4" />
         </button>
@@ -87,13 +96,16 @@ export default function AlertModal({
         <div className="pt-2">
           <button
             type="button"
-            onClick={onClose}
-            className={`w-full py-2 px-4 rounded text-tj-bg-main text-xs font-bold transition-all shadow-sm cursor-pointer ${theme.buttonBg}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            className={`w-full py-2.5 px-4 rounded text-tj-bg-main text-xs font-bold transition-all shadow-sm cursor-pointer select-none touch-manipulation active:scale-[0.98] ${theme.buttonBg}`}
           >
             Acknowledge
           </button>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
