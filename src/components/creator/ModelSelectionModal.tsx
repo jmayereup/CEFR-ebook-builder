@@ -48,6 +48,11 @@ const MODEL_DETAILS: Record<
       'High-speed, cost-efficient multimodal reasoning model always redirecting to the latest DeepSeek Flash release. Superior prose, character voice, and plot consistency.',
     languages: 'All supported languages',
   },
+  '~deepseek/deepseek-pro-latest': {
+    verdict:
+      'Flagship frontier reasoning model always redirecting to the latest DeepSeek Pro release. Exceptional depth, nuanced character voice, and complex narrative architecture.',
+    languages: 'All supported languages',
+  },
   'xiaomi/mimo-v2.6-pro': {
     verdict:
       'Flagship foundation model developed by Xiaomi. Highly capable reasoning, creative narrative depth, and superior character voice.',
@@ -56,6 +61,31 @@ const MODEL_DETAILS: Record<
   'nousresearch/hermes-3-llama-3.1-405b': {
     verdict:
       'Frontier 405B open-weights model fine-tuned by Nous Research. Exceptional creative writing, roleplaying, reasoning, and complex narrative capabilities.',
+    languages: 'All supported languages',
+  },
+  '~anthropic/claude-opus-latest': {
+    verdict:
+      'Anthropic flagship frontier reasoning model. Unmatched nuance, literary prose quality, deep worldbuilding, and superior dialogue.',
+    languages: 'All supported languages',
+  },
+  '~anthropic/claude-sonnet-latest': {
+    verdict:
+      'High-intelligence frontier reasoning model from Anthropic. Exceptional creative writing, character voice, and narrative consistency.',
+    languages: 'All supported languages',
+  },
+  '~openai/gpt-sol-latest': {
+    verdict:
+      'OpenAI flagship reasoning model balancing speed and frontier intelligence. Superior long-horizon coherence and narrative depth.',
+    languages: 'All supported languages',
+  },
+  '~openai/gpt-terra-latest': {
+    verdict:
+      'OpenAI frontier heavy reasoning model. Deep analytical capability, complex plot architectures, and intricate creative prose.',
+    languages: 'All supported languages',
+  },
+  '~openai/gpt-luna-latest': {
+    verdict:
+      'Fast, cost-efficient multimodal reasoning model from OpenAI. Highly responsive chapter pacing and clean pedagogical explanations.',
     languages: 'All supported languages',
   },
 };

@@ -39,6 +39,17 @@ export const AI_MODELS: AIModelOption[] = [
     maxOutputTokens: 16384,
   },
   {
+    id: '~deepseek/deepseek-pro-latest',
+    name: 'DeepSeek Pro Latest',
+    inputCost1M: 0.1035,
+    outputCost1M: 8.0,
+    category: 'pro',
+    supportsThinkingLevel: true,
+    supportsThinkingBudget: false,
+    supportsTemperature: true,
+    maxOutputTokens: 16384,
+  },
+  {
     id: '~z-ai/glm-flash-latest',
     name: 'GLM Flash Latest',
     inputCost1M: 0.045,
@@ -135,8 +146,15 @@ export const formatModelPriceIndicator = (
 /** Curated frontier & latest models for BYOK story generation selection with OpenRouter rates */
 export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
   {
-    id: 'anthropic/claude-sonnet-5',
-    name: 'Anthropic: Claude Sonnet 5',
+    id: '~anthropic/claude-opus-latest',
+    name: 'Anthropic: Claude Opus Latest',
+    category: 'pro',
+    inputCost1M: 4.0,
+    outputCost1M: 20.0,
+  },
+  {
+    id: '~anthropic/claude-sonnet-latest',
+    name: 'Anthropic: Claude Sonnet Latest',
     category: 'pro',
     inputCost1M: 2.0,
     outputCost1M: 10.0,
@@ -147,6 +165,13 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     category: 'flash',
     inputCost1M: 0.035,
     outputCost1M: 0.29,
+  },
+  {
+    id: '~deepseek/deepseek-pro-latest',
+    name: 'DeepSeek: DeepSeek Pro Latest',
+    category: 'pro',
+    inputCost1M: 0.1035,
+    outputCost1M: 8.0,
   },
   {
     id: 'google/gemini-2.5-flash-lite',

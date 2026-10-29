@@ -17,6 +17,14 @@ export const getModelBaseName = (modelId?: string): string => {
   if (modelId.includes('glm') || modelId.includes('z-ai')) return 'GLM';
   if (modelId.includes('xiaomi') || modelId.includes('mimo')) return 'Xiaomi';
   if (
+    modelId.includes('claude') ||
+    modelId.includes('anthropic') ||
+    modelId.includes('opus') ||
+    modelId.includes('sonnet')
+  ) {
+    return 'Anthropic';
+  }
+  if (
     modelId.includes('gpt') ||
     modelId.includes('openai') ||
     modelId.includes('sol') ||

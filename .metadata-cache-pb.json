@@ -1,6 +1,210 @@
 {
-  "lastFetchTime": 1791904048758,
+  "lastFetchTime": 1793310965104,
   "stories": [
+    {
+      "id": "stjmgyag2d6wnvd",
+      "cover": "stjmgyag2d6wnvd_kq1oqwvm2s.jpg",
+      "title": "เมื่อตัวตนละลายไป: จิตวิทยา คืนอันมืดมิด และพุทธศาสนา",
+      "language": "Thai",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "nonfiction",
+      "totalChapters": 15,
+      "createdAt": "2026-10-28T05:33:07.010Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "meta/muse-spark-1.3-contributor",
+      "ratings": null,
+      "totalReads": 0,
+      "completedBy": {},
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 15,
+      "wordCount": 6783,
+      "description": "A gentle B1-level introduction to ego dissolution across Western psychology, the Dark Night of the Soul, and Buddhist teachings on non-self. It explains the brain, spiritual crisis, and mindfulness in clear everyday language while emphasizing safety, support, and compassionate growth.",
+      "updated": "2026-10-28 05:49:31.338Z"
+    },
+    {
+      "id": "symwxehr5vvxhij",
+      "cover": "symwxehr5vvxhij_cf21c230xx.jpg",
+      "title": "พลังของความขอบคุณ: เปลี่ยนใจให้มีความสุข",
+      "language": "Thai",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "health_wellness",
+      "totalChapters": 10,
+      "createdAt": "2026-10-27T09:46:04.884Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "meta/muse-spark-1.3-contributor",
+      "ratings": null,
+      "totalReads": 0,
+      "completedBy": {},
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 3748,
+      "description": "A gentle, science-based guide to the benefits of gratitude practice for everyday life. Across 10 clear sections, it explains how thankfulness supports mental health, sleep, body health, relationships, and work, with simple daily exercises for beginners.",
+      "updated": "2026-10-27 09:53:21.766Z"
+    },
+    {
+      "id": "s6vbv9u0i38yblo",
+      "cover": "s6vbv9u0i38yblo_hoccnkul5r.jpg",
+      "title": "L'Aventure de la liberté : La pensée vivante de Simone de Beauvoir",
+      "language": "French",
+      "translationLanguage": "English",
+      "cefrLevel": "B2",
+      "genre": "philosophy",
+      "totalChapters": 15,
+      "createdAt": "2026-10-21T12:26:45.557Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "~google/gemini-flash-latest",
+      "ratings": {
+        "kjksljovpk623jy": 3
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 15,
+      "wordCount": 5345,
+      "description": "This analytical study offers an accessible, rigorous exploration of Simone de Beauvoir's existential philosophy and feminist theory tailored for B2-level French readers. Across fifteen focused sections, it examines her groundbreaking insights into embodied consciousness, ethical ambiguity, gender construction, and the vulnerability of aging. By anchoring abstract ideas in concrete lived experience, the work demonstrates how Beauvoir's demand for freedom and solidarity remains urgently relevant in contemporary debates.",
+      "updated": "2026-10-29 20:42:12.847Z"
+    },
+    {
+      "id": "s1cis90df2qvsc8",
+      "cover": "s1cis90df2qvsc8_am305ks3yc.jpg",
+      "title": "L'Anatomie de l'Abîme : Sartre, Merton et le Bouddhisme",
+      "language": "French",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 10,
+      "createdAt": "2026-10-20T23:22:16.962Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "meta/muse-spark-1.3-contributor",
+      "ratings": {
+        "kjksljovpk623jy": 3
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 4626,
+      "description": "An accessible B1-level analysis of existential dread as the collapse of the curated ego. It compares Sartre's radical freedom and self-invention, Merton's purgative death of the false self toward divine ground, and Buddhism's view of clinging to a separate self that never existed.",
+      "updated": "2026-10-26 09:33:12.748Z"
+    },
+    {
+      "id": "sycj7npikskslug",
+      "cover": "sycj7npikskslug_czgomzrjir.jpg",
+      "title": "กายวิภาคของห้วงเหว: เมอตัน ซาร์ตร์ และพุทธศาสนา",
+      "language": "Thai",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "philosophy",
+      "totalChapters": 10,
+      "createdAt": "2026-10-19T14:09:17.625Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "meta/muse-spark-1.3-contributor",
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 10,
+      "wordCount": 5231,
+      "description": "This analytical essay dissects existential dread as the collapse of the curated ego, comparing three profound diagnoses: Sartre's radical freedom demanding self-invention, Merton's purgative death of the false self opening onto divine ground, and Buddhism's view of dread as an epistemic error — the panic of clinging to a separate self that never existed. Written in accessible Thai for CEFR B1 readers, each of the ten sections builds the argument step by step, from the anatomy of the constructed self to three distinct paths out of the same abyss.",
+      "updated": "2026-10-21 11:13:02.712Z"
+    },
+    {
+      "id": "swugvtfryw5zgpv",
+      "cover": "swugvtfryw5zgpv_i3mdo05zow.jpg",
+      "title": "Au-delà de l'écho : Pourquoi l'intelligence artificielle n'est pas une simple imitation",
+      "language": "French",
+      "translationLanguage": "English",
+      "cefrLevel": "B2",
+      "genre": "science_tech_analysis",
+      "totalChapters": 7,
+      "createdAt": "2026-10-16T01:01:56.737Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "meta/muse-spark-1.3-contributor",
+      "ratings": null,
+      "totalReads": 0,
+      "completedBy": {},
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 7,
+      "wordCount": 2556,
+      "description": "This analytical booklet dismantles the myth of AI as a mere stochastic parrot, showing how neural networks build world models, generalize, and solve unseen problems. Comparing biological and synthetic learning, it separates consciousness from comprehension while honestly examining embodiment, hallucinations, and limits. It proposes a new definition of understanding for an age of alien, geometric intelligence.",
+      "updated": "2026-10-16 01:04:48.112Z"
+    },
+    {
+      "id": "sdj5cud89hb7gxn",
+      "cover": "sdj5cud89hb7gxn_95el29gqdo.jpg",
+      "title": "Beyond the Echo: Why Artificial Intelligence Is Not Mere Imitation",
+      "language": "English",
+      "translationLanguage": "English",
+      "cefrLevel": "B2",
+      "genre": "science_tech_analysis",
+      "totalChapters": 7,
+      "createdAt": "2026-10-15T22:04:21.641Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "meta/muse-spark-1.3-contributor",
+      "ratings": {
+        "kjksljovpk623jy": 5
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 7,
+      "wordCount": 3044,
+      "description": "Is AI just a parrot repeating our words? This clear B2-level analysis breaks down how neural networks learn, generalize, and solve unseen problems. It compares human and machine learning to argue for a new, synthetic form of understanding.",
+      "updated": "2026-10-16 00:57:58.266Z"
+    },
+    {
+      "id": "spjol4ajxk8x68t",
+      "cover": "spjol4ajxk8x68t_pegsuak5qp.jpg",
+      "title": "L'IA pour l'Humanité : Pouvoir, Travail et Vérité",
+      "language": "French",
+      "translationLanguage": "English",
+      "cefrLevel": "B1",
+      "genre": "social_cultural_issues",
+      "totalChapters": 15,
+      "createdAt": "2026-10-15T11:52:37.497Z",
+      "isCompleted": true,
+      "creatorId": "kjksljovpk623jy",
+      "model": "meta/muse-spark-1.3-contributor",
+      "ratings": {
+        "kjksljovpk623jy": 4
+      },
+      "totalReads": 1,
+      "completedBy": {
+        "kjksljovpk623jy": 1
+      },
+      "isPublic": true,
+      "copyrightFlag": false,
+      "chaptersCount": 15,
+      "wordCount": 5637,
+      "description": "A B1-level analytical work in French exploring themes from Magnifica Humanitas and the ethics of AI. It examines human uniqueness, private monopolies, labor exploitation, disinformation, and autonomous weapons, arguing technology must serve human rights and equity.",
+      "updated": "2026-10-16 12:44:46.483Z"
+    },
     {
       "id": "sc4op3yqfkzphpu",
       "cover": "sc4op3yqfkzphpu_yinxvtmhxu.jpg",
@@ -45,7 +249,7 @@
       "chaptersCount": 20,
       "wordCount": 7962,
       "description": "This practical guide explains why top students feel so much pressure when grades become their only source of worth. It teaches six clear, science-based tools to stay calm, protect identity, and study without burnout.",
-      "updated": "2026-10-13 15:01:41.897Z"
+      "updated": "2026-10-13 16:02:36.395Z"
     },
     {
       "id": "sqziyy32y8is4yg",
@@ -113,9 +317,9 @@
       "ratings": {
         "kjksljovpk623jy": 4
       },
-      "totalReads": 1,
+      "totalReads": 2,
       "completedBy": {
-        "kjksljovpk623jy": 1
+        "kjksljovpk623jy": 2
       },
       "isPublic": true,
       "copyrightFlag": false,

@@ -197,6 +197,24 @@ export const useUIStore = create<UIState>((set, get) => ({
       ) {
         storyModel = '~deepseek/deepseek-flash-latest';
         localStorage.setItem('custom_default_story_model', storyModel);
+      } else if (
+        storyModel === 'deepseek/deepseek-pro-latest' ||
+        storyModel === 'deepseek/deepseek-r1'
+      ) {
+        storyModel = '~deepseek/deepseek-pro-latest';
+        localStorage.setItem('custom_default_story_model', storyModel);
+      } else if (
+        storyModel === 'anthropic/claude-sonnet-5' ||
+        storyModel === 'anthropic/claude-sonnet-latest'
+      ) {
+        storyModel = '~anthropic/claude-sonnet-latest';
+        localStorage.setItem('custom_default_story_model', storyModel);
+      } else if (
+        storyModel === 'anthropic/claude-opus-latest' ||
+        storyModel === 'anthropic/claude-opus'
+      ) {
+        storyModel = '~anthropic/claude-opus-latest';
+        localStorage.setItem('custom_default_story_model', storyModel);
       } else if (storyModel === 'z-ai/glm-5.3-flash') {
         storyModel = '~z-ai/glm-flash-latest';
         localStorage.setItem('custom_default_story_model', storyModel);
