@@ -1440,6 +1440,47 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
           </Suspense>
         </AnimatePresence>
       </main>
+      {!isZenMode && !selectedStory && activeTab !== 'about' && (
+        <footer className="mt-auto py-8 border-t border-tj-border-main/40 text-center flex flex-col items-center justify-center gap-3 text-xs text-tj-text-muted">
+          <div className="flex items-center gap-4">
+            <a
+              href="/privacy.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-tj-primary transition-colors"
+            >
+              Privacy Notice
+            </a>
+            <span>•</span>
+            <a
+              href="/terms.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-tj-primary transition-colors"
+            >
+              Terms of Service
+            </a>
+          </div>
+          <div>
+            <a
+              href="https://www.simpleanalytics.com?utm_source=books.teacherjake.com&utm_content=badge"
+              referrerPolicy="origin"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="https://simpleanalyticsbadges.com/books.teacherjake.com?background=transparent&text=677779&logo=ff4f64&radius=3&counter=false"
+                width="168"
+                height="40"
+                alt="Simple Analytics"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                crossOrigin="anonymous"
+              />
+            </a>
+          </div>
+        </footer>
+      )}
       {!isZenMode && <FloatingFooter />}
       <SettingsModal
         isOpen={showSettingsModal}

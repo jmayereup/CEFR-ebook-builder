@@ -376,6 +376,25 @@ export default function AboutPage({ setActiveTab }: AboutPageProps) {
           </a>
         </div>
       </div>
+
+      <div className="flex justify-center pt-2">
+        <a
+          href="https://www.simpleanalytics.com?utm_source=books.teacherjake.com&utm_content=badge"
+          referrerPolicy="origin"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://simpleanalyticsbadges.com/books.teacherjake.com?background=transparent&text=677779&logo=ff4f64&radius=3&counter=false"
+            width="168"
+            height="40"
+            alt="Simple Analytics"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
+          />
+        </a>
+      </div>
     </div>
   );
 }
