@@ -182,10 +182,16 @@ export default function NarrativeMaintenancePanel({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update Story Bible with AI.');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || 'Failed to update Story Bible with AI.',
+        );
       }
 
       const updatedBible = await response.json();
+      if (updatedBible.error) {
+        throw new Error(updatedBible.error);
+      }
       updatedBible.lastUpdatedChapter = story.chapters?.length || 0;
 
       const updatedStory: Story = {
@@ -249,10 +255,16 @@ export default function NarrativeMaintenancePanel({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to execute consistency check.');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || 'Failed to execute consistency check.',
+        );
       }
 
       const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
       const auditObj: ConsistencyAudit = {
         chapterRange: `Chapters 1-${story.chapters.length}`,
         auditText: data.auditText,
@@ -319,10 +331,14 @@ export default function NarrativeMaintenancePanel({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to analyze tone.');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to analyze tone.');
       }
 
       const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
       setToneAnalysis(data.analysisText);
       setToneGuidance(data.suggestedRefresh);
 

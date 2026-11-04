@@ -115,6 +115,12 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
 
         proxy_cache_bypass $http_upgrade;
+
+        # Enable streaming responses for LLM generation heartbeats / chunks
+        proxy_buffering off;
+        proxy_read_timeout 600s;
+        proxy_connect_timeout 600s;
+        proxy_send_timeout 600s;
     }
 }
 ```

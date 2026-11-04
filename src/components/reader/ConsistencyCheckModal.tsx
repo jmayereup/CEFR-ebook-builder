@@ -172,8 +172,15 @@ export default function ConsistencyCheckModal({
         );
       }
 
-      const data: ConsistencyEditProposal = await response.json();
-      setProposal(data);
+      const data: ConsistencyEditProposal & { error?: string } =
+        await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      setProposal({
+        issuesSummary: data.issuesSummary || '',
+        issues: Array.isArray(data.issues) ? data.issues : [],
+      });
     } catch (err: any) {
       console.error('[ConsistencyCheckModal] Error:', err);
       setErrorMsg(err.message || 'An error occurred during consistency check.');
