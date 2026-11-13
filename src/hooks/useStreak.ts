@@ -2,12 +2,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   checkAndSyncStreakState,
   getLocalTodayStr,
-  getLocalYesterdayStr,
   recordDailyActivity,
   syncStreakWithOfflineDates,
   updateStreak,
 } from '../services/db';
 import type { UserStreakData } from '../types';
+import {
+  calculateStreakFromHistory,
+  pruneActivityHistory,
+} from '../utils/streakUtils';
 
 interface CelebrationConfig {
   isOpen: boolean;
@@ -24,92 +27,6 @@ const GUEST_STREAK_KEY = 'tj_guest_streak';
 const LEGACY_GUEST_STREAK_KEY = 'cefr_guest_streak';
 const USER_STREAK_KEY_PREFIX = 'tj_user_streak_';
 const PENDING_STREAK_SYNC_KEY_PREFIX = 'tj_pending_streak_dates_';
-
-function pruneActivityHistory(history: string[]): string[] {
-  if (!history) return [];
-  try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const d = new Date();
-    d.setDate(d.getDate() - 60);
-    const formatter = new Intl.DateTimeFormat('en-CA', {
-      timeZone: tz,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
-    const cutoff = formatter.format(d);
-    return history.filter((dateStr) => dateStr >= cutoff);
-  } catch (_e) {
-    const d = new Date();
-    d.setDate(d.getDate() - 60);
-    const cutoff = d.toISOString().split('T')[0];
-    return history.filter((dateStr) => dateStr >= cutoff);
-  }
-}
-
-function calculateStreakFromHistory(
-  history: string[],
-  previousMaxStreak = 0,
-): { currentStreak: number; maxStreak: number; lastActiveDate: string } {
-  const pruned = pruneActivityHistory(history);
-  const uniqueSorted = Array.from(new Set(pruned)).sort();
-  if (uniqueSorted.length === 0) {
-    return {
-      currentStreak: 0,
-      maxStreak: previousMaxStreak,
-      lastActiveDate: '',
-    };
-  }
-
-  const todayStr = getLocalTodayStr();
-  const yesterdayStr = getLocalYesterdayStr();
-  const lastActiveDate = uniqueSorted[uniqueSorted.length - 1];
-
-  // If last active date is neither today nor yesterday, active streak is broken
-  if (lastActiveDate !== todayStr && lastActiveDate !== yesterdayStr) {
-    return {
-      currentStreak: 0,
-      maxStreak: previousMaxStreak,
-      lastActiveDate,
-    };
-  }
-
-  // Count consecutive days ending at lastActiveDate
-  const dateSet = new Set(uniqueSorted);
-  let streakCount = 0;
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  // Start cursor at noon to avoid DST shift
-  const cursor = new Date(`${lastActiveDate}T12:00:00`);
-  while (true) {
-    let dateStr = '';
-    try {
-      const formatter = new Intl.DateTimeFormat('en-CA', {
-        timeZone: tz,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      });
-      dateStr = formatter.format(cursor);
-    } catch (_e) {
-      dateStr = cursor.toISOString().split('T')[0];
-    }
-
-    if (dateSet.has(dateStr)) {
-      streakCount++;
-      cursor.setDate(cursor.getDate() - 1);
-    } else {
-      break;
-    }
-  }
-
-  const maxStreak = Math.max(previousMaxStreak, streakCount);
-  return {
-    currentStreak: streakCount,
-    maxStreak,
-    lastActiveDate,
-  };
-}
 
 function getStoredStreak(key: string): UserStreakData | null {
   if (typeof window === 'undefined') return null;
@@ -184,7 +101,11 @@ export function useStreak(options: UseStreakOptions) {
       if (cached) {
         const recalculated = calculateStreakFromHistory(
           cached.activityHistory || [],
-          cached.maxStreak,
+          {
+            previousMaxStreak: cached.maxStreak,
+            previousCurrentStreak: cached.currentStreak,
+            previousLastActiveDate: cached.lastActiveDate,
+          },
         );
         const refreshed: UserStreakData = {
           ...cached,
@@ -203,7 +124,11 @@ export function useStreak(options: UseStreakOptions) {
       if (guestStreak) {
         const recalculated = calculateStreakFromHistory(
           guestStreak.activityHistory || [],
-          guestStreak.maxStreak,
+          {
+            previousMaxStreak: guestStreak.maxStreak,
+            previousCurrentStreak: guestStreak.currentStreak,
+            previousLastActiveDate: guestStreak.lastActiveDate,
+          },
         );
         const refreshed: UserStreakData = {
           ...guestStreak,
@@ -278,10 +203,14 @@ export function useStreak(options: UseStreakOptions) {
         );
 
         const { currentStreak, maxStreak, lastActiveDate } =
-          calculateStreakFromHistory(
-            mergedHistory,
-            Math.max(dbStreak.maxStreak, guestStreak.maxStreak),
-          );
+          calculateStreakFromHistory(mergedHistory, {
+            previousMaxStreak: Math.max(
+              dbStreak.maxStreak,
+              guestStreak.maxStreak,
+            ),
+            previousCurrentStreak: dbStreak.currentStreak,
+            previousLastActiveDate: dbStreak.lastActiveDate,
+          });
 
         const mergedStreak: UserStreakData = {
           currentStreak,
@@ -403,7 +332,11 @@ export function useStreak(options: UseStreakOptions) {
       }
 
       const { currentStreak, maxStreak, lastActiveDate } =
-        calculateStreakFromHistory(history, current.maxStreak);
+        calculateStreakFromHistory(history, {
+          previousMaxStreak: current.maxStreak,
+          previousCurrentStreak: current.currentStreak,
+          previousLastActiveDate: current.lastActiveDate,
+        });
 
       const updatedStreak: UserStreakData = {
         currentStreak,
