@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getLanguageCodeFromName, type Story } from '../types';
 import { getStoryCoverUrl } from '../utils/coverUtils';
 import { segmentText } from '../utils/segmenter';
@@ -48,6 +48,15 @@ export function useExport(options: UseExportOptions) {
     }
   };
   const [isExportingEpub, setIsExportingEpub] = useState(false);
+  const shareTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (shareTimerRef.current) clearTimeout(shareTimerRef.current);
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
 
   const handleShareStoryLink = () => {
     if (!selectedStory) return;
@@ -55,10 +64,24 @@ export function useExport(options: UseExportOptions) {
     const slug = slugify(selectedStory.title);
     const slugSegment = slug ? `${slug}-${selectedStory.id}` : selectedStory.id;
     const url = `${window.location.origin}/book/${slugSegment}/chapter/${activeChapterIdx + 1}?openExternalBrowser=1`;
-    navigator.clipboard.writeText(url).then(() => {
-      setShowShareToast(true);
-      setTimeout(() => setShowShareToast(false), 3000);
-    });
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        setShowShareToast(true);
+        if (shareTimerRef.current) clearTimeout(shareTimerRef.current);
+        shareTimerRef.current = setTimeout(() => {
+          setShowShareToast(false);
+          shareTimerRef.current = null;
+        }, 3000);
+      })
+      .catch((err) => {
+        console.warn('[useExport] Failed to copy share link:', err);
+        showAlert(
+          'Copy Failed',
+          'Could not copy the link to your clipboard.',
+          'warning',
+        );
+      });
   };
 
   const triggerCopyPlaintext = () => {
@@ -101,10 +124,24 @@ export function useExport(options: UseExportOptions) {
       textString += `For more free graded readers, visit books.teacherjake.com\n`;
     }
 
-    navigator.clipboard.writeText(textString).then(() => {
-      setCopyStatus('copy-plain');
-      setTimeout(() => setCopyStatus(null), 3000);
-    });
+    navigator.clipboard
+      .writeText(textString)
+      .then(() => {
+        setCopyStatus('copy-plain');
+        if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = setTimeout(() => {
+          setCopyStatus(null);
+          copyTimerRef.current = null;
+        }, 3000);
+      })
+      .catch((err) => {
+        console.warn('[useExport] Failed to copy plaintext:', err);
+        showAlert(
+          'Copy Failed',
+          'Could not copy story text to your clipboard.',
+          'warning',
+        );
+      });
   };
 
   const triggerCopyRichText = () => {
@@ -233,10 +270,24 @@ export function useExport(options: UseExportOptions) {
       'text/plain': textBlob,
     });
 
-    navigator.clipboard.write([item]).then(() => {
-      setCopyStatus('copy-rich');
-      setTimeout(() => setCopyStatus(null), 3000);
-    });
+    navigator.clipboard
+      .write([item])
+      .then(() => {
+        setCopyStatus('copy-rich');
+        if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = setTimeout(() => {
+          setCopyStatus(null);
+          copyTimerRef.current = null;
+        }, 3000);
+      })
+      .catch((err) => {
+        console.warn('[useExport] Failed to copy rich text:', err);
+        showAlert(
+          'Copy Failed',
+          'Could not copy formatted story to your clipboard.',
+          'warning',
+        );
+      });
   };
 
   const handleDownloadEpub = async () => {

@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import type { Story } from '../types';
 import { buildApiHeaders } from '../utils/modelUtils';
 import { cleanCompletedStory } from '../utils/storyCleanup';
@@ -92,7 +93,7 @@ export interface PersistStoryOptions {
   currentUser?: IUser | null;
   customOpenRouterKey?: string;
   coverModel?: string;
-  onStoryUpdated?: (updatedStory: Story) => void;
+  onStoryUpdated?: Dispatch<SetStateAction<Story | null>>;
   onRefreshMetadata?: (options: { refresh: boolean; storyId: string }) => void;
   triggerCoverGen?: boolean;
   generatingCoverIds?: Set<string>;
@@ -185,11 +186,11 @@ export async function persistStory(
         model: effectiveCoverModel,
         onCoverUpdated: (cover, updated) => {
           if (onStoryUpdated) {
-            onStoryUpdated({
-              ...localStory,
-              cover,
-              updated,
-            });
+            onStoryUpdated((prev) =>
+              prev && prev.id === sanitizedId
+                ? { ...prev, cover: cover || prev.cover, updated }
+                : prev,
+            );
           }
         },
         onRefreshMetadata,
@@ -216,6 +217,9 @@ export async function persistStory(
       err,
     );
     const fallbackStory: Story = { ...cleaned, isUnsaved: true };
+    if (oldId !== sanitizedId) {
+      await removeStoryFromOffline(sanitizedId);
+    }
     if (onStoryUpdated) {
       onStoryUpdated(fallbackStory);
     }

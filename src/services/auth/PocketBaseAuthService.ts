@@ -20,6 +20,7 @@ export class PocketBaseAuthService implements IAuthService {
     onFailure: () => void,
   ): Unsubscribe {
     let lastUserId: string | null = null;
+    let unsubscribed = false;
 
     // If already logged in and token is valid, invoke onSuccess immediately
     if (pb.authStore.isValid && pb.authStore.record) {
@@ -30,25 +31,26 @@ export class PocketBaseAuthService implements IAuthService {
       pb.collection('users')
         .authRefresh()
         .then((authData) => {
+          if (unsubscribed) return;
           if (authData.record) {
             onSuccess(toIUser(authData.record), authData.token);
           }
         })
         .catch((err) => {
+          if (unsubscribed) return;
           console.warn(
             '[PocketBaseAuthService] Auto authRefresh on mount failed:',
             err,
           );
           if (err.status === 401 || err.status === 403) {
-            pb.authStore.clear();
             lastUserId = null;
-            onFailure();
+            pb.authStore.clear();
           }
         });
     } else {
       // Clear expired or invalid stored credentials so stale record doesn't block future login
-      pb.authStore.clear();
       lastUserId = null;
+      pb.authStore.clear();
       onFailure();
     }
 
@@ -76,7 +78,10 @@ export class PocketBaseAuthService implements IAuthService {
       }
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribed = true;
+      unsubscribe();
+    };
   }
 
   async signIn(): Promise<{ user: IUser; accessToken: string } | null> {

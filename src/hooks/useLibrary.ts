@@ -138,20 +138,34 @@ export function useLibrary(options: UseLibraryOptions) {
     [],
   );
 
+  const privateStoriesReqIdRef = useRef(0);
+  const currentUserUidRef = useRef<string | undefined>(currentUser?.uid);
+  currentUserUidRef.current = currentUser?.uid;
+
   /** Fetches private stories on demand (one-time getDocs, no real-time listener). */
   const loadPrivateStories = useCallback(async () => {
-    if (!currentUser) {
+    const reqId = ++privateStoriesReqIdRef.current;
+    const targetUid = currentUser?.uid;
+    if (!targetUid) {
       setPrivateStories([]);
       return;
     }
     setPrivateStoriesLoading(true);
     try {
-      const loaded = await fetchPrivateStories(currentUser.uid);
+      const loaded = await fetchPrivateStories(targetUid);
+      if (
+        privateStoriesReqIdRef.current !== reqId ||
+        currentUserUidRef.current !== targetUid
+      ) {
+        return;
+      }
       setPrivateStories(loaded);
     } catch (error) {
       console.error('Failed to fetch private stories:', error);
     } finally {
-      setPrivateStoriesLoading(false);
+      if (privateStoriesReqIdRef.current === reqId) {
+        setPrivateStoriesLoading(false);
+      }
     }
   }, [currentUser]);
 
@@ -177,7 +191,10 @@ export function useLibrary(options: UseLibraryOptions) {
     );
   }, [publicStories, privateStories, offlineCachedStories]);
 
-  const handleSelectStory = async (story: Story): Promise<Story | null> => {
+  const handleSelectStory = async (
+    story: Story,
+    onBackgroundRefresh?: (freshStory: Story) => void,
+  ): Promise<Story | null> => {
     try {
       // Check memory / offline storage first (or story itself if chapters already present)
       const cachedStory =
@@ -203,6 +220,7 @@ export function useLibrary(options: UseLibraryOptions) {
                     ? prev.map((p) => (p.id === fullStory.id ? fullStory : p))
                     : [...prev, fullStory];
                 });
+                onBackgroundRefresh?.(fullStory);
               }
             })
             .catch((fetchErr) => {
@@ -216,7 +234,6 @@ export function useLibrary(options: UseLibraryOptions) {
       }
 
       // Not cached locally yet: perform blocking network fetch
-      setStoriesLoading(true);
       if (isOnline) {
         try {
           const fullStory = await fetchStory(story.id);
@@ -272,8 +289,6 @@ export function useLibrary(options: UseLibraryOptions) {
         'error',
       );
       return null;
-    } finally {
-      setStoriesLoading(false);
     }
   };
 

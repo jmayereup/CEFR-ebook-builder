@@ -25,7 +25,10 @@ interface UseActiveStoryOptions {
   recentlyRead: RecentlyReadItem[];
   setRecentlyRead: Dispatch<SetStateAction<RecentlyReadItem[]>>;
   isUserDataLoaded?: boolean;
-  libHandleSelectStory: (story: Story) => Promise<Story | null>;
+  libHandleSelectStory: (
+    story: Story,
+    onBackgroundRefresh?: (freshStory: Story) => void,
+  ) => Promise<Story | null>;
   libHandleDeleteStory: (
     storyId: string,
     e: MouseEvent | null,
@@ -283,22 +286,19 @@ export function useActiveStory(options: UseActiveStoryOptions) {
 
       // Background revalidation (stale-while-revalidate)
       if (!cachedStory.isUnsaved) {
-        libHandleSelectStory(story)
-          .then((freshStory) => {
-            if (!freshStory) return;
-            setSelectedStory((prev) => {
-              if (!prev || prev.id !== freshStory.id) return prev;
-              if (prev.isUnsaved) return prev;
-              return {
-                ...prev,
-                ...freshStory,
-                chapters: freshStory.chapters || prev.chapters,
-              };
-            });
-          })
-          .catch((err) => {
-            console.warn('[useActiveStory] Background refresh error:', err);
+        libHandleSelectStory(story, (freshStory) => {
+          setSelectedStory((prev) => {
+            if (!prev || prev.id !== freshStory.id) return prev;
+            if (prev.isUnsaved) return prev;
+            return {
+              ...prev,
+              ...freshStory,
+              chapters: freshStory.chapters || prev.chapters,
+            };
           });
+        }).catch((err) => {
+          console.warn('[useActiveStory] Background refresh error:', err);
+        });
       }
 
       return;

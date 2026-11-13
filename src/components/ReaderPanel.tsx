@@ -613,7 +613,14 @@ export default function ReaderPanel({
 
   useEffect(() => {
     setIsEditing(false);
-  }, []);
+    setSelectedWord(null);
+    setSelectedWordRange(null);
+  }, [story.id]);
+
+  useEffect(() => {
+    setSelectedWord(null);
+    setSelectedWordRange(null);
+  }, [activeChapterIndex]);
 
   // Reset activeTab to 'read' when exiting edit mode
   useEffect(() => {
@@ -1404,35 +1411,31 @@ export default function ReaderPanel({
       .map((w, idx) => ({ ...w, flatIdx: idx }))
       .filter((w) => w.pIdx === pIdx);
 
-    const startOffset = Math.max(0, dp.original.indexOf(text));
-    const endOffset = startOffset + text.length;
+    const range = selection.getRangeAt(0);
+    const paraText = paraEl.textContent || '';
+    let startOffset = 0;
+    if (paraEl.contains(range.startContainer)) {
+      const preRange = document.createRange();
+      preRange.selectNodeContents(paraEl);
+      preRange.setEnd(range.startContainer, range.startOffset);
+      startOffset = preRange.toString().length;
+    }
+    const endOffset = startOffset + range.toString().length;
 
-    const targetLangCode = getLanguageCodeFromName(effectivePrimaryLanguage);
-    const segments = segmentText(
-      dp.original,
-      targetLangCode,
-      segmentMatchingSet,
-    );
-
-    let currPos = 0;
-    let wordIdx = 0;
     const wordSpans: { flatIdx: number; startPos: number; endPos: number }[] =
       [];
-
-    for (const seg of segments) {
-      const start = currPos;
-      const end = currPos + seg.segment.length;
-      currPos = end;
-      if (seg.isWordLike) {
-        const found = matchingWords.find((mw) => mw.indexInPara === wordIdx);
-        if (found) {
-          wordSpans.push({
-            flatIdx: found.flatIdx,
-            startPos: start,
-            endPos: end,
-          });
-        }
-        wordIdx++;
+    let searchPos = 0;
+    for (const mw of matchingWords) {
+      const idx = paraText.indexOf(mw.word, searchPos);
+      if (idx !== -1) {
+        const start = idx;
+        const end = idx + mw.word.length;
+        wordSpans.push({
+          flatIdx: mw.flatIdx,
+          startPos: start,
+          endPos: end,
+        });
+        searchPos = end;
       }
     }
 
@@ -1605,7 +1608,7 @@ export default function ReaderPanel({
   ]);
 
   // Calls backend to automatically fetch Translation / Definition details via Gemini
-  const handleFetchTranslation = async () => {
+  const handleFetchTranslation = async (targetLangOverride?: string) => {
     if (!selectedWord) return;
 
     if (!currentUser) {
@@ -1633,7 +1636,10 @@ export default function ReaderPanel({
           word: selectedWord.word,
           language: effectivePrimaryLanguage,
           context: selectedWord.context,
-          targetLanguage: translationTargetLanguage || 'English',
+          targetLanguage:
+            targetLangOverride ||
+            useUIStore.getState().translationTargetLanguage ||
+            'English',
           model: defaultTranslationModel || 'google/gemini-2.5-flash-lite',
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
@@ -1683,7 +1689,7 @@ export default function ReaderPanel({
     setShowLanguageModal(false);
 
     // Automatically trigger translation lookup now that the target language is set!
-    handleFetchTranslation();
+    handleFetchTranslation(selectedLang);
   };
 
   const handleLanguageCancel = () => {
@@ -1696,6 +1702,18 @@ export default function ReaderPanel({
       setShowLanguageModal(true);
     }
   }, [selectedWord, translationTargetLanguage]);
+
+  const saveDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  useEffect(() => {
+    return () => {
+      if (saveDismissTimerRef.current) {
+        clearTimeout(saveDismissTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleSaveWordRecord = () => {
     if (!selectedWord || !onSaveWord) return;
@@ -1732,8 +1750,12 @@ export default function ReaderPanel({
     setSelectedWord((prev) => (prev ? { ...prev, saveSuccess: true } : null));
 
     // Auto-dismiss inside 1.5 seconds
-    setTimeout(() => {
+    if (saveDismissTimerRef.current) {
+      clearTimeout(saveDismissTimerRef.current);
+    }
+    saveDismissTimerRef.current = setTimeout(() => {
       setSelectedWord(null);
+      saveDismissTimerRef.current = null;
     }, 1500);
   };
 

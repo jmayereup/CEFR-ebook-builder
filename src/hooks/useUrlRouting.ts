@@ -12,6 +12,7 @@ import {
   getStorySync,
   saveStory,
 } from '../services/storage/offlineStorage';
+import { useAuthStore } from '../store/authStore';
 import type { IUser } from '../services/types';
 import type { Story } from '../types';
 import { getStoryIdFromSegment, slugify } from '../utils/slugify';
@@ -304,6 +305,11 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  const storiesRef = useRef(stories);
+  storiesRef.current = stories;
+  const recentlyReadRef = useRef(recentlyRead);
+  recentlyReadRef.current = recentlyRead;
+
   // 3. Resolve pending navigation when stories list updates or finishes loading
   useEffect(() => {
     if (!pendingNavigation) return;
@@ -327,7 +333,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
 
       if (hasCachedContent) {
         if (!directStory.cover) {
-          const meta = stories.find((s) => s.id === storyId);
+          const meta = storiesRef.current.find((s) => s.id === storyId);
           if (meta?.cover) {
             directStory = { ...directStory, cover: meta.cover };
             await saveStory(directStory);
@@ -352,7 +358,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
               chapterIdx < (directStory.chapters?.length ?? 0) ? chapterIdx : 0;
             setActiveChapterIdx(validIdx);
           } else {
-            let syncedItem = recentlyRead.find(
+            let syncedItem = recentlyReadRef.current.find(
               (item) => item.storyId === directStory.id,
             );
             if (!syncedItem && typeof window !== 'undefined') {
@@ -419,7 +425,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
       if (!active || loadingStoryIdRef.current !== storyId) return;
 
       if (directStory && !directStory.cover) {
-        const meta = stories.find((s) => s.id === storyId);
+        const meta = storiesRef.current.find((s) => s.id === storyId);
         if (meta?.cover) {
           directStory = { ...directStory, cover: meta.cover };
           await saveStory(directStory);
@@ -445,7 +451,7 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
               chapterIdx < (directStory.chapters?.length ?? 0) ? chapterIdx : 0;
             setActiveChapterIdx(validIdx);
           } else {
-            let syncedItem = recentlyRead.find(
+            let syncedItem = recentlyReadRef.current.find(
               (item) => item.storyId === directStory.id,
             );
             if (!syncedItem && typeof window !== 'undefined') {
@@ -501,22 +507,22 @@ export function useUrlRouting(options: UseUrlRoutingOptions) {
     currentUser,
     isOnline,
     showAlert,
-    recentlyRead,
     setSelectedStory,
     setLoadingStoryId,
     setActiveChapterIdx,
     setActiveTab,
-    stories,
   ]);
 
-  // Redirect unsigned-in users away from the bookshelf
+  const authChecking = useAuthStore((s) => s.authChecking);
+
+  // Redirect unsigned-in users away from the bookshelf once auth check completes
   useEffect(() => {
-    if (activeTab === 'bookshelf' && !currentUser) {
+    if (!authChecking && activeTab === 'bookshelf' && !currentUser) {
       setActiveTab('browse');
       setSelectedStory(null);
       window.history.replaceState(null, '', '/');
     }
-  }, [activeTab, currentUser, setActiveTab, setSelectedStory]);
+  }, [authChecking, activeTab, currentUser, setActiveTab, setSelectedStory]);
 
   // 4. Synchronize React state changes back to the browser URL
   useEffect(() => {

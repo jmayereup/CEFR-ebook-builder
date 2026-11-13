@@ -124,9 +124,12 @@ export default function ChapterSidebar({
   const [isGeneratingCover, setIsGeneratingCover] = useState<boolean>(false);
   const [selectedGlossaryLanguage, setSelectedGlossaryLanguage] =
     useState<string>(translationTargetLanguage || 'English');
-  const [selectedCoverModel, setSelectedCoverModel] = useState<string>(
-    defaultCoverModel || 'google/gemini-3.1-flash-lite-image',
-  );
+  const [selectedCoverModel, setSelectedCoverModel] = useState<string>(() => {
+    const fallback = 'google/gemini-3.1-flash-lite-image';
+    if (!defaultCoverModel) return fallback;
+    if (isMuseModel(defaultCoverModel) && !isAgeVerified) return fallback;
+    return defaultCoverModel;
+  });
   const [showCoverAgeModal, setShowCoverAgeModal] = useState<boolean>(false);
   const [pendingCoverModel, setPendingCoverModel] = useState<string | null>(
     null,
@@ -134,9 +137,10 @@ export default function ChapterSidebar({
 
   useEffect(() => {
     if (defaultCoverModel) {
+      if (isMuseModel(defaultCoverModel) && !isAgeVerified) return;
       setSelectedCoverModel(defaultCoverModel);
     }
-  }, [defaultCoverModel]);
+  }, [defaultCoverModel, isAgeVerified]);
 
   const handleCoverModelChange = (modelId: string) => {
     if (isMuseModel(modelId) && !isAgeVerified) {

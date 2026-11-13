@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { IUser } from '../services/types';
 import { useUIStore } from '../store/uiStore';
 import type { Story } from '../types';
+import { safeSetItem } from '../utils/safeStorage';
 import { filterAndSortStories, type SortBy } from '../utils/storyFilters';
 
 interface UseFiltersOptions {
@@ -87,17 +88,11 @@ export function useFilters(options: UseFiltersOptions) {
 
   // Remember library filters
   useEffect(() => {
-    localStorage.setItem(
-      'library_filter_language',
-      JSON.stringify(filterLanguage),
-    );
+    safeSetItem('library_filter_language', JSON.stringify(filterLanguage));
   }, [filterLanguage]);
 
   useEffect(() => {
-    localStorage.setItem(
-      'library_filter_cefr_level',
-      JSON.stringify(filterCefrLevel),
-    );
+    safeSetItem('library_filter_cefr_level', JSON.stringify(filterCefrLevel));
   }, [filterCefrLevel]);
 
   // Filter public stories or user owned private stories for Browse tab

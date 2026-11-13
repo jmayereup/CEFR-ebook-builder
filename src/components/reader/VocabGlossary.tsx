@@ -67,13 +67,13 @@ export default function VocabGlossary({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-        {vocabulary.map((vocab) => {
+        {vocabulary.map((vocab, index) => {
           const isAlreadySaved = savedWordsSet?.has(
             vocab.word.toLowerCase().trim(),
           );
           return (
             <div
-              key={vocab.word}
+              key={`${vocab.word}-${index}`}
               className="py-3 border-b border-slate-100 dark:border-slate-800/40 last:border-b-0 transition-colors group relative"
             >
               <div className="flex items-center justify-between gap-1 mb-1">

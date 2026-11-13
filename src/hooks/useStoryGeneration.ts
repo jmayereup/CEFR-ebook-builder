@@ -174,11 +174,13 @@ export const useStoryGeneration = (
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
+  const glossaryAbortControllerRef = useRef<AbortController | null>(null);
 
   // Abort any in-flight request when the hook is unmounted
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
+      glossaryAbortControllerRef.current?.abort();
     };
   }, []);
 
@@ -820,6 +822,7 @@ export const useStoryGeneration = (
       );
 
       const data = await response.json();
+      if (data.error) throw new Error(data.error);
       const regeneratedChapter: Chapter = sanitizeChapter({
         chapterNumber: chapterNumber,
         title: data.chapterTitle,
@@ -1043,6 +1046,7 @@ export const useStoryGeneration = (
         );
 
         const data = await response.json();
+        if (data.error) throw new Error(data.error);
         const newChapters: Chapter[] = (data.chapters ?? []).map((ch: any) =>
           sanitizeChapter({
             chapterNumber: ch.chapterNumber,
@@ -1173,9 +1177,9 @@ export const useStoryGeneration = (
       `Generating glossary for ${chaptersNeedingGlossary.length} chapter(s)...`,
     ]);
 
-    abortControllerRef.current?.abort();
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
+    glossaryAbortControllerRef.current?.abort();
+    glossaryAbortControllerRef.current = new AbortController();
+    const signal = glossaryAbortControllerRef.current.signal;
     const headers = buildApiHeaders(customOpenRouterKey);
 
     try {
@@ -1363,7 +1367,7 @@ export const useStoryGeneration = (
         );
       }
     } finally {
-      abortControllerRef.current = null;
+      glossaryAbortControllerRef.current = null;
     }
   };
 

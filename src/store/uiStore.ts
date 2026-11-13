@@ -6,6 +6,7 @@ import {
   saveGuestCompletedStoryIds,
 } from '../services/storage/offlineStorage';
 import type { ReaderLineSpacing } from '../types';
+import { safeRemoveItem, safeSetItem } from '../utils/safeStorage';
 
 interface UIState {
   isOnline: boolean;
@@ -65,91 +66,69 @@ export const useUIStore = create<UIState>((set, get) => ({
   isAgeVerified: false,
   setIsOnline: (isOnline) => set({ isOnline }),
   setIsAgeVerified: (verified) => {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('tj_age_verified', verified ? 'true' : 'false');
-    }
+    safeSetItem('tj_age_verified', verified ? 'true' : 'false');
     set({ isAgeVerified: verified });
   },
   setCustomOpenRouterKey: (key) => {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('custom_openrouter_api_key', key);
-    }
+    safeSetItem('custom_openrouter_api_key', key);
     set({ customOpenRouterKey: key });
   },
   setTranslationTargetLanguage: (lang) => {
-    if (typeof localStorage !== 'undefined') {
-      if (lang) {
-        localStorage.setItem('translation_target_language', lang);
-      } else {
-        localStorage.removeItem('translation_target_language');
-      }
+    if (lang) {
+      safeSetItem('translation_target_language', lang);
+    } else {
+      safeRemoveItem('translation_target_language');
     }
     set({ translationTargetLanguage: lang });
   },
   setDefaultStoryModel: (model) => {
-    if (typeof localStorage !== 'undefined') {
-      if (model) {
-        localStorage.setItem('custom_default_story_model', model);
-      } else {
-        localStorage.removeItem('custom_default_story_model');
-      }
+    if (model) {
+      safeSetItem('custom_default_story_model', model);
+    } else {
+      safeRemoveItem('custom_default_story_model');
     }
     set({ defaultStoryModel: model || '~deepseek/deepseek-flash-latest' });
   },
   setDefaultGlossaryModel: (model) => {
-    if (typeof localStorage !== 'undefined') {
-      if (model) {
-        localStorage.setItem('custom_default_glossary_model', model);
-      } else {
-        localStorage.removeItem('custom_default_glossary_model');
-      }
+    if (model) {
+      safeSetItem('custom_default_glossary_model', model);
+    } else {
+      safeRemoveItem('custom_default_glossary_model');
     }
     set({ defaultGlossaryModel: model || 'google/gemini-2.5-flash-lite' });
   },
   setDefaultTranslationModel: (model) => {
-    if (typeof localStorage !== 'undefined') {
-      if (model) {
-        localStorage.setItem('custom_default_translation_model', model);
-      } else {
-        localStorage.removeItem('custom_default_translation_model');
-      }
+    if (model) {
+      safeSetItem('custom_default_translation_model', model);
+    } else {
+      safeRemoveItem('custom_default_translation_model');
     }
     set({ defaultTranslationModel: model || 'google/gemini-2.5-flash-lite' });
   },
   setDefaultCoverModel: (model) => {
-    if (typeof localStorage !== 'undefined') {
-      if (model) {
-        localStorage.setItem('custom_default_cover_model', model);
-      } else {
-        localStorage.removeItem('custom_default_cover_model');
-      }
+    if (model) {
+      safeSetItem('custom_default_cover_model', model);
+    } else {
+      safeRemoveItem('custom_default_cover_model');
     }
     set({ defaultCoverModel: model || DEFAULT_COVER_IMAGE_MODEL });
   },
   setReaderFontSize: (size) => {
     const validatedSize =
       typeof size === 'number' && size >= 14 && size <= 26 ? size : 18;
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('reader-font-size', validatedSize.toString());
-    }
+    safeSetItem('reader-font-size', validatedSize.toString());
     set({ readerFontSize: validatedSize });
   },
   setReaderUseSerif: (useSerif) => {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('reader-use-serif', useSerif.toString());
-    }
+    safeSetItem('reader-use-serif', useSerif.toString());
     set({ readerUseSerif: useSerif });
   },
   setReaderTextAlignment: (alignment) => {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('reader-text-alignment', alignment);
-    }
+    safeSetItem('reader-text-alignment', alignment);
     set({ readerTextAlignment: alignment });
   },
   setReaderColumnWidth: (columnWidth) => {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('reader-column-width', columnWidth);
-    }
+    safeSetItem('reader-column-width', columnWidth);
     set({ readerColumnWidth: columnWidth });
   },
   setReaderLineSpacing: (spacing) => {
@@ -160,9 +139,7 @@ export const useUIStore = create<UIState>((set, get) => ({
       spacing === 'loose'
         ? spacing
         : 'normal';
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('reader-line-spacing', validatedSpacing);
-    }
+    safeSetItem('reader-line-spacing', validatedSpacing);
     set({ readerLineSpacing: validatedSpacing });
   },
   setGuestCompletedStoryIds: (ids) => {

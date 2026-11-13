@@ -48,6 +48,10 @@ export default function GeminiEmbedReader({
   const [imgError, setImgError] = useState(false);
 
   React.useEffect(() => {
+    setIsEditing(!story.description);
+  }, [story.id]);
+
+  React.useEffect(() => {
     setEditTitle(story.title || '');
     setEditDescription(story.description || '');
     setImgError(false);
@@ -67,7 +71,7 @@ export default function GeminiEmbedReader({
       const newTitle = editTitle.trim() || story.title;
       const newDesc = editDescription.trim();
 
-      await updateStoryDescription(story.id, newDesc);
+      await updateStoryDescription(story.id, newDesc, newTitle);
 
       const updatedStory: Story = {
         ...story,

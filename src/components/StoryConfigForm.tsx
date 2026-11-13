@@ -143,7 +143,9 @@ export default function StoryConfigForm({
   const [showDefaultModelInfo, setShowDefaultModelInfo] = useState(false);
   const [writingType, setWritingType] = useState('narrative');
   const [isLangCollapsed, setIsLangCollapsed] = useState(true);
-  const [sortedLanguages] = useState(() => {
+  const [sortedLanguages, setSortedLanguages] = useState(SUPPORTED_LANGUAGES);
+
+  useEffect(() => {
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
         const stored = localStorage.getItem('prior_used_languages');
@@ -163,16 +165,15 @@ export default function StoryConfigForm({
           languageMap.forEach((lang) => {
             sorted.push(lang);
           });
-          return sorted;
+          setSortedLanguages(sorted);
         }
       }
     } catch (_e) {}
-    return SUPPORTED_LANGUAGES;
-  });
+  }, []);
 
-  // Sync selectedModel with defaultStoryModel when BYOK is active or when defaultStoryModel changes
+  // Sync selectedModel with defaultStoryModel when BYOK or Admin is active or when defaultStoryModel changes
   useEffect(() => {
-    if (isByokActive && defaultStoryModel) {
+    if ((isByokActive || isAdmin) && defaultStoryModel) {
       if (isMuseModel(defaultStoryModel) && !isAgeVerified) {
         return;
       }
@@ -180,7 +181,7 @@ export default function StoryConfigForm({
       const support = getModelThinkingSupport(defaultStoryModel);
       setThinkingOption(support.defaultOption);
     }
-  }, [isByokActive, defaultStoryModel, isAgeVerified]);
+  }, [isByokActive, isAdmin, defaultStoryModel, isAgeVerified]);
 
   // Sync selectedCoverModel with defaultCoverModel when BYOK or Admin is active
   useEffect(() => {

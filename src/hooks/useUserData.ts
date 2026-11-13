@@ -14,6 +14,7 @@ import { pb } from '../services/pocketbase';
 import { useUIStore } from '../store/uiStore';
 import type { VocabularyTerm } from '../types';
 import { isFreeModel } from '../utils/creditCalculation';
+import { safeRemoveItem, safeSetItem } from '../utils/safeStorage';
 import { calculateNextSRS } from '../utils/srs';
 
 interface LookupLimitData {
@@ -385,9 +386,16 @@ export function useUserData(options: UseUserDataOptions) {
     }
 
     // 1. Optimistically update local state & localStorage immediately
-    const updated = [...savedVocab, wordObj];
-    setSavedVocab(updated);
-    localStorage.setItem('saved_vocab', JSON.stringify(updated));
+    setSavedVocab((prev) => {
+      if (
+        prev.some((v) => v.word.toLowerCase() === wordObj.word.toLowerCase())
+      ) {
+        return prev;
+      }
+      const updated = [...prev, wordObj];
+      safeSetItem('saved_vocab', JSON.stringify(updated));
+      return updated;
+    });
 
     // 2. Persist to PocketBase or queue for offline sync
     if (currentUser) {
@@ -430,11 +438,13 @@ export function useUserData(options: UseUserDataOptions) {
 
   const handleRemoveSavedWord = async (wordText: string) => {
     // 1. Optimistically remove from local state & localStorage immediately
-    const updated = savedVocab.filter(
-      (v) => v.word.toLowerCase() !== wordText.toLowerCase(),
-    );
-    setSavedVocab(updated);
-    localStorage.setItem('saved_vocab', JSON.stringify(updated));
+    setSavedVocab((prev) => {
+      const updated = prev.filter(
+        (v) => v.word.toLowerCase() !== wordText.toLowerCase(),
+      );
+      safeSetItem('saved_vocab', JSON.stringify(updated));
+      return updated;
+    });
 
     // 2. Delete on PocketBase or queue for offline sync
     if (currentUser) {
@@ -523,15 +533,18 @@ export function useUserData(options: UseUserDataOptions) {
   };
 
   const handleToggleBookshelf = async (storyId: string) => {
-    const isSaved = bookshelf.includes(storyId);
-    const updated = isSaved
-      ? bookshelf.filter((id) => id !== storyId)
-      : [...bookshelf, storyId];
-    setBookshelf(updated);
-    localStorage.setItem('bookshelf', JSON.stringify(updated));
+    let updatedBookshelf: string[] = [];
+    setBookshelf((prev) => {
+      const isSaved = prev.includes(storyId);
+      updatedBookshelf = isSaved
+        ? prev.filter((id) => id !== storyId)
+        : [...prev, storyId];
+      safeSetItem('bookshelf', JSON.stringify(updatedBookshelf));
+      return updatedBookshelf;
+    });
     if (currentUser) {
       saveUserProfileData(currentUser.uid, {
-        bookshelf: updated,
+        bookshelf: updatedBookshelf,
       }).catch((err) =>
         console.error('[useUserData] Failed to sync bookshelf:', err),
       );
@@ -612,12 +625,14 @@ export function useUserData(options: UseUserDataOptions) {
       }
     }
 
+    let active = true;
     const todayStr = new Date().toISOString().split('T')[0];
     const thisMonthStr = todayStr.substring(0, 7);
     const lastFetchTimeRef = { current: 0 };
     const isFetchingRef = { current: false };
 
     const loadSavedVocab = async (force = false) => {
+      if (!active) return;
       if (currentUser) {
         // Throttle automatic re-fetches (e.g. on focus) to at most once every 15 seconds unless forced
         const now = Date.now();
@@ -639,16 +654,21 @@ export function useUserData(options: UseUserDataOptions) {
             );
             // If the token is expired/revoked (401/403), stop and let auth handler log the user out
             if (authErr.status === 401 || authErr.status === 403) {
+              prevUserRef.current = currentUser;
               pb.authStore.clear();
               return;
             }
           }
+          if (!active) return;
 
           // Flush any pending offline vocab changes before fetching from cloud
           await flushPendingVocab(currentUser.uid);
+          if (!active) return;
 
           const profile = await fetchUserProfile(currentUser.uid);
+          if (!active) return;
           const vocab = await fetchUserVocab(currentUser.uid);
+          if (!active) return;
 
           if (profile) {
             // Reconcile cloud vocab with any remaining local pending updates
@@ -1098,6 +1118,7 @@ export function useUserData(options: UseUserDataOptions) {
     window.addEventListener('visibilitychange', handleFocus);
 
     return () => {
+      active = false;
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('visibilitychange', handleFocus);

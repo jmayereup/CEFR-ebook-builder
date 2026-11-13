@@ -467,7 +467,7 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
     setLoadingStory(null);
     setLoadingStoryId(null);
     if (selectedStory?.isUnsaved) {
-      setPendingNavigation({ tab });
+      setPendingNavigation({ tab, clearStory: true });
     } else {
       setSelectedStory(null);
       setActiveTab(tab);
@@ -571,13 +571,15 @@ export default function App({ ssrPath, ssrData }: AppProps = {}) {
         model: activeCoverModel,
         customOpenRouterKey,
         onCoverUpdated: (cover, updated) => {
-          if (selectedStory && selectedStory.id === storyId) {
-            setSelectedStory({
-              ...selectedStory,
-              cover: cover || selectedStory.cover,
-              updated,
-            });
-          }
+          setSelectedStory((prev) =>
+            prev && prev.id === storyId
+              ? {
+                  ...prev,
+                  cover: cover || prev.cover,
+                  updated,
+                }
+              : prev,
+          );
         },
         onRefreshMetadata: (opts) => loadStoriesMetadata(opts),
       });

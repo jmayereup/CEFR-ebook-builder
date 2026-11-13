@@ -50,6 +50,39 @@ type AppStoriesResponse = StoriesResponse<
   StoryBible // storyBible
 >;
 
+function escapePbFilterValue(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+function buildWordMatchFilter(userId: string, word: string): string {
+  const safeUser = escapePbFilterValue(userId);
+  const safeWord = escapePbFilterValue(word);
+  const safeLower = escapePbFilterValue(word.toLowerCase());
+  if (safeWord === safeLower) {
+    return `user = "${safeUser}" && word = "${safeWord}"`;
+  }
+  return `user = "${safeUser}" && (word = "${safeWord}" || word = "${safeLower}")`;
+}
+
+function readPendingDeletionFlags(): DeletionFlag[] {
+  try {
+    if (typeof localStorage === 'undefined') return [];
+    const existing = localStorage.getItem('pending_deletion_flags');
+    return existing ? (JSON.parse(existing) as DeletionFlag[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writePendingDeletionFlags(flags: DeletionFlag[]): void {
+  try {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem('pending_deletion_flags', JSON.stringify(flags));
+  } catch {
+    // Ignore storage errors in restricted environments
+  }
+}
+
 export class PocketBaseService implements IDatabaseService {
   // ── Stories ────────────────────────────────────────────────────────────────
 
@@ -282,8 +315,13 @@ export class PocketBaseService implements IDatabaseService {
   async updateStoryDescription(
     storyId: string,
     description: string,
+    title?: string,
   ): Promise<void> {
-    await pb.collection('stories').update(storyId, { description });
+    const updates: Record<string, string> = { description };
+    if (title !== undefined) {
+      updates.title = title;
+    }
+    await pb.collection('stories').update(storyId, updates);
   }
 
   async updateStoryVisibility(
@@ -415,10 +453,9 @@ export class PocketBaseService implements IDatabaseService {
       await pb.collection('deletion_flags').create(recordPayload);
     } catch (_err) {
       // Local Storage fallback if collection is pending creation
-      const existing = localStorage.getItem('pending_deletion_flags');
-      const list: DeletionFlag[] = existing ? JSON.parse(existing) : [];
+      const list = readPendingDeletionFlags();
       list.push({ ...recordPayload, id: `flag_${Date.now()}` });
-      localStorage.setItem('pending_deletion_flags', JSON.stringify(list));
+      writePendingDeletionFlags(list);
     }
   }
 
@@ -441,9 +478,7 @@ export class PocketBaseService implements IDatabaseService {
       }));
     } catch (_err) {
       // Local Storage fallback
-      const existing = localStorage.getItem('pending_deletion_flags');
-      const list: DeletionFlag[] = existing ? JSON.parse(existing) : [];
-      return list.filter((f) => f.status === 'pending');
+      return readPendingDeletionFlags().filter((f) => f.status === 'pending');
     }
   }
 
@@ -465,13 +500,12 @@ export class PocketBaseService implements IDatabaseService {
       });
     } catch (_err) {
       // Local Storage fallback
-      const existing = localStorage.getItem('pending_deletion_flags');
-      if (existing) {
-        const list: DeletionFlag[] = JSON.parse(existing);
+      const list = readPendingDeletionFlags();
+      if (list.length > 0) {
         const updated = list.map((f) =>
           f.id === flagId ? { ...f, status: 'resolved' as const } : f,
         );
-        localStorage.setItem('pending_deletion_flags', JSON.stringify(updated));
+        writePendingDeletionFlags(updated);
       }
     }
   }
@@ -601,7 +635,7 @@ export class PocketBaseService implements IDatabaseService {
       const existing = await pb
         .collection('saved_words')
         .getList<SavedWordsResponse>(1, 1, {
-          filter: `user = "${userId}" && word = "${term.word.toLowerCase()}"`,
+          filter: buildWordMatchFilter(userId, term.word),
         });
       if (existing.items.length > 0) {
         const updated = await pb
@@ -620,7 +654,7 @@ export class PocketBaseService implements IDatabaseService {
     const existing = await pb
       .collection('saved_words')
       .getList<SavedWordsResponse>(1, 1, {
-        filter: `user = "${userId}" && word = "${wordText.toLowerCase()}"`,
+        filter: buildWordMatchFilter(userId, wordText),
       });
     if (existing.items.length > 0) {
       await pb.collection('saved_words').delete(existing.items[0].id);

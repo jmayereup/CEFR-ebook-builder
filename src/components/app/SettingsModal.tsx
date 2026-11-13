@@ -131,6 +131,7 @@ export default function SettingsModal({
 
   useEffect(() => {
     if (!isOpen) return;
+    setKeyTestResult(null);
     setApiKeyInput(customOpenRouterKey || '');
 
     const story = resolveModelSelection(

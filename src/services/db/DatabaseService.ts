@@ -84,7 +84,11 @@ export interface IDatabaseService {
   ): Promise<void>;
 
   /** Update description on a story. */
-  updateStoryDescription(storyId: string, description: string): Promise<void>;
+  updateStoryDescription(
+    storyId: string,
+    description: string,
+    title?: string,
+  ): Promise<void>;
 
   /** Toggle a story's public/private visibility. */
   updateStoryVisibility(storyId: string, isPublic: boolean): Promise<void>;
