@@ -1,11 +1,4 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  Play,
-  Volume2,
-  X,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronUp, Play, X } from 'lucide-react';
 import type { SelectedWordData } from './types';
 
 interface ToastCollapsedBarProps {
@@ -18,7 +11,6 @@ interface ToastCollapsedBarProps {
   onExpand: () => void;
   onDismiss: () => void;
   onPlayWord: (word: string) => void;
-  onResumeChapterFromWord?: () => void;
   onUserActivity?: () => void;
 }
 
@@ -32,7 +24,6 @@ export default function ToastCollapsedBar({
   onExpand,
   onDismiss,
   onPlayWord,
-  onResumeChapterFromWord,
   onUserActivity,
 }: ToastCollapsedBarProps) {
   return (
@@ -54,22 +45,8 @@ export default function ToastCollapsedBar({
           className="p-1.5 rounded-full bg-tj-primary/10 hover:bg-tj-primary/20 dark:bg-tj-primary/15 dark:hover:bg-tj-primary/30 text-tj-primary dark:text-tj-primary-hover border border-tj-primary/20 hover:border-tj-primary/40 cursor-pointer transition-all shadow-2xs active:scale-90 flex items-center justify-center shrink-0"
           title="Replay pronunciation"
         >
-          <Volume2 className="w-4 h-4" />
+          <Play className="w-3.5 h-3.5 fill-current" />
         </button>
-        {onResumeChapterFromWord && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onUserActivity?.();
-              onResumeChapterFromWord();
-            }}
-            className="p-1.5 rounded-full bg-tj-primary-light hover:bg-tj-primary-light/80 dark:bg-tj-primary-light/10 dark:hover:bg-tj-primary-light/20 text-tj-primary dark:text-tj-primary-hover border border-tj-primary-border cursor-pointer transition-all shadow-2xs active:scale-90 flex items-center justify-center shrink-0"
-            title="Play from here"
-          >
-            <Play className="w-3.5 h-3.5 fill-current" />
-          </button>
-        )}
         <span
           lang={languageCode}
           translate="no"
