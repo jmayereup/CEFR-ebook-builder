@@ -37,15 +37,15 @@ import { useUrlRouting } from './hooks/useUrlRouting';
 import { useUserData } from './hooks/useUserData';
 import { useWebViewWarning } from './hooks/useWebViewWarning';
 // Pages
-import AboutPage from './pages/AboutPage';
 import BrowsePage from './pages/BrowsePage';
-import ReaderPage from './pages/ReaderPage';
 
+const AboutPage = lazy(() => import('./pages/AboutPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const BookshelfPage = lazy(() => import('./pages/BookshelfPage'));
 const CreatePage = lazy(() => import('./pages/CreatePage'));
 const NotesPage = lazy(() => import('./pages/NotesPage'));
 const PracticePage = lazy(() => import('./pages/PracticePage'));
+const ReaderPage = lazy(() => import('./pages/ReaderPage'));
 
 import { initAuth, logout, syncUserProfile } from './services/auth';
 import {

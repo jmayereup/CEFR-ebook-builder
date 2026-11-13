@@ -182,25 +182,29 @@ export default defineConfig(() => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
+              // Group Lucide React icons (check before react/ so lucide-react/ doesn't match react/)
+              if (id.includes('/lucide-react/')) {
+                return 'vendor-lucide';
+              }
               // Group React core libraries
               if (
-                id.includes('react/') ||
-                id.includes('react-dom/') ||
-                id.includes('scheduler/')
+                id.includes('/react/') ||
+                id.includes('/react-dom/') ||
+                id.includes('/scheduler/')
               ) {
                 return 'vendor-react';
               }
               // Group PocketBase SDK
-              if (id.includes('pocketbase')) {
+              if (id.includes('/pocketbase/')) {
                 return 'vendor-pocketbase';
               }
               // Group Framer Motion / Motion
-              if (id.includes('motion') || id.includes('framer-motion')) {
+              if (id.includes('/motion/') || id.includes('/framer-motion/')) {
                 return 'vendor-motion';
               }
-              // Group Lucide React icons
-              if (id.includes('lucide-react')) {
-                return 'vendor-lucide';
+              // Keep jszip out of vendor-core so it only loads on EPUB export
+              if (id.includes('/jszip/')) {
+                return 'vendor-jszip';
               }
               // Everything else from node_modules goes to vendor-core
               return 'vendor-core';
