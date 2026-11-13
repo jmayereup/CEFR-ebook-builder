@@ -38,6 +38,17 @@ interface SettingsModalProps {
   isPaid: boolean;
 }
 
+function resolveModelSelection(
+  modelId: string,
+  presets: ReadonlyArray<{ id: string }>,
+): { option: string; customInput: string } {
+  const isPreset = presets.some((m) => m.id === modelId);
+  return {
+    option: isPreset ? modelId : 'custom',
+    customInput: isPreset ? '' : modelId,
+  };
+}
+
 export default function SettingsModal({
   isOpen,
   onClose,
@@ -79,33 +90,81 @@ export default function SettingsModal({
   );
 
   // Default Story Model selection state
-  const isStoryPreset = FRONTIER_LATEST_MODELS.some(
-    (m) => m.id === defaultStoryModel,
+  const initialStory = resolveModelSelection(
+    defaultStoryModel,
+    FRONTIER_LATEST_MODELS,
   );
   const [selectedStoryModelOption, setSelectedStoryModelOption] =
-    useState<string>(isStoryPreset ? defaultStoryModel : 'custom');
+    useState<string>(initialStory.option);
   const [customStoryModelIdInput, setCustomStoryModelIdInput] =
-    useState<string>(isStoryPreset ? '' : defaultStoryModel);
+    useState<string>(initialStory.customInput);
+
+  // Default Glossary Model selection state
+  const initialGlossary = resolveModelSelection(
+    defaultGlossaryModel,
+    FRONTIER_LATEST_MODELS,
+  );
+  const [selectedGlossaryModelOption, setSelectedGlossaryModelOption] =
+    useState<string>(initialGlossary.option);
+  const [customGlossaryModelIdInput, setCustomGlossaryModelIdInput] =
+    useState<string>(initialGlossary.customInput);
+
+  // Default Word Translation Model selection state
+  const initialTranslation = resolveModelSelection(
+    defaultTranslationModel,
+    FRONTIER_LATEST_MODELS,
+  );
+  const [selectedTranslationModelOption, setSelectedTranslationModelOption] =
+    useState<string>(initialTranslation.option);
+  const [customTranslationModelIdInput, setCustomTranslationModelIdInput] =
+    useState<string>(initialTranslation.customInput);
 
   // Default Cover Model selection state
-  const isCoverPreset = COVER_IMAGE_MODELS.some(
-    (m) => m.id === defaultCoverModel,
+  const initialCover = resolveModelSelection(
+    defaultCoverModel,
+    COVER_IMAGE_MODELS,
   );
   const [selectedCoverModelOption, setSelectedCoverModelOption] =
-    useState<string>(isCoverPreset ? defaultCoverModel : 'custom');
+    useState<string>(initialCover.option);
   const [customCoverModelIdInput, setCustomCoverModelIdInput] =
-    useState<string>(isCoverPreset ? '' : defaultCoverModel);
+    useState<string>(initialCover.customInput);
 
   useEffect(() => {
+    if (!isOpen) return;
     setApiKeyInput(customOpenRouterKey || '');
-    const isCoverPresetMatch = COVER_IMAGE_MODELS.some(
-      (m) => m.id === defaultCoverModel,
+
+    const story = resolveModelSelection(
+      defaultStoryModel,
+      FRONTIER_LATEST_MODELS,
     );
-    setSelectedCoverModelOption(
-      isCoverPresetMatch ? defaultCoverModel : 'custom',
+    setSelectedStoryModelOption(story.option);
+    setCustomStoryModelIdInput(story.customInput);
+
+    const glossary = resolveModelSelection(
+      defaultGlossaryModel,
+      FRONTIER_LATEST_MODELS,
     );
-    setCustomCoverModelIdInput(isCoverPresetMatch ? '' : defaultCoverModel);
-  }, [customOpenRouterKey, defaultCoverModel, isOpen]);
+    setSelectedGlossaryModelOption(glossary.option);
+    setCustomGlossaryModelIdInput(glossary.customInput);
+
+    const translation = resolveModelSelection(
+      defaultTranslationModel,
+      FRONTIER_LATEST_MODELS,
+    );
+    setSelectedTranslationModelOption(translation.option);
+    setCustomTranslationModelIdInput(translation.customInput);
+
+    const cover = resolveModelSelection(defaultCoverModel, COVER_IMAGE_MODELS);
+    setSelectedCoverModelOption(cover.option);
+    setCustomCoverModelIdInput(cover.customInput);
+  }, [
+    customOpenRouterKey,
+    defaultStoryModel,
+    defaultGlossaryModel,
+    defaultTranslationModel,
+    defaultCoverModel,
+    isOpen,
+  ]);
 
   const hasApiKey = Boolean(apiKeyInput.trim());
 
@@ -145,24 +204,6 @@ export default function SettingsModal({
     setPendingStoryModelOption(null);
     setPendingCoverModelOption(null);
   };
-
-  // Default Glossary Model selection state
-  const isGlossaryPreset = FRONTIER_LATEST_MODELS.some(
-    (m) => m.id === defaultGlossaryModel,
-  );
-  const [selectedGlossaryModelOption, setSelectedGlossaryModelOption] =
-    useState<string>(isGlossaryPreset ? defaultGlossaryModel : 'custom');
-  const [customGlossaryModelIdInput, setCustomGlossaryModelIdInput] =
-    useState<string>(isGlossaryPreset ? '' : defaultGlossaryModel);
-
-  // Default Word Translation Model selection state
-  const isTranslationPreset = FRONTIER_LATEST_MODELS.some(
-    (m) => m.id === defaultTranslationModel,
-  );
-  const [selectedTranslationModelOption, setSelectedTranslationModelOption] =
-    useState<string>(isTranslationPreset ? defaultTranslationModel : 'custom');
-  const [customTranslationModelIdInput, setCustomTranslationModelIdInput] =
-    useState<string>(isTranslationPreset ? '' : defaultTranslationModel);
 
   const [pricingMap, setPricingMap] = useState<
     Map<string, OpenRouterModelInfo>
