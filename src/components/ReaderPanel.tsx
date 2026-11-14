@@ -1629,6 +1629,11 @@ export default function ReaderPanel({
     try {
       const headers = buildApiHeaders(customOpenRouterKey);
 
+      const resolvedTargetLanguage =
+        typeof targetLangOverride === 'string' && targetLangOverride.trim()
+          ? targetLangOverride
+          : useUIStore.getState().translationTargetLanguage || 'English';
+
       const response = await fetch('/api/translate', {
         method: 'POST',
         headers,
@@ -1636,10 +1641,7 @@ export default function ReaderPanel({
           word: selectedWord.word,
           language: effectivePrimaryLanguage,
           context: selectedWord.context,
-          targetLanguage:
-            targetLangOverride ||
-            useUIStore.getState().translationTargetLanguage ||
-            'English',
+          targetLanguage: resolvedTargetLanguage,
           model: defaultTranslationModel || 'google/gemini-2.5-flash-lite',
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
@@ -2677,7 +2679,7 @@ export default function ReaderPanel({
         setSelectedWord={setSelectedWord}
         story={story}
         currentUser={currentUser}
-        handleFetchTranslation={handleFetchTranslation}
+        handleFetchTranslation={() => handleFetchTranslation()}
         handleSaveWordRecord={handleSaveWordRecord}
         handlePlayWord={handlePlayWord}
         isSaved={isSelectedWordSaved}
