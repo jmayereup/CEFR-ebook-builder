@@ -43,22 +43,34 @@ export const isSwappableBilingual = (story: Story): boolean =>
 /**
  * Returns true if a story matches the user's selected language filter.
  *
- * Single-language stories match only by their primary language. Swappable
- * bilingual stories (A1 + translationLanguage) additionally match when the
- * filter targets their translation language, so an A1 Spanish→English book
- * appears in both the Spanish and English listings.
+ * - Single language selected: matches only by primary `story.language` (so
+ *   `EN-DE` matches English, `DE-EN` matches German, and neither matches the
+ *   other).
+ * - Multiple languages selected (e.g. English + German): requires the story's
+ *   language pair (`story.language` and `story.translationLanguage`) to
+ *   contain all selected languages (so both `EN-DE` and `DE-EN` match,
+ *   including Pre-A1 and A1, while `EN-FR` does not).
  */
 export const matchesLanguageFilter = (
   story: Story,
   filterLanguage: string[],
 ): boolean => {
   if (filterLanguage.length === 0) return true;
-  return filterLanguage.some(
-    (fl) =>
-      story.language.toLowerCase() === fl.toLowerCase() ||
-      (isSwappableBilingual(story) &&
-        story.translationLanguage?.toLowerCase() === fl.toLowerCase()),
+
+  const normalizedFilters = Array.from(
+    new Set(filterLanguage.map((fl) => fl.toLowerCase())),
   );
+  const primaryLang = story.language.toLowerCase();
+
+  if (normalizedFilters.length === 1) {
+    return primaryLang === normalizedFilters[0];
+  }
+
+  const transLang = story.translationLanguage?.toLowerCase();
+  const storyLangs = new Set(
+    transLang ? [primaryLang, transLang] : [primaryLang],
+  );
+  return normalizedFilters.every((fl) => storyLangs.has(fl));
 };
 
 /**
