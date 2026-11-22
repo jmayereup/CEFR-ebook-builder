@@ -54,8 +54,8 @@ export const useUIStore = create<UIState>((set, get) => ({
   customOpenRouterKey: '',
   translationTargetLanguage: null,
   defaultStoryModel: '~deepseek/deepseek-flash-latest',
-  defaultGlossaryModel: 'google/gemini-2.5-flash-lite',
-  defaultTranslationModel: 'google/gemini-2.5-flash-lite',
+  defaultGlossaryModel: '~z-ai/glm-flash-latest',
+  defaultTranslationModel: '~z-ai/glm-flash-latest',
   defaultCoverModel: DEFAULT_COVER_IMAGE_MODEL,
   readerFontSize: 18,
   readerUseSerif: true,
@@ -95,7 +95,7 @@ export const useUIStore = create<UIState>((set, get) => ({
     } else {
       safeRemoveItem('custom_default_glossary_model');
     }
-    set({ defaultGlossaryModel: model || 'google/gemini-2.5-flash-lite' });
+    set({ defaultGlossaryModel: model || '~z-ai/glm-flash-latest' });
   },
   setDefaultTranslationModel: (model) => {
     if (model) {
@@ -103,7 +103,7 @@ export const useUIStore = create<UIState>((set, get) => ({
     } else {
       safeRemoveItem('custom_default_translation_model');
     }
-    set({ defaultTranslationModel: model || 'google/gemini-2.5-flash-lite' });
+    set({ defaultTranslationModel: model || '~z-ai/glm-flash-latest' });
   },
   setDefaultCoverModel: (model) => {
     if (model) {
@@ -204,27 +204,36 @@ export const useUIStore = create<UIState>((set, get) => ({
       } else if (storyModel === '~openai/gpt-mini-latest') {
         storyModel = '~openai/gpt-luna-latest';
         localStorage.setItem('custom_default_story_model', storyModel);
+      } else if (storyModel === 'google/gemini-2.5-flash-lite') {
+        storyModel = '~z-ai/glm-flash-latest';
+        localStorage.setItem('custom_default_story_model', storyModel);
       }
       let glossaryModel =
         localStorage.getItem('custom_default_glossary_model') ||
-        'google/gemini-2.5-flash-lite';
+        '~z-ai/glm-flash-latest';
       if (glossaryModel === 'google/gemini-3.6-flash') {
         glossaryModel = '~google/gemini-flash-latest';
         localStorage.setItem('custom_default_glossary_model', glossaryModel);
-      } else if (glossaryModel === 'z-ai/glm-5.3-flash') {
+      } else if (
+        glossaryModel === 'z-ai/glm-5.3-flash' ||
+        glossaryModel === 'google/gemini-2.5-flash-lite'
+      ) {
         glossaryModel = '~z-ai/glm-flash-latest';
         localStorage.setItem('custom_default_glossary_model', glossaryModel);
       }
       let translationModel =
         localStorage.getItem('custom_default_translation_model') ||
-        'google/gemini-2.5-flash-lite';
+        '~z-ai/glm-flash-latest';
       if (translationModel === 'google/gemini-3.6-flash') {
         translationModel = '~google/gemini-flash-latest';
         localStorage.setItem(
           'custom_default_translation_model',
           translationModel,
         );
-      } else if (translationModel === 'z-ai/glm-5.3-flash') {
+      } else if (
+        translationModel === 'z-ai/glm-5.3-flash' ||
+        translationModel === 'google/gemini-2.5-flash-lite'
+      ) {
         translationModel = '~z-ai/glm-flash-latest';
         localStorage.setItem(
           'custom_default_translation_model',

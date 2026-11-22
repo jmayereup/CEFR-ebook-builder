@@ -15,7 +15,7 @@ interface GlossaryGenerationToastProps {
 }
 
 const FALLBACK_MODELS = [
-  { id: 'google/gemini-2.5-flash-lite', name: 'Google: Gemini 2.5 Flash Lite' },
+  { id: '~z-ai/glm-flash-latest', name: 'Z.AI: GLM Flash Latest' },
   { id: '~deepseek/deepseek-flash-latest', name: 'DeepSeek Flash Latest' },
 ];
 
@@ -30,7 +30,7 @@ export default function GlossaryGenerationToast({
 }: GlossaryGenerationToastProps) {
   const { customOpenRouterKey, defaultGlossaryModel } = useUIStore();
   const [selectedModel, setSelectedModel] = useState(
-    defaultGlossaryModel || 'google/gemini-2.5-flash-lite',
+    defaultGlossaryModel || '~z-ai/glm-flash-latest',
   );
 
   useEffect(() => {

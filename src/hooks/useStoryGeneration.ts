@@ -1187,7 +1187,7 @@ export const useStoryGeneration = (
       const targetModel =
         modelId ||
         useUIStore.getState().defaultGlossaryModel ||
-        'google/gemini-2.5-flash-lite';
+        '~z-ai/glm-flash-latest';
       const targetTransLang =
         translationLanguage ||
         story.translationLanguage ||

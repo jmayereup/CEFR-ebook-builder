@@ -30,8 +30,8 @@ export const AI_MODELS: AIModelOption[] = [
   {
     id: '~deepseek/deepseek-flash-latest',
     name: 'DeepSeek Flash Latest',
-    inputCost1M: 0.035,
-    outputCost1M: 0.29,
+    inputCost1M: 0.036,
+    outputCost1M: 0.5,
     category: 'flash',
     supportsThinkingLevel: true,
     supportsThinkingBudget: false,
@@ -41,7 +41,7 @@ export const AI_MODELS: AIModelOption[] = [
   {
     id: '~deepseek/deepseek-pro-latest',
     name: 'DeepSeek Pro Latest',
-    inputCost1M: 0.1035,
+    inputCost1M: 0.0999,
     outputCost1M: 8.0,
     category: 'pro',
     supportsThinkingLevel: true,
@@ -52,8 +52,8 @@ export const AI_MODELS: AIModelOption[] = [
   {
     id: '~z-ai/glm-flash-latest',
     name: 'GLM Flash Latest',
-    inputCost1M: 0.045,
-    outputCost1M: 0.14,
+    inputCost1M: 0.047,
+    outputCost1M: 0.0729,
     category: 'flash',
     supportsThinkingLevel: true,
     supportsThinkingBudget: false,
@@ -118,7 +118,7 @@ export const FREE_MODEL_IDS = new Set<string>([
 ]);
 
 /** Date when OpenRouter token rates were last verified/updated */
-export const MODEL_PRICES_LAST_UPDATED = 'September 27, 2026';
+export const MODEL_PRICES_LAST_UPDATED = 'November 22, 2026';
 
 export interface FrontierModelOption {
   id: string;
@@ -163,36 +163,29 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     id: '~deepseek/deepseek-flash-latest',
     name: 'DeepSeek: DeepSeek Flash Latest',
     category: 'flash',
-    inputCost1M: 0.035,
-    outputCost1M: 0.29,
+    inputCost1M: 0.036,
+    outputCost1M: 0.5,
   },
   {
     id: '~deepseek/deepseek-pro-latest',
     name: 'DeepSeek: DeepSeek Pro Latest',
     category: 'pro',
-    inputCost1M: 0.1035,
+    inputCost1M: 0.0999,
     outputCost1M: 8.0,
-  },
-  {
-    id: 'google/gemini-2.5-flash-lite',
-    name: 'Google: Gemini 2.5 Flash Lite',
-    category: 'flash',
-    inputCost1M: 0.1,
-    outputCost1M: 0.4,
   },
   {
     id: '~google/gemini-flash-latest',
     name: 'Google: Gemini Flash Latest',
     category: 'flash',
-    inputCost1M: 0.75,
-    outputCost1M: 3.75,
+    inputCost1M: 1.5,
+    outputCost1M: 7.5,
   },
   {
     id: '~google/gemini-pro-latest',
     name: 'Google: Gemini Pro Latest',
     category: 'pro',
     inputCost1M: 2.0,
-    outputCost1M: 12.0,
+    outputCost1M: 10.0,
   },
   {
     id: 'meta/muse-spark-1.3',
@@ -214,15 +207,15 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     id: 'moonshotai/kimi-k2.5',
     name: 'MoonshotAI: Kimi K2.5',
     category: 'pro',
-    inputCost1M: 0.45,
-    outputCost1M: 2.25,
+    inputCost1M: 0.5,
+    outputCost1M: 2.5,
   },
   {
     id: '~moonshotai/kimi-latest',
     name: 'MoonshotAI: Kimi Latest',
     category: 'pro',
-    inputCost1M: 0.9875,
-    outputCost1M: 5.53,
+    inputCost1M: 0.1824,
+    outputCost1M: 11.0055,
   },
   {
     id: 'nousresearch/hermes-3-llama-3.1-405b',
@@ -249,15 +242,15 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     id: '~openai/gpt-terra-latest',
     name: 'OpenAI: GPT Terra Latest',
     category: 'pro',
-    inputCost1M: 2.0,
-    outputCost1M: 12.0,
+    inputCost1M: 1.0,
+    outputCost1M: 5.0,
   },
   {
     id: '~x-ai/grok-latest',
     name: 'xAI: Grok Latest',
     category: 'pro',
-    inputCost1M: 1.6,
-    outputCost1M: 4.8,
+    inputCost1M: 2.0,
+    outputCost1M: 6.0,
   },
   {
     id: 'xiaomi/mimo-v2.6-pro',
@@ -270,15 +263,15 @@ export const FRONTIER_LATEST_MODELS: FrontierModelOption[] = [
     id: '~z-ai/glm-flash-latest',
     name: 'Z-AI: GLM Flash Latest',
     category: 'flash',
-    inputCost1M: 0.045,
-    outputCost1M: 0.14,
+    inputCost1M: 0.047,
+    outputCost1M: 0.0729,
   },
   {
     id: '~z-ai/glm-latest',
     name: 'Z-AI: GLM Latest',
     category: 'pro',
-    inputCost1M: 0.2737,
-    outputCost1M: 2.574,
+    inputCost1M: 0.0699,
+    outputCost1M: 1.4,
   },
 ];
 

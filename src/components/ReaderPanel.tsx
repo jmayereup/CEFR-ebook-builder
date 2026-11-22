@@ -1642,7 +1642,7 @@ export default function ReaderPanel({
           language: effectivePrimaryLanguage,
           context: selectedWord.context,
           targetLanguage: resolvedTargetLanguage,
-          model: defaultTranslationModel || 'google/gemini-2.5-flash-lite',
+          model: defaultTranslationModel || '~z-ai/glm-flash-latest',
           userId: currentUser?.uid,
           userEmail: currentUser?.email,
         }),
