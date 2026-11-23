@@ -58,12 +58,16 @@ export function useExport(options: UseExportOptions) {
     };
   }, []);
 
-  const handleShareStoryLink = () => {
+  const handleShareStoryLink = (targetChapterIdx?: number) => {
     if (!selectedStory) return;
     if (selectedStory.copyrightFlag === true) return;
+    const chapterIdx =
+      typeof targetChapterIdx === 'number'
+        ? targetChapterIdx
+        : activeChapterIdx;
     const slug = slugify(selectedStory.title);
     const slugSegment = slug ? `${slug}-${selectedStory.id}` : selectedStory.id;
-    const url = `${window.location.origin}/book/${slugSegment}/chapter/${activeChapterIdx + 1}?openExternalBrowser=1`;
+    const url = `${window.location.origin}/book/${slugSegment}/chapter/${chapterIdx + 1}?openExternalBrowser=1`;
     navigator.clipboard
       .writeText(url)
       .then(() => {

@@ -1,10 +1,12 @@
 import { BookMarked, Globe, Lock, Share2, ShieldAlert } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 import ExportPanel from '../components/app/ExportPanel';
 import ReaderPanel from '../components/ReaderPanel';
 import GeminiEmbedReader from '../components/reader/GeminiEmbedReader';
 import NonFictionDisclaimer from '../components/reader/NonFictionDisclaimer';
 import ReadingSyncPrompt from '../components/reader/ReadingSyncPrompt';
+import ShareStoryModal from '../components/reader/ShareStoryModal';
 import type { IUser } from '../services/types';
 import {
   getLanguageCodeFromName,
@@ -26,7 +28,7 @@ interface ReaderPageProps {
   onClearRemoteReadingLocation?: () => void;
   handleToggleStoryPrivacy: (storyId: string) => Promise<void>;
   handleToggleBookshelf: (storyId: string) => void;
-  handleShareStoryLink: () => void;
+  handleShareStoryLink: (targetChapterIdx?: number) => void;
   bookshelf: string[];
   showShareToast: boolean;
   showExportMenu: boolean;
@@ -157,6 +159,8 @@ export default function ReaderPage({
   isSyncing = false,
   syncChangesToDatabase,
 }: ReaderPageProps) {
+  const [showShareModal, setShowShareModal] = useState(false);
+
   if (
     selectedStory.sourceType === 'gemini_storybook' ||
     selectedStory.embedUrl
@@ -176,7 +180,7 @@ export default function ReaderPage({
           bookshelf={bookshelf}
           handleToggleBookshelf={handleToggleBookshelf}
           handleToggleStoryPrivacy={handleToggleStoryPrivacy}
-          handleShareStoryLink={handleShareStoryLink}
+          handleShareStoryLink={() => handleShareStoryLink(0)}
           handleDeleteStory={() => handleDeleteStory()}
           onStoryUpdated={onStoryUpdated}
         />
@@ -280,7 +284,13 @@ export default function ReaderPage({
                 {/* Share Link button */}
                 <button
                   type="button"
-                  onClick={handleShareStoryLink}
+                  onClick={() => {
+                    if (activeChapterIdx > 0) {
+                      setShowShareModal(true);
+                    } else {
+                      handleShareStoryLink(0);
+                    }
+                  }}
                   disabled={selectedStory.copyrightFlag === true}
                   className="p-1.5 rounded-xl border bg-tj-bg-card hover:bg-tj-bg-recessed border-tj-border-main text-tj-text-muted hover:text-tj-primary dark:hover:text-tj-primary-hover transition-all cursor-pointer relative disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-tj-text-muted"
                   title={
@@ -406,6 +416,22 @@ export default function ReaderPage({
         syncChangesToDatabase={syncChangesToDatabase}
         isGeneratingCover={isGeneratingCover}
         onExit={() => setSelectedStory(null)}
+      />
+
+      <ShareStoryModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        storyTitle={selectedStory.title}
+        currentChapterNumber={activeChapterIdx + 1}
+        currentChapterTitle={selectedStory.chapters?.[activeChapterIdx]?.title}
+        onShareBeginning={() => {
+          setShowShareModal(false);
+          handleShareStoryLink(0);
+        }}
+        onShareCurrentChapter={() => {
+          setShowShareModal(false);
+          handleShareStoryLink(activeChapterIdx);
+        }}
       />
     </article>
   );
