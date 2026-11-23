@@ -120,7 +120,13 @@ export function useStoryHighlights({
   const updateHighlight = useCallback(
     async (
       highlightId: string,
-      updates: { color?: HighlightColor; note?: string; text?: string },
+      updates: {
+        color?: HighlightColor;
+        note?: string;
+        text?: string;
+        startOffset?: number;
+        endOffset?: number;
+      },
     ): Promise<void> => {
       if (!userId) {
         onUnauthorized?.();

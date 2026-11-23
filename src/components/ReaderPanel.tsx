@@ -447,7 +447,7 @@ export default function ReaderPanel({
   const effectiveTranslationLanguage = isSwapped
     ? story.language
     : story.translationLanguage ||
-      (story.language?.toLowerCase().includes('thai') ? 'English' : 'Thai');
+    (story.language?.toLowerCase().includes('thai') ? 'English' : 'Thai');
 
   const isPrimaryThai =
     effectivePrimaryLanguage.toLowerCase().includes('thai') ||
@@ -1082,8 +1082,8 @@ export default function ReaderPanel({
         document.querySelector('[data-active-word="true"]') ||
         (selectedWordRange && chapterWords[selectedWordRange[0]]
           ? document.getElementById(
-              `chapter-para-${chapterWords[selectedWordRange[0]].pIdx}`,
-            )
+            `chapter-para-${chapterWords[selectedWordRange[0]].pIdx}`,
+          )
           : null);
 
       if (!activeEl) return;
@@ -1113,7 +1113,7 @@ export default function ReaderPanel({
     selectedWordRange[0] > 0 &&
     selectedWordRange[0] < chapterWords.length &&
     chapterWords[selectedWordRange[0] - 1]?.pIdx ===
-      chapterWords[selectedWordRange[0]]?.pIdx &&
+    chapterWords[selectedWordRange[0]]?.pIdx &&
     selectedWordRange[1] - (selectedWordRange[0] - 1) + 1 <= 50;
 
   const canShrinkLeft =
@@ -1127,7 +1127,7 @@ export default function ReaderPanel({
     selectedWordRange[1] >= 0 &&
     selectedWordRange[1] < chapterWords.length - 1 &&
     chapterWords[selectedWordRange[1] + 1]?.pIdx ===
-      chapterWords[selectedWordRange[1]]?.pIdx &&
+    chapterWords[selectedWordRange[1]]?.pIdx &&
     selectedWordRange[1] + 1 - selectedWordRange[0] + 1 <= 50;
 
   const handleExtendLeft = () => {
@@ -1273,7 +1273,12 @@ export default function ReaderPanel({
     if (pIdx === undefined) return;
 
     if (activeHighlightForToast) {
-      updateHighlight(activeHighlightForToast.id, { color });
+      updateHighlight(activeHighlightForToast.id, {
+        color,
+        startOffset: offsets.startOffset,
+        endOffset: offsets.endOffset,
+        text: selectedWord.word,
+      });
     } else {
       addHighlight({
         text: selectedWord.word,
@@ -1394,11 +1399,12 @@ export default function ReaderPanel({
     const text = selection.toString().trim();
     if (!text || text.length < 1) return;
 
-    const anchorNode = selection.anchorNode;
+    const range = selection.getRangeAt(0);
+    const startNode = range.startContainer;
     const paraEl =
-      anchorNode instanceof HTMLElement
-        ? anchorNode.closest('[data-paragraph-index]')
-        : anchorNode?.parentElement?.closest('[data-paragraph-index]');
+      startNode instanceof HTMLElement
+        ? startNode.closest('p[data-paragraph-index]')
+        : startNode?.parentElement?.closest('p[data-paragraph-index]');
 
     if (!paraEl) return;
     const pIdxStr = paraEl.getAttribute('data-paragraph-index');
@@ -1411,7 +1417,6 @@ export default function ReaderPanel({
       .map((w, idx) => ({ ...w, flatIdx: idx }))
       .filter((w) => w.pIdx === pIdx);
 
-    const range = selection.getRangeAt(0);
     const paraText = paraEl.textContent || '';
     let startOffset = 0;
     if (paraEl.contains(range.startContainer)) {
@@ -1668,12 +1673,12 @@ export default function ReaderPanel({
       setSelectedWord((prev) =>
         prev
           ? {
-              ...prev,
-              translation: data.translation || '',
-              partOfSpeech: data.partOfSpeech || 'Noun',
-              definition: data.definition || '',
-              isFetching: false,
-            }
+            ...prev,
+            translation: data.translation || '',
+            partOfSpeech: data.partOfSpeech || 'Noun',
+            definition: data.definition || '',
+            isFetching: false,
+          }
           : null,
       );
     } catch (err) {
@@ -1847,17 +1852,15 @@ export default function ReaderPanel({
                 }
               }
             }}
-            className={`bg-tj-bg-card text-tj-text-main ${isZenMode ? 'p-6 sm:p-12 md:p-16' : 'p-4 sm:p-6 md:p-8'} ${
-              selectedWord ? 'pb-72 sm:pb-80' : ''
-            } ${
-              columnWidth === 'narrow'
+            className={`bg-tj-bg-card text-tj-text-main ${isZenMode ? 'p-6 sm:p-12 md:p-16' : 'p-4 sm:p-6 md:p-8'} ${selectedWord ? 'pb-72 sm:pb-80' : ''
+              } ${columnWidth === 'narrow'
                 ? 'max-w-xl'
                 : columnWidth === 'wide'
                   ? 'max-w-5xl'
                   : columnWidth === 'full'
                     ? 'max-w-full'
                     : 'max-w-3xl'
-            } sm:rounded-lg border-x-0 border-y sm:border border-tj-border-main shadow-none mx-auto relative overflow-hidden transition-all duration-300`}
+              } sm:rounded-lg border-x-0 border-y sm:border border-tj-border-main shadow-none mx-auto relative overflow-hidden transition-all duration-300`}
           >
             <ScrollToTop readerRef={readerRef} />
             {/* Terracotta progress bookmark line at the top of the reading view card */}
@@ -1908,11 +1911,10 @@ export default function ReaderPanel({
                   onClick={() => {
                     setActiveTab('read');
                   }}
-                  className={`px-4 py-2.5 border-b-2 font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                    activeTab === 'read'
+                  className={`px-4 py-2.5 border-b-2 font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${activeTab === 'read'
                       ? 'border-tj-success text-tj-success'
                       : 'border-transparent text-tj-text-muted hover:text-tj-text-main'
-                  }`}
+                    }`}
                 >
                   <BookOpen className="w-3.5 h-3.5" />
                   <span>Read Chapter</span>
@@ -1922,11 +1924,10 @@ export default function ReaderPanel({
                   onClick={() => {
                     setActiveTab('maintenance');
                   }}
-                  className={`px-4 py-2.5 border-b-2 font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
-                    activeTab === 'maintenance'
+                  className={`px-4 py-2.5 border-b-2 font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${activeTab === 'maintenance'
                       ? 'border-tj-success text-tj-success'
                       : 'border-transparent text-tj-text-muted hover:text-tj-text-main'
-                  }`}
+                    }`}
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Narrative Maintenance</span>
@@ -1937,7 +1938,7 @@ export default function ReaderPanel({
             {activeTab === 'maintenance' && isCreator ? (
               <NarrativeMaintenancePanel
                 story={story}
-                onStoryUpdated={onStoryUpdated || (() => {})}
+                onStoryUpdated={onStoryUpdated || (() => { })}
                 onSaveStory={onSaveStory}
                 customOpenRouterKey={customOpenRouterKey}
                 onShowAlert={onShowAlert}
@@ -2165,9 +2166,9 @@ export default function ReaderPanel({
                         const activeSentenceRange =
                           isSpeakingThisParaPrimary && activeSentence
                             ? {
-                                startChar: activeSentence.startChar,
-                                endChar: activeSentence.endChar,
-                              }
+                              startChar: activeSentence.startChar,
+                              endChar: activeSentence.endChar,
+                            }
                             : null;
 
                         return (
@@ -2183,11 +2184,10 @@ export default function ReaderPanel({
                                 aria-hidden="true"
                               >
                                 <div
-                                  className={`w-1 sm:w-1.5 rounded-full transition-all duration-300 ${
-                                    isPaused
+                                  className={`w-1 sm:w-1.5 rounded-full transition-all duration-300 ${isPaused
                                       ? 'h-4 bg-amber-400 dark:bg-amber-500'
                                       : 'h-7 sm:h-8 bg-tj-success dark:bg-tj-success animate-pulse shadow-sm shadow-tj-success/30'
-                                  }`}
+                                    }`}
                                 />
                               </div>
                             )}
@@ -2220,11 +2220,10 @@ export default function ReaderPanel({
                                       isSpeakingThisParaPrimary,
                                     )
                                   }
-                                  className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-colors shrink-0 ${
-                                    isSpeakingThisParaPrimary && !isPaused
+                                  className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-colors shrink-0 ${isSpeakingThisParaPrimary && !isPaused
                                       ? 'text-tj-success bg-[#e2ece3] dark:bg-[#28362b]'
                                       : 'text-slate-400 hover:text-tj-success hover:bg-tj-primary-light dark:hover:bg-slate-800'
-                                  }`}
+                                    }`}
                                   title={
                                     isSpeakingThisParaPrimary && !isPaused
                                       ? 'Pause'
@@ -2289,16 +2288,15 @@ export default function ReaderPanel({
                                         isSpeakingThisParaTranslation,
                                       )
                                     }
-                                    className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-colors shrink-0 ${
-                                      isSpeakingThisParaTranslation && !isPaused
+                                    className={`mt-1 p-1.5 rounded-lg cursor-pointer transition-colors shrink-0 ${isSpeakingThisParaTranslation && !isPaused
                                         ? 'text-tj-success bg-[#e2ece3] dark:bg-[#28362b]'
                                         : 'text-slate-400 hover:text-tj-success hover:bg-tj-primary-light dark:hover:bg-slate-800'
-                                    }`}
+                                      }`}
                                     title={
                                       isSpeakingThisParaTranslation && !isPaused
                                         ? 'Pause'
                                         : isSpeakingThisParaTranslation &&
-                                            isPaused
+                                          isPaused
                                           ? 'Resume'
                                           : `Play ${effectiveTranslationLanguage} line`
                                     }
@@ -2334,136 +2332,135 @@ export default function ReaderPanel({
                     {/* Explicit book completion section */}
                     {activeChapterIndex ===
                       (story.chapters?.length ?? 0) - 1 && (
-                      <div className="mt-8 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/10 dark:to-teal-950/5 border border-emerald-100 dark:border-emerald-900/20 rounded-2xl animate-fade-in text-center space-y-4">
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-bold text-emerald-800 dark:text-emerald-400">
-                            You've reached the end!
-                          </h4>
-                          <p className="text-xs text-tj-text-muted max-w-md mx-auto">
-                            Congratulations on reading the entire story. Click
-                            below to mark it as completed and update your
-                            reading stats.
-                          </p>
-                        </div>
-                        {sessionFinished ? (
-                          <div className="space-y-3">
-                            <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-500/10">
-                              <Check className="w-4 h-4 stroke-[3]" />
-                              <span>Story Completed!</span>
+                        <div className="mt-8 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/10 dark:to-teal-950/5 border border-emerald-100 dark:border-emerald-900/20 rounded-2xl animate-fade-in text-center space-y-4">
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-bold text-emerald-800 dark:text-emerald-400">
+                              You've reached the end!
+                            </h4>
+                            <p className="text-xs text-tj-text-muted max-w-md mx-auto">
+                              Congratulations on reading the entire story. Click
+                              below to mark it as completed and update your
+                              reading stats.
+                            </p>
+                          </div>
+                          {sessionFinished ? (
+                            <div className="space-y-3">
+                              <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-500/10">
+                                <Check className="w-4 h-4 stroke-[3]" />
+                                <span>Story Completed!</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  if (onStoryFinished) {
+                                    await onStoryFinished(story.id);
+                                  }
+                                }}
+                                className="block mx-auto text-xs text-tj-primary hover:underline font-semibold cursor-pointer border-0 bg-transparent"
+                              >
+                                Read again? Mark another completion
+                              </button>
+                              {onStoryUnfinished && (
+                                <button
+                                  type="button"
+                                  onClick={async (e) => {
+                                    e.preventDefault();
+                                    setSessionFinished(false);
+                                    await onStoryUnfinished(story.id);
+                                  }}
+                                  className="block mx-auto text-[10px] text-rose-500 hover:underline font-semibold cursor-pointer border-0 bg-transparent mt-1"
+                                >
+                                  Oops, mark as unread
+                                </button>
+                              )}
                             </div>
+                          ) : (
                             <button
                               type="button"
                               onClick={async () => {
+                                setSessionFinished(true);
                                 if (onStoryFinished) {
                                   await onStoryFinished(story.id);
                                 }
                               }}
-                              className="block mx-auto text-xs text-tj-primary hover:underline font-semibold cursor-pointer border-0 bg-transparent"
+                              className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 cursor-pointer active:scale-98 border-0"
                             >
-                              Read again? Mark another completion
+                              <Check className="w-4 h-4 stroke-[3]" />
+                              <span>I've finished</span>
                             </button>
-                            {onStoryUnfinished && (
-                              <button
-                                type="button"
-                                onClick={async (e) => {
-                                  e.preventDefault();
-                                  setSessionFinished(false);
-                                  await onStoryUnfinished(story.id);
-                                }}
-                                className="block mx-auto text-[10px] text-rose-500 hover:underline font-semibold cursor-pointer border-0 bg-transparent mt-1"
-                              >
-                                Oops, mark as unread
-                              </button>
-                            )}
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              setSessionFinished(true);
-                              if (onStoryFinished) {
-                                await onStoryFinished(story.id);
-                              }
-                            }}
-                            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 cursor-pointer active:scale-98 border-0"
-                          >
-                            <Check className="w-4 h-4 stroke-[3]" />
-                            <span>I've finished</span>
-                          </button>
-                        )}
-                      </div>
-                    )}
+                          )}
+                        </div>
+                      )}
 
                     {/* Book Rating Section */}
                     {activeChapterIndex ===
                       (story.chapters?.length ?? 0) - 1 && (
-                      <div className="mt-4 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-amber-50/40 to-orange-50/30 dark:from-amber-950/10 dark:to-orange-950/5 border border-amber-100/70 dark:border-amber-900/20 rounded-2xl animate-fade-in text-center space-y-4">
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-bold text-amber-800 dark:text-amber-400 flex items-center justify-center gap-1.5">
-                            <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
-                            How did you like this story?
-                          </h4>
-                          <p className="text-xs text-tj-text-muted max-w-md mx-auto">
-                            Share your feedback to help us recommend better
-                            books for you.
-                          </p>
-                        </div>
+                        <div className="mt-4 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-amber-50/40 to-orange-50/30 dark:from-amber-950/10 dark:to-orange-950/5 border border-amber-100/70 dark:border-amber-900/20 rounded-2xl animate-fade-in text-center space-y-4">
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-bold text-amber-800 dark:text-amber-400 flex items-center justify-center gap-1.5">
+                              <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+                              How did you like this story?
+                            </h4>
+                            <p className="text-xs text-tj-text-muted max-w-md mx-auto">
+                              Share your feedback to help us recommend better
+                              books for you.
+                            </p>
+                          </div>
 
-                        <div className="p-3 bg-white/80 dark:bg-slate-900/40 backdrop-blur-sm rounded-xl border border-amber-100/50 dark:border-amber-900/10 inline-flex flex-col items-center gap-2 select-none min-w-[240px]">
-                          {currentUser ? (
-                            <>
-                              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold font-sans tracking-wide uppercase">
-                                {userRating > 0 ? 'Your rating' : 'Tap to rate'}
-                              </p>
-                              <div className="flex items-center justify-center gap-2">
-                                {[1, 2, 3, 4, 5].map((star) => {
-                                  const isStarred =
-                                    star <= (hoverRating || userRating);
-                                  return (
-                                    <button
-                                      key={star}
-                                      type="button"
-                                      onClick={() => onRateStory?.(star)}
-                                      onMouseEnter={() => setHoverRating(star)}
-                                      onMouseLeave={() => setHoverRating(0)}
-                                      className="p-1 hover:scale-125 transition-transform duration-100 cursor-pointer focus:outline-none"
-                                    >
-                                      <Star
-                                        className={`w-8 h-8 transition-colors duration-150 ${
-                                          isStarred
-                                            ? 'text-amber-500 fill-amber-500 filter drop-shadow-sm'
-                                            : 'text-slate-300 dark:text-slate-700'
-                                        }`}
-                                      />
-                                    </button>
-                                  );
-                                })}
+                          <div className="p-3 bg-white/80 dark:bg-slate-900/40 backdrop-blur-sm rounded-xl border border-amber-100/50 dark:border-amber-900/10 inline-flex flex-col items-center gap-2 select-none min-w-[240px]">
+                            {currentUser ? (
+                              <>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold font-sans tracking-wide uppercase">
+                                  {userRating > 0 ? 'Your rating' : 'Tap to rate'}
+                                </p>
+                                <div className="flex items-center justify-center gap-2">
+                                  {[1, 2, 3, 4, 5].map((star) => {
+                                    const isStarred =
+                                      star <= (hoverRating || userRating);
+                                    return (
+                                      <button
+                                        key={star}
+                                        type="button"
+                                        onClick={() => onRateStory?.(star)}
+                                        onMouseEnter={() => setHoverRating(star)}
+                                        onMouseLeave={() => setHoverRating(0)}
+                                        className="p-1 hover:scale-125 transition-transform duration-100 cursor-pointer focus:outline-none"
+                                      >
+                                        <Star
+                                          className={`w-8 h-8 transition-colors duration-150 ${isStarred
+                                              ? 'text-amber-500 fill-amber-500 filter drop-shadow-sm'
+                                              : 'text-slate-300 dark:text-slate-700'
+                                            }`}
+                                        />
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium font-sans">
+                                  {Object.keys(story.ratings || {}).length} total{' '}
+                                  {Object.keys(story.ratings || {}).length === 1
+                                    ? 'rating'
+                                    : 'ratings'}
+                                  {story.ratings &&
+                                    Object.keys(story.ratings).length > 0 && (
+                                      <span className="ml-1.5 text-amber-600 dark:text-amber-400 font-semibold">
+                                        (Avg:{' '}
+                                        {getAverageRating(story.ratings).toFixed(
+                                          1,
+                                        )}{' '}
+                                        ★)
+                                      </span>
+                                    )}
+                                </p>
+                              </>
+                            ) : (
+                              <div className="text-[10px] text-slate-400 dark:text-slate-500 leading-normal font-sans py-1">
+                                <span>Please sign in to rate this book.</span>
                               </div>
-                              <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium font-sans">
-                                {Object.keys(story.ratings || {}).length} total{' '}
-                                {Object.keys(story.ratings || {}).length === 1
-                                  ? 'rating'
-                                  : 'ratings'}
-                                {story.ratings &&
-                                  Object.keys(story.ratings).length > 0 && (
-                                    <span className="ml-1.5 text-amber-600 dark:text-amber-400 font-semibold">
-                                      (Avg:{' '}
-                                      {getAverageRating(story.ratings).toFixed(
-                                        1,
-                                      )}{' '}
-                                      ★)
-                                    </span>
-                                  )}
-                              </p>
-                            </>
-                          ) : (
-                            <div className="text-[10px] text-slate-400 dark:text-slate-500 leading-normal font-sans py-1">
-                              <span>Please sign in to rate this book.</span>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
                     {/* Take it Offline Milestone Callout */}
                     {(story.isCompleted ||

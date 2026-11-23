@@ -259,6 +259,17 @@ export default function InteractiveParagraph({
 
     const paddingClass = isSpaceLess ? 'px-0' : 'px-1 -mx-1';
 
+    if (isActive && highlight) {
+      const highlightClasses = getHighlightClassNames(
+        highlight,
+        isHighlightStart,
+        isHighlightEnd,
+        isBold,
+        isItalic,
+      );
+      return `${highlightClasses} underline decoration-2 decoration-tj-primary underline-offset-4`;
+    }
+
     if (isActive) {
       return `text-tj-primary dark:text-tj-primary-hover bg-tj-primary/10 dark:bg-tj-primary/20 rounded-xs underline decoration-2 decoration-tj-primary underline-offset-4 ${paddingClass} cursor-pointer transition ${weightClass} select-text`;
     }
@@ -410,6 +421,27 @@ export default function InteractiveParagraph({
             seg.isHighlightStart,
             seg.isHighlightEnd,
           )}
+        >
+          {seg.segment}
+        </span>
+      );
+    }
+
+    if (isActive && seg.highlight) {
+      const highlightClasses = getHighlightClassNames(
+        seg.highlight,
+        seg.isHighlightStart,
+        seg.isHighlightEnd,
+        seg.isBold,
+        seg.isItalic,
+      );
+      return (
+        // biome-ignore lint/a11y/noStaticElementInteractions: highlight segment click listener
+        // biome-ignore lint/a11y/useKeyWithClickEvents: highlight segment click listener
+        <span
+          key={seg.key}
+          onClick={handleClick}
+          className={`${highlightClasses} underline decoration-2 decoration-tj-primary underline-offset-4`}
         >
           {seg.segment}
         </span>

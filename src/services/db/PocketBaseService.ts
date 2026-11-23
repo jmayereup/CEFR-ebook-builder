@@ -954,6 +954,9 @@ export class PocketBaseService implements IDatabaseService {
     if (updates.color !== undefined) payload.color = updates.color;
     if (updates.note !== undefined) payload.note = updates.note;
     if (updates.text !== undefined) payload.text = updates.text;
+    if (updates.startOffset !== undefined)
+      payload.startOffset = updates.startOffset;
+    if (updates.endOffset !== undefined) payload.endOffset = updates.endOffset;
 
     const updated: any = await pb
       .collection('story_highlights')

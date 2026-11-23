@@ -113,7 +113,6 @@ export default function ToastExpandedContent({
               onSaveHighlightNote={onSaveHighlightNote}
               onDeleteHighlight={onDeleteHighlight}
               onOpenAuth={onOpenAuth}
-              onClose={onClose}
             />
           </div>
 
