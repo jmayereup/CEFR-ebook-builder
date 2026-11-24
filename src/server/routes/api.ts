@@ -35,6 +35,8 @@ apiRouter.get('/api/stories/metadata', metadataLimiter, async (req, res) => {
 apiRouter.use('/api/stories/generate-outline', generationLimiter, proxyToTJGen);
 apiRouter.use('/api/stories/generate-chapter', generationLimiter, proxyToTJGen);
 apiRouter.use('/api/stories/generate-batch', generationLimiter, proxyToTJGen);
+apiRouter.post('/api/stories/jobs', generationLimiter, proxyToTJGen);
+apiRouter.use('/api/stories/jobs', proxyToTJGen);
 apiRouter.use(
   '/api/stories/generate-glossary',
   generationLimiter,

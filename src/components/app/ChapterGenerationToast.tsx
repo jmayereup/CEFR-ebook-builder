@@ -80,7 +80,7 @@ export default function ChapterGenerationToast({
 
           {/* Action text */}
           <p className="text-[10px] text-tj-text-muted italic select-none">
-            You can continue reading the story while generation is in progress.
+            Writing continues on the server even if you navigate away or close this tab.
           </p>
         </motion.div>
       )}

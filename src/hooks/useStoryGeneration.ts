@@ -29,7 +29,7 @@ import {
   isFreeModel,
   REGENERATION_CREDIT_COST,
 } from '../utils/creditCalculation';
-import { fetchWithRetry } from '../utils/fetchWithRetry';
+import { fetchWithRetry, sleep } from '../utils/fetchWithRetry';
 import { buildApiHeaders, getModelBaseName } from '../utils/modelUtils';
 import { checkGenerationPermission } from '../utils/permissionUtils';
 import { buildStory, generatePocketBaseId } from '../utils/storyFactory';
@@ -122,6 +122,26 @@ export interface UseStoryGenerationReturn {
   handleCancelGeneration: () => void;
 }
 
+interface ServerStoryJobSnapshot {
+  storyId: string;
+  mode: 'initiate' | 'auto-remaining';
+  status: 'running' | 'completed' | 'failed' | 'canceled';
+  statusMessage: string;
+  logs: string[];
+  chaptersCount: number;
+  totalChapters: number;
+  batchesCompleted: number;
+  tokensUsed: number;
+  completionTokensUsed: number;
+  reasoningTokensUsed: number;
+  error: string | null;
+  startedAt: number;
+  updatedAt: number;
+  finishedAt: number | null;
+}
+
+const JOB_POLL_INTERVAL_MS = 2500;
+
 const sanitizeChapter = (ch: Partial<Chapter>): Chapter => {
   return {
     chapterNumber: ch.chapterNumber ?? 1,
@@ -175,14 +195,232 @@ export const useStoryGeneration = (
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const glossaryAbortControllerRef = useRef<AbortController | null>(null);
+  const pollAbortControllerRef = useRef<AbortController | null>(null);
+  const activeJobStoryIdRef = useRef<string | null>(null);
 
-  // Abort any in-flight request when the hook is unmounted
+  // Stop client-side polling and single-request fetches on unmount.
+  // Intentionally does NOT cancel server-side background story jobs so they
+  // finish cleanly even if the user navigates away or closes the tab.
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
       glossaryAbortControllerRef.current?.abort();
+      pollAbortControllerRef.current?.abort();
     };
   }, []);
+
+  const observeServerJob = async (params: {
+    storyId: string;
+    mode: 'initiate' | 'auto-remaining';
+    baseStory: Story;
+    initialChapterCount: number;
+    isNewStory: boolean;
+  }): Promise<void> => {
+    const { storyId, mode, baseStory, initialChapterCount, isNewStory } = params;
+
+    pollAbortControllerRef.current?.abort();
+    const pollController = new AbortController();
+    pollAbortControllerRef.current = pollController;
+    const pollSignal = pollController.signal;
+    activeJobStoryIdRef.current = storyId;
+
+    if (mode === 'initiate') {
+      setIsGenerating(true);
+    } else {
+      setIsAutoGenerating(true);
+    }
+    setIsAutoGenerationPaused(false);
+
+    let lastSyncedChapters = initialChapterCount;
+    let hasNotifiedCreated = !isNewStory;
+    let runningCreditsCharged = baseStory.creditsCharged ?? 0;
+    let consecutivePollErrors = 0;
+
+    const syncStoryFromServer = async () => {
+      try {
+        const freshStory = await dbService.fetchStory(storyId);
+        if (!freshStory) return;
+
+        const freshCount = freshStory.chapters?.length ?? 0;
+        if (freshCount > lastSyncedChapters) {
+          let deltaCredits = 0;
+          if (!isFreeModel(freshStory.model || baseStory.model)) {
+            for (let chNum = lastSyncedChapters + 1; chNum <= freshCount; chNum++) {
+              const chapterCost = calculateChapterCreditCost(
+                chNum,
+                chNum - 1,
+                freshStory.chapterLength || baseStory.chapterLength || 300,
+                freshStory.model ?? baseStory.model ?? '',
+                freshStory.initialCreditsEstimate ?? baseStory.initialCreditsEstimate,
+                runningCreditsCharged,
+              );
+              deltaCredits += chapterCost;
+              runningCreditsCharged += chapterCost;
+            }
+          }
+
+          if (onGenerationSuccess) {
+            onGenerationSuccess(
+              freshStory.model || baseStory.model || '~deepseek/deepseek-flash-latest',
+              deltaCredits,
+              !hasNotifiedCreated,
+            );
+          }
+
+          const mergedStory: Story = {
+            ...baseStory,
+            ...freshStory,
+            creditsCharged: runningCreditsCharged,
+            isUnsaved: false,
+          };
+
+          lastSyncedChapters = freshCount;
+          if (!hasNotifiedCreated) {
+            hasNotifiedCreated = true;
+            onStoryCreated(mergedStory);
+          } else {
+            onStoryUpdated(mergedStory);
+          }
+        }
+      } catch (syncErr) {
+        console.warn('[useStoryGeneration] Failed to sync story from PocketBase:', syncErr);
+      }
+    };
+
+    try {
+      while (!pollSignal.aborted) {
+        const headers = buildApiHeaders(customOpenRouterKey);
+        let job: ServerStoryJobSnapshot | null = null;
+
+        try {
+          const res = await fetch(`/api/stories/jobs/${encodeURIComponent(storyId)}`, {
+            method: 'GET',
+            headers,
+            signal: pollSignal,
+          });
+          if (!res.ok) {
+            throw new Error(`Status check failed (${res.status})`);
+          }
+          const data = await res.json();
+          job = (data?.job as ServerStoryJobSnapshot | null) ?? null;
+          consecutivePollErrors = 0;
+        } catch (pollErr: unknown) {
+          if (pollSignal.aborted || (pollErr as { name?: string })?.name === 'AbortError') {
+            return;
+          }
+          consecutivePollErrors++;
+          if (consecutivePollErrors >= 6) {
+            throw pollErr;
+          }
+          await sleep(JOB_POLL_INTERVAL_MS, pollSignal);
+          continue;
+        }
+
+        if (!job) {
+          // Job no longer in server memory (e.g., server restarted or expired);
+          // sync whatever chapters were saved to PocketBase and stop polling.
+          await syncStoryFromServer();
+          break;
+        }
+
+        if (job.statusMessage) {
+          setGenerationStatus(job.statusMessage);
+        }
+        if (Array.isArray(job.logs) && job.logs.length > 0) {
+          setGenerationLogs(job.logs);
+        }
+
+        if (job.chaptersCount > lastSyncedChapters) {
+          await syncStoryFromServer();
+        }
+
+        if (job.status === 'completed') {
+          await syncStoryFromServer();
+          break;
+        }
+
+        if (job.status === 'failed') {
+          await syncStoryFromServer();
+          showAlert(
+            mode === 'initiate' ? 'Story Initiation Failed' : 'Auto-Write Interrupted',
+            job.error || 'Server-side generation failed.',
+            'error',
+          );
+          break;
+        }
+
+        if (job.status === 'canceled') {
+          await syncStoryFromServer();
+          showAlert(
+            mode === 'initiate' ? 'Generation Canceled' : 'Auto-Write Canceled',
+            'Story generation was canceled.',
+            'info',
+          );
+          break;
+        }
+
+        await sleep(JOB_POLL_INTERVAL_MS, pollSignal);
+      }
+    } catch (err: unknown) {
+      if (pollSignal.aborted || (err as { name?: string })?.name === 'AbortError') {
+        return;
+      }
+      const e = err as { message?: string };
+      showAlert(
+        'Connection Lost',
+        `Lost connection while tracking progress (${e.message || 'network error'}). Generation will continue on the server — reopen this story to check progress.`,
+        'warning',
+      );
+    } finally {
+      if (activeJobStoryIdRef.current === storyId) {
+        activeJobStoryIdRef.current = null;
+      }
+      if (pollAbortControllerRef.current === pollController) {
+        pollAbortControllerRef.current = null;
+      }
+      setIsGenerating(false);
+      setIsAutoGenerating(false);
+      setGenerationStatus('');
+      setGenerationLogs([]);
+    }
+  };
+
+  // Re-attach to any running server-side job when the user opens or reloads a story
+  useEffect(() => {
+    const storyId = selectedStory?.id;
+    if (!storyId || !currentUser) return;
+    if (activeJobStoryIdRef.current === storyId) return;
+
+    let cancelled = false;
+    const checkExistingJob = async () => {
+      try {
+        const headers = buildApiHeaders(customOpenRouterKey);
+        const res = await fetch(
+          `/api/stories/jobs/${encodeURIComponent(storyId)}`,
+          { method: 'GET', headers },
+        );
+        if (!res.ok || cancelled) return;
+        const data = await res.json();
+        const job = data?.job as ServerStoryJobSnapshot | null;
+        if (!cancelled && job && job.status === 'running') {
+          void observeServerJob({
+            storyId,
+            mode: job.mode,
+            baseStory: selectedStory,
+            initialChapterCount: selectedStory.chapters?.length ?? 0,
+            isNewStory: (selectedStory.chapters?.length ?? 0) === 0,
+          });
+        }
+      } catch {
+        // Ignore transient status check errors on mount
+      }
+    };
+
+    void checkExistingJob();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedStory?.id, currentUser?.uid]);
 
   const runNarrativeMaintenance = async (
     story: Story,
@@ -198,6 +436,20 @@ export const useStoryGeneration = (
   // ---------------------------------------------------------------------------
 
   const handleCancelGeneration = () => {
+    const activeJobId = activeJobStoryIdRef.current;
+    if (activeJobId) {
+      const headers = buildApiHeaders(customOpenRouterKey);
+      void fetch(`/api/stories/jobs/${encodeURIComponent(activeJobId)}/cancel`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ userId: currentUser?.uid }),
+      }).catch((err) => {
+        console.warn('[useStoryGeneration] Failed to cancel server job:', err);
+      });
+      activeJobStoryIdRef.current = null;
+    }
+    pollAbortControllerRef.current?.abort();
+    pollAbortControllerRef.current = null;
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
     setIsGenerating(false);
@@ -382,122 +634,66 @@ export const useStoryGeneration = (
       return;
     }
 
-    abortControllerRef.current?.abort();
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
-
     try {
       const newStoryId = config.storyId || generatePocketBaseId();
       const headers = buildApiHeaders(customOpenRouterKey);
 
-      const response = await fetchWithRetry(
-        '/api/stories/generate-batch',
-        {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            storyId: newStoryId,
-            language: config.language,
-            cefrLevel: config.cefrLevel,
-            genre: config.genre,
-            totalChapters: config.totalChapters,
-            startChapterNumber: 1,
-            storyTitle: config.storyTitle || '',
-            outline: config.outline || '',
-            promptNotes: config.promptNotes || '',
-            previousChapters: [],
-            chapterLength: config.chapterLength,
-            model: config.model,
-            thinkingLevel: config.thinkingLevel,
-            thinkingBudget: config.thinkingBudget,
-            temperature: config.temperature,
-            translationLanguage:
-              config.translationLanguage ||
-              useUIStore.getState().translationTargetLanguage ||
-              'English',
-            userId: currentUser?.uid,
-            userEmail: currentUser?.email,
-          }),
-        },
-        {
-          maxRetries: 6,
-          initialDelay: 4000,
-          factor: 2,
-          signal,
-          onAttemptStart: (attempt) => {
-            if (attempt === 1) {
-              setGenerationLogs([
-                'Analyzing target language guidelines...',
-                `Contacting ${modelBaseName} model to draft initial ${batchCount} chapters...`,
-              ]);
-            } else {
-              setGenerationLogs((prev) => [
-                ...prev,
-                `[Attempt ${attempt}/7] Contacting ${modelBaseName} model to draft initial ${batchCount} chapters...`,
-              ]);
-            }
-          },
-          onRetry: (attempt, remainingMs, error) => {
-            const seconds = Math.ceil(remainingMs / 1000);
-            const text = `[Warning] Attempt ${attempt} failed: ${(error as Error).message}. Retrying in ${seconds}s...`;
-            setGenerationLogs((prev) => {
-              if (
-                prev.length > 0 &&
-                prev[prev.length - 1].startsWith(
-                  `[Warning] Attempt ${attempt} failed`,
-                )
-              ) {
-                return [...prev.slice(0, -1), text];
-              }
-              return [...prev, text];
-            });
-          },
-        },
-      );
-
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      setGenerationLogs((prev) => [
-        ...prev,
-        `Chapters 1–${batchCount} successfully graded.`,
-        'Saving drafted story to database...',
-      ]);
-
-      const initialChapters: Chapter[] = (data.chapters ?? [])
-        .map((ch: any) =>
-          sanitizeChapter({
-            chapterNumber: ch.chapterNumber,
-            title: ch.chapterTitle,
-            content: ch.content,
-            vocabulary: [],
-            summary: ch.summary,
-          }),
-        )
-        .sort((a: any, b: any) => a.chapterNumber - b.chapterNumber);
-
-      const newStory = buildStory({
+      // Persist the story shell to PocketBase first so server-side generation
+      // can save chapters directly even if the user navigates away or closes the tab.
+      const shellStory = buildStory({
         storyId: newStoryId,
         config,
-        chapters: initialChapters,
+        chapters: [],
         currentUser,
         initialCreditsEstimate,
-        creditsCharged: estimatedCreditsCost,
+        creditsCharged: 0,
         titleOverride: config.storyTitle,
       });
-      newStory.isUnsaved = true;
+      await dbService.createStory(shellStory);
 
-      if (onGenerationSuccess) {
-        onGenerationSuccess(
-          config.model || '~z-ai/glm-flash-latest',
-          estimatedCreditsCost,
-          true,
+      const startRes = await fetch('/api/stories/jobs', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          storyId: newStoryId,
+          mode: 'initiate',
+          language: config.language,
+          cefrLevel: config.cefrLevel,
+          genre: config.genre,
+          totalChapters: config.totalChapters,
+          storyTitle: config.storyTitle || shellStory.title || '',
+          outline: config.outline || '',
+          promptNotes: config.promptNotes || '',
+          previousChapters: [],
+          chapterLength: config.chapterLength,
+          model: config.model,
+          thinkingLevel: config.thinkingLevel,
+          thinkingBudget: config.thinkingBudget,
+          temperature: config.temperature,
+          translationLanguage:
+            config.translationLanguage ||
+            useUIStore.getState().translationTargetLanguage ||
+            'English',
+          userId: currentUser?.uid,
+          userEmail: currentUser?.email,
+        }),
+      });
+
+      const startData = await startRes.json().catch(() => ({}));
+      if (!startRes.ok || startData.error) {
+        throw new Error(
+          startData.error ||
+            `Failed to start server-side story generation (${startRes.status})`,
         );
       }
-      setIsGenerating(false);
-      setGenerationLogs([]);
-      onStoryCreated(newStory);
+
+      await observeServerJob({
+        storyId: newStoryId,
+        mode: 'initiate',
+        baseStory: shellStory,
+        initialChapterCount: 0,
+        isNewStory: true,
+      });
     } catch (err: unknown) {
       const e = err as { name?: string; message?: string };
       if (e.name === 'AbortError') {
@@ -513,10 +709,8 @@ export const useStoryGeneration = (
           'error',
         );
       }
-    } finally {
       setIsGenerating(false);
       setGenerationLogs([]);
-      abortControllerRef.current = null;
     }
   };
 
@@ -936,176 +1130,58 @@ export const useStoryGeneration = (
 
     setIsAutoGenerating(true);
     setIsAutoGenerationPaused(false);
-    let activeStory = selectedStory;
-
-    abortControllerRef.current?.abort();
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
-
-    const BATCH_SIZE = 5;
+    setGenerationStatus('Starting server-side auto-write...');
 
     try {
-      while ((activeStory.chapters?.length ?? 0) < activeStory.totalChapters) {
-        if (signal.aborted) {
-          throw new DOMException('Aborted', 'AbortError');
-        }
-
-        const startChapterNumber = (activeStory.chapters?.length ?? 0) + 1;
-        const remaining =
-          activeStory.totalChapters - (activeStory.chapters?.length ?? 0);
-        const batchCount = Math.min(BATCH_SIZE, remaining);
-        const endChapterNumber = startChapterNumber + batchCount - 1;
-
-        setGenerationStatus(
-          `Writing Chapters ${startChapterNumber}–${endChapterNumber} of ${activeStory.totalChapters}...`,
-        );
-
-        const headers = buildApiHeaders(customOpenRouterKey);
-
-        const targetRange = `Chapters 1-${startChapterNumber - 1}`;
-        const auditExistsBefore = activeStory.consistencyAudits?.some(
-          (a) => a.chapterRange === targetRange,
-        );
-        const willRunAudit =
-          (startChapterNumber - 1) % 10 === 0 &&
-          startChapterNumber > 1 &&
-          !auditExistsBefore;
-
-        activeStory = await runNarrativeMaintenance(
-          activeStory,
-          startChapterNumber,
-          headers,
-        );
-
-        const auditExistsAfter = activeStory.consistencyAudits?.some(
-          (a) => a.chapterRange === targetRange,
-        );
-        const auditWasPerformed = willRunAudit && auditExistsAfter;
-
-        if (auditWasPerformed) {
-          // Persist the updated story (with the new audit) so that resuming
-          // auto-write doesn't re-trigger the same audit in an infinite loop.
-          onStoryUpdated(activeStory);
-          setIsAutoGenerationPaused(true);
-          setGenerationLogs((prev) => [
-            ...prev,
-            `Auto-write paused for Consistency Audit review.`,
-          ]);
-          break;
-        }
-
-        const response = await fetchWithRetry(
-          '/api/stories/generate-batch',
-          {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-              storyId: activeStory.id,
-              language: activeStory.language,
-              cefrLevel: activeStory.cefrLevel,
-              genre: activeStory.genre,
-              totalChapters: activeStory.totalChapters,
-              startChapterNumber,
-              storyTitle: activeStory.title,
-              outline: activeStory.outline || '',
-              promptNotes: activeStory.promptNotes || '',
-              previousChapters: activeStory.chapters || [],
-              chapterLength: activeStory.chapterLength || 300,
-              model: activeStory.model,
-              thinkingLevel: activeStory.thinkingLevel,
-              thinkingBudget: activeStory.thinkingBudget,
-              temperature: activeStory.temperature,
-              translationLanguage:
-                activeStory.translationLanguage ||
-                useUIStore.getState().translationTargetLanguage ||
-                'English',
-              storyBible: activeStory.storyBible || null,
-              toneRefreshGuidance: activeStory.toneRefreshGuidance || '',
-              consistencyAudits: activeStory.consistencyAudits || [],
-              userId: currentUser?.uid,
-              userEmail: currentUser?.email,
-            }),
-          },
-          {
-            maxRetries: 6,
-            initialDelay: 4000,
-            factor: 2,
-            signal,
-            onAttemptStart: (attempt) => {
-              setGenerationStatus(
-                `Writing Chapters ${startChapterNumber}–${endChapterNumber} of ${activeStory.totalChapters} (Attempt ${attempt}/7)...`,
-              );
-            },
-            onRetry: (attempt, remainingMs, error) => {
-              const seconds = Math.ceil(remainingMs / 1000);
-              setGenerationStatus(
-                `Batch ${startChapterNumber}–${endChapterNumber} (Attempt ${attempt}/7) failed: ${(error as Error).message}. Retrying in ${seconds}s...`,
-              );
-            },
-          },
-        );
-
-        const data = await response.json();
-        if (data.error) throw new Error(data.error);
-        const newChapters: Chapter[] = (data.chapters ?? []).map((ch: any) =>
-          sanitizeChapter({
-            chapterNumber: ch.chapterNumber,
-            title: ch.chapterTitle,
-            content: ch.content,
-            vocabulary: [],
-            summary: ch.summary,
-          }),
-        );
-
-        if (newChapters.length === 0) {
-          throw new Error('Batch response contained no chapters.');
-        }
-
-        const updatedChapters = [
-          ...(activeStory.chapters || []),
-          ...newChapters,
-        ].sort((a, b) => a.chapterNumber - b.chapterNumber);
-
-        let batchCreditsCost = 0;
-        if (!isFreeModel(activeStory.model)) {
-          for (let i = 0; i < newChapters.length; i++) {
-            const chNum = startChapterNumber + i;
-            batchCreditsCost += calculateChapterCreditCost(
-              chNum,
-              chNum - 1,
-              activeStory.chapterLength || 300,
-              activeStory.model ?? '',
-              activeStory.initialCreditsEstimate,
-              activeStory.creditsCharged,
-            );
-          }
-        }
-
-        const updatedCreditsCharged =
-          (activeStory.creditsCharged ?? 0) + batchCreditsCost;
-
-        if (onGenerationSuccess) {
-          onGenerationSuccess(
-            activeStory.model || '~deepseek/deepseek-flash-latest',
-            batchCreditsCost,
-          );
-        }
-
-        activeStory = {
-          ...activeStory,
-          chapters: updatedChapters,
-          isCompleted: updatedChapters.length >= activeStory.totalChapters,
-          creditsCharged: updatedCreditsCharged,
-          isUnsaved: true,
-        };
-
-        setGenerationLogs((prev) => [
-          ...prev,
-          `Chapters ${startChapterNumber}–${endChapterNumber} written successfully.`,
-        ]);
-
-        onStoryUpdated(activeStory);
+      // Ensure the story exists in PocketBase before starting the server job
+      if (selectedStory.isUnsaved) {
+        await dbService.createStory(selectedStory);
       }
+
+      const headers = buildApiHeaders(customOpenRouterKey);
+      const startRes = await fetch('/api/stories/jobs', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          storyId: selectedStory.id,
+          mode: 'auto-remaining',
+          language: selectedStory.language,
+          cefrLevel: selectedStory.cefrLevel,
+          genre: selectedStory.genre,
+          totalChapters: selectedStory.totalChapters,
+          storyTitle: selectedStory.title,
+          outline: selectedStory.outline || '',
+          promptNotes: selectedStory.promptNotes || '',
+          previousChapters: selectedStory.chapters || [],
+          chapterLength: selectedStory.chapterLength || 300,
+          model: selectedStory.model,
+          thinkingLevel: selectedStory.thinkingLevel,
+          thinkingBudget: selectedStory.thinkingBudget,
+          temperature: selectedStory.temperature,
+          translationLanguage:
+            selectedStory.translationLanguage ||
+            useUIStore.getState().translationTargetLanguage ||
+            'English',
+          userId: currentUser?.uid,
+          userEmail: currentUser?.email,
+        }),
+      });
+
+      const startData = await startRes.json().catch(() => ({}));
+      if (!startRes.ok || startData.error) {
+        throw new Error(
+          startData.error ||
+            `Failed to start server-side auto-write (${startRes.status})`,
+        );
+      }
+
+      await observeServerJob({
+        storyId: selectedStory.id,
+        mode: 'auto-remaining',
+        baseStory: selectedStory,
+        initialChapterCount: selectedStory.chapters?.length ?? 0,
+        isNewStory: false,
+      });
     } catch (err: unknown) {
       const e = err as { name?: string; message?: string };
       if (e.name === 'AbortError') {
@@ -1121,10 +1197,8 @@ export const useStoryGeneration = (
           'error',
         );
       }
-    } finally {
       setIsAutoGenerating(false);
       setGenerationStatus('');
-      abortControllerRef.current = null;
     }
   };
 

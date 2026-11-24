@@ -73,10 +73,12 @@ export async function proxyToTJGen(
       headers['x-openrouter-api-key'] = customKey;
     }
 
+    const hasBody =
+      req.method !== 'GET' && req.method !== 'HEAD' && req.body !== undefined;
     const response = await fetch(targetUrl, {
       method: req.method,
       headers,
-      body: req.body ? JSON.stringify(req.body) : undefined,
+      body: hasBody ? JSON.stringify(req.body) : undefined,
     });
 
     res.status(response.status);
