@@ -139,6 +139,15 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
       console.warn('[Server PB] Failed to fetch story completions:', compError);
     }
 
+    let allRatings: any[] = [];
+    try {
+      allRatings = await pb.collection('story_ratings').getFullList({
+        fields: 'story,user,rating',
+      });
+    } catch (ratingsError) {
+      console.warn('[Server PB] Failed to fetch story ratings:', ratingsError);
+    }
+
     const completionsMap: Record<string, number> = {};
     const completedByMap: Record<string, Record<string, number>> = {};
     for (const comp of completions) {
@@ -153,6 +162,16 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
           completedByMap[storyId][comp.user] =
             (completedByMap[storyId][comp.user] ?? 0) + timesRead;
         }
+      }
+    }
+
+    const ratingsMap: Record<string, Record<string, number>> = {};
+    for (const r of allRatings) {
+      if (r.story && r.user && typeof r.rating === 'number') {
+        if (!ratingsMap[r.story]) {
+          ratingsMap[r.story] = {};
+        }
+        ratingsMap[r.story][r.user] = r.rating;
       }
     }
 
@@ -182,7 +201,7 @@ export async function refreshStoriesMetadataCache(_forceAll = false) {
           isCompleted: record.isCompleted || false,
           creatorId: record.creatorId || '',
           model: record.model,
-          ratings: record.ratings,
+          ratings: ratingsMap[record.id] || {},
           totalReads: completionsMap[record.id] || 0,
           completedBy: completedByMap[record.id] || {},
           isPublic: record.isPublic !== false,
@@ -275,6 +294,26 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
           );
         }
 
+        const ratings: Record<string, number> = {};
+        try {
+          const ratingRecords = await pb
+            .collection('story_ratings')
+            .getFullList({
+              filter: `story = "${storyId}"`,
+              fields: 'user,rating',
+            });
+          for (const r of ratingRecords) {
+            if (r.user && typeof r.rating === 'number') {
+              ratings[r.user] = r.rating;
+            }
+          }
+        } catch (ratingsError) {
+          console.warn(
+            `[Server PB] Failed to fetch ratings for single story ${storyId}:`,
+            ratingsError,
+          );
+        }
+
         const mapped = {
           id: record.id,
           cover: record.cover || '',
@@ -289,7 +328,7 @@ export async function getStoriesMetadata(options: any = {}): Promise<any[]> {
           isCompleted: record.isCompleted || false,
           creatorId: record.creatorId || '',
           model: record.model,
-          ratings: record.ratings,
+          ratings,
           totalReads,
           completedBy,
           isPublic: record.isPublic !== false,
@@ -356,7 +395,26 @@ export async function fetchStoryServer(storyId: string): Promise<any | null> {
   try {
     const record = await pb.collection('stories').getOne(storyId);
     if (record) {
-      serverStoryCache.set(storyId, { story: record, timestamp: Date.now() });
+      const ratings: Record<string, number> = {};
+      try {
+        const ratingRecords = await pb.collection('story_ratings').getFullList({
+          filter: `story = "${storyId}"`,
+          fields: 'user,rating',
+        });
+        for (const r of ratingRecords) {
+          if (r.user && typeof r.rating === 'number') {
+            ratings[r.user] = r.rating;
+          }
+        }
+      } catch (ratingsError) {
+        console.warn(
+          `[Server PB SSR] Failed to fetch ratings for story ${storyId}:`,
+          ratingsError,
+        );
+      }
+      const enriched = { ...record, ratings };
+      serverStoryCache.set(storyId, { story: enriched, timestamp: Date.now() });
+      return enriched;
     }
     return record;
   } catch (err) {
@@ -370,12 +428,12 @@ export async function saveGenerationLog(log: any) {
     await ensureAdminAuth();
     const maskedEmail = log.userEmail
       ? (() => {
-          const parts = log.userEmail.split('@');
-          if (parts.length !== 2) return 'anonymous';
-          const [local, domain] = parts;
-          if (local.length <= 2) return `${local[0]}***@${domain}`;
-          return `${local[0]}***${local[local.length - 1]}@${domain}`;
-        })()
+        const parts = log.userEmail.split('@');
+        if (parts.length !== 2) return 'anonymous';
+        const [local, domain] = parts;
+        if (local.length <= 2) return `${local[0]}***@${domain}`;
+        return `${local[0]}***${local[local.length - 1]}@${domain}`;
+      })()
       : 'anonymous';
 
     await pb.collection('generation_logs').create({

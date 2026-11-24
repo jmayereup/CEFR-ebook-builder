@@ -415,27 +415,15 @@ export default function StoryCard({
           )}
         </div>
 
-        {/* Center Block: Intro Button */}
+        {/* Center Block: Picture Book Label */}
         {(story.sourceType === 'gemini_storybook' || story.embedUrl) && (
           <span
             title="Interactive Gemini Storybook Link"
-            className="px-1 py-0.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 rounded text-[9px] font-bold border border-emerald-500/30 uppercase"
+            className="text-[9px] sm:text-[10px] font-medium text-tj-text-muted/80 uppercase tracking-wide whitespace-nowrap"
           >
-            Pictures
+            Picture Book
           </span>
         )}
-        <button
-          type="button"
-          onClick={handleToggleIntro}
-          className={`cursor-pointer text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors underline underline-offset-2 px-1 ${
-            showDescription
-              ? 'text-tj-primary decoration-tj-primary'
-              : 'text-tj-text-muted hover:text-tj-text-main decoration-tj-text-muted/50 hover:decoration-tj-text-main'
-          }`}
-          title="View Description"
-        >
-          Intro
-        </button>
 
         {/* Right Block: Action Icons */}
         <div className="flex items-center gap-1 shrink-0">
@@ -519,6 +507,37 @@ export default function StoryCard({
           </p>
         </div>
       ) : null}
+
+      {/* Rating Row below snippet (shown when story has ratings) */}
+      {story.ratings && Object.keys(story.ratings).length > 0 && (
+        <div
+          className="mt-1.5 px-1 flex items-center gap-1.5 text-[10px] font-mono text-tj-text-muted select-none"
+          title={`Average rating: ${getAverageRating(story.ratings).toFixed(1)} (${Object.keys(story.ratings).length} ${Object.keys(story.ratings).length === 1 ? 'rating' : 'ratings'})`}
+        >
+          <div className="flex items-center gap-0.5">
+            {[1, 2, 3, 4, 5].map((starValue) => {
+              const isFilled =
+                starValue <= Math.round(getAverageRating(story.ratings));
+              return (
+                <Star
+                  key={starValue}
+                  className={`w-2.5 h-2.5 ${
+                    isFilled
+                      ? 'fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400'
+                      : 'text-tj-text-muted/30'
+                  }`}
+                />
+              );
+            })}
+          </div>
+          <span className="font-bold text-tj-text-main">
+            {getAverageRating(story.ratings).toFixed(1)}
+          </span>
+          <span className="opacity-70">
+            ({Object.keys(story.ratings).length})
+          </span>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,10 +6,16 @@
  */
 
 import type { RecentlyReadItem, Story } from '../types';
-import { GENRES } from '../types';
+import { GENRES, getAverageRating } from '../types';
 import { getModelDisplayName } from './modelUtils';
 
-export type SortBy = 'newest' | 'oldest' | 'chapters' | 'title' | 'popularity';
+export type SortBy =
+  | 'newest'
+  | 'oldest'
+  | 'chapters'
+  | 'title'
+  | 'popularity'
+  | 'rating';
 
 export interface StoryFilters {
   filterLanguage: string[];
@@ -201,6 +207,22 @@ export const filterAndSortStories = (
           );
           if (popularityA !== popularityB) {
             return popularityB - popularityA;
+          }
+          return (
+            new Date(b.createdAt || 0).getTime() -
+            new Date(a.createdAt || 0).getTime()
+          );
+        }
+        case 'rating': {
+          const avgA = getAverageRating(a.ratings);
+          const avgB = getAverageRating(b.ratings);
+          if (avgA !== avgB) {
+            return avgB - avgA;
+          }
+          const countA = Object.keys(a.ratings || {}).length;
+          const countB = Object.keys(b.ratings || {}).length;
+          if (countA !== countB) {
+            return countB - countA;
           }
           return (
             new Date(b.createdAt || 0).getTime() -

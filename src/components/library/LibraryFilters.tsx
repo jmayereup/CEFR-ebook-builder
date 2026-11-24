@@ -218,6 +218,9 @@ export default function LibraryFilters({
               <option value="popularity" className="dark:bg-slate-900">
                 Sort: Popularity (Reads)
               </option>
+              <option value="rating" className="dark:bg-slate-900">
+                Sort: Highest Rated
+              </option>
               <option value="chapters" className="dark:bg-slate-900">
                 Sort: Length (Chapters)
               </option>

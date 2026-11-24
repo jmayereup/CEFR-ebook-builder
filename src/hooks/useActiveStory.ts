@@ -35,7 +35,7 @@ interface UseActiveStoryOptions {
     bypassConfirm?: boolean,
   ) => Promise<string | null>;
   libHandleToggleStoryPrivacy: (storyId: string) => Promise<boolean>;
-  libHandleRateStory: (storyId: string, rating: number) => Promise<void>;
+  libHandleRateStory: (storyId: string, rating: number) => Promise<boolean>;
   loadStoriesMetadata: (options?: {
     refresh?: boolean;
     storyId?: string;
@@ -202,14 +202,14 @@ export function useActiveStory(options: UseActiveStoryOptions) {
           const parsed = parseRecentlyReadItems(JSON.parse(local));
           syncedItem = parsed.find((item) => item.storyId === selectedStory.id);
         }
-      } catch {}
+      } catch { }
     }
 
     if (syncedItem || isUserDataLoaded) {
       const validIdx =
         syncedItem &&
-        syncedItem.chapterIdx >= 0 &&
-        syncedItem.chapterIdx < (selectedStory.chapters?.length ?? 0)
+          syncedItem.chapterIdx >= 0 &&
+          syncedItem.chapterIdx < (selectedStory.chapters?.length ?? 0)
           ? syncedItem.chapterIdx
           : 0;
 
@@ -242,7 +242,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
       story.chapters && story.chapters.length > 0
         ? story
         : getStorySyncFromOffline(story.id) ||
-          (await getStoryFromOffline(story.id));
+        (await getStoryFromOffline(story.id));
 
     const hasCachedContent =
       cachedStory && cachedStory.chapters && cachedStory.chapters.length > 0;
@@ -273,7 +273,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
               const parsed = parseRecentlyReadItems(JSON.parse(local));
               syncedItem = parsed.find((item) => item.storyId === story.id);
             }
-          } catch {}
+          } catch { }
         }
         idx = syncedItem ? syncedItem.chapterIdx : 0;
       }
@@ -348,7 +348,7 @@ export function useActiveStory(options: UseActiveStoryOptions) {
               const parsed = parseRecentlyReadItems(JSON.parse(local));
               syncedItem = parsed.find((item) => item.storyId === story.id);
             }
-          } catch {}
+          } catch { }
         }
         idx = syncedItem ? syncedItem.chapterIdx : 0;
       }
@@ -401,7 +401,23 @@ export function useActiveStory(options: UseActiveStoryOptions) {
   };
 
   const handleRateStory = async (storyId: string, rating: number) => {
-    await libHandleRateStory(storyId, rating);
+    const succeeded = await libHandleRateStory(storyId, rating);
+    if (succeeded && currentUser) {
+      setSelectedStory((prev) => {
+        if (prev && prev.id === storyId) {
+          const updated = {
+            ...prev,
+            ratings: {
+              ...(prev.ratings || {}),
+              [currentUser.uid]: rating,
+            },
+          };
+          saveStoryToOffline(updated);
+          return updated;
+        }
+        return prev;
+      });
+    }
   };
 
   const handleDeleteChapter = async (chapterIndex: number) => {

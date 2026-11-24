@@ -170,10 +170,17 @@ export class PocketBaseService implements IDatabaseService {
         .getOne<AppStoriesResponse>(storyId);
       const storyObj = record as unknown as Story;
       try {
-        const comps = await pb.collection('story_completions').getFullList({
-          filter: `story = "${storyId}"`,
-          fields: 'user,timesRead',
-        });
+        const safeStory = escapePbFilterValue(storyId);
+        const [comps, ratingRecords] = await Promise.all([
+          pb.collection('story_completions').getFullList({
+            filter: `story = "${safeStory}"`,
+            fields: 'user,timesRead',
+          }),
+          pb.collection('story_ratings').getFullList({
+            filter: `story = "${safeStory}"`,
+            fields: 'user,rating',
+          }),
+        ]);
         const completedBy: Record<string, number> = {};
         let totalReads = 0;
         for (const c of comps) {
@@ -185,9 +192,17 @@ export class PocketBaseService implements IDatabaseService {
         }
         storyObj.completedBy = completedBy;
         storyObj.totalReads = totalReads;
+
+        const ratings: Record<string, number> = {};
+        for (const r of ratingRecords) {
+          if (r.user && typeof r.rating === 'number') {
+            ratings[r.user] = r.rating;
+          }
+        }
+        storyObj.ratings = ratings;
       } catch (compError) {
         console.warn(
-          `[PocketBaseService] Failed to load completions for story ${storyId}:`,
+          `[PocketBaseService] Failed to load completions/ratings for story ${storyId}:`,
           compError,
         );
       }
@@ -206,15 +221,28 @@ export class PocketBaseService implements IDatabaseService {
         sort: '-createdAt',
       });
     try {
-      const comps = await pb.collection('story_completions').getFullList({
-        filter: `user = "${userId}"`,
-        fields: 'story,user,timesRead',
-      });
+      const safeUser = escapePbFilterValue(userId);
+      const [comps, ratingRecords] = await Promise.all([
+        pb.collection('story_completions').getFullList({
+          filter: `user = "${safeUser}"`,
+          fields: 'story,user,timesRead',
+        }),
+        pb.collection('story_ratings').getFullList({
+          filter: `user = "${safeUser}"`,
+          fields: 'story,user,rating',
+        }),
+      ]);
       const userCompletions: Record<string, number> = {};
       for (const c of comps) {
         if (c.story) {
           userCompletions[c.story] =
             (userCompletions[c.story] ?? 0) + (c.timesRead ?? 0);
+        }
+      }
+      const userRatings: Record<string, number> = {};
+      for (const r of ratingRecords) {
+        if (r.story && typeof r.rating === 'number') {
+          userRatings[r.story] = r.rating;
         }
       }
       return records.map((r: any) => ({
@@ -223,10 +251,11 @@ export class PocketBaseService implements IDatabaseService {
           [userId]: userCompletions[r.id] ?? 0,
         },
         totalReads: userCompletions[r.id] ?? 0,
+        ratings: userRatings[r.id] ? { [userId]: userRatings[r.id] } : {},
       })) as unknown as Story[];
     } catch (compError) {
       console.warn(
-        '[PocketBaseService] Failed to load completions for private stories:',
+        '[PocketBaseService] Failed to load completions/ratings for private stories:',
         compError,
       );
       return records as unknown as Story[];
@@ -370,11 +399,23 @@ export class PocketBaseService implements IDatabaseService {
     userId: string,
     rating: number,
   ): Promise<void> {
-    const record = await pb
-      .collection('stories')
-      .getOne<AppStoriesResponse>(storyId, { fields: 'ratings' });
-    const ratings = { ...(record.ratings ?? {}), [userId]: rating };
-    await pb.collection('stories').update(storyId, { ratings });
+    const safeStory = escapePbFilterValue(storyId);
+    const safeUser = escapePbFilterValue(userId);
+    const records = await pb.collection('story_ratings').getList(1, 1, {
+      filter: `story = "${safeStory}" && user = "${safeUser}"`,
+    });
+
+    if (records.items.length > 0) {
+      await pb.collection('story_ratings').update(records.items[0].id, {
+        rating,
+      });
+    } else {
+      await pb.collection('story_ratings').create({
+        story: storyId,
+        user: userId,
+        rating,
+      });
+    }
   }
 
   async incrementStoryCompletion(
@@ -773,7 +814,7 @@ export class PocketBaseService implements IDatabaseService {
       updated.maxStreak !== currentStreakData.maxStreak ||
       updated.lastActiveDate !== currentStreakData.lastActiveDate ||
       (updated.activityHistory?.length ?? 0) !==
-        (currentStreakData.activityHistory?.length ?? 0)
+      (currentStreakData.activityHistory?.length ?? 0)
     ) {
       await pb.collection('users').update(userId, { streak: updated });
     }

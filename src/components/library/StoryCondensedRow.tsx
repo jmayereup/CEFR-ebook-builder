@@ -151,6 +151,20 @@ export default function StoryCondensedRow({
             </span>
           </div>
 
+          {/* Compact Rating Badge */}
+          {story.ratings && Object.keys(story.ratings).length > 0 && (
+            <span
+              className="inline-flex items-center gap-0.5 text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400"
+              title={`Average rating: ${getAverageRating(story.ratings).toFixed(1)} (${Object.keys(story.ratings).length} ${Object.keys(story.ratings).length === 1 ? 'rating' : 'ratings'})`}
+            >
+              <Star className="w-3 h-3 fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400" />
+              <span>{getAverageRating(story.ratings).toFixed(1)}</span>
+              <span className="text-tj-text-muted font-normal opacity-75">
+                ({Object.keys(story.ratings).length})
+              </span>
+            </span>
+          )}
+
           {(story.sourceType === 'gemini_storybook' || story.embedUrl) && (
             <span
               className="text-[9px] bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded-sm border border-emerald-500/30 flex items-center gap-1 font-bold"

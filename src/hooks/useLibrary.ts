@@ -115,7 +115,7 @@ export function useLibrary(options: UseLibraryOptions) {
       try {
         const data = await fetchStoriesMetadata(options);
         setPublicStories(data);
-        saveCachedStoriesMetadata(data).catch(() => {});
+        saveCachedStoriesMetadata(data).catch(() => { });
         lastMetadataFetchRef.current = Date.now();
       } catch (error) {
         console.error('Failed to load public stories metadata:', error);
@@ -384,52 +384,71 @@ export function useLibrary(options: UseLibraryOptions) {
     }
   };
 
-  const handleRateStory = async (storyId: string, rating: number) => {
-    if (!currentUser) {
-      showAlert(
-        'Authentication Required',
-        'Please sign in to rate books.',
-        'warning',
-      );
-      return;
-    }
-    try {
-      await rateStory(storyId, currentUser.uid, rating);
-      loadStoriesMetadata({ refresh: true, storyId });
-    } catch (error) {
-      console.error('Rating error:', error);
-      showAlert(
-        'Rating Failed',
-        'Failed to save rating. Permissions restricted or connection error.',
-        'error',
-      );
-    }
-  };
+    const handleRateStory = async (
+      storyId: string,
+      rating: number,
+    ): Promise<boolean> => {
+      if (!currentUser) {
+        showAlert(
+          'Authentication Required',
+          'Please sign in to rate books.',
+          'warning',
+        );
+        return false;
+      }
+      try {
+        await rateStory(storyId, currentUser.uid, rating);
+        const applyRating = (list: Story[]) =>
+          list.map((s) =>
+            s.id === storyId
+              ? {
+                ...s,
+                ratings: {
+                  ...(s.ratings || {}),
+                  [currentUser.uid]: rating,
+                },
+              }
+              : s,
+          );
+        setPublicStories(applyRating);
+        setPrivateStories(applyRating);
+        loadStoriesMetadata({ refresh: true, storyId });
+        return true;
+      } catch (error) {
+        console.error('Rating error:', error);
+        showAlert(
+          'Rating Failed',
+          'Failed to save rating. Permissions restricted or connection error.',
+          'error',
+        );
+        return false;
+      }
+    };
 
-  // Load stories metadata on login/logout or tab switch
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Refetch metadata on authentication status changes
-  useEffect(() => {
-    loadStoriesMetadata();
-  }, [currentUser?.uid, currentUser?.email, loadStoriesMetadata]);
+    // Load stories metadata on login/logout or tab switch
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Refetch metadata on authentication status changes
+    useEffect(() => {
+      loadStoriesMetadata();
+    }, [currentUser?.uid, currentUser?.email, loadStoriesMetadata]);
 
-  // Clear private stories when user logs out
-  useEffect(() => {
-    if (!currentUser) {
-      setPrivateStories([]);
-    }
-  }, [currentUser]);
+    // Clear private stories when user logs out
+    useEffect(() => {
+      if (!currentUser) {
+        setPrivateStories([]);
+      }
+    }, [currentUser]);
 
-  return {
-    stories,
-    setPublicStories,
-    setPrivateStories,
-    storiesLoading,
-    privateStoriesLoading,
-    loadStoriesMetadata,
-    loadPrivateStories,
-    handleSelectStory,
-    handleDeleteStory,
-    handleToggleStoryPrivacy,
-    handleRateStory,
-  };
-}
+    return {
+      stories,
+      setPublicStories,
+      setPrivateStories,
+      storiesLoading,
+      privateStoriesLoading,
+      loadStoriesMetadata,
+      loadPrivateStories,
+      handleSelectStory,
+      handleDeleteStory,
+      handleToggleStoryPrivacy,
+      handleRateStory,
+    };
+  }

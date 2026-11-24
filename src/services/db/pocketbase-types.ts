@@ -27,6 +27,7 @@ export const Collections = {
   Stories: 'stories',
   StoryCompletions: 'story_completions',
   StoryHighlights: 'story_highlights',
+  StoryRatings: 'story_ratings',
   TeamGames: 'teamGames',
   TjComponentsTeacherInfo: 'tj_components_teacher_info',
   TjwcSubmissions: 'tjwc_submissions',
@@ -470,6 +471,15 @@ export type StoryHighlightsRecord = {
   user: RecordIdString;
 };
 
+export type StoryRatingsRecord = {
+  created: IsoAutoDateString;
+  id: string;
+  rating: number;
+  story: RecordIdString;
+  updated: IsoAutoDateString;
+  user: RecordIdString;
+};
+
 export type TeamGamesRecord = {
   created: IsoAutoDateString;
   id: string;
@@ -682,6 +692,8 @@ export type StoryCompletionsResponse<Texpand = unknown> =
   Required<StoryCompletionsRecord> & BaseSystemFields<Texpand>;
 export type StoryHighlightsResponse<Texpand = unknown> =
   Required<StoryHighlightsRecord> & BaseSystemFields<Texpand>;
+export type StoryRatingsResponse<Texpand = unknown> =
+  Required<StoryRatingsRecord> & BaseSystemFields<Texpand>;
 export type TeamGamesResponse<Texpand = unknown> = Required<TeamGamesRecord> &
   BaseSystemFields<Texpand>;
 export type TjComponentsTeacherInfoResponse<Texpand = unknown> =
@@ -742,6 +754,7 @@ export type CollectionRecords = {
   stories: StoriesRecord;
   story_completions: StoryCompletionsRecord;
   story_highlights: StoryHighlightsRecord;
+  story_ratings: StoryRatingsRecord;
   teamGames: TeamGamesRecord;
   tj_components_teacher_info: TjComponentsTeacherInfoRecord;
   tjwc_submissions: TjwcSubmissionsRecord;
@@ -771,6 +784,7 @@ export type CollectionResponses = {
   stories: StoriesResponse;
   story_completions: StoryCompletionsResponse;
   story_highlights: StoryHighlightsResponse;
+  story_ratings: StoryRatingsResponse;
   teamGames: TeamGamesResponse;
   tj_components_teacher_info: TjComponentsTeacherInfoResponse;
   tjwc_submissions: TjwcSubmissionsResponse;
